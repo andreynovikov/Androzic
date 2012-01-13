@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<color name="cursorcolor">#FFFF0000</color>
+<color name="currenttrack">#FFA565FE</color>
+<color name="waypoint">#FFFFFF00</color>
+<color name="waypointbg">#AAFFFFFF</color>
+<color name="waypointtext">#FF000000</color>
+<color name="routeline">#AA003300</color>
+<color name="routewaypoint">#FFFFFF00</color>
+<color name="routewaypointwithalpha">#AACCFFCC</color>
+<color name="routewaypointtext">#FF000000</color>
+<color name="navigationline">#88FFFF00</color>
+<color name="distanceline">#888888FF</color>
+<color name="accuracy">#330000FF</color>
+<color name="gpsenabled">#FFFFFF66</color>
+<color name="gpsdisabled">#FFFF6666</color>
+<color name="gpsworking">#FFFFFFFF</color>
+<color name="usertag">#FF0000FF</color>
+<color name="usertagwithalpha">#88FFFFFF</color>
+</resources>

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="auto"
+    package="com.androzic"
+    android:versionCode="73"
+    android:versionName="1.2.3" >
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
+    <uses-sdk
+        android:minSdkVersion="4"
+        android:targetSdkVersion="11" />
+
+    <uses-feature
+        android:name="android.hardware.location"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.network"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.screen.portrait"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <application
+        android:backupAgent="Backup"
+        android:debuggable="false"
+        android:description="@string/homepage"
+        android:icon="@drawable/icon"
+        android:theme="@style/BlackTheme"
+        android:label="@string/app_name"
+        android:name=".Androzic"
+        android:restoreAnyVersion="true" >
+        <activity
+            android:configChanges="orientation"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:name=".Splash" >
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:name=".MapActivity" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchableActivity" />
+        </activity>
+        <activity android:name=".ExternalActions" >
+            <intent-filter >
+                <action android:name="com.androzic.PLOT_ROUTE" />
+                <action android:name="com.google.android.radar.SHOW_RADAR" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:label="@string/search_name"
+            android:launchMode="singleTop"
+            android:name=".SearchableActivity" >
+            <intent-filter >
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:label="@string/hsi_name"
+            android:name=".HSIActivity" />
+        <activity
+            android:label="@string/compass_name"
+            android:name=".CompassActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:label="@string/information_name"
+            android:name=".Information"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/credits_name"
+            android:name=".Credits" />
+        <activity
+            android:label="@string/pref_name"
+            android:name=".Preferences" />
+        <activity android:name=".Preferences$InnerPreferences" />
+        <activity android:name=".Preferences$OnlineMapPreferences" />
+        <activity android:name=".Preferences$FolderPreferences" />
+        <activity android:name=".Preferences$ApplicationPreferences" />
+        <activity
+            android:label="@string/pref_name"
+            android:name=".PreferencesHC" />
+        <activity
+            android:label="@string/maplist_name"
+            android:name=".MapList" />
+        <activity
+            android:name=".ErrorDialog"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/mapinformation_name"
+            android:name=".map.MapInformation" />
+        <activity
+            android:label="@string/managewaypoints_name"
+            android:name=".waypoint.WaypointList" />
+        <activity
+            android:label="@string/waypointproperties_name"
+            android:name=".waypoint.WaypointProperties" />
+        <activity
+            android:label="@string/markericon_name"
+            android:name=".ui.MarkerPickerActivity"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:name=".waypoint.WaypointInfo"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/waypointproject_name"
+            android:name=".waypoint.WaypointProject"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/loadwaypoints_name"
+            android:name=".waypoint.WaypointFileList"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/savewaypoints_name"
+            android:name=".waypoint.WaypointSave"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/coordinates_name"
+            android:name=".waypoint.CoordinatesReceived"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/managetracks_name"
+            android:name=".track.TrackList" />
+        <activity
+            android:label="@string/trackproperties_name"
+            android:name=".track.TrackProperties" />
+        <activity
+            android:label="@string/loadtrack_name"
+            android:name=".track.TrackFileList"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/track2route_name"
+            android:name=".track.TrackToRoute" />
+        <activity
+            android:label="@string/savetrack_name"
+            android:name=".track.TrackSave"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/loadroute_name"
+            android:name=".route.RouteFileList" />
+        <activity
+            android:name=".route.RouteStart"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/manageroutes_name"
+            android:name=".route.RouteList" />
+        <activity
+            android:name=".route.RouteEdit"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/saveroute_name"
+            android:name=".route.RouteSave"
+            android:theme="@style/BlackDialog" />
+        <activity
+            android:label="@string/routeproperties_name"
+            android:name=".route.RouteProperties" />
+
+        <receiver
+            android:icon="@drawable/icon"
+            android:label="@string/widget_name"
+            android:name=".LocationWidget" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/location_widget" />
+        </receiver>
+
+        <provider
+            android:authorities="com.androzic.SuggestionProvider"
+            android:name=".SuggestionProvider" />
+
+        <service
+            android:icon="@drawable/icon"
+            android:name=".track.TrackingService"
+            android:process=":tracking" >
+            <intent-filter >
+                <action android:name="com.androzic.tracking" />
+                <action android:name="com.androzic.track.ITrackingRemoteService" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+        <service
+            android:icon="@drawable/icon"
+            android:name=".location.LocationService"
+            android:process=":location" >
+            <intent-filter >
+                <action android:name="com.androzic.location" />
+                <action android:name="com.androzic.location.ILocationRemoteService" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+        <service
+            android:icon="@drawable/widget_icon"
+            android:name=".WidgetService"
+            android:process=":widget" />
+        <service
+            android:icon="@drawable/widget_icon"
+            android:name=".NavigationService" />
+
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAIQMCPbh1CGZy5QovaZA_o6cJgv-SaYlYVxGQ5MQ" />
+    </application>
+
+</manifest>

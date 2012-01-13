@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_map_title">
+    <CheckBoxPreference android:key="@string/pref_usemapindex" android:title="@string/pref_usemapindex_title" android:summary="@string/pref_usemapindex_summary" android:defaultValue="@bool/def_usemapindex" />
+	<com.androzic.ui.SeekbarPreference android:key="@string/pref_maprenderinterval" android:title="@string/pref_maprenderinterval_title" android:summary="@string/pref_maprenderinterval_summary" androzic:defaultValue="@integer/def_maprenderinterval" android:text=" ms" androzic:format="0" androzic:multiplier="100" androzic:min="2" androzic:max="50" />
+    <CheckBoxPreference android:key="@string/pref_mapbest" android:title="@string/pref_mapbest_title" android:summary="@string/pref_mapbest_summary" android:defaultValue="@bool/def_mapbest" />
+	<com.androzic.ui.SeekbarPreference android:key="@string/pref_mapbestinterval" android:title="@string/pref_mapbestinterval_title" android:summary="@string/pref_mapbestinterval_summary" android:dependency="@string/pref_mapbest" androzic:defaultValue="@integer/def_mapbestinterval" android:text=" seconds" androzic:min="3" androzic:max="30" />
+    <CheckBoxPreference android:key="@string/pref_unfollowontap" android:title="@string/pref_unfollowontap_title" android:summary="@string/pref_unfollowontap_summary" android:defaultValue="@bool/def_unfollowontap" />
+    <PreferenceCategory android:title="@string/pref_onlinemaps_title">
+	    <CheckBoxPreference android:key="@string/pref_useonlinemap" android:title="@string/pref_useonlinemap_title" android:summary="@string/pref_useonlinemap_summary" android:defaultValue="@bool/def_useonlinemap" />
+		<ListPreference android:key="@string/pref_onlinemap" android:title="@string/pref_onlinemap_title" android:summary="@string/pref_onlinemap_summary" android:defaultValue="osm" android:dialogTitle="@string/pref_onlinemap_title" android:dependency="@string/pref_useonlinemap" />
+		<com.androzic.ui.SeekbarPreference android:key="@string/pref_onlinemapscale" android:title="@string/pref_onlinemapscale_title" android:summary="@string/pref_onlinemapscale_summary" androzic:defaultValue="@integer/def_onlinemapscale" androzic:format="0" androzic:min="1" androzic:max="18" android:dependency="@string/pref_useonlinemap" />
+	</PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_grid_title">
+	    <CheckBoxPreference android:key="@string/pref_grid_mapshow" android:title="@string/pref_grid_mapshow_title" android:summary="@string/pref_grid_mapshow_summary" android:defaultValue="true" />
+	    <CheckBoxPreference android:key="@string/pref_grid_usershow" android:title="@string/pref_grid_usershow_title" android:summary="@string/pref_grid_usershow_summary" android:defaultValue="false" />
+		<EditTextPreference android:key="@string/pref_grid_userscale" android:title="@string/pref_grid_userscale_title" android:summary="@string/pref_grid_userscale_summary" android:numeric="integer" android:maxLength="5" android:inputType="number" android:defaultValue="@string/def_grid_userscale" android:singleLine="true" android:dependency="@string/pref_grid_usershow" />
+		<ListPreference android:key="@string/pref_grid_userunit" android:title="@string/pref_grid_userunit_title"  android:entries="@array/distance_short" android:entryValues="@array/distance_values" android:defaultValue="0" android:dialogTitle="@string/pref_grid_userunit_title" android:dependency="@string/pref_grid_usershow" />
+		<EditTextPreference android:key="@string/pref_grid_usermpp" android:title="@string/pref_grid_usermpp_title" android:summary="@string/pref_grid_usermpp_summary" android:numeric="integer" android:maxLength="4" android:inputType="number" android:defaultValue="@string/def_grid_usermpp" android:singleLine="true" android:dependency="@string/pref_grid_usershow" />
+		<ListPreference android:key="@string/pref_grid_preference" android:title="@string/pref_grid_preference_title" android:entries="@array/grid_names" android:entryValues="@array/grid_values" android:defaultValue="0" android:dialogTitle="@string/pref_grid_preference_title" android:dependency="@string/pref_grid_usershow" />
+	</PreferenceCategory>
+</PreferenceScreen>

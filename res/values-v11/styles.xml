@@ -1,0 +1,7 @@
+<resources>
+    <style name="BlackTheme" parent="@android:style/Theme.Holo"></style>
+    <style name="LightTheme" parent="@android:style/Theme.Holo.Light"></style>
+    <style name="BlackDialog" parent="@android:style/Theme.Holo.Dialog"></style>
+    <style name="LightDialog" parent="@android:style/Theme.Holo.Light.Dialog"></style>
+    <style name="ButtonBar" parent="@android:style/Holo.ButtonBar"></style>
+</resources>

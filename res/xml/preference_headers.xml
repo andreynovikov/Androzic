@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+   	<header android:fragment="com.androzic.PreferencesHC$OnlineMapPreferencesFragment" android:title="@string/pref_map_title">
+		<extra android:name="resource" android:value="pref_behavior" />
+	</header>
+   	<header android:fragment="com.androzic.PreferencesHC$FolderPreferencesFragment" android:title="@string/pref_folder_title">
+		<extra android:name="resource" android:value="pref_folder" />
+	</header>
+   	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_loc_title">
+		<extra android:name="resource" android:value="pref_location" />
+	</header>
+   	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_show_title">
+		<extra android:name="resource" android:value="pref_display" />
+	</header>
+	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_unit_title">
+		<extra android:name="resource" android:value="pref_unit" />
+	</header>
+	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_tracking_title">
+		<extra android:name="resource" android:value="pref_tracking" />
+	</header>
+	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_waypoint_title">
+		<extra android:name="resource" android:value="pref_waypoint" />
+	</header>
+	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_route_title">
+		<extra android:name="resource" android:value="pref_route" />
+	</header>
+	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_navigation_title">
+		<extra android:name="resource" android:value="pref_navigation" />
+	</header>
+	<header android:id="@+id/pref_sharing" android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_sharing_title">
+		<extra android:name="resource" android:value="pref_sharing" />
+	</header>
+   	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_advanced_title">
+		<extra android:name="resource" android:value="pref_general" />
+	</header>
+	<header android:fragment="com.androzic.PreferencesHC$ApplicationPreferencesFragment" android:title="@string/pref_application_title">
+		<extra android:name="resource" android:value="pref_application" />
+	</header>
+ </preference-headers>

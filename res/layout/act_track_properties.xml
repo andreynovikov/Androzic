@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	
+	<ScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_gravity="top"
+		android:layout_weight="1">
+		
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:padding="5dip">
+
+			<TextView
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textStyle="bold"
+				android:text="@string/name" />
+			<EditText android:id="@+id/name_text"
+				android:maxLength="20"
+				android:inputType="text"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content" />
+    <!--
+    <TextView android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:textStyle="bold"
+              android:text="@string/description"
+              android:paddingTop="6dip" />
+    <EditText android:id="@+id/description_text"
+              android:maxLength="160"
+              android:inputType="text"
+              android:lines="3"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content" />
+    -->
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingTop="6dip">
+				
+				<CheckBox android:id="@+id/show_check"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textStyle="bold"
+					android:text="@string/show" />
+
+			</LinearLayout>
+
+			<TextView
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textStyle="bold"
+				android:text="@string/color"
+				android:paddingTop="6dip" />
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingTop="6dip">
+
+				<TextView android:id="@+id/color_text"
+					android:drawableTop="@drawable/line"
+					android:drawableBottom="@drawable/line"
+                	android:layout_width="40dip"
+                	android:layout_height="fill_parent" />
+
+				<Button android:id="@+id/color_button"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/change" />
+
+			</LinearLayout>
+
+		</LinearLayout>
+	</ScrollView>
+
+	<include layout="@layout/inc_buttonbar" />
+
+</LinearLayout>

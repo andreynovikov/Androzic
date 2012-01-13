@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:panel="http://schemas.android.com/apk/res/com.androzic"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<include layout="@layout/inc_map" />
+  
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true">
+    
+		<RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_weight="1">  
+
+			<LinearLayout android:id="@+id/topbar"
+				android:orientation="vertical"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentTop="true"
+				 android:background="#88000000">
+
+				<include layout="@layout/inc_satinfo" />
+
+				<LinearLayout
+					android:orientation="horizontal"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
+			  
+			  		<include layout="@layout/inc_routeinfo" />
+			  		<include layout="@layout/inc_waypointinfo" />
+			  		
+				</LinearLayout>
+
+			</LinearLayout>
+
+			<LinearLayout android:id="@+id/bottombar"
+				android:orientation="vertical"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentBottom="true"
+				 android:background="#88000000">
+
+				<LinearLayout android:id="@+id/edittrack"
+					android:visibility="gone"
+					android:padding="3dip"
+					android:gravity="center_vertical"
+					android:orientation="horizontal" 
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
+			    
+					<include layout="@layout/inc_trackedit" /> 
+		
+				</LinearLayout>
+	
+				<include layout="@layout/inc_mapinfo" />
+
+			</LinearLayout>
+  
+			<include layout="@layout/inc_trackdetails" /> 
+  
+		</RelativeLayout>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:layout_weight="0">
+
+			<LinearLayout android:id="@+id/editroute"
+				android:visibility="gone"
+				android:background="#88000000"
+				android:padding="3dip"
+				android:orientation="vertical" 
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent">
+	    
+				<include layout="@layout/inc_routeedit" /> 
+
+			</LinearLayout>
+	    
+	    	<TableLayout android:id="@+id/movinginfo"
+				android:visibility="gone"
+				android:background="#88000000"
+				android:minWidth="80dip"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent">
+	    
+				<TableRow android:gravity="center_vertical">
+					<include layout="@layout/inc_speed" />
+				</TableRow>
+				<TableRow android:gravity="center_vertical">
+					<include layout="@layout/inc_track" />
+				</TableRow>
+				<TableRow android:gravity="center_vertical">
+					<include layout="@layout/inc_elevation" />
+				</TableRow>
+				<TableRow android:gravity="center_vertical">
+					<include layout="@layout/inc_distance" />
+				</TableRow>
+				<TableRow android:gravity="center_vertical">
+					<include layout="@layout/inc_bearing" />
+				</TableRow>
+				<TableRow android:gravity="center_vertical">
+					<include layout="@layout/inc_turn" />
+				</TableRow>
+				<TableRow android:gravity="center_vertical">
+					<include layout="@layout/inc_xtk" />
+				</TableRow>
+	    
+			</TableLayout>
+        
+		</LinearLayout>
+	</LinearLayout>
+
+	<org.miscwidgets.widget.Panel android:id="@+id/panel" 
+	    android:layout_width="wrap_content" 
+	    android:layout_height="fill_parent" 
+		android:layout_alignParentLeft="true"
+	    android:layout_gravity="left"
+	    panel:handle="@+id/panelHandle"
+	    panel:content="@+id/panelContent"
+	    panel:position="left"
+	    panel:animationDuration="600"
+	    panel:openedHandle="@drawable/left_switcher_expanded_background"
+	    panel:closedHandle="@drawable/left_switcher_collapsed_background">
+
+		<include layout="@layout/inc_panelhandle" />
+		<include layout="@layout/inc_mapbuttons" />
+			    
+	</org.miscwidgets.widget.Panel>
+  
+	<include layout="@layout/inc_wait" />    
+</RelativeLayout>

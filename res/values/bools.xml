@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<bool name="def_usemapindex">true</bool>
+<bool name="def_useonlinemap">true</bool>
+<bool name="def_usecompass">false</bool>
+<bool name="def_showcompass">false</bool>
+<bool name="def_wakelock">true</bool>
+<bool name="def_mapbest">true</bool>
+<bool name="def_mapdim">false</bool>
+<bool name="def_maphideondrag">true</bool>
+<bool name="def_unfollowontap">true</bool>
+<bool name="def_loc_usenetwork">true</bool>
+<bool name="def_loc_store">true</bool>
+<bool name="def_folder_lookup">false</bool>
+<bool name="def_folder_sgs">false</bool>
+<bool name="def_tracking_currentload">true</bool>
+<bool name="def_navigation_traverse">true</bool>
+<bool name="def_navigation_proximitycircle">false</bool>
+<bool name="def_navigation_loadlast">true</bool>
+</resources>

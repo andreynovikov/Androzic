@@ -1,0 +1,7 @@
+<resources>
+    <style name="BlackTheme" parent="@android:style/Theme.Black"></style>
+    <style name="LightTheme" parent="@android:style/Theme.Light"></style>
+    <style name="BlackDialog" parent="@android:style/Theme.Dialog"></style>
+    <style name="LightDialog" parent="@android:style/Theme.Dialog"></style>
+    <style name="ButtonBar" parent="@android:style/ButtonBar"></style>
+</resources>

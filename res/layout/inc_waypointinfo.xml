@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/waypointinfo"
+	android:orientation="horizontal"
+	android:visibility="gone"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:layout_weight="1">
+
+	<TextView android:id="@+id/waypointname"
+		android:text=""
+		android:lines="1"
+		android:scrollHorizontally="true"
+		android:fadingEdge="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:padding="3dip"
+		android:textColor="#ffffffff" />
+
+	<TextView android:id="@+id/waypointextra"
+		android:text="--"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_weight="0"
+		android:gravity="right"
+		android:padding="3dip"
+		android:textColor="#ffffffff" />
+
+</LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:title="@string/menu_properties" android:id="@+id/menuTrackProperties" android:icon="@android:drawable/ic_menu_edit"></item>
+<item android:title="@string/menu_edit" android:id="@+id/menuTrackEdit" android:icon="@android:drawable/ic_menu_edit"></item>
+<item android:title="@string/menu_track2route" android:id="@+id/menuTrackToRoute" android:icon="@android:drawable/ic_menu_directions"></item>
+<item android:title="@string/menu_save" android:id="@+id/menuTrackSave" android:icon="@android:drawable/ic_menu_save"></item>
+<item android:title="@string/menu_remove" android:id="@+id/menuTrackRemove" android:icon="@android:drawable/ic_menu_delete"></item>
+</menu>

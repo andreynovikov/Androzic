@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_folder_title" android:summary="@string/pref_folder_summary">
+	<ListPreference android:key="@string/pref_folder_map" android:title="@string/pref_folder_map_title" android:defaultValue="@string/def_folder_map" android:dialogTitle="@string/pref_folder_map_title" />
+	<ListPreference android:key="@string/pref_folder_waypoint" android:title="@string/pref_folder_waypoint_title" android:defaultValue="@string/def_folder_waypoint" android:dialogTitle="@string/pref_folder_waypoint_title" />
+	<ListPreference android:key="@string/pref_folder_track" android:title="@string/pref_folder_track_title" android:defaultValue="@string/def_folder_track" android:dialogTitle="@string/pref_folder_track_title" />
+	<ListPreference android:key="@string/pref_folder_route" android:title="@string/pref_folder_route_title" android:defaultValue="@string/def_folder_route" android:dialogTitle="@string/pref_folder_route_title" />
+    <CheckBoxPreference android:key="@string/pref_folder_lookup" android:title="@string/pref_folder_lookup_title" android:summary="@string/pref_folder_lookup_summary" android:defaultValue="@bool/def_folder_lookup" />
+    <com.androzic.ui.FolderPickerPreference android:key="@string/pref_folder_root" android:title="@string/pref_folder_prefix_title" android:defaultValue="@string/def_folder_prefix" android:dialogMessage="@string/pref_folder_prefix_caution" />
+</PreferenceScreen>

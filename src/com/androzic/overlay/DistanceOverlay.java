@@ -1,0 +1,139 @@
+package com.androzic.overlay;
+
+import android.app.Activity;
+import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.Paint.Align;
+import android.preference.PreferenceManager;
+
+import com.androzic.Androzic;
+import com.androzic.MapView;
+import com.androzic.R;
+import com.androzic.util.Geo;
+import com.androzic.util.StringFormatter;
+
+public class DistanceOverlay extends MapOverlay
+{
+	Paint linePaint;
+	Paint circlePaint;
+	Paint textPaint;
+	Paint textFillPaint;
+	
+	double[] ancor;
+	int [] ancorXY;
+
+    public DistanceOverlay(final Activity mapActivity)
+    {
+        super(mapActivity);
+
+        linePaint = new Paint();
+        linePaint.setAntiAlias(true);
+        linePaint.setStrokeWidth(5);
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setColor(context.getResources().getColor(R.color.distanceline));
+        circlePaint = new Paint();
+        circlePaint.setAntiAlias(true);
+        circlePaint.setStrokeWidth(1);
+        circlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        circlePaint.setColor(context.getResources().getColor(R.color.distanceline));
+        circlePaint.setAlpha(255);
+        textPaint = new Paint();
+        textPaint.setAntiAlias(true);
+        textPaint.setStrokeWidth(2);
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setTextAlign(Align.LEFT);
+        textPaint.setTextSize(10);
+        textPaint.setTypeface(Typeface.SANS_SERIF);
+        textPaint.setColor(context.getResources().getColor(R.color.waypointtext));
+        textFillPaint = new Paint();
+        textFillPaint.setAntiAlias(false);
+        textFillPaint.setStrokeWidth(1);
+        textFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        textFillPaint.setColor(context.getResources().getColor(R.color.distanceline));
+
+        onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
+        
+        enabled = true;
+    }
+    
+    public void setAncor(double[] ancor)
+    {
+    	this.ancor = ancor;
+    	Androzic application = (Androzic) context.getApplication();
+        ancorXY = application.getXYbyLatLon(this.ancor[0], this.ancor[1]);
+    }
+
+	public double[] getAncor()
+	{
+		return ancor;
+	}
+
+	@Override
+	public void onMapChanged()
+	{
+		super.onMapChanged();
+    	Androzic application = (Androzic) context.getApplication();
+		ancorXY = application.getXYbyLatLon(this.ancor[0], this.ancor[1]);
+	}
+
+	@Override
+	protected void onDraw(Canvas c, MapView mapView)
+	{
+        final double[] loc = mapView.currentLocation;
+		final int[] cxy = mapView.currentXY;
+
+        int sx = ancorXY[0] - cxy[0] + Math.round(mapView.getWidth() / 2);
+        int sy = ancorXY[1] - cxy[1] + Math.round(mapView.getHeight() / 2);
+        
+        if (ancorXY[0] != cxy[0] || ancorXY[1] != cxy[1])
+        {
+	        if (sx >= 0 && sy >= 0 && sx <= mapView.getWidth() && sy <= mapView.getHeight())
+	        {
+	        	c.drawLine(cxy[0], cxy[1], ancorXY[0], ancorXY[1], linePaint);
+	        	c.drawCircle(ancorXY[0], ancorXY[1], linePaint.getStrokeWidth(), circlePaint);
+	        }
+	        else
+	        {
+	        	double bearing = Geo.bearing(loc[0], loc[1], ancor[0], ancor[1]);
+	        	c.save();
+	        	c.rotate((float) bearing, cxy[0], cxy[1]);
+	        	c.drawLine(cxy[0], cxy[1], cxy[0], 0, linePaint);
+	        	c.restore();
+	        }
+        }
+	}
+
+	@Override
+	protected void onDrawFinished(Canvas c, MapView mapView)
+	{
+		final double[] loc = mapView.currentLocation;
+		final int[] cxy = mapView.currentXY;
+		
+		double dist = Geo.distance(loc[0], loc[1], ancor[0], ancor[1]);
+		double bearing = Geo.bearing(loc[0], loc[1], ancor[0], ancor[1]);
+		if (dist > 0)
+		{
+			String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.bearingH(bearing);
+	
+			Rect rect = new Rect();
+	    	textPaint.getTextBounds(distance, 0, distance.length(), rect);
+	    	int half = rect.width() / 2;
+	    	int dy = bearing > 90 && bearing < 270 ? -40 : 40+rect.height()/2;
+	        rect.offset(cxy[0]-half, cxy[1]+dy);
+	        rect.inset(-4, -4);
+	        c.drawRect(rect, textFillPaint);
+	    	c.drawText(distance, cxy[0]-half, cxy[1]+dy, textPaint);
+		}
+	}
+
+	@Override
+	public void onPreferencesChanged(SharedPreferences settings)
+	{
+        linePaint.setStrokeWidth(settings.getInt(context.getString(R.string.pref_navigation_linewidth), context.getResources().getInteger(R.integer.def_navigation_linewidth)));
+        int textSize = settings.getInt(context.getString(R.string.pref_waypoint_width), context.getResources().getInteger(R.integer.def_waypoint_width));
+        textPaint.setTextSize(textSize * 2);
+	}
+}

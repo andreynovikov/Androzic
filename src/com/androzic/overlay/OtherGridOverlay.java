@@ -1,0 +1,305 @@
+package com.androzic.overlay;
+
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.util.Log;
+
+import com.androzic.Androzic;
+import com.androzic.MapView;
+import com.androzic.R;
+import com.androzic.map.Map;
+import com.androzic.map.Map.Grid;
+import com.androzic.util.Geo;
+
+public class OtherGridOverlay extends MapOverlay
+{
+	ArrayList<Path> paths = new ArrayList<Path>();
+	Paint linePaint;
+	Rect clip;
+	int spacing = 100000;
+	int maxMPP = 0;
+	
+	public OtherGridOverlay(Activity activity)
+	{
+		super(activity);
+        linePaint = new Paint();
+        linePaint.setAntiAlias(true);
+        linePaint.setStrokeWidth(1);
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setColor(context.getResources().getColor(R.color.distanceline));
+	}
+
+	public void setGrid(Grid grid)
+	{
+		spacing = (int) grid.spacing;
+		maxMPP = grid.maxMPP;
+		linePaint.setColor(grid.spacing >= 1000 ? grid.color1 : grid.color2);
+		enabled = true;
+	}
+
+	@Override
+	public synchronized void onMapChanged()
+	{
+		paths.clear();
+    	Androzic application = (Androzic) context.getApplication();
+    	Map map = application.getCurrentMap();
+    	if (map == null)
+    		return;
+    	
+    	Log.e("GRID", "mpp: "+maxMPP+" "+(map.mpp / map.getZoom()));
+		if (maxMPP > 0 && maxMPP < (map.mpp / map.getZoom()))
+			return;
+
+    	clip = new Rect(0, 0, map.getScaledWidth(), map.getScaledHeight());
+
+    	ArrayList<int[]> points = new ArrayList<int[]>();
+    	ArrayList<double[]> refPoints = new ArrayList<double[]>();
+
+    	// find map center coordinates
+    	double[] cll = new double[2];
+		int[] cxy = new int[] { map.getScaledWidth() / 2,  map.getScaledHeight() / 2};
+    	map.getLatLonByXY(cxy[0], cxy[1], cll);
+    	
+    	// build vertical reference path
+    	int y = cxy[1];
+    	double[] ll = new double[] { cll[0], cll[1] };
+		refPoints.add(new double[] {cll[0], cll[1]});
+		points.add(cxy);
+    	while (y < map.getScaledHeight())
+    	{
+        	int[] pxy = new int[2];
+        	double[] pll = Geo.projection(ll[0], ll[1], spacing * 3, 180);
+	    	map.getXYByLatLon(pll[0], pll[1], pxy);
+    		refPoints.add(pll);
+    		points.add(pxy);
+        	ll[0] = pll[0];
+        	ll[1] = pll[1];
+    		y = pxy[1];
+    	}
+    	ll = new double[] { cll[0], cll[1] };
+    	while (y > 0)
+    	{
+        	int[] pxy = new int[2];
+    		double[] pll = Geo.projection(ll[0], ll[1], spacing * 3, 0);
+	    	map.getXYByLatLon(pll[0], pll[1], pxy);
+    		refPoints.add(0, pll);
+    		points.add(0, pxy);
+        	ll[0] = pll[0];
+        	ll[1] = pll[1];
+    		y = pxy[1];
+    	}
+   		Path path = new Path();
+   		for (int[] p : points)
+   		{
+   			if (path.isEmpty())
+   			{
+   				path.moveTo(p[0], p[1]);
+   				path.lineTo(p[0], p[1]);
+   			}
+   			else
+   			{
+   				path.lineTo(p[0], p[1]);
+   			}
+   		}
+   		paths.add(path);
+
+   		// build vertical paths
+   		int i = 1;
+   		boolean onmap = true;
+    	while (onmap)
+    	{
+    		points.clear();
+    		onmap = false;
+    		for (double[] pll : refPoints)
+    		{
+            	int[] pxy = new int[2];
+        		double[] dll = Geo.projection(pll[0], pll[1], spacing * i, 90);
+       	    	map.getXYByLatLon(dll[0], dll[1], pxy);
+        	    points.add(pxy);
+        	    onmap |= pxy[0] <= map.getScaledWidth();
+    		}
+    		path = new Path();
+    		for (int[] p : points)
+    		{
+    			if (path.isEmpty())
+    			{
+    				path.moveTo(p[0], p[1]);
+    				path.lineTo(p[0], p[1]);
+    			}
+    			else
+    			{
+    				path.lineTo(p[0], p[1]);
+    			}
+    		}
+    		paths.add(path);
+    		i++;
+    	}
+   		i = 1;
+   		onmap = true;
+    	while (onmap)
+    	{
+    		points.clear();
+    		onmap = false;
+    		for (double[] pll : refPoints)
+    		{
+            	int[] pxy = new int[2];
+        		double[] dll = Geo.projection(pll[0], pll[1], spacing * i, 270);
+       	    	map.getXYByLatLon(dll[0], dll[1], pxy);
+        	    points.add(pxy);
+        	    onmap |= pxy[0] >= 0;
+    		}
+    		path = new Path();
+    		for (int[] p : points)
+    		{
+    			if (path.isEmpty())
+    			{
+    				path.moveTo(p[0], p[1]);
+    				path.lineTo(p[0], p[1]);
+    			}
+    			else
+    			{
+    				path.lineTo(p[0], p[1]);
+    			}
+    		}
+    		paths.add(path);
+    		i++;
+    	}
+    	// build horizontal reference path
+    	refPoints.clear();
+    	points.clear();
+    	int x = cxy[0];
+    	ll = new double[] { cll[0], cll[1] };
+		refPoints.add(new double[] {cll[0], cll[1]});
+		points.add(cxy);
+    	while (x < map.getScaledWidth())
+    	{
+        	int[] pxy = new int[2];
+        	double[] pll = Geo.projection(ll[0], ll[1], spacing * 3, 90);
+	    	map.getXYByLatLon(pll[0], pll[1], pxy);
+    		refPoints.add(pll);
+    		points.add(pxy);
+        	ll[0] = pll[0];
+        	ll[1] = pll[1];
+    		x = pxy[0];
+    	}
+    	ll = new double[] { cll[0], cll[1] };
+    	while (x > 0)
+    	{
+        	int[] pxy = new int[2];
+    		double[] pll = Geo.projection(ll[0], ll[1], spacing * 3, 270);
+	    	map.getXYByLatLon(pll[0], pll[1], pxy);
+    		refPoints.add(0, pll);
+    		points.add(0, pxy);
+        	ll[0] = pll[0];
+        	ll[1] = pll[1];
+    		x = pxy[0];
+    	}
+   		path = new Path();
+   		for (int[] p : points)
+   		{
+   			if (path.isEmpty())
+   			{
+   				path.moveTo(p[0], p[1]);
+   				path.lineTo(p[0], p[1]);
+   			}
+   			else
+   			{
+   				path.lineTo(p[0], p[1]);
+   			}
+   		}
+   		paths.add(path);
+
+   		// build horizontal paths
+   		i = 1;
+   		onmap = true;
+    	while (onmap)
+    	{
+    		points.clear();
+    		onmap = false;
+    		for (double[] pll : refPoints)
+    		{
+            	int[] pxy = new int[2];
+        		double[] dll = Geo.projection(pll[0], pll[1], spacing * i, 180);
+       	    	map.getXYByLatLon(dll[0], dll[1], pxy);
+        	    points.add(pxy);
+        	    onmap |= pxy[1] <= map.getScaledHeight();
+    		}
+    		path = new Path();
+    		for (int[] p : points)
+    		{
+    			if (path.isEmpty())
+    			{
+    				path.moveTo(p[0], p[1]);
+    				path.lineTo(p[0], p[1]);
+    			}
+    			else
+    			{
+    				path.lineTo(p[0], p[1]);
+    			}
+    		}
+    		paths.add(path);
+    		i++;
+    	}
+   		i = 1;
+   		onmap = true;
+    	while (onmap)
+    	{
+    		points.clear();
+    		onmap = false;
+    		for (double[] pll : refPoints)
+    		{
+            	int[] pxy = new int[2];
+        		double[] dll = Geo.projection(pll[0], pll[1], spacing * i, 0);
+       	    	map.getXYByLatLon(dll[0], dll[1], pxy);
+        	    points.add(pxy);
+        	    onmap |= pxy[1] >= 0;
+    		}
+    		path = new Path();
+    		for (int[] p : points)
+    		{
+    			if (path.isEmpty())
+    			{
+    				path.moveTo(p[0], p[1]);
+    				path.lineTo(p[0], p[1]);
+    			}
+    			else
+    			{
+    				path.lineTo(p[0], p[1]);
+    			}
+    		}
+    		paths.add(path);
+    		i++;
+    	}
+   	}
+	
+	@Override
+	public void onPreferencesChanged(SharedPreferences settings)
+	{
+	}
+
+	@Override
+	protected synchronized void onDraw(Canvas c, MapView mapView)
+	{
+		c.save();
+		if (clip != null)
+		{
+			c.clipRect(clip);
+		}
+		for (Path path : paths)
+		{
+			c.drawPath(path, linePaint);
+		}
+		c.restore();
+	}
+
+	@Override
+	protected void onDrawFinished(Canvas c, MapView mapView)
+	{
+	}
+}

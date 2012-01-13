@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_show_title" android:summary="@string/pref_show_summary">
+	<com.androzic.ui.SeekbarPreference android:key="@string/pref_maprenderinterval" android:title="@string/pref_maprenderinterval_title" android:summary="@string/pref_maprenderinterval_summary" androzic:defaultValue="@integer/def_maprenderinterval" android:text=" ms" androzic:format="0" androzic:multiplier="100" androzic:min="2" androzic:max="50" />
+	<com.androzic.ui.ColorPreference android:key="@string/pref_cursorcolor" android:title="@string/pref_cursorcolor_title" android:summary="@string/pref_cursorcolor_summary" android:dialogTitle="@string/pref_cursorcolor_title" />
+    <CheckBoxPreference android:key="@string/pref_showsatinfo" android:title="@string/pref_showsatinfo_title" android:summary="@string/pref_showsatinfo_summary" android:defaultValue="true" />
+    <CheckBoxPreference android:key="@string/pref_showmapinfo" android:title="@string/pref_showmapinfo_title" android:summary="@string/pref_showmapinfo_summary" android:defaultValue="true" />
+	<CheckBoxPreference android:key="@string/pref_showcurrenttrack" android:title="@string/pref_showcurrenttrack_title" android:summary="@string/pref_showcurrenttrack_summary" android:defaultValue="true" />
+	<CheckBoxPreference android:key="@string/pref_showaccuracy" android:title="@string/pref_showaccuracy_title" android:summary="@string/pref_showaccuracy_summary" android:defaultValue="true" />
+	<CheckBoxPreference android:key="@string/pref_showdistance" android:title="@string/pref_showdistance_title" android:summary="@string/pref_showdistance_summary" android:defaultValue="true" />
+	<CheckBoxPreference android:key="@string/pref_maphideondrag" android:title="@string/pref_maphideondrag_title" android:summary="@string/pref_maphideondrag_summary" android:defaultValue="@bool/def_maphideondrag" />
+	<com.androzic.ui.SeekbarPreference android:key="@string/pref_lookahead" android:title="@string/pref_lookahead_title" android:summary="@string/pref_lookahead_summary" androzic:defaultValue="@integer/def_lookahead" android:text=" %" androzic:max="90" />
+</PreferenceScreen>

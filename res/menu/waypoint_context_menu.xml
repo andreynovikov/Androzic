@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:title="@string/menu_visible" android:id="@+id/menuWaypointVisible" android:icon="@android:drawable/ic_menu_view" />
+<item android:title="@string/menu_navigate" android:id="@+id/menuWaypointNavigate" android:icon="@drawable/ic_menu_goto" />
+<item android:title="@string/menu_properties" android:id="@+id/menuWaypointProperties" android:icon="@android:drawable/ic_menu_edit" />
+<item android:title="@string/menu_share" android:id="@+id/menuWaypointShare" android:icon="@android:drawable/ic_menu_share" />
+<item android:title="@string/menu_remove" android:id="@+id/menuWaypointRemove" android:icon="@android:drawable/ic_menu_delete" />
+</menu>

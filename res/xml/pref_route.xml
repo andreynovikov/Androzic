@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_route_title" android:summary="@string/pref_route_summary">
+	<com.androzic.ui.SeekbarPreference android:key="@string/pref_route_linewidth" android:title="@string/pref_route_linewidth_title" android:summary="@string/pref_route_linewidth_summary" androzic:defaultValue="@integer/def_route_linewidth" android:text=" pixels" androzic:min="1" androzic:max="6" />
+	<com.androzic.ui.SeekbarPreference android:key="@string/pref_route_pointwidth" android:title="@string/pref_route_pointwidth_title" android:summary="@string/pref_route_pointwidth_summary" androzic:defaultValue="@integer/def_route_pointwidth" android:text=" pixels" androzic:min="5" androzic:max="20" />
+    <CheckBoxPreference android:key="@string/pref_route_showname" android:title="@string/pref_route_showname_title" android:summary="@string/pref_route_showname_summary" android:defaultValue="true" />
+</PreferenceScreen>

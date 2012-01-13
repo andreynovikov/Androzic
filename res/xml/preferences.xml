@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic">
+   	<Preference android:key="pref_behavior" android:title="@string/pref_map_title" />
+   	<Preference android:key="pref_folder" android:title="@string/pref_folder_title" />
+   	<Preference android:key="pref_display" android:title="@string/pref_show_title" />
+	<Preference android:key="pref_unit" android:title="@string/pref_unit_title" />
+	<Preference android:key="pref_tracking" android:title="@string/pref_tracking_title" />
+	<Preference android:key="pref_waypoint" android:title="@string/pref_waypoint_title" />
+	<Preference android:key="pref_route" android:title="@string/pref_route_title" />
+	<Preference android:key="pref_navigation" android:title="@string/pref_navigation_title" />
+	<Preference android:key="pref_sharing" android:title="@string/pref_sharing_title" />
+   	<Preference android:key="pref_general" android:title="@string/pref_advanced_title" />
+   	<Preference android:key="pref_application" android:title="@string/pref_application_title" />
+</PreferenceScreen>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_unit_title" android:summary="@string/pref_unit_summary">
+	<ListPreference android:key="@string/pref_unitspeed" android:title="@string/pref_unitspeed_title" android:entries="@array/speed_units" android:entryValues="@array/speed_values" android:defaultValue="0" android:dialogTitle="@string/pref_unitspeed_title" />
+	<ListPreference android:key="@string/pref_unitdistance" android:title="@string/pref_unitdistance_title" android:entries="@array/distance_units" android:entryValues="@array/distance_values" android:defaultValue="0" android:dialogTitle="@string/pref_unitdistance_title" />
+	<ListPreference android:key="@string/pref_unitelevation" android:title="@string/pref_unitelevation_title" android:entries="@array/elevation_units" android:entryValues="@array/elevation_values" android:defaultValue="0" android:dialogTitle="@string/pref_unitelevation_title" />
+	<ListPreference android:key="@string/pref_unitcoordinate" android:title="@string/pref_unitcoordinate_title" android:entries="@array/coordinate_units" android:entryValues="@array/coordinate_values" android:defaultValue="0" android:dialogTitle="@string/pref_unitcoordinate_title" />
+	<ListPreference android:key="@string/pref_unitangle" android:title="@string/pref_unitangle_title" android:entries="@array/angle_units" android:entryValues="@array/angle_values" android:defaultValue="0" android:dialogTitle="@string/pref_unitangle_title" />
+	<ListPreference android:key="@string/pref_unitsunrise" android:title="@string/pref_unitsunrise_title" android:entries="@array/sunrise_units" android:entryValues="@array/sunrise_values" android:defaultValue="0" android:dialogTitle="@string/pref_unitsunrise_title" />
+</PreferenceScreen>

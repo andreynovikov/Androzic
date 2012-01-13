@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:panel="http://schemas.android.com/apk/res/com.androzic"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<include layout="@layout/inc_map" />
+	
+	<LinearLayout android:id="@+id/topbar"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:background="#88000000">
+
+		<include layout="@layout/inc_satinfo" />
+		<include layout="@layout/inc_routeinfo" />
+		<include layout="@layout/inc_waypointinfo" />
+
+	</LinearLayout>
+
+	<LinearLayout android:id="@+id/bottombar"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:background="#88000000">
+
+    	<TableLayout android:id="@+id/movinginfo"
+			android:visibility="gone"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+	    
+			<TableRow>
+				<include layout="@layout/inc_distance" />
+				<include layout="@layout/inc_bearing" />
+				<include layout="@layout/inc_turn" />
+			</TableRow>
+			<TableRow android:id="@+id/movingrow">
+				<include layout="@layout/inc_speed" />
+				<include layout="@layout/inc_track" />
+				<include layout="@layout/inc_elevation" />
+				<include layout="@layout/inc_xtk" />
+			</TableRow>
+	    
+		</TableLayout>
+
+		<LinearLayout android:id="@+id/edittrack"
+			android:visibility="gone"
+			android:padding="3dip"
+			android:gravity="center_vertical"
+			android:orientation="horizontal" 
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+	    
+			<include layout="@layout/inc_trackedit" /> 
+
+		</LinearLayout>
+
+		<LinearLayout android:id="@+id/editroute"
+			android:visibility="gone"
+			android:padding="3dip"
+			android:orientation="horizontal" 
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+	    
+			<include layout="@layout/inc_routeedit" /> 
+
+		</LinearLayout>
+
+		<include layout="@layout/inc_mapinfo" />
+
+	</LinearLayout>
+    
+    <include layout="@layout/inc_trackdetails" />
+    <include layout="@layout/inc_wait" />
+    
+	<org.miscwidgets.widget.Panel android:id="@+id/panel" 
+	    android:layout_width="wrap_content" 
+	    android:layout_height="fill_parent" 
+		android:layout_alignParentRight="true"
+	    android:layout_gravity="right"
+	    panel:handle="@+id/panelHandle"
+	    panel:content="@+id/panelContent"
+	    panel:position="right"
+	    panel:animationDuration="600"
+	    panel:openedHandle="@drawable/right_switcher_expanded_background"
+	    panel:closedHandle="@drawable/right_switcher_collapsed_background">
+
+			<include layout="@layout/inc_panelhandle" />
+			<include layout="@layout/inc_mapbuttons" />
+			    
+	</org.miscwidgets.widget.Panel>
+   
+</RelativeLayout>

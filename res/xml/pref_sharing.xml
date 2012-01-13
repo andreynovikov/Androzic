@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_sharing_title">
+	<EditTextPreference android:key="@string/pref_sharing_session" android:title="@string/pref_sharing_session_title" android:summary="@string/pref_sharing_session_summary" android:maxLength="60" android:singleLine="true" />
+	<EditTextPreference android:key="@string/pref_sharing_user" android:title="@string/pref_sharing_user_title" android:summary="@string/pref_sharing_user_summary" android:maxLength="60" android:singleLine="true" />
+	<com.androzic.ui.SeekbarPreference android:key="@string/pref_sharing_updateinterval" android:title="@string/pref_sharing_updateinterval_title" android:summary="@string/pref_sharing_updateinterval_summary" androzic:defaultValue="@integer/def_sharing_updateinterval" android:text=" s" androzic:format="0" androzic:min="10" androzic:max="300" />
+	<com.androzic.ui.SeekbarPreference android:key="@string/pref_sharing_timeout" android:title="@string/pref_sharing_timeout_title" android:summary="@string/pref_sharing_timeout_summary" androzic:defaultValue="@integer/def_sharing_timeout" android:text=" min" androzic:format="0" androzic:min="1" androzic:max="30" />
+	<com.androzic.ui.SeekbarPreference android:key="@string/pref_sharing_tagwidth" android:title="@string/pref_sharing_tagwidth_title" android:summary="@string/pref_sharing_tagwidth_summary" androzic:defaultValue="@integer/def_sharing_tagwidth" android:text=" pixels" androzic:min="5" androzic:max="20" />
+	<com.androzic.ui.ColorPreference android:key="@string/pref_sharing_tagcolor" android:title="@string/pref_sharing_tagcolor_title" android:dialogTitle="@string/pref_sharing_tagcolor_title" />
+</PreferenceScreen>

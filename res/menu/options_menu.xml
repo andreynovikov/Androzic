@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/menuAddWaypoint"
+	    android:showAsAction="always"
+		  android:title="@string/menu_addwaypoint"
+		  android:icon="@android:drawable/ic_menu_add" />
+    <item android:id="@+id/menuWaypoints"
+    	  android:showAsAction="ifRoom|withText"
+          android:title="@string/menu_waypoints"
+          android:icon="@android:drawable/ic_menu_myplaces">          
+			<menu>
+				<item android:id="@+id/menuProjectWaypoint"
+				      android:title="@string/menu_project" />
+				<item android:id="@+id/menuManageWaypoints"
+				      android:title="@string/menu_manage" />
+				<item android:id="@+id/menuLoadWaypoints"
+				      android:title="@string/menu_load" />
+				<item android:id="@+id/menuSaveWaypoints"
+				      android:title="@string/menu_save" />
+				<item android:id="@+id/menuRemoveWaypoints"
+				      android:title="@string/menu_removeall" />
+			</menu>
+	</item>
+    <item android:id="@+id/menuTrack"
+          android:title="@string/menu_tracks"
+          android:icon="@drawable/ic_menu_track">
+			<menu>
+				<item android:id="@+id/menuManageTracks"
+				      android:title="@string/menu_manage" />
+				<item android:id="@+id/menuLoadTrack"
+				      android:title="@string/menu_load" />
+				<item android:id="@+id/menuClearTrackTail"
+				      android:title="@string/menu_cleartail" />
+			</menu>
+	</item>
+    <item android:id="@+id/menuNavigation"
+    	  android:showAsAction="ifRoom|withText"
+          android:title="@string/menu_navigation"
+          android:icon="@android:drawable/ic_menu_directions">          
+			<menu>
+				<item android:id="@+id/menuNewRoute"
+				      android:title="@string/menu_newroute" />
+				<item android:id="@+id/menuManageRoutes"
+				      android:title="@string/menu_manage" />
+				<item android:id="@+id/menuLoadRoute"
+				      android:title="@string/menu_load" />
+				<item android:id="@+id/menuStartNavigation"
+				      android:title="@string/menu_startnavigation" />
+				<item android:id="@+id/menuNextNavPoint"
+				      android:title="@string/menu_nextnavpoint" />
+				<item android:id="@+id/menuPrevNavPoint"
+				      android:title="@string/menu_prevnavpoint" />
+				<item android:id="@+id/menuStopNavigation"
+				      android:title="@string/menu_stopnavigation" />
+			</menu>
+	</item>
+    <item android:id="@+id/menuView"
+    	  android:showAsAction="ifRoom|withText"
+          android:title="@string/menu_view"
+          android:icon="@android:drawable/ic_menu_view">
+			<menu>
+				<item android:id="@+id/menuHSI"
+				      android:title="@string/menu_hsi" />
+				<item android:id="@+id/menuCompass"
+				      android:title="@string/menu_compass" />
+				<item android:id="@+id/menuInformation"
+				      android:title="@string/menu_information" />
+			</menu>
+    </item>
+    <item android:id="@+id/menuMaps"
+    	  android:showAsAction="ifRoom|withText"
+          android:title="@string/menu_maps"
+          android:icon="@android:drawable/ic_menu_mapmode">
+			<menu>
+				<item android:id="@+id/menuMapInfo"
+				      android:title="@string/menu_information" />
+				<item android:id="@+id/menuCursorMaps"
+				      android:title="@string/menu_atcursor" />
+				<item android:id="@+id/menuAllMaps"
+				      android:title="@string/menu_all" />
+			</menu>
+    </item>
+    <item android:id="@+id/menuLocation"
+          android:title="@string/menu_location"
+          android:icon="@android:drawable/ic_menu_mylocation">
+			<menu>
+			    <item android:id="@+id/menuShare"
+			          android:title="@string/menu_share"
+			          android:icon="@android:drawable/ic_menu_share"/>
+			    <item android:id="@+id/menuCopyLocation"
+			          android:title="@string/menu_copy"
+			          android:icon="@android:drawable/ic_menu_edit"/>
+			    <item android:id="@+id/menuPasteLocation"
+			          android:title="@string/menu_paste"
+			          android:icon="@drawable/ic_menu_goto"/>
+			</menu>
+    </item>
+    <item android:id="@+id/menuGPS"
+          android:title="@string/menu_gps"
+          android:icon="@android:drawable/ic_menu_compass"/>
+    <item android:id="@+id/menuSetAnchor"
+          android:title="@string/menu_anchor"
+          android:icon="@android:drawable/ic_menu_edit"/>
+    <item android:id="@+id/menuSearch"
+          android:icon="@android:drawable/ic_menu_search"
+          android:title="@string/menu_search"
+          android:showAsAction="always" />
+    <item android:id="@+id/menuPreferences"
+          android:title="@string/menu_preferences"
+          android:icon="@android:drawable/ic_menu_preferences" />
+</menu>

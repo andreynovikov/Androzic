@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_application_title">
+    <Preference android:key="@string/pref_about" android:title="@string/pref_about_title" />
+    <Preference android:key="@string/pref_donate" android:title="@string/pref_donate_title" />
+    <Preference android:key="@string/pref_faq" android:title="@string/pref_faq_title" android:summary="@string/pref_uri_summary" />
+    <Preference android:key="@string/pref_feature" android:title="@string/pref_feature_title" android:summary="@string/pref_uri_summary" />
+    <Preference android:key="@string/pref_facebook" android:title="@string/pref_facebook_title" android:summary="@string/pref_uri_summary" />
+    <Preference android:key="@string/pref_twitter" android:title="@string/pref_twitter_title" android:summary="@string/pref_uri_summary" />
+    <Preference android:key="@string/pref_credits" android:title="@string/pref_credits_title" />
+</PreferenceScreen>

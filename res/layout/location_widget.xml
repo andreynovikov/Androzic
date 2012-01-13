@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="horizontal"
+	android:gravity="center"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@drawable/appwidget_bg">
+	<ImageButton android:id="@+id/start"
+		android:src="@drawable/play_button"
+		android:background="@null"
+		android:paddingRight="2dip"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" />
+	<ImageButton android:id="@+id/stop"
+		android:src="@drawable/stop_button"
+		android:background="@null"
+		android:visibility="gone"
+		android:paddingRight="2dip"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" />
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+		<TextView android:id="@+id/latitude"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" />
+		<TextView android:id="@+id/longitude"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" />
+	</LinearLayout>
+</LinearLayout>

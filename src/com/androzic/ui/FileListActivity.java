@@ -1,0 +1,174 @@
+package com.androzic.ui;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
+import com.androzic.R;
+import com.androzic.util.FileList;
+
+public abstract class FileListActivity extends ListActivity
+{
+	List<File> files = null;
+	List<Map<String, String>> fileData = new ArrayList<Map<String, String>>();
+
+	private ProgressDialog dlgWait;
+	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
+	final Handler handler = new Handler();
+
+	private final static String KEY_FILE = "FILE";
+	private final static String KEY_PATH = "DIR";
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) 
+	{
+		super.onCreate(savedInstanceState);
+		
+		String state = Environment.getExternalStorageState();
+		if (! Environment.MEDIA_MOUNTED.equals(state))
+		{
+			Toast.makeText(this, R.string.err_nosdcard, Toast.LENGTH_LONG).show();
+			this.finish();
+		}
+
+		final ProgressDialog pd = new ProgressDialog(this);
+		
+		pd.setIndeterminate(true);
+		pd.setMessage(getString(R.string.msg_scansdcard)); 
+		pd.show();
+		
+		new Thread(new Runnable() 
+		{ 
+			public void run() 
+			{
+				SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(FileListActivity.this);
+				boolean lookup = settings.getBoolean(getString(R.string.pref_folder_lookup), getResources().getBoolean(R.bool.def_folder_lookup));
+				File root = lookup ? Environment.getExternalStorageDirectory() : new File(getPath());
+				files = FileList.getFileListing(root, getFilenameFilter());
+/*
+				Collections.sort(files, new Comparator()
+                        {
+                            @Override
+                            public int compare(Object o1, Object o2)
+                            {
+                        	return ((File) o1).getName().compareToIgnoreCase(((File) o2).getName());
+                            }
+                        });
+*/            	
+				Map<String, String> group;
+
+				for (File file : files)
+				{
+					group = new HashMap<String, String>();
+					group.put(KEY_FILE, file.getName());
+					group.put(KEY_PATH, file.getParent());
+					fileData.add( group );
+				}
+
+				pd.dismiss();
+				
+				handler.post(updateResults);
+			} 
+		}).start();
+	}
+
+	final Runnable updateResults = new Runnable() 
+	{
+		public void run() 
+        {
+			setListAdapter(new SimpleAdapter(FileListActivity.this, fileData, android.R.layout.simple_list_item_2, new String[] { KEY_FILE, KEY_PATH }, new int[]{ android.R.id.text1, android.R.id.text2 } ));
+			getListView().setTextFilterEnabled(true);
+        }
+	};
+
+	@Override
+	protected Dialog onCreateDialog(int id) 
+	{
+		switch (id) 
+		{
+    		case 0:
+    		{
+    			dlgWait = new ProgressDialog(this);
+    			dlgWait.setMessage(getString(R.string.msg_wait));
+    			dlgWait.setIndeterminate(true);
+    			dlgWait.setCancelable(false);
+    			return dlgWait;
+    		}
+		}
+		return null;
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) 
+	{
+		super.onListItemClick(l, v, position, id);
+
+		final File file = files.get(position);
+
+		if (!file.exists())
+		{
+			Toast.makeText(this, R.string.err_nofile, Toast.LENGTH_LONG).show();
+			this.setResult(Activity.RESULT_CANCELED);
+			finish();
+		}
+
+		showDialog(0);
+
+		this.threadPool.execute(new Runnable() 
+		{
+			public void run() 
+			{
+				loadFile(file);			    
+				dlgWait.dismiss();
+			};
+		});
+
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		files = null;
+		fileData.clear();
+	}
+
+	abstract protected FilenameFilter getFilenameFilter();
+
+	abstract protected String getPath();
+
+	abstract protected void loadFile(File file);
+
+	protected final Runnable wrongFormat = new Runnable() {
+		public void run()
+		{
+			Toast.makeText(getBaseContext(), R.string.err_wrongformat, Toast.LENGTH_LONG).show();
+		}
+	};
+
+	protected final Runnable readError = new Runnable() {
+		public void run()
+		{
+			Toast.makeText(getBaseContext(), R.string.err_read, Toast.LENGTH_LONG).show();
+		}
+	};
+}
