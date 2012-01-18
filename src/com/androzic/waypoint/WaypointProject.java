@@ -1,5 +1,6 @@
 package com.androzic.waypoint;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -116,6 +117,7 @@ public class WaypointProject extends Activity
         		double[] prj = Geo.projection(loc[0], loc[1], distance, bearing);
         		waypoint.latitude = prj[0];
         		waypoint.longitude = prj[1];
+        		waypoint.date = Calendar.getInstance().getTime();
         		application.addWaypoint(waypoint);
     			setResult(Activity.RESULT_OK);
         		finish();

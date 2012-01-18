@@ -1,7 +1,10 @@
 package com.androzic;
 
+import java.util.Calendar;
+
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
+import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.RouteOverlay;
 
 import android.app.Activity;
@@ -56,6 +59,7 @@ public class ExternalActions extends Activity
 	        double lat = intent.getFloatExtra("latitude", 0);
 	        double lon = intent.getFloatExtra("longitude", 0);
 	        Waypoint waypoint = new Waypoint("", "", lat, lon);
+    		waypoint.date = Calendar.getInstance().getTime();
 			int wpt = application.addWaypoint(waypoint);
 			waypoint.name = "WPT" + wpt;
 			startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", wpt));

@@ -64,6 +64,18 @@ public class OziExplorerFiles
 		    	
 	    		Waypoint waypoint = new Waypoint(fields[1].replace((char) 209, ','), fields[10].replace((char) 209, ','), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
 
+	    		if (! "".equals(fields[4]))
+	    		{
+	    			try 
+	    			{
+	    				waypoint.date = TDateTime.dateFromDateTime(Double.parseDouble(fields[4]));
+	    			}
+		    		catch (NumberFormatException e)
+		    		{
+		    			e.printStackTrace();
+		    		}
+	    		}
+	    		
 		    	if (! "".equals(fields[8]))
 		    	{
 		    		try
@@ -161,7 +173,8 @@ public class OziExplorerFiles
 	        	writer.write("-1,");
 	        	writer.write(wpt.name.replace(',', (char) 209)+",");
 	        	writer.write(coordFormat.format(wpt.latitude)+","+coordFormat.format(wpt.longitude)+",");
-	        	writer.write(",0,1,3,");
+	        	writer.write((wpt.date == null ? "" : TDateTime.toDateTime(wpt.date))+",");
+	        	writer.write("0,1,3,");
 	        	writer.write((wpt.textcolor != Integer.MIN_VALUE ? rgb2bgr(wpt.textcolor) : "") + ",");
 	        	writer.write((wpt.backcolor != Integer.MIN_VALUE ? rgb2bgr(wpt.backcolor) : "") + ",");
 	        	writer.write(wpt.description.replace(',', (char) 209)+",");

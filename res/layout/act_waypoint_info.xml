@@ -35,6 +35,16 @@
 
 			</LinearLayout>
 			
+			<TextView android:id="@+id/date"
+				android:lines="1"
+				android:scrollHorizontally="true"
+				android:fadingEdge="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:paddingBottom="6dip"
+				android:textStyle="italic"
+				android:textSize="10sp" />
+		    
 			<WebView android:id="@+id/description"
 				android:layout_width="fill_parent"
 				android:layout_height="160dip" />

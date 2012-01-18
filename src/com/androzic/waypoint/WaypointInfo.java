@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -83,7 +84,12 @@ public class WaypointInfo extends Activity implements OnClickListener
 		bearing = application.fixDeclination(bearing);
 		String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.bearingH(bearing);
 		((TextView) findViewById(R.id.distance)).setText(distance);
-		
+
+		if (waypoint.date != null)
+			((TextView) findViewById(R.id.date)).setText(DateFormat.getDateFormat(this).format(waypoint.date)+" "+DateFormat.getTimeFormat(this).format(waypoint.date));
+		else
+			((TextView) findViewById(R.id.date)).setVisibility(View.GONE);
+			
 	    ((Button) findViewById(R.id.navigate_button)).setOnClickListener(this);
 	    ((Button) findViewById(R.id.properties_button)).setOnClickListener(this);
 	    ((Button) findViewById(R.id.remove_button)).setOnClickListener(this);
