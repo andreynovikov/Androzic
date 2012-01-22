@@ -68,7 +68,7 @@ public class Astro
 		double sunrise = computeSunriseTime(solarZenith, location, date);
 		double sunset = computeSunsetTime(solarZenith, location, date);
 		double now = (double) date.get(Calendar.HOUR_OF_DAY) + (double) date.get(Calendar.MINUTE) / 60;
-		if (sunrise != Double.NaN && sunset != Double.NaN)
+		if (! Double.isNaN(sunrise) && ! Double.isNaN(sunset))
 		{
 			if (now < sunrise || now > sunset)
 				return false;
