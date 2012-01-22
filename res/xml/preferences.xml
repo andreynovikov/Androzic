@@ -2,6 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic">
    	<Preference android:key="pref_behavior" android:title="@string/pref_map_title" />
    	<Preference android:key="pref_folder" android:title="@string/pref_folder_title" />
+   	<Preference android:key="pref_location" android:title="@string/pref_loc_title" />
    	<Preference android:key="pref_display" android:title="@string/pref_show_title" />
 	<Preference android:key="pref_unit" android:title="@string/pref_unit_title" />
 	<Preference android:key="pref_tracking" android:title="@string/pref_tracking_title" />
