@@ -1,3 +1,24 @@
+/*
+ * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
+ * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ *
+ * This file is part of Androzic application.
+ *
+ * Androzic is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * Androzic is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #include <jni.h>
 #include <android/log.h>
 #include <stdint.h>
@@ -92,7 +113,7 @@ jintArray Java_com_androzic_map_OzfDecoder_getTileNative(JNIEnv* env, jclass cla
 	// convert to rgb
 	int tile_z = OZF_TILE_WIDTH * (OZF_TILE_HEIGHT - 1) * 4;
 	int tile_x = 0;
-
+--
 	jbyte* palette = (jbyte *) env->GetPrimitiveArrayCritical(p, (jboolean *)0);
 
 	for(int j = 0; j < OZF_TILE_WIDTH * OZF_TILE_HEIGHT; j++)
@@ -265,6 +286,52 @@ void ozf_get_tile(FILE*	file, int type, unsigned char key, int encryption_depth,
 
 	free(tile);
 }
+
+/*
+  http://www.geisswerks.com/ryan/FAQS/resize.html
+  Copyright (c) 2008+ Ryan M. Geiss
+
+  The code below performs a fairly-well-optimized high-quality resample 
+  (smooth resize) of a 3-channel image that is padded to 4 bytes per 
+  pixel.  The pixel format is assumed to be ARGB.  If you want to make 
+  it handle an alpha channel, the changes should be very straightforward.
+  
+  In general, if the image is being enlarged, bilinear interpolation
+  is used; if the image is being downsized, all input pixels are weighed
+  appropriately to produce the correct result.
+  
+  In order to be efficient, it actually performs 1 of 4 routines.  First, 
+  if you are cutting the image size *exactly* in half (common when generating 
+  mipmap levels), it will use a specialized routine to do just that.  There
+  are actually two versions of this routine - an MMX one and a non-MMX one.
+  It detects if MMX is present and chooses the right one.
+  
+  If you're not cutting the image perfectly in half, it executes one
+  of two general resize routines.  If upsampling (increasing width and height)
+  on both X and Y, then it executes a faster resize algorithm that just performs
+  a 2x2 bilinear interpolation of the appropriate input pixels, for each output 
+  pixel.  
+  
+  If downsampling on either X or Y (or both), though, the general-purpose 
+  routine gets run.  It iterates over every output pixel, and for each one, it 
+  iterates over the input pixels that map to that output pixel [there will 
+  usually be more than 1 in this case].  Each input pixel is properly weighted
+  to produce exactly the right image.  There's a little bit of extra bookkeeping,
+  but in general, it's pretty efficient.
+  
+  Note that on extreme downsizing (2,800 x 2,800 -> 1x1 or greater ratio),
+  the colors can overflow.  If you want to fix this lazily, just break
+  your resize into two passes.
+  
+  Also note that when your program exits, or when you are done using this 
+  function, you should delete [] g_px1a and g_px1ab if they have been 
+  allocated.
+  
+  I posted this here because this is pretty common code that is a bit of
+  a pain to write; I've written it several times over the years, and I really
+  don't feel like writing it again.  So - here it is - for my reference, and
+  for yours.  Enjoy!
+*/
 
 void Resize_HQ_4ch(unsigned char* src, int w1, int h1, unsigned char* dest, int w2, int h2)
 {
