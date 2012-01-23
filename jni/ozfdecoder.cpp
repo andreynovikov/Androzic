@@ -113,7 +113,7 @@ jintArray Java_com_androzic_map_OzfDecoder_getTileNative(JNIEnv* env, jclass cla
 	// convert to rgb
 	int tile_z = OZF_TILE_WIDTH * (OZF_TILE_HEIGHT - 1) * 4;
 	int tile_x = 0;
---
+
 	jbyte* palette = (jbyte *) env->GetPrimitiveArrayCritical(p, (jboolean *)0);
 
 	for(int j = 0; j < OZF_TILE_WIDTH * OZF_TILE_HEIGHT; j++)
