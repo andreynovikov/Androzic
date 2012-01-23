@@ -33,7 +33,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.RemoteException;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -43,14 +42,16 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
 
-import com.androzic.location.ILocationCallback;
-import com.androzic.location.ILocationRemoteService;
+import com.androzic.location.ILocationListener;
+import com.androzic.location.ILocationService;
+import com.androzic.location.LocationService;
+import com.androzic.navigation.NavigationService;
 import com.androzic.util.StringFormatter;
 
 public class HSIActivity extends Activity
 {
 	private WakeLock wakeLock;
-	private ILocationRemoteService locationService = null;
+	private ILocationService locationService = null;
     private NavigationService navigationService;
     private HSIView hsiView;
 	private TextView distanceValue;
@@ -107,9 +108,6 @@ public class HSIActivity extends Activity
 		eteValue = (TextView) findViewById(R.id.ete);
 		eteUnit = (TextView) findViewById(R.id.eteunit);
 
-        bindService(new Intent(ILocationRemoteService.class.getName()), locationConnection, BIND_AUTO_CREATE);
-		bindService(new Intent(this, NavigationService.class), navigationConnection, BIND_AUTO_CREATE);
-
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "DoNotDimScreen");
     }
@@ -147,34 +145,24 @@ public class HSIActivity extends Activity
 		//Location loc = application.getLastKnownLocation();
 		//hsiView.initialize(proximity, 0); loc.getBearing());
 		hsiView.setProximity(proximity);
+		
+        bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
+		bindService(new Intent(this, NavigationService.class), navigationConnection, BIND_AUTO_CREATE);
 	}
 
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
-		wakeLock.release();
-	}
-
-	@Override
-	protected void onDestroy()
-	{
 		if (locationService != null)
 		{
-			try
-			{
-				locationService.unregisterCallback(locationCallback);
-			}
-			catch (RemoteException e)
-			{
-			}
+			locationService.unregisterCallback(locationListener);
+			unbindService(locationConnection);
 			locationService = null;
 		}
-		unbindService(locationConnection);
     	unregisterReceiver(navigationReceiver);
 		unbindService(navigationConnection);
-
-		super.onDestroy();
+		wakeLock.release();
 	}
 
 	@Override
@@ -307,15 +295,8 @@ public class HSIActivity extends Activity
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service)
 		{
-			locationService = ILocationRemoteService.Stub.asInterface(service);
-
-			try
-			{
-				locationService.registerCallback(locationCallback);
-			}
-			catch (RemoteException e)
-			{
-			}
+			locationService = (ILocationService) service;
+			locationService.registerCallback(locationListener);
 		}
 
 		public void onServiceDisconnected(ComponentName className)
@@ -324,16 +305,16 @@ public class HSIActivity extends Activity
 		}
 	};
 
-	private ILocationCallback locationCallback = new ILocationCallback.Stub()
+	private ILocationListener locationListener = new ILocationListener()
 	{
 
 		@Override
-		public void onGpsStatusChanged(String provider, int status, int fsats, int tsats) throws RemoteException
+		public void onGpsStatusChanged(String provider, int status, int fsats, int tsats)
 		{
 		}
 
 		@Override
-		public void onLocationChanged(final Location loc, boolean continous, float smoothspeed, float avgspeed) throws RemoteException
+		public void onLocationChanged(final Location loc, boolean continous, boolean geoid, float smoothspeed, float avgspeed)
 		{
 			runOnUiThread(new Runnable() {
 				public void run()
@@ -350,22 +331,22 @@ public class HSIActivity extends Activity
 		}
 
 		@Override
-		public void onProviderChanged(String provider) throws RemoteException
+		public void onProviderChanged(String provider)
 		{
 		}
 
 		@Override
-		public void onProviderDisabled(String provider) throws RemoteException
+		public void onProviderDisabled(String provider)
 		{
 		}
 
 		@Override
-		public void onProviderEnabled(String provider) throws RemoteException
+		public void onProviderEnabled(String provider)
 		{
 		}
 
 		@Override
-		public void onSensorChanged(final float azimuth, final float pitch, final float roll) throws RemoteException
+		public void onSensorChanged(final float azimuth, final float pitch, final float roll)
 		{
 		}
 	};

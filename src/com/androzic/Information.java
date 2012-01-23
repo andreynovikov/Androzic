@@ -35,7 +35,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,15 +45,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.androzic.location.ILocationCallback;
-import com.androzic.location.ILocationRemoteService;
+import com.androzic.location.ILocationListener;
+import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
 import com.androzic.util.Astro;
 import com.androzic.util.StringFormatter;
 
 public class Information extends Activity
 {
-	private ILocationRemoteService locationService = null;
+	private ILocationService locationService = null;
 	private TextView satsValue;
 	private TextView lastfixValue;
 	private TextView providerValue;
@@ -90,39 +89,25 @@ public class Information extends Activity
 
 	    Button update = (Button) findViewById(R.id.almanac_button);
 	    update.setOnClickListener(updateOnClickListener);
-
-		bindService(new Intent(ILocationRemoteService.class.getName()), locationConnection, BIND_AUTO_CREATE);
     }
     
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
+		bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
 	}
 
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
-	}
-
-	@Override
-	protected void onDestroy()
-	{
 		if (locationService != null)
 		{
-			try
-			{
-				locationService.unregisterCallback(locationCallback);
-			}
-			catch (RemoteException e)
-			{
-			}
+			locationService.unregisterCallback(locationListener);
+			unbindService(locationConnection);
 			locationService = null;
 		}
-		unbindService(locationConnection);
-
-		super.onDestroy();
 	}
 
 	@Override
@@ -153,15 +138,8 @@ public class Information extends Activity
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service)
 		{
-			locationService = ILocationRemoteService.Stub.asInterface(service);
-
-			try
-			{
-				locationService.registerCallback(locationCallback);
-			}
-			catch (RemoteException e)
-			{
-			}
+			locationService = (ILocationService) service;
+			locationService.registerCallback(locationListener);
 		}
 
 		public void onServiceDisconnected(ComponentName className)
@@ -170,11 +148,11 @@ public class Information extends Activity
 		}
 	};
 
-	private ILocationCallback locationCallback = new ILocationCallback.Stub()
+	private ILocationListener locationListener = new ILocationListener()
 	{
 
 		@Override
-		public void onGpsStatusChanged(final String provider, final int status, final int fsats, final int tsats) throws RemoteException
+		public void onGpsStatusChanged(final String provider, final int status, final int fsats, final int tsats)
 		{
 			runOnUiThread(new Runnable() {
 				public void run()
@@ -197,7 +175,7 @@ public class Information extends Activity
 		}
 
 		@Override
-		public void onLocationChanged(final Location loc, boolean continous, float smoothspeed, float avgspeed) throws RemoteException
+		public void onLocationChanged(final Location loc, boolean continous, boolean geoid, float smoothspeed, float avgspeed)
 		{
 			runOnUiThread(new Runnable() {
 				public void run()
@@ -213,7 +191,7 @@ public class Information extends Activity
 					double sunrise = Astro.computeSunriseTime(application.getZenith(), loc, now);
 					double sunset = Astro.computeSunsetTime(application.getZenith(), loc, now);
 
-					if (sunrise == Double.NaN)
+					if (Double.isNaN(sunrise))
 					{
 						sunriseValue.setText(R.string.never);
 					}
@@ -221,7 +199,7 @@ public class Information extends Activity
 					{
 						sunriseValue.setText(Astro.getLocalTimeAsString(sunrise));
 					}
-					if (sunset == Double.NaN)
+					if (Double.isNaN(sunset))
 					{
 						sunsetValue.setText(R.string.never);
 					}
@@ -236,28 +214,28 @@ public class Information extends Activity
 		}
 
 		@Override
-		public void onProviderChanged(String provider) throws RemoteException
+		public void onProviderChanged(String provider)
 		{
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void onProviderDisabled(String provider) throws RemoteException
+		public void onProviderDisabled(String provider)
 		{
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void onProviderEnabled(String provider) throws RemoteException
+		public void onProviderEnabled(String provider)
 		{
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void onSensorChanged(final float azimuth, final float pitch, final float roll) throws RemoteException
+		public void onSensorChanged(final float azimuth, final float pitch, final float roll)
 		{
 		}
 	};

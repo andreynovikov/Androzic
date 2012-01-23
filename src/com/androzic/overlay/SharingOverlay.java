@@ -43,6 +43,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -53,7 +54,6 @@ import android.graphics.Typeface;
 import android.graphics.Paint.Align;
 import android.location.Location;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 
 import com.androzic.Androzic;
@@ -61,8 +61,9 @@ import com.androzic.MapActivity;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Situation;
-import com.androzic.location.ILocationCallback;
-import com.androzic.location.ILocationRemoteService;
+import com.androzic.location.ILocationListener;
+import com.androzic.location.ILocationService;
+import com.androzic.location.LocationService;
 
 public class SharingOverlay extends MapOverlay
 {
@@ -73,7 +74,7 @@ public class SharingOverlay extends MapOverlay
 
 	int pointWidth;
 
-	private ILocationRemoteService locationService = null;
+	private ILocationService locationService = null;
 	private boolean isBound = false;
 	protected ExecutorService executorThread = Executors.newSingleThreadExecutor();
 
@@ -121,12 +122,7 @@ public class SharingOverlay extends MapOverlay
 		{
 			unbind();
 		}
-		isBound = context.bindService(new Intent(ILocationRemoteService.class.getName()), connection, 0);
-		if (isBound)
-		{
-			Androzic application = (Androzic) context.getApplication();
-			updateSituation(application.getLocationAsLocation());
-		}
+		isBound = context.bindService(new Intent(context, LocationService.class), locationConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	public void setIdentity(String session, String user)
@@ -194,18 +190,12 @@ public class SharingOverlay extends MapOverlay
 		{
 			if (locationService != null)
 			{
-				try
-				{
-					locationService.unregisterCallback(callback);
-				}
-				catch (RemoteException e)
-				{
-				}
+				locationService.unregisterCallback(locationListener);
 			}
 
 			try
 			{
-				context.unbindService(connection);
+				context.unbindService(locationConnection);
 			}
 			catch (Exception e)
 			{
@@ -237,18 +227,13 @@ public class SharingOverlay extends MapOverlay
 		speedFactor = Double.parseDouble(context.getResources().getStringArray(R.array.speed_factors)[speedIdx]);
 	}
 
-	private ServiceConnection connection = new ServiceConnection() {
+	private ServiceConnection locationConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service)
 		{
-			locationService = ILocationRemoteService.Stub.asInterface(service);
-
-			try
-			{
-				locationService.registerCallback(callback);
-			}
-			catch (RemoteException e)
-			{
-			}
+			locationService = (ILocationService) service;
+			locationService.registerCallback(locationListener);
+			Androzic application = Androzic.getApplication();
+			updateSituation(application.getLocationAsLocation());
 		}
 
 		public void onServiceDisconnected(ComponentName className)
@@ -335,15 +320,15 @@ public class SharingOverlay extends MapOverlay
 		});
 	}
 
-	private ILocationCallback callback = new ILocationCallback.Stub()
+	private ILocationListener locationListener = new ILocationListener()
 	{
 		@Override
-		public void onGpsStatusChanged(String provider, int status, int fsats, int tsats) throws RemoteException
+		public void onGpsStatusChanged(String provider, int status, int fsats, int tsats)
 		{
 		}
 
 		@Override
-		public void onLocationChanged(Location loc, boolean continous, float smoothspeed, float avgspeed) throws RemoteException
+		public void onLocationChanged(Location loc, boolean continous, boolean geoid, float smoothspeed, float avgspeed)
 		{
 			if (loc.getTime() - lastShareTime > updateInterval)
 			{
@@ -352,22 +337,22 @@ public class SharingOverlay extends MapOverlay
 		}
 
 		@Override
-		public void onProviderChanged(String provider) throws RemoteException
+		public void onProviderChanged(String provider)
 		{
 		}
 
 		@Override
-		public void onProviderDisabled(String provider) throws RemoteException
+		public void onProviderDisabled(String provider)
 		{
 		}
 
 		@Override
-		public void onProviderEnabled(String provider) throws RemoteException
+		public void onProviderEnabled(String provider)
 		{
 		}
 
 		@Override
-		public void onSensorChanged(float azimuth, float pitch, float roll) throws RemoteException
+		public void onSensorChanged(float azimuth, float pitch, float roll)
 		{
 		}
 	};
