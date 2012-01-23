@@ -21,10 +21,10 @@
 package com.androzic.route;
 
 import com.androzic.Androzic;
-import com.androzic.NavigationService;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
+import com.androzic.navigation.NavigationService;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -31,9 +31,9 @@ import android.preference.PreferenceManager;
 import com.androzic.Androzic;
 import com.androzic.MapActivity;
 import com.androzic.MapView;
-import com.androzic.NavigationService;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
+import com.androzic.navigation.NavigationService;
 import com.androzic.util.Geo;
 
 public class NavigationOverlay extends MapOverlay
@@ -99,8 +99,8 @@ public class NavigationOverlay extends MapOverlay
 
 		int[] xy = application.getXYbyLatLon(navigationService.navWaypoint.latitude, navigationService.navWaypoint.longitude);
 
-        final double[] loc = mapView.currentLocation;
-        final int[] cxy = mapView.currentXY;
+        final double[] loc = mapView.mapCenter;
+        final int[] cxy = mapView.mapCenterXY;
 
         int sx = xy[0] - cxy[0] + Math.round(mapView.getWidth() / 2);
         int sy = xy[1] - cxy[1] + Math.round(mapView.getHeight() / 2);

@@ -46,10 +46,10 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 
 import com.androzic.Androzic;
-import com.androzic.NavigationService;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
+import com.androzic.navigation.NavigationService;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
@@ -98,7 +98,7 @@ public class WaypointList extends ExpandableListActivity
 				wptData.clear();
 				waypoints.clear();
 	   			
-				Androzic application = (Androzic) getApplication();
+				Androzic application = Androzic.getApplication();
 				final double[] loc = application.getLocation();
 				
 				List<WaypointSet> wptSets = application.getWaypointSets();
