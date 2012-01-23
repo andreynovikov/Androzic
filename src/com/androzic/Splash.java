@@ -28,18 +28,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.app.Activity;
-import android.content.ComponentName;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -47,7 +52,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.androzic.location.ILocationRemoteService;
 import com.androzic.overlay.CurrentTrackOverlay;
 import com.androzic.util.OziExplorerFiles;
 
@@ -79,9 +83,6 @@ public class Splash extends Activity implements OnClickListener
 	{
 		super.onCreate(savedInstanceState);
 		
-		// bind early to have a chance it will start before main activity
-		bindService(new Intent(ILocationRemoteService.class.getName()), locationConnection, BIND_AUTO_CREATE);
-		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		application = (Androzic) getApplication();
@@ -100,7 +101,7 @@ public class Splash extends Activity implements OnClickListener
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, true);
 
 		setContentView(R.layout.act_splash);
-
+		
 		if (application.isPaid)
 		{
 			findViewById(R.id.paid).setVisibility(View.VISIBLE);			
@@ -119,7 +120,9 @@ public class Splash extends Activity implements OnClickListener
 		quit = (Button) findViewById(R.id.quit);
 		quit.setOnClickListener(this);
 	
-		wait = false;
+		wait = true;
+		
+		showEula();
 		
 		if (! application.mapsInited)
 		{
@@ -130,14 +133,48 @@ public class Splash extends Activity implements OnClickListener
 			progressHandler.sendEmptyMessage(MSG_FINISH);			
 		}
 	}
-	
-	@Override
-	public void onDestroy()
+
+	private void showEula()
 	{
-		super.onDestroy();
-		unbindService(locationConnection);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean hasBeenShown = prefs.getBoolean(getString(R.string.app_eulaaccepted), false);
+		if (hasBeenShown == false)
+		{
+			final SpannableString message = new SpannableString(Html.fromHtml(getString(R.string.app_eula).replace("/n", "<br/>")));
+			Linkify.addLinks(message, Linkify.WEB_URLS);
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this)
+				.setTitle(getString(R.string.app_name))
+				.setIcon(R.drawable.icon)
+				.setMessage(message)
+				.setPositiveButton(android.R.string.ok, new Dialog.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i)
+					{
+						prefs.edit().putBoolean(getString(R.string.app_eulaaccepted), true).commit();
+						wait = false;
+						dialogInterface.dismiss();
+					}})
+				.setOnKeyListener(new OnKeyListener() {
+					@Override
+					public boolean onKey(DialogInterface dialoginterface, int keyCode, KeyEvent event)
+					{
+						return ! (keyCode == KeyEvent.KEYCODE_HOME);
+					}})
+				.setCancelable(false);
+
+			AlertDialog d = builder.create();
+			
+			d.show();
+		    // Make the textview clickable. Must be called after show()
+		    ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+		}
+		else
+		{
+			wait = false;
+		}
 	}
-	
+
 	final Handler progressHandler = new Handler() {
 		public void handleMessage(Message msg)
 		{
@@ -181,6 +218,18 @@ public class Splash extends Activity implements OnClickListener
 
 		public void run()
 		{
+			while (wait)
+			{
+				try
+				{
+					sleep(100);
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
 			total = 0;
 
 			Message msg = mHandler.obtainMessage(MSG_STATUS);
@@ -191,6 +240,9 @@ public class Splash extends Activity implements OnClickListener
 
 			Resources resources = getResources();
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(Splash.this);
+
+			application.enableLocating(settings.getBoolean(getString(R.string.lc_locate), true));
+			application.enableTracking(settings.getBoolean(getString(R.string.lc_track), true));
 
 			// set root folder and check if it has to be created
 			String rootPath = settings.getString(getString(R.string.pref_folder_root), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_prefix));
@@ -417,7 +469,7 @@ public class Splash extends Activity implements OnClickListener
 			mHandler.sendMessage(msg);
 
 			// initialize current map
-			application.initializeLocation();
+			application.initializeMapCenter();
 
 			total += PROGRESS_STEP;
 			msg = mHandler.obtainMessage(MSG_PROGRESS);
@@ -449,24 +501,4 @@ public class Splash extends Activity implements OnClickListener
 		no.setVisibility(View.GONE);
 		wait = false;
 	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig)
-	{
-		super.onConfigurationChanged(newConfig);
-	}
-
-	
-	// we do not need it but there no chance to bind to service without it
-	private ServiceConnection locationConnection = new ServiceConnection()
-	{
-		public void onServiceConnected(ComponentName className, IBinder service)
-		{
-		}
-
-		public void onServiceDisconnected(ComponentName className)
-		{
-		}
-	};
-
 }
