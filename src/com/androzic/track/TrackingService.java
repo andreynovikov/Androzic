@@ -28,7 +28,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -43,38 +45,50 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Environment;
+import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.androzic.Androzic;
 import com.androzic.MapActivity;
 import com.androzic.R;
-import com.androzic.location.ILocationCallback;
-import com.androzic.location.ILocationRemoteService;
+
+import com.androzic.location.ILocationListener;
+import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
+import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.TDateTime;
 
 public class TrackingService extends Service implements OnSharedPreferenceChangeListener
 {
-	private static final int ANDROZIC_NOTIFICATION_ID = 2416;
+    private static final String TAG = "Tracking";
+    private static final int NOTIFICATION_ID = 24162;
+
+	public static final String ENABLE_TRACK = "enableTrack";
+	public static final String DISABLE_TRACK = "disableTrack";
 	
-    final RemoteCallbackList<ITrackingCallback> callbacks = new RemoteCallbackList<ITrackingCallback>();
+	public static final String BROADCAST_TRACKING_STATUS = "com.androzic.trackingStatusChanged";
 
-	final static DecimalFormat coordFormat = new DecimalFormat("* ###0.000000", new DecimalFormatSymbols(Locale.ENGLISH));
+    private final RemoteCallbackList<ITrackingCallback> remoteCallbacks = new RemoteCallbackList<ITrackingCallback>();
+	private final Set<ITrackingListener> callbacks = new HashSet<ITrackingListener>();
 
-	private ILocationRemoteService remoteService = null;
+	private final static DecimalFormat coordFormat = new DecimalFormat("* ###0.000000", new DecimalFormatSymbols(Locale.ENGLISH));
+
+	private ILocationService locationService = null;
+	private final Binder binder = new LocalBinder();
 
 	private BufferedWriter trackWriter = null;
 	private boolean needsHeader = false;
-	private int gpsStatus = -1;
+	private boolean errorState = false;
+	private boolean trackingEnabled = false;
+	private boolean isSuspended = false;
 
-	private NotificationManager notificationManager;
 	private Notification notification;
 	private PendingIntent contentIntent;
 	
@@ -86,67 +100,53 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 	private long minTime = 500; // half a second (default)
 	private long maxTime = 300000; // 5 minutes
 	private int minDistance = 3; // 3 meters (default)
-	private String trackPath;
+	private int color = Color.RED;
 	private int fileInterval;
 
-    private final ITrackingRemoteService.Stub binder = new ITrackingRemoteService.Stub()
-    {
-        public void registerCallback(ITrackingCallback cb)
-        {
-        	Log.d("ANDROZIC", "Register callback");
-            if (cb != null) callbacks.register(cb);
-        }
-        public void unregisterCallback(ITrackingCallback cb)
-        {
-            if (cb != null) callbacks.unregister(cb);
-        }
-    };
-    
-    @Override
-    public IBinder onBind(Intent intent)
-    {
-        if ("com.androzic.tracking".equals(intent.getAction()) || ITrackingRemoteService.class.getName().equals(intent.getAction()))
-        {
-            return binder;
-        }
-        else
-        {
-        	return null;
-        }
-    }
-    
     @Override
 	public void onCreate()
 	{
 		super.onCreate();
 
-		String state = Environment.getExternalStorageState();
-		if (! Environment.MEDIA_MOUNTED.equals(state))
-		{
-			Toast.makeText(getBaseContext(), getString(R.string.err_nosdcard), Toast.LENGTH_LONG).show();
-			this.stopSelf();
-			return;
-		}
-
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_currentcolor));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_mintime));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_mindistance));
-		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_path));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_currentinterval));
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-		// we need this cause we run in separate thread
-		registerReceiver(receiver, new IntentFilter("onSharedPreferenceChanged"));
 
-		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		notification = new Notification();
-		notification.when = 0;
-	    notification.flags |= Notification.FLAG_ONGOING_EVENT;
 	    contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 	
-		bindService(new Intent(ILocationRemoteService.class.getName()), connection, BIND_AUTO_CREATE);
-
-	    Log.d("ANDROZIC", "TrackingService: service started");
+		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_LOCATING_STATUS));
+		Log.i(TAG, "Service started");
 	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId)
+	{
+		if (intent != null && intent.getAction() != null)
+		{
+			if (intent.getAction().equals(ENABLE_TRACK) && ! trackingEnabled && ! isSuspended)
+			{
+	    		prepareNormalNotification();
+				trackingEnabled = true;
+				isSuspended = true;
+				connect();
+			}
+			if (intent.getAction().equals(DISABLE_TRACK) && trackingEnabled)
+			{
+				trackingEnabled = false;
+				isSuspended = false;
+				stopForeground(true);
+				disconnect();
+				closeFile();
+				sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
+			}
+		}
+		return START_REDELIVER_INTENT | START_STICKY;
+	}
+
 
     private void closeFile()
     {
@@ -156,7 +156,11 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 			{
 				trackWriter.close();
 			}
-			catch (Exception ignore) { }
+			catch (Exception e)
+			{
+				Log.e(TAG, "Ex", e);
+				showErrorNotification();
+			}
 			trackWriter = null;
 		}
     }
@@ -166,7 +170,8 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
     	closeFile();
 		try
 		{
-			File dir = new File(trackPath);
+			Androzic application = Androzic.getApplication();
+			File dir = new File(application.trackPath);
 			if (! dir.exists())
 				dir.mkdirs();
 			String addon = "";
@@ -198,7 +203,6 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 							  "WGS 84\n" +
 							  "Altitude is in Feet\n" +
 							  "Reserved 3\n" +
-
 								// Field 1 : always zero (0)
 								// Field 2 : width of track plot line on screen - 1 or 2 are usually the best
 								// Field 3 : track color (RGB)
@@ -208,84 +212,124 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 								// Field 7 : track fill style - 0 =bsSolid; 1 =bsClear; 2 =bsBdiagonal; 3 =bsFdiagonal; 4 =bsCross;
 								// 5 =bsDiagCross; 6 =bsHorizontal; 7 =bsVertical;
 								// Field 8 : track fill color (RGB)
-							  "0,2,16711680,Androzic Current Track   ,0,0\n" +
+							  "0,2," +
+							  OziExplorerFiles.rgb2bgr(color) +
+							  ",Androzic Current Track " + addon +
+							  " ,0,0\n" +
 							  "0\n");
 					needsHeader = false;
 				}
 			}
 			else
 			{
-				Toast.makeText(getBaseContext(), getString(R.string.err_currentlog), Toast.LENGTH_LONG).show();
-				stopSelf();
+				showErrorNotification();
 				return;
 			}
 		}
 		catch (IOException e)
 		{
-			Log.e("ANDROZIC", e.toString(), e);
-			Toast.makeText(getBaseContext(), getString(R.string.err_currentlog), Toast.LENGTH_LONG).show();
-			stopSelf();
+			Log.e(TAG, e.toString(), e);
+			showErrorNotification();
 			return;
 		}
     }
     
-	private void setNotification(int status)
-	{
-		if (status != gpsStatus)
-		{
-		    switch (status)
-		    {
-		    	case LocationService.GPS_OK:
-		    		notification.icon = R.drawable.status_icon_ok;
-		    	    notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_ok), contentIntent);
-		    		break;
-		    	case LocationService.GPS_SEARCHING:
-		    		notification.icon = R.drawable.status_icon_searching;
-		    	    notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_searching), contentIntent);
-		    		break;
-		    	case LocationService.GPS_OFF:
-		    		notification.icon = R.drawable.status_icon_off;
-		    	    notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_off), contentIntent);
-		    }
-		    notificationManager.notify(ANDROZIC_NOTIFICATION_ID, notification);
-		    gpsStatus = status;
-		}
-	}
-
     @Override
 	public void onDestroy()
 	{
 		super.onDestroy();
 		
-    	unregisterReceiver(receiver);
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
-
-		if (remoteService != null)
-		{
-			try
-			{
-				remoteService.unregisterCallback(callback);
-			}
-			catch (RemoteException e)
-			{
-			}
-			unbindService(connection);
-		}
-
-		if (notificationManager != null)
-		{
-			notificationManager.cancel(ANDROZIC_NOTIFICATION_ID);
-		}
 
 		closeFile();
 
-        notificationManager = null;
+		unregisterReceiver(broadcastReceiver);
+		disconnect();
+		stopForeground(true);
+		
 		notification = null;
 	    contentIntent = null;
 	    
-		Log.d("ANDROZIC", "TrackingService: service stopped");
+	    Log.i(TAG, "Service stopped");
 	}
-	
+    
+    private void connect()
+    {
+		bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
+    }
+    
+    private void disconnect()
+    {
+		if (locationService != null)
+		{
+			locationService.unregisterCallback(locationListener);
+			unbindService(locationConnection);
+			locationService = null;
+		}
+    }
+    
+    private void doStart()
+    {
+		if (isSuspended)
+		{
+			if (trackingEnabled)
+			{
+				startForeground(NOTIFICATION_ID, notification);
+				sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
+			}
+			isSuspended = false;
+		}
+    }
+
+	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			Log.e(TAG, "Broadcast: " + action);
+			if (action.equals(LocationService.BROADCAST_LOCATING_STATUS))
+			{
+				if (locationService != null && locationService.isLocating())
+				{
+					doStart();
+				}
+				else if (trackingEnabled)
+				{
+					stopForeground(true);
+					closeFile();
+					isSuspended = true;
+				}
+			}
+		}
+	};
+
+    private void prepareNormalNotification()
+    {
+		notification.when = 0;
+		notification.icon = R.drawable.ic_stat_track;
+	    notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_trk_short), getText(R.string.notif_trk_started), contentIntent);
+		errorState = false;
+    }
+    
+    private void showErrorNotification()
+    {
+    	if (errorState)
+    		return;
+    	
+		notification.when = System.currentTimeMillis();
+		notification.defaults |= Notification.DEFAULT_SOUND;
+		/*
+		 * Red icon (white): saturation +100, lightness -40
+		 * Red icon (grey): saturation +100, lightness 0
+		 */
+		notification.icon = R.drawable.ic_stat_track_error;
+		notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_trk_short), getText(R.string.err_currentlog), contentIntent);
+		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		nm.notify(NOTIFICATION_ID, notification);
+		
+		errorState = true;
+    }
+    
 	public void addPoint(boolean continous, double latitude, double longitude, double altitude, float speed, long time)
 	{
 		long interval = fileInterval > 0 ? time % fileInterval : -1;
@@ -317,81 +361,77 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 		}
 		catch (Exception e)
 		{
-			Toast.makeText(getBaseContext(), getString(R.string.err_currentlog), Toast.LENGTH_LONG).show();
-			Log.e("ANDROZIC", e.toString(), e);
+			showErrorNotification();
 			closeFile();
 		}
 	}
 	
 	private void writeLocation(final Location loc, final boolean continous)
 	{
-		Log.d("ANDROZIC", "TrackingService: fix needs writing");
+		Log.d(TAG, "Fix needs writing");
 		lastWritenLocation = loc;
 		distanceFromLastWriting = 0;
 		addPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getTime());
 
-    	final int n = callbacks.beginBroadcast();
+		for (ITrackingListener callback : callbacks)
+		{
+			callback.onNewPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getBearing(), loc.getTime());			
+		}
+		
+    	final int n = remoteCallbacks.beginBroadcast();
         for (int i=0; i<n; i++)
         {
-			Log.d("ANDROZIC", "TrackingService: fix dispatched");
-            final ITrackingCallback callback = callbacks.getBroadcastItem(i);
+            final ITrackingCallback callback = remoteCallbacks.getBroadcastItem(i);
             try
             {
 				callback.onNewPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getBearing(), loc.getTime());
             } 
             catch (RemoteException e)
             {
-				Log.d("ANDROZIC", "TrackingService: fix broadcast error: "+e.toString());
-				e.printStackTrace();
+            	Log.e(TAG, "Point broadcast error", e);
             }
         }
-        callbacks.finishBroadcast();
+        remoteCallbacks.finishBroadcast();
 	}
 	
-	private ServiceConnection connection = new ServiceConnection() {
+	private ServiceConnection locationConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service)
 		{
-			remoteService = ILocationRemoteService.Stub.asInterface(service);
-
-			try
-			{
-				remoteService.registerCallback(callback);
-				Log.d("ANDROZIC", "TrackingService: location service connected");
-			}
-			catch (RemoteException e)
-			{
-			}
+			locationService = (ILocationService) service;
+			locationService.registerCallback(locationListener);
+	    	if (locationService.isLocating())
+	    		doStart();
+			Log.i(TAG, "Location service connected");
 		}
 
 		public void onServiceDisconnected(ComponentName className)
 		{
-			remoteService = null;
-			Log.d("ANDROZIC", "TrackingService: location service disconnected");
+			locationService = null;
+			Log.i(TAG, "Location service disconnected");
 		}
 	};
 
-	private ILocationCallback callback = new ILocationCallback.Stub() {
-
+	private ILocationListener locationListener = new ILocationListener()
+	{
 		@Override
-		public void onGpsStatusChanged(String provider, int status, int fsats, int tsats) throws RemoteException
+		public void onGpsStatusChanged(String provider, int status, int fsats, int tsats)
 		{
 			if (LocationManager.GPS_PROVIDER.equals(provider))
 			{
-    		    setNotification(status);
 				switch (status)
 				{
 					case LocationService.GPS_OFF:
 					case LocationService.GPS_SEARCHING:
-	        			if (! lastLocation.toString().equals(lastWritenLocation.toString()))
+	        			if (lastLocation != null && (lastWritenLocation == null || ! lastLocation.toString().equals(lastWritenLocation.toString())))
 	        				writeLocation(lastLocation, true);
 				}
 			}
 		}
 
 		@Override
-		public void onLocationChanged(Location loc, boolean continous, float smoothspeed, float avgspeed) throws RemoteException
+		public void onLocationChanged(Location loc, boolean continous, boolean geoid, float smoothspeed, float avgspeed)
 		{
-			Log.d("ANDROZIC", "TrackingService: location arrived");
+			Log.d(TAG, "Location arrived");
 
 			boolean needsWrite = false;
 			if (lastLocation != null)
@@ -412,53 +452,41 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 
 			lastLocation = loc;
 
-			if (needsWrite)
+			if (needsWrite && ! isSuspended)
 			{
 				writeLocation(loc, continous);
 			}
 		}
 
 		@Override
-		public void onProviderChanged(String provider) throws RemoteException
+		public void onProviderChanged(String provider)
 		{
 		}
 
 		@Override
-		public void onProviderDisabled(String provider) throws RemoteException
+		public void onProviderDisabled(String provider)
 		{
-			if (LocationManager.GPS_PROVIDER.equals(provider))
-				setNotification(LocationService.GPS_OFF);
 		}
 
 		@Override
-		public void onProviderEnabled(String provider) throws RemoteException
+		public void onProviderEnabled(String provider)
 		{
-			if (LocationManager.GPS_PROVIDER.equals(provider))
-				setNotification(LocationService.GPS_SEARCHING);
 		}
 
 		@Override
-		public void onSensorChanged(float azimuth, float pitch, float roll) throws RemoteException
+		public void onSensorChanged(float azimuth, float pitch, float roll)
 		{
 		}
 	};
 
-    private BroadcastReceiver receiver = new BroadcastReceiver()
-    {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("onSharedPreferenceChanged"))
-            {
-        		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(TrackingService.this);
-        		onSharedPreferenceChanged(sharedPreferences, intent.getExtras().getString("key"));
-            }
-        }
-    };
-
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
-		if (getString(R.string.pref_tracking_mintime).equals(key))
+		if (getString(R.string.pref_tracking_currentcolor).equals(key))
+		{
+			color = sharedPreferences.getInt(key, getResources().getColor(R.color.currenttrack));
+		}
+		else if (getString(R.string.pref_tracking_mintime).equals(key))
 		{
 			minTime = Integer.parseInt(sharedPreferences.getString(key, "500"));
 		}
@@ -466,14 +494,61 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 		{
 			minDistance = Integer.parseInt(sharedPreferences.getString(key, "5"));
 		}
-		else if (getString(R.string.pref_tracking_path).equals(key))
-		{
-			trackPath = sharedPreferences.getString(key, "");
-		}
 		else if (getString(R.string.pref_tracking_currentinterval).equals(key))
 		{
 			fileInterval = Integer.parseInt(sharedPreferences.getString(key, "0")) * 3600000;
 			closeFile();
+		}
+		else if (getString(R.string.pref_folder_track).equals(key))
+		{
+			closeFile();
+		}
+	}
+
+    private final ITrackingRemoteService.Stub remoteBinder = new ITrackingRemoteService.Stub()
+    {
+        public void registerCallback(ITrackingCallback cb)
+        {
+        	Log.i(TAG, "Register callback");
+            if (cb != null) remoteCallbacks.register(cb);
+        }
+        public void unregisterCallback(ITrackingCallback cb)
+        {
+            if (cb != null) remoteCallbacks.unregister(cb);
+        }
+    };
+    
+    @Override
+    public IBinder onBind(Intent intent)
+    {
+        if ("com.androzic.tracking".equals(intent.getAction()) || ITrackingRemoteService.class.getName().equals(intent.getAction()))
+        {
+            return remoteBinder;
+        }
+        else
+        {
+        	return binder;
+        }
+    }
+    
+	public class LocalBinder extends Binder implements ITrackingService
+	{
+		@Override
+		public void registerCallback(ITrackingListener callback)
+		{
+			callbacks.add(callback);
+		}
+
+		@Override
+		public void unregisterCallback(ITrackingListener callback)
+		{
+			callbacks.remove(callback);
+		}
+
+		@Override
+		public boolean isTracking()
+		{
+			return trackingEnabled;
 		}
 	}
 }

@@ -26,17 +26,17 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 
 import com.androzic.R;
 import com.androzic.data.Track;
-import com.androzic.track.ITrackingCallback;
-import com.androzic.track.ITrackingRemoteService;
+import com.androzic.track.ITrackingListener;
+import com.androzic.track.ITrackingService;
+import com.androzic.track.TrackingService;
 
 public class CurrentTrackOverlay extends TrackOverlay
 {
-	private ITrackingRemoteService remoteService = null;
+	private ITrackingService trackingService = null;
 	private boolean isBound = false;
 
     public CurrentTrackOverlay(final Activity mapActivity)
@@ -53,7 +53,7 @@ public class CurrentTrackOverlay extends TrackOverlay
 	{
 		unbind();
 		super.setMapContext(activity);
-        isBound = context.bindService(new Intent(ITrackingRemoteService.class.getName()), connection, 0);
+        isBound = context.getApplicationContext().bindService(new Intent(context.getApplicationContext(), TrackingService.class), trackingConnection, 0);
 	}
 
     @Override
@@ -80,16 +80,12 @@ public class CurrentTrackOverlay extends TrackOverlay
 	{
     	if (isBound)
     	{
-    		if (remoteService != null)
+    		if (trackingService != null)
     		{
-            	try
-            	{
-                	remoteService.unregisterCallback(callback);
-                }
-            	catch (RemoteException e) { }
+               	trackingService.unregisterCallback(trackingListener);
     		}
 
-    		context.unbindService(connection);
+    		context.getApplicationContext().unbindService(trackingConnection);
     		isBound = false;
     	}
 	}
@@ -101,26 +97,21 @@ public class CurrentTrackOverlay extends TrackOverlay
     	track.maxPoints = Integer.parseInt(settings.getString(context.getString(R.string.pref_tracking_currentlength), context.getString(R.string.def_tracking_currentlength)));		
 	}
     
-    private ServiceConnection connection = new ServiceConnection()
+    private ServiceConnection trackingConnection = new ServiceConnection()
     {
         public void onServiceConnected(ComponentName className, IBinder service)
         {
-            remoteService = ITrackingRemoteService.Stub.asInterface(service);
-
-            try
-            {
-                remoteService.registerCallback(callback);
-            }
-            catch (RemoteException e) { }
+            trackingService = (ITrackingService) service;
+            trackingService.registerCallback(trackingListener);
         }
 
         public void onServiceDisconnected(ComponentName className)
         {
-            remoteService = null;
+            trackingService = null;
         }
     };
     
-    private ITrackingCallback callback = new ITrackingCallback.Stub()
+    private ITrackingListener trackingListener = new ITrackingListener()
     {
         public void onNewPoint(boolean continous, double lat, double lon, double elev, double speed, double trk, long time)
         {
