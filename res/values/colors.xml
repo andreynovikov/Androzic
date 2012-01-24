@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="cursorcolor">#FFFF0000</color>
+<color name="cursor">#FFFF0000</color>
 <color name="currenttrack">#FFA565FE</color>
+<color name="mapcross">#99333333</color>
 <color name="waypoint">#FFFFFF00</color>
 <color name="waypointbg">#AAFFFFFF</color>
 <color name="waypointtext">#FF000000</color>
