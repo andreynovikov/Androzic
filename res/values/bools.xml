@@ -9,6 +9,7 @@
 <bool name="def_mapdim">false</bool>
 <bool name="def_maphideondrag">true</bool>
 <bool name="def_unfollowontap">true</bool>
+<bool name="def_mapfollowonloc">true</bool>
 <bool name="def_loc_usenetwork">true</bool>
 <bool name="def_loc_store">true</bool>
 <bool name="def_folder_lookup">false</bool>

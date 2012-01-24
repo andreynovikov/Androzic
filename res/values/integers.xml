@@ -5,7 +5,7 @@
 <integer name="def_mapdiminterval">300</integer>
 <integer name="def_maginterval">300</integer>
 <integer name="def_mapdimvalue">80</integer>
-<integer name="def_lookahead">0</integer>
+<integer name="def_lookahead">60</integer>
 <integer name="def_dragahead">0</integer>
 <integer name="def_loc_gpstimeout">120</integer>
 <integer name="def_waypoint_width">8</integer>
@@ -16,4 +16,5 @@
 <integer name="def_sharing_timeout">10</integer>
 <integer name="def_sharing_tagwidth">8</integer>
 <integer name="def_onlinemapscale">14</integer>
+<integer name="def_cursorvectormlpr">10</integer>
 </resources>
