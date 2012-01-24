@@ -73,10 +73,9 @@ public class AccuracyOverlay extends MapOverlay
 	@Override
 	protected void onDraw(Canvas c, MapView mapView)
 	{
-		if (mapView.getAutoFollow() && radius > 0)
+		if (radius > 0 && mapView.currentLocation != null)
 		{
-			final int[] cxy = mapView.currentXY;
-			c.drawCircle(cxy[0], cxy[1], radius, paint);
+			c.drawCircle(mapView.currentLocationXY[0], mapView.currentLocationXY[1], radius, paint);
 		}
 	}
 

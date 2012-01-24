@@ -102,8 +102,8 @@ public class DistanceOverlay extends MapOverlay
 	@Override
 	protected void onDraw(Canvas c, MapView mapView)
 	{
-        final double[] loc = mapView.currentLocation;
-		final int[] cxy = mapView.currentXY;
+        final double[] loc = mapView.mapCenter;
+		final int[] cxy = mapView.mapCenterXY;
 
         int sx = ancorXY[0] - cxy[0] + Math.round(mapView.getWidth() / 2);
         int sy = ancorXY[1] - cxy[1] + Math.round(mapView.getHeight() / 2);
@@ -129,8 +129,8 @@ public class DistanceOverlay extends MapOverlay
 	@Override
 	protected void onDrawFinished(Canvas c, MapView mapView)
 	{
-		final double[] loc = mapView.currentLocation;
-		final int[] cxy = mapView.currentXY;
+		final double[] loc = mapView.mapCenter;
+		final int[] cxy = mapView.mapCenterXY;
 		
 		double dist = Geo.distance(loc[0], loc[1], ancor[0], ancor[1]);
 		double bearing = Geo.bearing(loc[0], loc[1], ancor[0], ancor[1]);
@@ -141,7 +141,7 @@ public class DistanceOverlay extends MapOverlay
 			Rect rect = new Rect();
 	    	textPaint.getTextBounds(distance, 0, distance.length(), rect);
 	    	int half = rect.width() / 2;
-	    	int dy = bearing > 90 && bearing < 270 ? -40 : 40+rect.height()/2;
+	    	int dy = bearing > 90 && bearing < 270 ? -60 : 60+rect.height()/2;
 	        rect.offset(cxy[0]-half, cxy[1]+dy);
 	        rect.inset(-4, -4);
 	        c.drawRect(rect, textFillPaint);

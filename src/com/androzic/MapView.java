@@ -20,13 +20,20 @@
 
 package com.androzic;
 
+import org.metalev.multitouch.controller.MultiTouchController;
+import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
+import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
+import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -36,27 +43,42 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.androzic.map.Map;
 import com.androzic.overlay.MapOverlay;
-
-import org.metalev.multitouch.controller.MultiTouchController;
-import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
-import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
-import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
+import com.androzic.util.Geo;
 
 public class MapView extends View implements MultiTouchObjectCanvas<Object>
 {
+	private static final String TAG = "MapView";
+
 	private static final float MAX_ROTATION_SPEED = 15f;
 	private static final float INC_ROTATION_SPEED = 1f;
 	private static final float MAX_SHIFT_SPEED = 20f;
 	private static final float INC_SHIFT_SPEED = 1.5f;
 
-	private boolean autoFollow = true;
+	private int vectorType = 1;
+	private int vectorMultiplier = 10;
 	private boolean strictUnfollow = true;
 	private boolean hideOnDrag = true;
+	private boolean loadBestMap = true;
+	private int bestMapInterval = 5000;
 	private boolean ready = false;
+	/**
+	 * True when there is a valid location
+	 */
 	private boolean isFixed = false;
+	/**
+	 * True when there is a valid bearing
+	 */
 	private boolean isMoving = false;
+	/**
+	 * True when map moves with location cursor
+	 */
+	private boolean isFollowing = false;
 	
+	private long lastBestMap = 0;
+	private boolean bestMapEnabled = true;
+
 	int penX = 0;
 	int penY = 0;
 	int penOX = 0;
@@ -70,15 +92,22 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	
 	int waypointSelected = -1;
 		
+	public double[] mapCenter;
+	public int[] mapCenterXY;
 	public double[] currentLocation;
-	public int[] currentXY;
+	public int[] currentLocationXY;
 	private float lookAheadB = 0;
 	private float smoothB = 0;
 	private float smoothBS = 0;
 	private float bearing = 0;
+	private float speed = 0;
+	private double mpp = 0;
+	private int vectorLength = 0;
+	private int proximity = 0;
 
-	private Drawable movingCursor	= null;	
-	private Drawable standingCursor = null;
+	private Drawable movingCursor = null;	
+	private Paint crossPaint = null;
+	private Paint pointerPaint = null;
 	private PorterDuffColorFilter active = null;
 	
 	private Androzic application;
@@ -107,6 +136,18 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
    	{
 		this.application = application;
 
+        crossPaint = new Paint();
+        crossPaint.setAntiAlias(true);
+        crossPaint.setStrokeWidth(3);
+        crossPaint.setStyle(Paint.Style.STROKE);
+        crossPaint.setColor(getResources().getColor(R.color.mapcross));
+
+        pointerPaint = new Paint();
+        pointerPaint.setAntiAlias(true);
+        pointerPaint.setStrokeWidth(3);
+        pointerPaint.setStyle(Paint.Style.STROKE);
+        pointerPaint.setColor(getResources().getColor(R.color.cursor));
+
 		Resources resources = getResources();
 		
 		if (application.customCursor != null)
@@ -118,12 +159,10 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 			movingCursor = resources.getDrawable(R.drawable.moving);
 		}
 		movingCursor.setBounds(-movingCursor.getIntrinsicWidth()/2, 0, movingCursor.getIntrinsicWidth()/2, movingCursor.getIntrinsicHeight());
-   		standingCursor = resources.getDrawable(R.drawable.standing);
-		standingCursor.setBounds(-standingCursor.getIntrinsicWidth()/2, -standingCursor.getIntrinsicHeight()/2, standingCursor.getIntrinsicWidth()/2, standingCursor.getIntrinsicHeight()/2);
 
    		multiTouchController = new MultiTouchController<Object>(this, false);
    	 
-   		Log.d("ANDROZIC","Map initialize");
+   		Log.d(TAG,"Map initialize");
    	}	
 	
 	@Override
@@ -144,14 +183,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
         int cx = getWidth() / 2;
         int cy = getHeight() / 2;
 
-        /*
-        double[] tl = Swampex.getLocationByXYonMap(x - cx, y - cy);
-        double[] br = Swampex.getLocationByXYonMap(x + cx, y + cy);
-        Log.d("ANDROZIC", "TL: " + String.valueOf(tl[0]) + ", " + String.valueOf(tl[1]));
-        Log.d("ANDROZIC", "BR: " + String.valueOf(br[0]) + ", " + String.valueOf(br[1]));
-        */
-        
-        application.drawMap(currentLocation, lookAheadXY, getWidth(), getHeight(), canvas);
+        application.drawMap(mapCenter, lookAheadXY, getWidth(), getHeight(), canvas);
 
 		canvas.translate(lookAheadXY[0], lookAheadXY[1]);
 
@@ -161,28 +193,63 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
         if (! scaled && ready && ((penOX == 0 && penOY == 0) || ! hideOnDrag))
         {
     		canvas.save();
-    		canvas.translate(-currentXY[0], -currentXY[1]);
+    		canvas.translate(-mapCenterXY[0], -mapCenterXY[1]);
         	// TODO Should be synchronized?
         	for (MapOverlay mo : application.getOverlays(Androzic.ORDER_DRAW_PREFERENCE))
        			mo.onManagedDraw(canvas, this);
     		canvas.restore();
         }
-        
-		// draw cursor (it is always topmost)
-        if (! scaled && ready)
+                
+        // draw cursor (it is always topmost)
+        if (! scaled && ready && currentLocation != null)
         {
-			if (isMoving == true && autoFollow == true)
+    		canvas.save();
+    		canvas.translate(-mapCenterXY[0]+currentLocationXY[0], -mapCenterXY[1]+currentLocationXY[1]);
+			if (isMoving)
 			{
 				canvas.rotate(bearing, 0, 0);
 				movingCursor.draw(canvas);
+				if (isFixed)
+					canvas.drawLine(0, 0, 0, -vectorLength, pointerPaint);
 			}
 			else
 			{
-				standingCursor.draw(canvas);
+		        canvas.drawCircle(0, 0, 1, pointerPaint);
+		        canvas.drawCircle(0, 0, 40, pointerPaint);
+		        canvas.drawLine( 20,   0,  60,   0, pointerPaint);
+		        canvas.drawLine(-20,   0, -60,   0, pointerPaint);
+		        canvas.drawLine(  0,  20,   0,  60, pointerPaint);
+		        canvas.drawLine(  0, -20,   0, -60, pointerPaint);
 			}
+			canvas.restore();
+
+	        int sx = currentLocationXY[0] - mapCenterXY[0] + cx;
+	        int sy = currentLocationXY[1] - mapCenterXY[1] + cy;
+	        
+	        if (sx < 0 || sy < 0 || sx > getWidth() || sy > getHeight())
+	        {
+	    		canvas.save();
+	        	double bearing = Geo.bearing(mapCenter[0], mapCenter[1], currentLocation[0], currentLocation[1]);
+	        	canvas.rotate((float) bearing, 0, 0);
+	        	canvas.drawLine(-10, -50,  0, -70, pointerPaint);
+	        	canvas.drawLine(  0, -70, 10, -50, pointerPaint);
+	        	canvas.drawLine(-10, -50, 10, -50, pointerPaint);
+	        	canvas.restore();
+	        }
+
         }
-        
-		if (isMoving && autoFollow && isFixed)
+
+        if (! isFollowing)
+        {
+	        canvas.drawCircle(0, 0, 1, crossPaint);
+	        canvas.drawCircle(0, 0, 40, crossPaint);
+	        canvas.drawLine(20, 0, 120, 0, crossPaint);
+	        canvas.drawLine(-20, 0, -120, 0, crossPaint);
+	        canvas.drawLine(0, 20, 0, 120, crossPaint);
+	        canvas.drawLine(0, -20, 0, -120, crossPaint);
+        }
+
+		if (isMoving && isFollowing && isFixed)
 		{
 			lookAheadC = lookAhead;
 		}
@@ -193,11 +260,63 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		calculateLookAhead();
 	}
 
-   	public void setBearing(float b)
+   	public void setLocation(Location loc)
    	{
-   		bearing = b;
-   		lookAheadB = Math.round(b/10)*10;
-   		calculateLookAhead();
+   		ready = false;
+   		bearing = loc.getBearing();
+   		speed = loc.getSpeed();
+   		
+   		if (currentLocation == null)
+   		{
+   			currentLocation = new double[2];
+   		}
+   		currentLocation[0] = loc.getLatitude();
+   		currentLocation[1] = loc.getLongitude();
+		currentLocationXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
+   		
+   		lookAheadB = Math.round(bearing/10)*10;
+
+		long lastLocationMillis = loc.getTime();
+
+		if (isFollowing)
+		{
+			boolean newMap = false;
+			if (bestMapEnabled && bestMapInterval > 0 && lastLocationMillis - lastBestMap >= bestMapInterval)
+			{
+				newMap = application.setMapCenter(currentLocation[0], currentLocation[1], loadBestMap);
+				lastBestMap = lastLocationMillis;
+			}
+			else
+			{
+				newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false);
+				if (newMap)
+					loadBestMap = bestMapEnabled;
+				updateMapInfo();
+			}
+			if (newMap)
+				updateMapInfo();
+		}
+    	calculateVectorLength();		
+   	}
+   	
+   	public void clearLocation()
+   	{
+   		setFollowingThroughContext(false);
+   		currentLocation = null;
+   		bearing = 0;
+   		speed = 0;
+    	calculateVectorLength();
+   	}
+   	
+   	public void updateMapInfo()
+   	{
+		scale = 1;
+		try
+		{
+			MapActivity androzic = (MapActivity) getContext();
+			androzic.updateFileInfo();
+		}
+		finally {}
    	}
    	
    	private void calculateLookAhead()
@@ -279,6 +398,27 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		}
    	}
 
+   	private void calculateVectorLength()
+   	{
+   		if (mpp == 0)
+   		{
+   			vectorLength = 0;
+   			return;
+   		}
+   		switch (vectorType)
+   		{
+   			case 0:
+   				vectorLength = 0;
+   				break;
+   			case 1:
+   				vectorLength = (int) (proximity / mpp);
+   				break;
+   			case 2:
+   		   		vectorLength = (int) (speed * 60 / mpp);
+   		}
+   		vectorLength *= vectorMultiplier;
+   	}
+   	
    	public void setMoving(boolean moving)
    	{
    		isMoving = moving;
@@ -299,40 +439,49 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
    		return ready;
    	}
    	
-   	public void setAutoFollow(boolean follow) 
+   	public void setFollowing(boolean follow) 
    	{
-   		if (autoFollow != follow)
+   		if (currentLocation == null)
+   			return;
+
+   		if (isFollowing != follow)
    		{
-   			standingCursor.setColorFilter(follow ? active : null);
 	   		if (follow)
-	   			Toast.makeText(getContext(), R.string.auto_follow_enabled, Toast.LENGTH_SHORT).show();
+	   		{
+	   			Toast.makeText(getContext(), R.string.following_enabled, Toast.LENGTH_SHORT).show();
+		   		boolean newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false);
+		   		if (newMap)
+		   			updateMapInfo();
+	   		}
 	   		else
-	   			Toast.makeText(getContext(), R.string.auto_follow_disabled, Toast.LENGTH_SHORT).show();
-	   		if (ready)
-	   			post(updateView);
-	   		autoFollow = follow;
+	   		{
+	   			Toast.makeText(getContext(), R.string.following_disabled, Toast.LENGTH_SHORT).show();
+	   		}
+	   		
+	   		isFollowing = follow;
+	   		update();
    		}
    	}
 
-   	private void setAutoFollowThroughContext(boolean follow)
+   	private void setFollowingThroughContext(boolean follow)
    	{
-   		if (autoFollow != follow)
+   		if (isFollowing != follow)
    		{
 			try
 			{
-				MapActivity androzic = (MapActivity) this.getContext();
-				androzic.setAutoFollow(! autoFollow);
+				MapActivity androzic = (MapActivity) getContext();
+				androzic.setFollowing(! isFollowing);
 			}
 			catch(Exception e)
 			{
-				setAutoFollow(! autoFollow);
+				setFollowing(false);
 			}
    		}
    	}
    	
-   	public boolean getAutoFollow()
+   	public boolean isFollowing()
    	{
-   		return autoFollow;
+   		return isFollowing;
    	}
    	
    	public void setStrictUnfollow(boolean mode)
@@ -350,12 +499,31 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
    		hideOnDrag = hide;
    	}
 
+   	public void setBestMapEnabled(boolean best)
+   	{
+   		bestMapEnabled = best;
+   	}
+   	
+   	public void suspendBestMap()
+   	{
+   		loadBestMap = false;
+   	}
+   	
+   	public boolean isBestMapEnabled()
+   	{
+   		return bestMapEnabled;
+   	}
+   	
+   	public void setBestMapInterval(int best)
+   	{
+   		bestMapInterval = best;
+   	}
+   	
    	public void setFixed(boolean fixed)
 	{
 		isFixed = fixed;
 		movingCursor.setColorFilter(isFixed ? active : null);
-		if (ready)
-   			post(updateView);
+   		update();
 	}
 
    	public boolean isFixed()
@@ -380,49 +548,54 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	public void setCursorColor(final int color)
 	{
 		active = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
-		movingCursor.setColorFilter(isFixed ? active : null);			
-		standingCursor.setColorFilter(autoFollow ? active : null);
+		movingCursor.setColorFilter(isFixed ? active : null);
+		pointerPaint.setColor(color);
+	}
+	
+	public void setCursorVector(final int type, final int multiplier)
+	{
+		vectorType = type;
+		vectorMultiplier = multiplier;
+	}
+	
+	public void setProximity(final int proximity)
+	{
+		this.proximity = proximity;
+	}
+	
+	public void onMapChanged()
+	{
+    	Map map = application.getCurrentMap();
+    	if (map == null)
+    		mpp = 0;
+    	else
+    		mpp = map.mpp / map.getZoom();
+    	calculateVectorLength();
 	}
 	
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh)
 	{
-		Log.d("ANDROZIC","Size: "+w+","+h+","+oldw+","+oldh);
+		Log.d(TAG,"Size: "+w+","+h+","+oldw+","+oldh);
 		super.onSizeChanged(w, h, oldw, oldh);
 		if ((w != oldw || h != oldh))
 		{
 			setLookAhead(lookAheadPst);
-			updateView(false);
+			update();
 		}		
 	}
 	
-    private final Runnable updateView = new Runnable() 
-    {
-        public void run() 
-        {
-            updateView(false);
-        }
-    };
-
-	public void update(boolean mapChanged)
+	public void update()
 	{
-		updateView(mapChanged);
-	}
-
- 	private final void updateView(boolean mapChanged)
-	{
-        currentLocation = application.getLocation();
-        currentXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
+        mapCenter = application.getMapCenter();
+        mapCenterXY = application.getXYbyLatLon(mapCenter[0], mapCenter[1]);
+        if (currentLocation != null)
+        	currentLocationXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
 
 		try
 		{
-			MapActivity androzic = (MapActivity) this.getContext();
-			androzic.updateCoordinates(currentLocation);
-			if (mapChanged)
-			{
-				scale = 1;
-				androzic.updateFileInfo();
-			}
+			MapActivity activity = (MapActivity) getContext();
+			activity.updateCoordinates(mapCenter);
 		}
 		finally {}
 
@@ -434,10 +607,10 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
    	{
 		try
 		{
-   			int centerX = currentXY[0] - getWidth() / 2;
-   			int centerY = currentXY[1] - getHeight() / 2;
+   			int centerX = mapCenterXY[0] - getWidth() / 2;
+   			int centerY = mapCenterXY[1] - getHeight() / 2;
    			
-   			if (isMoving && autoFollow && isFixed)
+   			if (isMoving && isFollowing && isFixed)
    			{
    				centerX -= lookAheadXY[0];
    				centerY -= lookAheadXY[1];
@@ -471,7 +644,9 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
    	private final void onDragFinished(int deltaX, int deltaY)
 	{
    		boolean mapChanged = application.scrollMap(-deltaX, -deltaY);
-        updateView(mapChanged);
+   		if (mapChanged)
+   			updateMapInfo();
+        update();
     }
    	
   	@Override 
@@ -492,7 +667,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
    				penOY = penY = (int) event.getY();
    				break;
    			case MotionEvent.ACTION_MOVE:
-   				if (! wasMultitouch && (! autoFollow || ! strictUnfollow))
+   				if (! wasMultitouch && (! isFollowing || ! strictUnfollow))
    				{
    		   			int x = (int) event.getX();
    		   			int y = (int) event.getY();
@@ -500,7 +675,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
    		   			int dx = -(penX - x);
    		   			int dy = -(penY - y);
 
-	   		        if (! autoFollow && (Math.abs(dx) > 0 || Math.abs(dy) > 0))
+	   		        if (! isFollowing && (Math.abs(dx) > 0 || Math.abs(dy) > 0))
 	   				{
 	   	   				penX = x;
 	   	   				penY = y;
@@ -509,14 +684,14 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 					if (Math.abs(dx) > 10 || Math.abs(dy) > 10)
 	   				{
 	   	    			if (! strictUnfollow)
-	   	    				setAutoFollowThroughContext(false);
+	   	    				setFollowingThroughContext(false);
 	   				}
    				}
    				break;
    			case MotionEvent.ACTION_UP:
 				int dx = -(penOX - (int) event.getX());
 				int dy = -(penOY - (int) event.getY());
-				int tapDelta = autoFollow ? 15 : 30;
+				int tapDelta = isFollowing ? 15 : 30;
 				if (! wasMultitouch && Math.abs(dx) < tapDelta && Math.abs(dy) < tapDelta)
 				{
 					waypointTapped(penOX, penOY);
@@ -538,13 +713,13 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
     	switch (keyCode)
     	{
     		case KeyEvent.KEYCODE_DPAD_CENTER:
-    			setAutoFollowThroughContext(! autoFollow);
+    			setFollowingThroughContext(! isFollowing);
     			return true;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 			case KeyEvent.KEYCODE_DPAD_UP:
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
-   				if (! autoFollow || ! strictUnfollow)
+   				if (! isFollowing || ! strictUnfollow)
    				{
    					int dx = 0;
    					int dy = 0;
@@ -563,8 +738,8 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	   						dx -= 10;
 	   						break;
    			    	}
-   	    			if (autoFollow)
-   	    				setAutoFollowThroughContext(false);
+   	    			if (isFollowing)
+   	    				setFollowingThroughContext(false);
     				onDragFinished(dx, dy);
     				return true;
    				}
@@ -598,10 +773,10 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
    		switch (action)
    		{
    			case MotionEvent.ACTION_UP:
-   				setAutoFollowThroughContext(! autoFollow);
+   				setFollowingThroughContext(! isFollowing);
    				break;
    			case MotionEvent.ACTION_MOVE:
-   				if (! autoFollow)
+   				if (! isFollowing)
    				{
 	   		        int n = event.getHistorySize();
 	   		        final float scaleX = event.getXPrecision();
@@ -636,12 +811,18 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 			Bundle bundle = (Bundle) state;
 			super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
 
-			autoFollow = bundle.getBoolean("autoFollow");
+			vectorType = bundle.getInt("vectorType");
+			vectorMultiplier = bundle.getInt("vectorMultiplier");
+			isFollowing = bundle.getBoolean("autoFollow");
 			strictUnfollow = bundle.getBoolean("strictUnfollow");
 			hideOnDrag = bundle.getBoolean("hideOnDrag");
+			loadBestMap = bundle.getBoolean("loadBestMap");
+			bestMapInterval = bundle.getInt("bestMapInterval");
+			
 			ready = bundle.getBoolean("ready");
 			isFixed = bundle.getBoolean("isFixed");
 			isMoving = bundle.getBoolean("isMoving");
+			lastBestMap = bundle.getLong("lastBestMap");
 			
 			penX = bundle.getInt("penX");
 			penY = bundle.getInt("penY");
@@ -659,12 +840,17 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 			
 			waypointSelected = bundle.getInt("waypointSelected");
 				
+			mapCenter = bundle.getDoubleArray("mapCenter");
 			currentLocation = bundle.getDoubleArray("currentLocation");
-			currentXY = bundle.getIntArray("currentXY");
+			mapCenterXY = bundle.getIntArray("mapCenterXY");
+			currentLocationXY = bundle.getIntArray("currentLocationXY");
 			bearing = bundle.getFloat("bearing");
+			speed = bundle.getFloat("speed");
+			mpp = bundle.getDouble("mpp");
+			vectorLength = bundle.getInt("vectorLength");
+			proximity = bundle.getInt("proximity");
 			
 			//TODO Should be somewhere else?
-   			standingCursor.setColorFilter(autoFollow ? active : null);
    			movingCursor.setColorFilter(isFixed ? active : null);
 		}
 		else
@@ -679,12 +865,18 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	    Bundle bundle = new Bundle();
 	    bundle.putParcelable("instanceState", super.onSaveInstanceState());
 
-		bundle.putBoolean("autoFollow", autoFollow);
+		bundle.putInt("vectorType", vectorType);
+		bundle.putInt("vectorMultiplier", vectorMultiplier);
+		bundle.putBoolean("autoFollow", isFollowing);
 		bundle.putBoolean("strictUnfollow", strictUnfollow);
 		bundle.putBoolean("hideOnDrag", hideOnDrag);
+		bundle.putBoolean("loadBestMap", loadBestMap);
+		bundle.putInt("bestMapInterval", bestMapInterval);
+
 		bundle.putBoolean("ready", ready);
 		bundle.putBoolean("isFixed", isFixed);
 		bundle.putBoolean("isMoving", isMoving);
+		bundle.putLong("lastBestMap", lastBestMap);
 		
 		bundle.putInt("penX", penX);
 		bundle.putInt("penY", penY);
@@ -702,9 +894,15 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		
 		bundle.putInt("waypointSelected", waypointSelected);
 			
+		bundle.putDoubleArray("mapCenter", mapCenter);
 		bundle.putDoubleArray("currentLocation", currentLocation);
-		bundle.putIntArray("currentXY", currentXY);
+		bundle.putIntArray("mapCenterXY", mapCenterXY);
+		bundle.putIntArray("currentLocationXY", currentLocationXY);
 		bundle.putFloat("bearing", bearing);
+		bundle.putFloat("speed", speed);
+		bundle.putDouble("mpp", mpp);
+		bundle.putInt("vectorLength", vectorLength);
+		bundle.putInt("proximity", proximity);
 		
 		return bundle;
 	}
@@ -728,7 +926,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		if (obj == null)
 		{
 			pinch = 0;
-			Log.e("ANDROZIC","Scale: "+scale);
+			Log.e(TAG, "Scale: "+scale);
 			try
 			{
 				MapActivity androzic = (MapActivity) this.getContext();
