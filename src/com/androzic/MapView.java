@@ -511,7 +511,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
    	
    	public boolean isBestMapEnabled()
    	{
-   		return bestMapEnabled;
+   		return loadBestMap;
    	}
    	
    	public void setBestMapInterval(int best)
