@@ -96,6 +96,7 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 	private Location lastLocation = null;
 	private double distanceFromLastWriting = 0;
 	private long timeFromLastWriting = 0;
+	private boolean isContinous;
 
 	private long minTime = 500; // half a second (default)
 	private long maxTime = 300000; // 5 minutes
@@ -132,6 +133,7 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 	    		prepareNormalNotification();
 				trackingEnabled = true;
 				isSuspended = true;
+				isContinous = false;
 				connect();
 			}
 			if (intent.getAction().equals(DISABLE_TRACK) && trackingEnabled)
@@ -423,7 +425,7 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 					case LocationService.GPS_OFF:
 					case LocationService.GPS_SEARCHING:
 	        			if (lastLocation != null && (lastWritenLocation == null || ! lastLocation.toString().equals(lastWritenLocation.toString())))
-	        				writeLocation(lastLocation, true);
+	        				writeLocation(lastLocation, isContinous);
 				}
 			}
 		}
@@ -443,7 +445,7 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 
 			if (lastLocation == null ||
 				lastWritenLocation == null ||
-				! continous ||
+				! isContinous ||
 				timeFromLastWriting > maxTime ||
 				distanceFromLastWriting > minDistance && timeFromLastWriting > minTime)
 			{
@@ -454,7 +456,8 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 
 			if (needsWrite && ! isSuspended)
 			{
-				writeLocation(loc, continous);
+				writeLocation(loc, isContinous);
+				isContinous = continous;
 			}
 		}
 
