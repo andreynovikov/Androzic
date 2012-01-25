@@ -79,6 +79,11 @@
         <item>Proximity distance</item>
         <item>Time (minutes)</item>
     </string-array>
+    <string-array name="showdistance_names">
+        <item>No</item>
+        <item>Manually</item>
+        <item>Always</item>
+    </string-array>
     <string-array name="credit_merits">
     	<item>Ozf2, ozfx3 maps support</item>
     	<item>Application icon</item>

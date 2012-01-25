@@ -76,7 +76,7 @@ public class DistanceOverlay extends MapOverlay
 
         onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
         
-        enabled = true;
+        enabled = false;
     }
     
     public void setAncor(double[] ancor)
@@ -95,6 +95,8 @@ public class DistanceOverlay extends MapOverlay
 	public void onMapChanged()
 	{
 		super.onMapChanged();
+		if (ancor == null)
+			return;
     	Androzic application = (Androzic) context.getApplication();
 		ancorXY = application.getXYbyLatLon(this.ancor[0], this.ancor[1]);
 	}
@@ -102,7 +104,10 @@ public class DistanceOverlay extends MapOverlay
 	@Override
 	protected void onDraw(Canvas c, MapView mapView)
 	{
-        final double[] loc = mapView.mapCenter;
+		if (ancor == null)
+			return;
+		
+		final double[] loc = mapView.mapCenter;
 		final int[] cxy = mapView.mapCenterXY;
 
         int sx = ancorXY[0] - cxy[0] + Math.round(mapView.getWidth() / 2);
@@ -129,6 +134,9 @@ public class DistanceOverlay extends MapOverlay
 	@Override
 	protected void onDrawFinished(Canvas c, MapView mapView)
 	{
+		if (ancor == null)
+			return;
+		
 		final double[] loc = mapView.mapCenter;
 		final int[] cxy = mapView.mapCenterXY;
 		

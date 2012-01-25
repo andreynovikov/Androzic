@@ -37,7 +37,7 @@
 	<string name="pref_cursorvectormlpr">cursorvectormlpr</string>
 	<string name="pref_showsatinfo">showsatinfo</string>
 	<string name="pref_showmapinfo">showmapinfo</string>
-	<string name="pref_showdistance">showdistance</string>
+	<string name="pref_showdistance_int">showdistance_int</string>
 	<string name="pref_showaccuracy">showaccuracy</string>
 	<string name="pref_showcurrenttrack">tracking_showcurrent</string>
 	<string name="pref_showwaypoints">showwaypoints</string>
@@ -90,6 +90,7 @@
 	<string name="pref_credits">credits</string>
 																																													
 	<string name="def_cursorvector">1</string>
+	<string name="def_showdistance">1</string>
 	<string name="def_navigation_proximity">200</string>
 	<string name="def_tracking_currentlength">1000</string>
 	<string name="def_grid_userscale">200</string>
