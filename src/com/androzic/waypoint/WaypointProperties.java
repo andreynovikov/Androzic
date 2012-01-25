@@ -22,13 +22,13 @@ package com.androzic.waypoint;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.LightingColorFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -130,9 +130,14 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		{
 			waypoint = application.getRoute(route - 1).getWaypoints().get(index);
 		}
-		else
+		else if (index >= 0)
 		{
 			waypoint = application.getWaypoint(index);
+		}
+		else
+		{
+			waypoint = new Waypoint();
+			waypoint.date = Calendar.getInstance().getTime();
 		}
 		
 		name = (TextView) findViewById(R.id.name_text);
@@ -147,8 +152,6 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		{
 			if (waypoint.drawImage)
 			{
-	//			BitmapFactory.Options options = new BitmapFactory.Options();
-	//           options.inScaled = false;
 				Bitmap b = BitmapFactory.decodeFile(application.iconPath + File.separator + waypoint.image);
 				if (b != null)
 				{
@@ -167,7 +170,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 			icon.setEnabled(false);
 		}
 
-		int set = application.getWaypointSets().indexOf(waypoint.set);
+		int set = waypoint.set == null ? 0 : application.getWaypointSets().indexOf(waypoint.set);
 
 		ArrayList<String> items = new ArrayList<String>();
 		for (WaypointSet wptset : application.getWaypointSets())
@@ -320,6 +323,9 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
         	{
         		Androzic application = (Androzic) getApplication();
 
+        		if (name.getText().length() == 0)
+        			return;
+        		
         		waypoint.name = name.getText().toString();
 
         		waypoint.description = description.getText().toString();
@@ -329,14 +335,18 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
         		waypoint.image = iconValue;
         		if (iconValue == null)
         			waypoint.drawImage = false;
-            	int set = ((Spinner) findViewById(R.id.set_spinner)).getSelectedItemPosition();
-        		waypoint.set = application.getWaypointSets().get(set);
         		if (markerColorValue != defMarkerColor)
         			waypoint.backcolor = markerColorValue;
         		if (textColorValue != defTextColor)
         			waypoint.textcolor = textColorValue;
+
+        		if (waypoint.set == null)
+        			application.addWaypoint(waypoint);
         		
-    			setResult(Activity.RESULT_OK);
+        		int set = ((Spinner) findViewById(R.id.set_spinner)).getSelectedItemPosition();
+        		waypoint.set = application.getWaypointSets().get(set);
+        		
+        		setResult(Activity.RESULT_OK);
         		finish();
         	}
         	catch (Exception e)

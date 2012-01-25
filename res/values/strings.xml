@@ -153,6 +153,7 @@
 	<string name="menu_newroute">New route</string>
     <string name="menu_properties">Properties</string>
     <string name="menu_project">Project new</string>
+    <string name="menu_new">New</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_load">Load from file</string>
     <string name="menu_save">Save to file</string>
@@ -246,7 +247,6 @@
 	<string name="pref_showmapinfo_title">Show map panel</string>
 	<string name="pref_showmapinfo_summary">Mark to show current map name and zoom level</string>
 	<string name="pref_showdistance_title">Show distance</string>
-	<string name="pref_showdistance_summary">Mark to show distance to anchor point if not following</string>
 	<string name="pref_showaccuracy_title">Show accuracy circle</string>
 	<string name="pref_showaccuracy_summary">Mark to show accuracy circle around position cursor</string>
 	<string name="pref_showcurrenttrack_title">Show current track</string>
