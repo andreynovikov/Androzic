@@ -63,6 +63,7 @@ import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
+import com.androzic.location.LocationService;
 import com.androzic.map.Map;
 import com.androzic.map.MapIndex;
 import com.androzic.map.MockMap;
@@ -79,6 +80,7 @@ import com.androzic.overlay.RouteOverlay;
 import com.androzic.overlay.SharingOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.overlay.WaypointsOverlay;
+import com.androzic.track.TrackingService;
 import com.androzic.util.CSV;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.Geo;
@@ -106,7 +108,9 @@ public class Androzic extends Application
 	private MapIndex maps;
 	private List<Map> suitableMaps;
 	private Map currentMap;
-	private double[] location = new double[] {0.0, 0.0};
+	private double[] mapCenter = new double[] {0.0, 0.0};
+	private double[] location = new double[] {Double.NaN, Double.NaN};
+	private double[] shouldBeVisible = new double[] {Double.NaN, Double.NaN};
 	private double magneticDeclination = 0;
 	
 	private List<Waypoint> waypoints = new ArrayList<Waypoint>();
@@ -115,7 +119,6 @@ public class Androzic extends Application
 	private List<Track> tracks = new ArrayList<Track>();
 	private List<Route> routes = new ArrayList<Route>();
 	
-	public boolean centeredOn = false;
 	public boolean hasCompass = false;
 	private boolean memmsg = false;
 	
@@ -270,11 +273,13 @@ public class Androzic extends Application
 			   			{
 			   				mo.enable();
 			   			}
-			   			if (mapActivity != null && mapActivity.map != null)
-			   			{
-			   				mapActivity.map.postInvalidate();
-			   			}
+			   			j++;
 			    	}
+		   			if (mapActivity != null && mapActivity.map != null)
+		   			{
+		   				mapActivity.map.onMapChanged();
+		   				mapActivity.map.postInvalidate();
+		   			}
 				}
 			});
 		}
@@ -435,14 +440,29 @@ public class Androzic extends Application
 
 	public void ensureVisible(Waypoint waypoint)
 	{
-		setLocation(waypoint.latitude, waypoint.longitude, false, true);
-		centeredOn = true;
+		ensureVisible(waypoint.latitude, waypoint.longitude);
 	}
 
 	public void ensureVisible(double lat, double lon)
 	{
-		setLocation(lat, lon, false, true);
-		centeredOn = true;
+		shouldBeVisible[0] = lat;
+		shouldBeVisible[1] = lon;
+	}
+	
+	public boolean hasEnsureVisible()
+	{
+		return ! Double.isNaN(shouldBeVisible[0]);
+	}
+	
+	public double[] getEnsureVisible()
+	{
+		return shouldBeVisible;
+	}
+	
+	public void clearEnsureVisible()
+	{
+		shouldBeVisible[0] = Double.NaN;
+		shouldBeVisible[1] = Double.NaN;
 	}
 
 	public int addWaypointSet(final WaypointSet newWaypointSet)
@@ -752,7 +772,9 @@ public class Androzic extends Application
 	{
 		if (angleType == 0)
 		{
-			GeomagneticField mag = new GeomagneticField((float) location[0], (float) location[1], 0.0f, System.currentTimeMillis());
+			float lat = (float) (Double.isNaN(location[0]) ? mapCenter[0] : location[0]);
+			float lon = (float) (Double.isNaN(location[1]) ? mapCenter[1] : location[1]);
+			GeomagneticField mag = new GeomagneticField(lat, lon, 0.0f, System.currentTimeMillis());
 			magneticDeclination = mag.getDeclination();
 		}		
 		return magneticDeclination;
@@ -771,58 +793,69 @@ public class Androzic extends Application
 	public double[] getLocation()
 	{
 		double[] res = new double[2];
-		res[0] = location[0];
-		res[1] = location[1];
+		res[0] = Double.isNaN(location[0]) ? mapCenter[0] : location[0];
+		res[1] = Double.isNaN(location[1]) ? mapCenter[1] : location[1];
 		return res;
 	}
 	
 	public Location getLocationAsLocation()
 	{
 		Location loc = new Location("fake");
-		loc.setLatitude(location[0]);
-		loc.setLongitude(location[1]);
+		loc.setLatitude(Double.isNaN(location[0]) ? mapCenter[0] : location[0]);
+		loc.setLongitude(Double.isNaN(location[1]) ? mapCenter[1] : location[1]);
 		return loc;
 	}
 	
-	public void initializeLocation()
+	void setLocation(Location loc, boolean updatemag)
 	{
-		double[] coordinate = null;
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean store = sharedPreferences.getBoolean(getString(R.string.pref_loc_store), getResources().getBoolean(R.bool.def_loc_store));
-		if (store)
+		location[0] = loc.getLatitude();
+		location[1] = loc.getLongitude();
+		if (updatemag && angleType == 1)
 		{
-			String loc = sharedPreferences.getString(getString(R.string.loc_last), null);
-			if (loc != null)
-			{
-				coordinate = CoordinateParser.parse(loc);
-				setLocation(coordinate[0], coordinate[1], true, true);
-			}
-		}
-		
-		if (coordinate == null)
-		{
-			setLocation(0, 0, true, true);
+			GeomagneticField mag = new GeomagneticField((float) location[0], (float) location[1], (float) loc.getAltitude(), System.currentTimeMillis());
+			magneticDeclination = mag.getDeclination();
 		}
 	}
 	
-	public boolean setLocation(double lat, double lon, boolean findbest, boolean updatemag)
+	public void initializeMapCenter()
 	{
-		location[0] = lat;
-		location[1] = lon;
-		
-		// TODO should honor altitude
-		if (updatemag && angleType == 1)
+		double[] coordinate = null;
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		String loc = sharedPreferences.getString(getString(R.string.loc_last), null);
+		if (loc != null)
 		{
-			GeomagneticField mag = new GeomagneticField((float) location[0], (float) location[1], 0.0f, System.currentTimeMillis());
-			magneticDeclination = mag.getDeclination();
+			coordinate = CoordinateParser.parse(loc);
+			setMapCenter(coordinate[0], coordinate[1], true);
 		}
-
-		suitableMaps = maps.getMaps(lat, lon);
+		if (coordinate == null)
+		{
+			setMapCenter(0, 0, true);
+		}
+	}
+	
+	public double[] getMapCenter()
+	{
+		double[] res = new double[2];
+		res[0] = mapCenter[0];
+		res[1] = mapCenter[1];
+		return res;
+	}
+	
+	public boolean setMapCenter(double lat, double lon, boolean findbest)
+	{
+		mapCenter[0] = lat;
+		mapCenter[1] = lon;
+		return updateLocationInfo(findbest);
+	}
+		
+	public boolean updateLocationInfo(boolean findbest)
+	{
+		suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
 		boolean mapchanged = true;
 		
 		if (! findbest && currentMap != null)
 		{
-			if (currentMap.coversLatLon(lat, lon))
+			if (currentMap.coversLatLon(mapCenter[0], mapCenter[1]))
 			{
 				mapchanged = false;
 			}
@@ -837,7 +870,7 @@ public class Androzic extends Application
 			}
 			if (newMap == null)
 			{
-				newMap = MockMap.getMap(lat, lon);
+				newMap = MockMap.getMap(mapCenter[0], mapCenter[1]);
 			}
 			mapchanged = setMap(newMap);
 		}
@@ -852,7 +885,7 @@ public class Androzic extends Application
 			int[] xy = new int[2];
 			double[] ll = new double[2];
 			
-			currentMap.getXYByLatLon(location[0], location[1], xy);
+			currentMap.getXYByLatLon(mapCenter[0], mapCenter[1], xy);
 			currentMap.getLatLonByXY(xy[0] + dx, xy[1] + dy, ll);
 
 			if (ll[0] > 90.0) ll[0] = 90.0;
@@ -860,7 +893,7 @@ public class Androzic extends Application
 			if (ll[1] > 180.0) ll[1] = 180.0;
 			if (ll[1] < -180.0) ll[1] = -180.0;
 			
-			return setLocation(ll[0], ll[1], false, true);
+			return setMapCenter(ll[0], ll[1], false);
 		}
 		return false;
 	}
@@ -1058,9 +1091,9 @@ public class Androzic extends Application
 			{
 				int x = currentMap.getScaledWidth() / 2;
 				int y = currentMap.getScaledHeight() / 2;
-				currentMap.getLatLonByXY(x, y, location);
+				currentMap.getLatLonByXY(x, y, mapCenter);
 			}
-			suitableMaps = maps.getMaps(location[0], location[1]);
+			suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
 		}
 		return newmap;
 	}
@@ -1181,25 +1214,35 @@ public class Androzic extends Application
 		clearTracks();
 		clearWaypoints();
 		clearWaypointSets();
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean store = sharedPreferences.getBoolean(getString(R.string.pref_loc_store), getResources().getBoolean(R.bool.def_loc_store));
-		if (store)
-		{
-			Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-			editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", location[0], location[1]));
-			editor.commit();			
-		}
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
+		editor.commit();			
+		
+		stopService(new Intent(this, TrackingService.class));
+		stopService(new Intent(this, LocationService.class));
+		
 		llGridOverlay = null;
 		grGridOverlay = null;
 		mapActivity = null;
 		currentMap = null;
 		suitableMaps = null;
-		centeredOn = false;
 		maps = null;
 		mapsInited = false;
 		memmsg = false;
 	}
 
+	public void enableLocating(boolean enable)
+	{
+		String action = enable ? LocationService.ENABLE_LOCATIONS : LocationService.DISABLE_LOCATIONS;
+		startService(new Intent(this, LocationService.class).setAction(action));
+	}
+
+	public void enableTracking(boolean enable)
+	{
+		String action = enable ? TrackingService.ENABLE_TRACK : TrackingService.DISABLE_TRACK;
+		startService(new Intent(this, TrackingService.class).setAction(action));
+	}
+	
 	public void initialize(MapState mapState)
 	{
 		waypoints.addAll(mapState.waypoints);
@@ -1214,7 +1257,6 @@ public class Androzic extends Application
 			route.removed = false;
 		}
 		
-		centeredOn = mapState.centeredOn;
 		hasCompass = mapState.hasCompass;
 
 		locale = mapState.locale;
@@ -1241,7 +1283,6 @@ public class Androzic extends Application
 		mapState.tracks.addAll(tracks);
 		mapState.routes.addAll(routes);
 
-		mapState.centeredOn = centeredOn;
 		mapState.hasCompass = hasCompass;
 		
 		mapState.locale = locale;
