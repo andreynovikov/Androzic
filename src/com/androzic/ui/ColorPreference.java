@@ -56,6 +56,7 @@ public class ColorPreference extends DialogPreference
 		TypedArray sattrs = context.obtainStyledAttributes(attrs, R.styleable.ColorPreference);
 		mDefaultColor = sattrs.getInt(R.styleable.ColorPreference_defaultColor, Color.RED);
 		mDensity = getContext().getResources().getDisplayMetrics().density;
+		sattrs.recycle();
 	}
 
 	public ColorPreference(Context context, AttributeSet attrs, int defStyle)

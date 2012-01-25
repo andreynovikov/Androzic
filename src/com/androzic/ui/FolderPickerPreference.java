@@ -114,11 +114,9 @@ public class FolderPickerPreference extends DialogPreference implements OnItemCl
 	@Override
 	protected void onDialogClosed(boolean positiveResult)
 	{
-	    super.onDialogClosed(positiveResult);
-
 	    if (!positiveResult)
 	        return;
-	    if (shouldPersist())
+	    if (callChangeListener(mCurrentValue) && shouldPersist())
 	        persistString(mCurrentValue);
 
 	    notifyChanged();
