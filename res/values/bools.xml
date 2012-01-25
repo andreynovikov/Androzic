@@ -13,7 +13,6 @@
 <bool name="def_loc_usenetwork">true</bool>
 <bool name="def_loc_store">true</bool>
 <bool name="def_folder_lookup">false</bool>
-<bool name="def_folder_sgs">false</bool>
 <bool name="def_tracking_currentload">true</bool>
 <bool name="def_navigation_traverse">true</bool>
 <bool name="def_navigation_proximitycircle">false</bool>

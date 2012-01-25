@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_loc_title" android:summary="@string/pref_loc_summary">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_loc_title">
     <CheckBoxPreference android:key="@string/pref_usecompass" android:title="@string/pref_usecompass_title" android:summary="@string/pref_usecompass_summary" android:defaultValue="@bool/def_usecompass" />
     <CheckBoxPreference android:key="@string/pref_loc_usenetwork" android:title="@string/pref_loc_usenetwork_title" android:summary="@string/pref_loc_usenetwork_summary" android:defaultValue="@bool/def_loc_usenetwork" />
 	<com.androzic.ui.SeekbarPreference android:key="@string/pref_loc_gpstimeout" android:title="@string/pref_loc_gpstimeout_title" android:summary="@string/pref_loc_gpstimeout_summary" android:dependency="@string/pref_loc_usenetwork" androzic:defaultValue="@integer/def_loc_gpstimeout" android:text=" seconds" androzic:min="30" androzic:max="300" />
-    <CheckBoxPreference android:key="@string/pref_loc_store" android:title="@string/pref_loc_store_title" android:summary="@string/pref_loc_store_summary" android:defaultValue="@bool/def_loc_store" />
 </PreferenceScreen>

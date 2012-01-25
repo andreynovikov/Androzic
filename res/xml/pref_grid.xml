@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_grid_title" android:summary="@string/pref_grid_summary">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_grid_title">
     <CheckBoxPreference android:key="@string/pref_grid_mapshow" android:title="@string/pref_grid_mapshow_title" android:summary="@string/pref_grid_mapshow_summary" android:defaultValue="true" />
     <CheckBoxPreference android:key="@string/pref_grid_usershow" android:title="@string/pref_grid_usershow_title" android:summary="@string/pref_grid_usershow_summary" android:defaultValue="false" />
 	<EditTextPreference android:key="@string/pref_grid_userscale" android:title="@string/pref_grid_userscale_title" android:summary="@string/pref_grid_userscale_summary" android:numeric="integer" android:maxLength="5" android:inputType="number" android:defaultValue="@string/def_grid_userscale" android:singleLine="true" android:dependency="@string/pref_grid_usershow" />

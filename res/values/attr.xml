@@ -1,37 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-     <declare-styleable name="SeekbarPreference">
-          <attr name="min" format="integer" />
-          <attr name="max" format="integer" />
-          <attr name="defaultValue" format="integer" />
-          <attr name="multiplier" format="float" />
-          <attr name="format" format="string" />
-     </declare-styleable>
-     <declare-styleable name="ColorPreference">
-          <attr name="defaultColor" format="color" />
-     </declare-styleable>
-     <declare-styleable name="FolderPickerPreference">
-          <attr name="defaultFolder" format="string" />
-     </declare-styleable>
-     <declare-styleable name="TouchListView">
-		<attr name="normal_height" format="dimension" />
-		<attr name="expanded_height" format="dimension" />
-		<attr name="grabber" format="reference" />
-		<attr name="dragndrop_background" format="color" />
-    	<attr name="remove_mode">
-			<enum name="none" value="-1" />
-			<enum name="fling" value="0" />
-			<enum name="slide" value="1" />
-			<enum name="slideRight" value="1" />
-			<enum name="slideLeft" value="2" />
-		</attr>
-	</declare-styleable>
+    <declare-styleable name="SeekbarPreference">
+        <attr name="min" format="integer" />
+        <attr name="max" format="integer" />
+        <attr name="defaultValue" format="integer" />
+        <attr name="multiplier" format="float" />
+        <attr name="format" format="string" />
+    </declare-styleable>
+    <declare-styleable name="ColorPreference">
+        <attr name="defaultColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="FolderPickerPreference">
+        <attr name="defaultFolder" format="string" />
+    </declare-styleable>
+    <declare-styleable name="ImageMultiChoiceListPreference">
+        <attr name="entryImages" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="TouchListView">
+        <attr name="normal_height" format="dimension" />
+        <attr name="expanded_height" format="dimension" />
+        <attr name="grabber" format="reference" />
+        <attr name="dragndrop_background" format="color" />
+        <attr name="remove_mode">
+            <enum name="none" value="-1" />
+            <enum name="fling" value="0" />
+            <enum name="slide" value="1" />
+            <enum name="slideRight" value="1" />
+            <enum name="slideLeft" value="2" />
+        </attr>
+    </declare-styleable>
     <declare-styleable name="Panel">
+
         <!-- Defines panel animation duration in ms. -->
         <attr name="animationDuration" format="integer" />
         <!-- Defines panel position on the screen. -->
         <attr name="position">
-        	<!-- Panel placed at top of the screen. -->
+
+            <!-- Panel placed at top of the screen. -->
             <enum name="top" value="0" />
             <!-- Panel placed at bottom of the screen. -->
             <enum name="bottom" value="1" />
@@ -54,6 +59,7 @@
         <attr name="closedHandle" format="reference|color" />
     </declare-styleable>
     <declare-styleable name="Switcher">
+
         <!-- Defines switcher animation duration in ms. -->
         <attr name="animationDuration" />
         <!-- Defines switcher idle timeout in ms. -->
@@ -63,4 +69,5 @@
         <!-- Defines opened handle (drawable). -->
         <attr name="increaseButton" format="reference" />
     </declare-styleable>
+
 </resources>

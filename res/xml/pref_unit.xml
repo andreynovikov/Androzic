@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_unit_title" android:summary="@string/pref_unit_summary">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_unit_title">
 	<ListPreference android:key="@string/pref_unitspeed" android:title="@string/pref_unitspeed_title" android:entries="@array/speed_units" android:entryValues="@array/speed_values" android:defaultValue="0" android:dialogTitle="@string/pref_unitspeed_title" />
 	<ListPreference android:key="@string/pref_unitdistance" android:title="@string/pref_unitdistance_title" android:entries="@array/distance_units" android:entryValues="@array/distance_values" android:defaultValue="0" android:dialogTitle="@string/pref_unitdistance_title" />
 	<ListPreference android:key="@string/pref_unitelevation" android:title="@string/pref_unitelevation_title" android:entries="@array/elevation_units" android:entryValues="@array/elevation_values" android:defaultValue="0" android:dialogTitle="@string/pref_unitelevation_title" />

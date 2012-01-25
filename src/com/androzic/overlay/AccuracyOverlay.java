@@ -59,7 +59,7 @@ public class AccuracyOverlay extends MapOverlay
 			int[] pxy = application.getXYbyLatLon(prx[0], prx[1]);
 			radius = (int) Math.hypot((pxy[0]-cxy[0]), (pxy[1]-cxy[1]));
 		}
-		enabled = true;
+		enabled = accuracy > 0;
     }
 
 	@Override

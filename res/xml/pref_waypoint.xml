@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_waypoint_title" android:summary="@string/pref_waypoint_summary">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_waypoint_title">
 	<com.androzic.ui.SeekbarPreference android:key="@string/pref_waypoint_width" android:title="@string/pref_waypoint_width_title" android:summary="@string/pref_waypoint_width_summary" androzic:defaultValue="@integer/def_waypoint_width" android:text=" pixels" androzic:min="5" androzic:max="20" />
 	<com.androzic.ui.ColorPreference android:key="@string/pref_waypoint_color" android:title="@string/pref_waypoint_color_title" android:dialogTitle="@string/pref_waypoint_color_title" androzic:defaultColor="@color/waypoint" />
     <CheckBoxPreference android:key="@string/pref_waypoint_showname" android:title="@string/pref_waypoint_showname_title" android:summary="@string/pref_waypoint_showname_summary" android:defaultValue="true" />

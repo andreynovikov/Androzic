@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_tracking_title" android:summary="@string/pref_tracking_summary">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_tracking_title">
 	<EditTextPreference android:key="@string/pref_tracking_mintime" android:title="@string/pref_tracking_mintime_title" android:summary="@string/pref_tracking_mintime_summary" android:numeric="integer" android:maxLength="5" android:inputType="number" android:defaultValue="500" android:singleLine="true" />
 	<EditTextPreference android:key="@string/pref_tracking_mindistance" android:title="@string/pref_tracking_mindistance_title" android:summary="@string/pref_tracking_mindistance_summary" android:numeric="integer" android:maxLength="3" android:inputType="number" android:defaultValue="3" android:singleLine="true" />
     <CheckBoxPreference android:key="@string/pref_tracking_currentload" android:title="@string/pref_tracking_currentload_title" android:summary="@string/pref_tracking_currentload_summary" android:defaultValue="@bool/def_tracking_currentload" />

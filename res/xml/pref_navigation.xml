@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_navigation_title" android:summary="@string/pref_navigation_summary">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_navigation_title">
 	<EditTextPreference android:key="@string/pref_navigation_proximity" android:title="@string/pref_navigation_proximity_title" android:summary="@string/pref_navigation_proximity_summary" android:numeric="integer" android:maxLength="4" android:inputType="number" android:defaultValue="@string/def_navigation_proximity" android:singleLine="true" />
     <CheckBoxPreference android:key="@string/pref_navigation_traverse" android:title="@string/pref_navigation_traverse_title" android:summary="@string/pref_navigation_traverse_summary" android:defaultValue="@bool/def_navigation_traverse" />
     <CheckBoxPreference android:key="@string/pref_navigation_loadlast" android:title="@string/pref_navigation_loadlast_title" android:summary="@string/pref_navigation_loadlast_summary" android:defaultValue="@bool/def_navigation_loadlast" />

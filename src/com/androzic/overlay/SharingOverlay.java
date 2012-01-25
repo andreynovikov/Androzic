@@ -132,11 +132,6 @@ public class SharingOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onMapChanged()
-	{
-	}
-
-	@Override
 	protected void onDraw(Canvas c, MapView mapView)
 	{
 		Androzic application = (Androzic) context.getApplication();

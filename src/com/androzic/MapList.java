@@ -76,7 +76,7 @@ public class MapList extends ListActivity
 	   	        
 	   	        if (extras != null && extras.getBoolean("pos"))
 	   	        {
-	   	        	double[] loc = application.getLocation();
+	   	        	double[] loc = application.getMapCenter();
 	   	        	maps = application.getMaps(loc);
 	   	        }
 	   	        else
