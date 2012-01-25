@@ -122,13 +122,35 @@ public class OziExplorerFiles
 		    			e.printStackTrace();
 		    		}
 		    	}
-	    		
-	    		if (fields.length >= 22)
-		    	{
-		    		if (! "".equals(fields[21]))
+
+	    		if (fields.length >= 14 && ! "".equals(fields[13]))
+	    		{
+		    		try
 		    		{
-		    			waypoint.image = fields[21];
+		    			waypoint.proximity = Integer.parseInt(fields[13]);
 		    		}
+		    		catch (NumberFormatException e)
+		    		{
+		    			e.printStackTrace();
+		    		}
+		    	}
+
+	    		if (fields.length >= 15 && ! "".equals(fields[14]))
+	    		{
+		    		try
+		    		{
+		    			int alt = Integer.parseInt(fields[14]);
+		    			waypoint.altitude = alt == -777 ? Integer.MIN_VALUE : alt;
+	    			}
+		    		catch (NumberFormatException e)
+		    		{
+		    			e.printStackTrace();
+		    		}
+		    	}
+
+	    		if (fields.length >= 22 && ! "".equals(fields[21]))
+	    		{
+	    			waypoint.image = fields[21];
 		    	}
 	    		waypoints.add(waypoint);
 	    	}
@@ -197,8 +219,11 @@ public class OziExplorerFiles
 	        	writer.write("0,1,3,");
 	        	writer.write((wpt.textcolor != Integer.MIN_VALUE ? rgb2bgr(wpt.textcolor) : "") + ",");
 	        	writer.write((wpt.backcolor != Integer.MIN_VALUE ? rgb2bgr(wpt.backcolor) : "") + ",");
-	        	writer.write(wpt.description.replace(',', (char) 209)+",");
-	        	writer.write("2,0,0,-777,,,,,,,");
+	        	writer.write(wpt.description.replace(',', (char) 209) + ",");
+	        	writer.write("2,0,");
+	        	writer.write(wpt.proximity + ",");
+	        	writer.write((wpt.altitude == Integer.MIN_VALUE ? -777 : wpt.altitude) + ",");
+	        	writer.write(",,,,,,");
 	        	writer.write(wpt.image+",,");
 	        	writer.write("\n");
 	        }

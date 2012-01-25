@@ -31,7 +31,56 @@
                 android:layout_gravity="top"
                 android:layout_weight="1" >
 
-                <include layout="@layout/inc_waypoint_properties_main" />
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+					android:padding="5dip" >
+
+                    <include layout="@layout/inc_waypoint_properties_main" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingTop="6dip"
+                            android:text="@string/altitude"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingTop="6dip"
+                            android:text="@string/proximity"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <EditText
+                            android:id="@+id/altitude_text"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="number|numberSigned" />
+
+                        <EditText
+                            android:id="@+id/proximity_text"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="number|numberSigned" />
+                    </LinearLayout>
+                </LinearLayout>
             </ScrollView>
 
             <ScrollView

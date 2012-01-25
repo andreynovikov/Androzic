@@ -6,6 +6,7 @@
 <color name="waypoint">#FFFFFF00</color>
 <color name="waypointbg">#AAFFFFFF</color>
 <color name="waypointtext">#FF000000</color>
+<color name="proximity">#55FF0000</color>
 <color name="routeline">#AA003300</color>
 <color name="routewaypoint">#FFFFFF00</color>
 <color name="routewaypointwithalpha">#AACCFFCC</color>

@@ -30,6 +30,7 @@ public class Waypoint
 	public double longitude = 0;
 	public boolean silent = false;
 	public int proximity = 0;
+	public int altitude = Integer.MIN_VALUE;
 	public String image = "";
 	public boolean drawImage = false;
 	public WaypointSet set = null;

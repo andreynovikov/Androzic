@@ -86,6 +86,8 @@
     <string name="color">Color</string>
 	<string name="latitude">Latitude</string>
 	<string name="longitude">Longitude</string>
+	<string name="altitude">Altitude</string>
+	<string name="proximity">Proximity</string>
 	<string name="accuracy">Accuracy</string>
 	<string name="filename">File name</string>
 	<string name="coordformat">Coordinates format</string>

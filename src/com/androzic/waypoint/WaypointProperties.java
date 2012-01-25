@@ -71,6 +71,8 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 
 	private TextView name;
 	private TextView description;
+	private TextView altitude;
+	private TextView proximity;
 	private TextView markercolor;
 	private TextView textcolor;
 	
@@ -144,6 +146,13 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		name.setText(waypoint.name);
 		description = (TextView) findViewById(R.id.description_text);
 		description.setText(waypoint.description);
+
+		altitude = (TextView) findViewById(R.id.altitude_text);
+		if (waypoint.altitude != Integer.MIN_VALUE)
+			altitude.setText(String.valueOf(waypoint.altitude));
+		proximity = (TextView) findViewById(R.id.proximity_text);
+		if (waypoint.proximity != 0)
+			proximity.setText(String.valueOf(waypoint.proximity));
 
 		iconValue = null;
 		ImageButton icon = (ImageButton) findViewById(R.id.icon_button);
@@ -332,9 +341,38 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
         		Coords coords = getLatLon();
         		waypoint.latitude = coords.lat;
         		waypoint.longitude = coords.lon;
-        		waypoint.image = iconValue;
+        		
+        		try
+				{
+					int prx = Integer.parseInt(proximity.getText().toString());
+					if (prx != 0)
+						waypoint.proximity = prx;
+				}
+				catch (NumberFormatException e)
+				{
+					e.printStackTrace();
+				}
+
+        		try
+				{
+					int alt = Integer.parseInt(altitude.getText().toString());
+					if (alt != 0)
+						waypoint.altitude = alt;
+				}
+				catch (NumberFormatException e)
+				{
+					e.printStackTrace();
+				}
+
         		if (iconValue == null)
+        		{
+            		waypoint.image = "";
         			waypoint.drawImage = false;
+        		}
+        		else
+        		{
+            		waypoint.image = iconValue;        			
+        		}
         		if (markerColorValue != defMarkerColor)
         			waypoint.backcolor = markerColorValue;
         		if (textColorValue != defTextColor)
@@ -351,6 +389,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
         	}
         	catch (Exception e)
         	{
+				e.printStackTrace();
     			Toast.makeText(getBaseContext(), "Invalid input", Toast.LENGTH_LONG).show();        		
         	}
         }

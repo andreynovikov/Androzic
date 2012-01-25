@@ -22,7 +22,6 @@ package com.androzic.overlay;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.WeakHashMap;
 
 import android.app.Activity;
@@ -40,20 +39,23 @@ import com.androzic.Androzic;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
+import com.androzic.map.Map;
 
 public class WaypointsOverlay extends MapOverlay
 {
-	Paint borderPaint;
-	Paint fillPaint;
-	Paint textPaint;
-	Paint textFillPaint;
-	List<Waypoint> waypoints;
-	Map<Waypoint,Bitmap> bitmaps;
+	private Paint borderPaint;
+	private Paint fillPaint;
+	private Paint textPaint;
+	private Paint textFillPaint;
+	private Paint proximityPaint;
+	private List<Waypoint> waypoints;
+	private WeakHashMap<Waypoint,Bitmap> bitmaps;
 	
 	// TODO replace with enabled
-	boolean visible;
-	int pointWidth;
-	boolean showNames;
+	private boolean visible;
+	private int pointWidth;
+	private boolean showNames;
+	private double mpp;
 	
     public WaypointsOverlay(final Activity mapActivity)
     {
@@ -83,8 +85,14 @@ public class WaypointsOverlay extends MapOverlay
         textFillPaint.setStrokeWidth(1);
         textFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         textFillPaint.setColor(context.getResources().getColor(R.color.waypointbg));
+        proximityPaint = new Paint();
+        proximityPaint.setAntiAlias(false);
+        proximityPaint.setStrokeWidth(1);
+        proximityPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        proximityPaint.setColor(context.getResources().getColor(R.color.proximity));
 
     	bitmaps = new WeakHashMap<Waypoint, Bitmap>();
+    	mpp = 0;
 
     	onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
 
@@ -139,6 +147,17 @@ public class WaypointsOverlay extends MapOverlay
 		super.onBeforeDestroy();
 		bitmaps.clear();
     }
+
+	@Override
+	public synchronized void onMapChanged()
+	{
+    	Androzic application = (Androzic) context.getApplication();
+    	Map map = application.getCurrentMap();
+    	if (map == null)
+    		return;
+    	
+    	mpp = map.mpp / map.getZoom();
+	}
 
 	@Override
 	protected void onDraw(final Canvas c, final MapView mapView)
@@ -249,6 +268,8 @@ public class WaypointsOverlay extends MapOverlay
 		            bitmaps.put(wpt, bitmap);
 	        	}
 	            int[] xy = application.getXYbyLatLon(wpt.latitude,wpt.longitude);
+	        	if (wpt.proximity > 0 && mpp > 0)
+		            c.drawCircle(xy[0], xy[1], (float) (wpt.proximity / mpp), proximityPaint);
 	            int dx = wpt.drawImage ? application.iconX : pointWidth / 2;
 	            int dy = wpt.drawImage ? application.iconY : bitmap.getHeight() / 2;
 	        	c.drawBitmap(bitmap, xy[0] - dx, xy[1] - dy, null);

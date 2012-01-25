@@ -99,6 +99,12 @@ public class WaypointInfo extends Activity implements OnClickListener
 		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
 		((TextView) findViewById(R.id.coordinates)).setText(coords);
 		
+		if (waypoint.altitude != Integer.MIN_VALUE)
+		{
+			String altitude = String.format("%d %s", waypoint.altitude, getResources().getStringArray(R.array.distance_abbrs_short)[2]);
+			((TextView) findViewById(R.id.altitude)).setText(altitude);
+		}
+		
 		double dist = Geo.distance(lat, lon, waypoint.latitude, waypoint.longitude);
 		double bearing = Geo.bearing(lat, lon, waypoint.latitude, waypoint.longitude);
 		bearing = application.fixDeclination(bearing);
