@@ -105,6 +105,7 @@ public class RouteSave extends Activity
     			if (file.canWrite())
     			{
     				OziExplorerFiles.saveRouteToFile(file, route);
+    				route.filepath = file.getAbsolutePath();
     			}
         		finish();
     		}
