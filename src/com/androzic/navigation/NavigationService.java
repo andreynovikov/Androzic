@@ -390,8 +390,8 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 				}
 				else
 				{
-					clearNavigation();
 					updateNavigationState(STATE_REACHED);
+					stopNavigation();
 					return;
 				}
 			}
@@ -439,7 +439,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 	
 	private void updateNavigationState(final int state)
 	{
-		if (state != STATE_STOPED)
+		if (state != STATE_STOPED && state != STATE_REACHED)
 		{
 			notification.when = System.currentTimeMillis();
 			String message = String.format((String) getText(R.string.notif_nav_to), navWaypoint.name);
@@ -447,14 +447,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 			NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 			nm.notify(NOTIFICATION_ID, notification);
 		}
-/*		executorThread.execute(new Runnable()
-        {
-			@Override
-			public void run()
-			{*/
-				sendBroadcast(new Intent(BROADCAST_NAVIGATION_STATE).putExtra("state", state));
-/*			}
-        });*/
+		sendBroadcast(new Intent(BROADCAST_NAVIGATION_STATE).putExtra("state", state));
 		Log.d(TAG, "State dispatched");
 	}
 

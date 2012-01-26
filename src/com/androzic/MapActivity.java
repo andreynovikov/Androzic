@@ -1657,7 +1657,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				map.setFollowing(false);
 				return true;
 			case R.id.menuWaypointNavigate:
-				navigationService.navigateTo(map.waypointSelected);
+				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", map.waypointSelected));
 				return true;
 			case R.id.menuWaypointProperties:
 				startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", map.waypointSelected), RESULT_SAVE_WAYPOINT);
@@ -1709,7 +1709,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 					switch (action)
 					{
 						case R.id.navigate_button:
-							navigationService.navigateTo(index);
+							startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", index));
 							break;
 						case R.id.properties_button:
 							startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index), RESULT_SAVE_WAYPOINT);
@@ -1801,7 +1801,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 					Bundle extras = data.getExtras();
 					int index = extras.getInt("index");
 					int dir = extras.getInt("dir");
-					navigationService.navigateTo(application.getRoute(index), dir);
+					startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra("index", index).putExtra("direction", dir));
 				}
 				break;
 			case RESULT_EDIT_ROUTE:
