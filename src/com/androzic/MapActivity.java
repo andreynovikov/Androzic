@@ -1190,7 +1190,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		boolean slVisible = settings.getBoolean(getString(R.string.pref_showsatinfo), true);
 		boolean mlVisible = settings.getBoolean(getString(R.string.pref_showmapinfo), true);
 
-		findViewById(R.id.satinfo).setVisibility(slVisible ? View.VISIBLE : View.INVISIBLE);
+		findViewById(R.id.satinfo).setVisibility(slVisible ? View.VISIBLE : View.GONE);
 		findViewById(R.id.mapinfo).setVisibility(mlVisible ? View.VISIBLE : View.GONE);
 	}
 
