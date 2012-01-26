@@ -23,8 +23,7 @@ package com.androzic.track;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
-import com.androzic.ui.ColorPickerDialog;
-import com.androzic.ui.OnColorChangedListener;
+import com.androzic.ui.ColorButton;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -42,11 +41,8 @@ public class TrackProperties extends Activity
 	private TextView name;
 	//private TextView description;
 	private CheckBox show;
-	private TextView color;
-	private Button colorselect;
+	private ColorButton color;
 	
-	private int colorValue;
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -66,11 +62,8 @@ public class TrackProperties extends Activity
 		*/
 		show = (CheckBox) findViewById(R.id.show_check);
         show.setChecked(track.show);
-        color = (TextView) findViewById(R.id.color_text);
-        colorValue = track.color;
-        color.setBackgroundColor(track.color);
-	    colorselect = (Button) findViewById(R.id.color_button);
-	    colorselect.setOnClickListener(colorOnClickListener);
+        color = (ColorButton) findViewById(R.id.color_button);
+        color.setColor(track.color, getResources().getColor(R.color.currenttrack));
 		
 	    Button save = (Button) findViewById(R.id.done_button);
 	    save.setOnClickListener(saveOnClickListener);
@@ -88,7 +81,7 @@ public class TrackProperties extends Activity
         		track.name = name.getText().toString();
         		//track.description = description.getText().toString();
         		track.show = show.isChecked();
-        		track.color = colorValue;
+        		track.color = color.getColor();
     			setResult(Activity.RESULT_OK);
         		finish();
         	}
@@ -99,26 +92,6 @@ public class TrackProperties extends Activity
         }
     };
 
-	private OnClickListener colorOnClickListener = new OnClickListener()
-	{
-        public void onClick(View v)
-        {
-        	new ColorPickerDialog(TrackProperties.this, colorChangeListener, colorValue, track.color, false).show();
-        }
-    };
-
-	private OnColorChangedListener colorChangeListener = new OnColorChangedListener()
-	{
-
-		@Override
-		public void colorChanged(int newColor)
-		{
-			colorValue = newColor;
-			color.setBackgroundColor(newColor);
-		}
-		
-	};
-
 	@Override
 	protected void onDestroy()
 	{
@@ -127,7 +100,6 @@ public class TrackProperties extends Activity
 		name = null;
 		show = null;
 		color = null;
-		colorselect = null;
 	}
 
 }

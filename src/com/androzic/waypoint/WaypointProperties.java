@@ -55,9 +55,8 @@ import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
-import com.androzic.ui.ColorPickerDialog;
+import com.androzic.ui.ColorButton;
 import com.androzic.ui.MarkerPickerActivity;
-import com.androzic.ui.OnColorChangedListener;
 import com.androzic.util.StringFormatter;
 import com.jhlabs.map.GeodeticPosition;
 import com.jhlabs.map.ReferenceException;
@@ -73,8 +72,8 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	private TextView description;
 	private TextView altitude;
 	private TextView proximity;
-	private TextView markercolor;
-	private TextView textcolor;
+	private ColorButton markercolor;
+	private ColorButton textcolor;
 	
 	private ViewGroup coordDeg;
 	private ViewGroup coordUtm;
@@ -87,8 +86,6 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 
 	
 	private int curFormat = -1;
-	private int markerColorValue;
-	private int textColorValue;
 	private String iconValue;
 
 	private int defMarkerColor;
@@ -193,8 +190,8 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		spinner.setAdapter(adapter);
 		spinner.setSelection(set);
 
-		markerColorValue = waypoint.backcolor;
-		textColorValue = waypoint.textcolor;
+		int markerColorValue = waypoint.backcolor;
+		int textColorValue = waypoint.textcolor;
 		
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		defMarkerColor = settings.getInt(getString(R.string.pref_waypoint_color), getResources().getColor(R.color.waypoint));
@@ -209,13 +206,11 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 			textColorValue = defTextColor;
 		}
 		
-        markercolor = (TextView) findViewById(R.id.markercolor_text);
-        markercolor.setBackgroundColor(markerColorValue);
-	    ((Button) findViewById(R.id.markercolor_button)).setOnClickListener(markerColorOnClickListener);
+        markercolor = (ColorButton) findViewById(R.id.markercolor_button);
+        markercolor.setColor(markerColorValue, defMarkerColor);
 
-        textcolor = (TextView) findViewById(R.id.textcolor_text);
-        textcolor.setBackgroundColor(textColorValue);
-	    ((Button) findViewById(R.id.textcolor_button)).setOnClickListener(textColorOnClickListener);
+        textcolor = (ColorButton) findViewById(R.id.textcolor_button);
+        textcolor.setColor(textColorValue, defTextColor);
 
 		coordDeg    = (ViewGroup) findViewById(R.id.coord_deg);
 		coordUtm    = (ViewGroup) findViewById(R.id.coord_utm);
@@ -373,8 +368,10 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
         		{
             		waypoint.image = iconValue;        			
         		}
+    			int markerColorValue = markercolor.getColor();
         		if (markerColorValue != defMarkerColor)
         			waypoint.backcolor = markerColorValue;
+    			int textColorValue = textcolor.getColor();
         		if (textColorValue != defTextColor)
         			waypoint.textcolor = textColorValue;
 
@@ -568,44 +565,4 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		coordLonMin = null;
 		coordLonSec = null;
 	}
-
-	private OnClickListener markerColorOnClickListener = new OnClickListener()
-	{
-        public void onClick(View v)
-        {
-        	new ColorPickerDialog(WaypointProperties.this, markerColorChangeListener, markerColorValue, defMarkerColor, true).show();
-        }
-    };
-
-	private OnColorChangedListener markerColorChangeListener = new OnColorChangedListener()
-	{
-
-		@Override
-		public void colorChanged(int newColor)
-		{
-			markerColorValue = newColor;
-			markercolor.setBackgroundColor(newColor);
-		}
-		
-	};
-
-	private OnClickListener textColorOnClickListener = new OnClickListener()
-	{
-        public void onClick(View v)
-        {
-        	new ColorPickerDialog(WaypointProperties.this, textColorChangeListener, textColorValue, defTextColor, true).show();
-        }
-    };
-
-	private OnColorChangedListener textColorChangeListener = new OnColorChangedListener()
-	{
-
-		@Override
-		public void colorChanged(int newColor)
-		{
-			textColorValue = newColor;
-			textcolor.setBackgroundColor(newColor);
-		}
-		
-	};
 }

@@ -23,8 +23,7 @@ package com.androzic.route;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
-import com.androzic.ui.ColorPickerDialog;
-import com.androzic.ui.OnColorChangedListener;
+import com.androzic.ui.ColorButton;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -42,11 +41,8 @@ public class RouteProperties extends Activity
 	private TextView name;
 	//private TextView description;
 	private CheckBox show;
-	private TextView color;
-	private Button colorselect;
+	private ColorButton color;
 	
-	private int colorValue;
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -67,11 +63,8 @@ public class RouteProperties extends Activity
 		*/
 		show = (CheckBox) findViewById(R.id.show_check);
         show.setChecked(route.show);
-        color = (TextView) findViewById(R.id.color_text);
-        colorValue = route.lineColor;
-        color.setBackgroundColor(route.lineColor);
-	    colorselect = (Button) findViewById(R.id.color_button);
-	    colorselect.setOnClickListener(colorOnClickListener);
+        color = (ColorButton) findViewById(R.id.color_button);
+        color.setColor(route.lineColor, getResources().getColor(R.color.routeline));
 		
 	    Button save = (Button) findViewById(R.id.done_button);
 	    save.setOnClickListener(saveOnClickListener);
@@ -89,7 +82,7 @@ public class RouteProperties extends Activity
         		route.name = name.getText().toString();
         		//route.description = description.getText().toString();
         		route.show = show.isChecked();
-        		route.lineColor = colorValue;
+        		route.lineColor = color.getColor();
     			setResult(Activity.RESULT_OK);
         		finish();
         	}
@@ -100,26 +93,6 @@ public class RouteProperties extends Activity
         }
     };
 
-	private OnClickListener colorOnClickListener = new OnClickListener()
-	{
-        public void onClick(View v)
-        {
-        	new ColorPickerDialog(RouteProperties.this, colorChangeListener, colorValue, route.lineColor, false).show();
-        }
-    };
-
-	private OnColorChangedListener colorChangeListener = new OnColorChangedListener()
-	{
-
-		@Override
-		public void colorChanged(int newColor)
-		{
-			colorValue = newColor;
-			color.setBackgroundColor(newColor);
-		}
-		
-	};
-
 	@Override
 	protected void onDestroy()
 	{
@@ -128,7 +101,6 @@ public class RouteProperties extends Activity
 		name = null;
 		show = null;
 		color = null;
-		colorselect = null;
 	}
 
 }
