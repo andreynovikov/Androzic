@@ -99,23 +99,26 @@ public class NavigationOverlay extends MapOverlay
 
 		int[] xy = application.getXYbyLatLon(navigationService.navWaypoint.latitude, navigationService.navWaypoint.longitude);
 
-        final double[] loc = mapView.mapCenter;
-        final int[] cxy = mapView.mapCenterXY;
-
-        int sx = xy[0] - cxy[0] + Math.round(mapView.getWidth() / 2);
-        int sy = xy[1] - cxy[1] + Math.round(mapView.getHeight() / 2);
+        final double[] loc = mapView.currentLocation;
+        final int[] cxy = mapView.currentLocationXY;
         
-        if (sx >= 0 && sy >= 0 && sx <= mapView.getWidth() && sy <= mapView.getHeight())
+        if (loc != null)
         {
-        	c.drawLine(cxy[0], cxy[1], xy[0], xy[1], paint);
-        }
-        else
-        {
-        	double bearing = Geo.bearing(loc[0], loc[1], navigationService.navWaypoint.latitude, navigationService.navWaypoint.longitude);
-        	c.save();
-        	c.rotate((float) bearing, cxy[0], cxy[1]);
-        	c.drawLine(cxy[0], cxy[1], cxy[0], 0, paint);
-        	c.restore();
+	        int sx = xy[0] - cxy[0] + Math.round(mapView.getWidth() / 2);
+	        int sy = xy[1] - cxy[1] + Math.round(mapView.getHeight() / 2);
+	        
+	        if (sx >= 0 && sy >= 0 && sx <= mapView.getWidth() && sy <= mapView.getHeight())
+	        {
+	        	c.drawLine(cxy[0], cxy[1], xy[0], xy[1], paint);
+	        }
+	        else
+	        {
+	        	double bearing = Geo.bearing(loc[0], loc[1], navigationService.navWaypoint.latitude, navigationService.navWaypoint.longitude);
+	        	c.save();
+	        	c.rotate((float) bearing, cxy[0], cxy[1]);
+	        	c.drawLine(cxy[0], cxy[1], cxy[0], 0, paint);
+	        	c.restore();
+	        }
         }
         if (drawCircle && navigationService.navRoute != null)
         {
