@@ -56,12 +56,14 @@
 	<string name="pref_grid_usermpp">grid_usermpp</string>
 	<string name="pref_grid_preference">grid_preference</string>
 	<string name="pref_tracking_path">tracking_path</string>
+	<string name="pref_tracking_mintime">tracking_mintime</string>
 	<string name="pref_tracking_mindistance">tracking_mindistance</string>
 	<string name="pref_tracking_currentinterval">tracking_currentinterval</string>
 	<string name="pref_tracking_currentload">tracking_currentload</string>
 	<string name="pref_tracking_currentlength">tracking_currentlength</string>
 	<string name="pref_tracking_currentcolor">tracking_currentcolor</string>
 	<string name="pref_tracking_linewidth">tracking_linewidth</string>
+	<string name="pref_waypoint_visible">waypoint_visible</string>
 	<string name="pref_waypoint_width">waypoint_width_int</string>
 	<string name="pref_waypoint_color">waypoint_color</string>
 	<string name="pref_waypoint_namecolor">waypoint_namecolor</string>

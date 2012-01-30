@@ -279,7 +279,6 @@
 	<string name="pref_grid_usermpp_summary">Maximum meters per pixel scale at which custom grid will be visible</string>
 	<string name="pref_grid_preference_title">Grid preference</string>
 	<string name="pref_tracking_title">Tracks</string>
-	<string name="pref_tracking_mintime">tracking_mintime</string>
 	<string name="pref_tracking_mintime_title">Minimum time</string>
 	<string name="pref_tracking_mintime_summary">Minimum time in milliseconds that should pass before another track point is acquired</string>
 	<string name="pref_tracking_mindistance_title">Minimum distance</string>
@@ -291,6 +290,8 @@
 	<string name="pref_tracking_currentlength_summary">Maximum number of points in current track tail</string>
 	<string name="pref_tracking_currentcolor_title">Current track color</string>
 	<string name="pref_waypoint_title">Waypoints</string>
+	<string name="pref_waypoint_visible_title">Ensure visible on create</string>
+	<string name="pref_waypoint_visible_summary">Mark to center map on newly created waypoint</string>
 	<string name="pref_waypoint_width_title">Marker size</string>
 	<string name="pref_waypoint_width_summary">The pixel size of waypoint marker</string>
 	<string name="pref_waypoint_color_title">Marker color</string>
