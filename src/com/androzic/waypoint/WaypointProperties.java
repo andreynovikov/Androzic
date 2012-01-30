@@ -87,6 +87,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	
 	private int curFormat = -1;
 	private String iconValue;
+	private int route;
 
 	private int defMarkerColor;
 	private int defTextColor;
@@ -104,7 +105,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		setContentView(R.layout.act_waypoint_properties);
 
         int index = getIntent().getExtras().getInt("INDEX");
-        int route = getIntent().getExtras().getInt("ROUTE");
+        route = getIntent().getExtras().getInt("ROUTE");
         
         tabHost = (TabHost) findViewById(R.id.tabhost);
         tabHost.setup();
@@ -128,6 +129,8 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		if (route > 0)
 		{
 			waypoint = application.getRoute(route - 1).getWaypoints().get(index);
+			findViewById(R.id.advanced).setVisibility(View.GONE);
+			findViewById(R.id.icon_container).setVisibility(View.GONE);
 		}
 		else if (index >= 0)
 		{
@@ -375,13 +378,27 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
         		if (textColorValue != defTextColor)
         			waypoint.textcolor = textColorValue;
 
-        		if (waypoint.set == null)
-        			application.addWaypoint(waypoint);
+        		int index = -1;
+        		if (route == 0)
+        		{
+        			if (waypoint.set == null)
+        			{
+        				application.addWaypoint(waypoint);
+        				index = application.getWaypointIndex(waypoint);
+        			}
         		
-        		int set = ((Spinner) findViewById(R.id.set_spinner)).getSelectedItemPosition();
-        		waypoint.set = application.getWaypointSets().get(set);
+        			int set = ((Spinner) findViewById(R.id.set_spinner)).getSelectedItemPosition();
+        			waypoint.set = application.getWaypointSets().get(set);
+        		}
         		
-        		setResult(Activity.RESULT_OK);
+        		if (index != -1)
+        		{
+        			setResult(Activity.RESULT_OK, new Intent().putExtra("index", index));
+        		}
+        		else
+        		{
+        			setResult(Activity.RESULT_OK);
+        		}
         		finish();
         	}
         	catch (Exception e)
