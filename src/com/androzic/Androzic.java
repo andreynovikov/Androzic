@@ -1436,7 +1436,7 @@ public class Androzic extends Application
 			}
 		}
 		File mapproviders = new File(rootPath, "providers.dat");
-		if (isPaid && mapproviders.exists())
+		if (mapproviders.exists())
 		{
 			try
 			{
