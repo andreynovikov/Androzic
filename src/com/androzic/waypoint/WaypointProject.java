@@ -32,6 +32,7 @@ import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.hardware.GeomagneticField;
 import android.os.Bundle;
 import android.view.View;
@@ -139,7 +140,7 @@ public class WaypointProject extends Activity
         		waypoint.longitude = prj[1];
         		waypoint.date = Calendar.getInstance().getTime();
         		application.addWaypoint(waypoint);
-    			setResult(Activity.RESULT_OK);
+    			setResult(Activity.RESULT_OK, new Intent().putExtra("index", application.getWaypointIndex(waypoint)));
         		finish();
         	}
         	catch (Exception e)

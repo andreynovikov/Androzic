@@ -1,8 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_waypoint_title">
-	<com.androzic.ui.SeekbarPreference android:key="@string/pref_waypoint_width" android:title="@string/pref_waypoint_width_title" android:summary="@string/pref_waypoint_width_summary" androzic:defaultValue="@integer/def_waypoint_width" android:text=" pixels" androzic:min="5" androzic:max="20" />
-	<com.androzic.ui.ColorPreference android:key="@string/pref_waypoint_color" android:title="@string/pref_waypoint_color_title" android:dialogTitle="@string/pref_waypoint_color_title" androzic:defaultColor="@color/waypoint" />
-    <CheckBoxPreference android:key="@string/pref_waypoint_showname" android:title="@string/pref_waypoint_showname_title" android:summary="@string/pref_waypoint_showname_summary" android:defaultValue="true" />
-	<com.androzic.ui.ColorPreference android:key="@string/pref_waypoint_namecolor" android:title="@string/pref_waypoint_namecolor_title" android:dialogTitle="@string/pref_waypoint_namecolor_title" androzic:defaultColor="@color/waypointtext" />
-	<com.androzic.ui.ColorPreference android:key="@string/pref_waypoint_bgcolor" android:title="@string/pref_waypoint_bgcolor_title" android:dialogTitle="@string/pref_waypoint_bgcolor_title" androzic:defaultColor="@color/waypointbg" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
+    android:title="@string/pref_waypoint_title" >
+
+    <CheckBoxPreference
+        android:key="@string/pref_waypoint_visible"
+        android:defaultValue="@bool/def_waypoint_visible"
+        android:title="@string/pref_waypoint_visible_title"
+        android:summary="@string/pref_waypoint_visible_summary" />
+
+    <com.androzic.ui.SeekbarPreference
+        androzic:defaultValue="@integer/def_waypoint_width"
+        android:key="@string/pref_waypoint_width"
+        androzic:max="20"
+        androzic:min="5"
+        android:summary="@string/pref_waypoint_width_summary"
+        android:text=" pixels"
+        android:title="@string/pref_waypoint_width_title" />
+
+    <com.androzic.ui.ColorPreference
+        androzic:defaultColor="@color/waypoint"
+        android:defaultValue="@color/waypoint"
+        android:dialogTitle="@string/pref_waypoint_color_title"
+        android:key="@string/pref_waypoint_color"
+        android:title="@string/pref_waypoint_color_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_waypoint_showname"
+        android:summary="@string/pref_waypoint_showname_summary"
+        android:title="@string/pref_waypoint_showname_title" />
+
+    <com.androzic.ui.ColorPreference
+        androzic:defaultColor="@color/waypointtext"
+        android:defaultValue="@color/waypointtext"
+        android:dialogTitle="@string/pref_waypoint_namecolor_title"
+        android:key="@string/pref_waypoint_namecolor"
+        android:title="@string/pref_waypoint_namecolor_title" />
+    
+    <com.androzic.ui.ColorPreference
+        androzic:defaultColor="@color/waypointbg"
+        android:defaultValue="@color/waypointbg"
+        android:dialogTitle="@string/pref_waypoint_bgcolor_title"
+        android:key="@string/pref_waypoint_bgcolor"
+        android:title="@string/pref_waypoint_bgcolor_title" />
+
 </PreferenceScreen>
