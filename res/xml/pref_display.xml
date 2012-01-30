@@ -1,12 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_show_title" android:summary="@string/pref_show_summary">
-	<com.androzic.ui.SeekbarPreference android:key="@string/pref_maprenderinterval" android:title="@string/pref_maprenderinterval_title" android:summary="@string/pref_maprenderinterval_summary" androzic:defaultValue="@integer/def_maprenderinterval" android:text=" ms" androzic:format="0" androzic:multiplier="100" androzic:min="2" androzic:max="50" />
-	<com.androzic.ui.ColorPreference android:key="@string/pref_cursorcolor" android:title="@string/pref_cursorcolor_title" android:summary="@string/pref_cursorcolor_summary" android:dialogTitle="@string/pref_cursorcolor_title" />
-    <CheckBoxPreference android:key="@string/pref_showsatinfo" android:title="@string/pref_showsatinfo_title" android:summary="@string/pref_showsatinfo_summary" android:defaultValue="true" />
-    <CheckBoxPreference android:key="@string/pref_showmapinfo" android:title="@string/pref_showmapinfo_title" android:summary="@string/pref_showmapinfo_summary" android:defaultValue="true" />
-	<CheckBoxPreference android:key="@string/pref_showcurrenttrack" android:title="@string/pref_showcurrenttrack_title" android:summary="@string/pref_showcurrenttrack_summary" android:defaultValue="true" />
-	<CheckBoxPreference android:key="@string/pref_showaccuracy" android:title="@string/pref_showaccuracy_title" android:summary="@string/pref_showaccuracy_summary" android:defaultValue="true" />
-	<CheckBoxPreference android:key="@string/pref_showdistance" android:title="@string/pref_showdistance_title" android:summary="@string/pref_showdistance_summary" android:defaultValue="true" />
-	<CheckBoxPreference android:key="@string/pref_maphideondrag" android:title="@string/pref_maphideondrag_title" android:summary="@string/pref_maphideondrag_summary" android:defaultValue="@bool/def_maphideondrag" />
-	<com.androzic.ui.SeekbarPreference android:key="@string/pref_lookahead" android:title="@string/pref_lookahead_title" android:summary="@string/pref_lookahead_summary" androzic:defaultValue="@integer/def_lookahead" android:text=" %" androzic:max="90" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
+    android:title="@string/pref_show_title" >
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_showsatinfo"
+        android:summary="@string/pref_showsatinfo_summary"
+        android:title="@string/pref_showsatinfo_title" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_showmapinfo"
+        android:summary="@string/pref_showmapinfo_summary"
+        android:title="@string/pref_showmapinfo_title" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_showcurrenttrack"
+        android:summary="@string/pref_showcurrenttrack_summary"
+        android:title="@string/pref_showcurrenttrack_title" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_showaccuracy"
+        android:summary="@string/pref_showaccuracy_summary"
+        android:title="@string/pref_showaccuracy_title" />
+    <ListPreference
+       	android:defaultValue="@string/def_showdistance"
+		android:key="@string/pref_showdistance_int"
+        android:title="@string/pref_showdistance_title"
+        android:dialogTitle="@string/pref_showdistance_title"
+        android:entries="@array/showdistance_names"
+        android:entryValues="@array/showdistance_values" />
+    <CheckBoxPreference
+        android:defaultValue="@bool/def_maphideondrag"
+        android:key="@string/pref_maphideondrag"
+        android:summary="@string/pref_maphideondrag_summary"
+        android:title="@string/pref_maphideondrag_title" />
+
+    <com.androzic.ui.SeekbarPreference
+        androzic:defaultValue="@integer/def_lookahead"
+        android:key="@string/pref_lookahead"
+        androzic:max="90"
+        android:summary="@string/pref_lookahead_summary"
+        android:text=" %"
+        android:title="@string/pref_lookahead_title" />
+
+    <com.androzic.ui.ImageMultiChoiceListPreference
+        android:defaultValue="@string/def_panelactions"
+        android:entries="@array/panel_action_names"
+        androzic:entryImages="@array/panel_action_images"
+        android:entryValues="@array/panel_action_values"
+        android:key="@string/pref_panelactions"
+        android:summary="@string/pref_panelactions_summary"
+        android:title="@string/pref_panelactions_title" />
+
+    <PreferenceCategory android:title="@string/pref_cursor_title" >
+        <com.androzic.ui.ColorPreference
+			androzic:defaultColor="@color/cursor"
+			android:defaultValue="@color/cursor"
+            android:dialogTitle="@string/pref_cursorcolor_title"
+            android:key="@string/pref_cursorcolor"
+            android:summary="@string/pref_cursorcolor_summary"
+            android:title="@string/pref_cursorcolor_title" />
+
+        <ListPreference
+        	android:defaultValue="@string/def_cursorvector"
+            android:key="@string/pref_cursorvector"
+            android:title="@string/pref_cursorvector_title"
+            android:summary="@string/pref_cursorvector_summary"
+            android:dialogTitle="@string/pref_cursorvector_title"
+            android:entries="@array/cursorvector_names"
+            android:entryValues="@array/cursorvector_values" />
+
+        <com.androzic.ui.SeekbarPreference
+	        androzic:defaultValue="@integer/def_cursorvectormlpr"
+            android:key="@string/pref_cursorvectormlpr"
+            android:title="@string/pref_cursorvectormlpr_title"
+            android:summary="@string/pref_cursorvectormlpr_summary"
+            androzic:min="1"
+            androzic:max="20"
+            androzic:format="0" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -1,9 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_tracking_title">
-	<EditTextPreference android:key="@string/pref_tracking_mintime" android:title="@string/pref_tracking_mintime_title" android:summary="@string/pref_tracking_mintime_summary" android:numeric="integer" android:maxLength="5" android:inputType="number" android:defaultValue="500" android:singleLine="true" />
-	<EditTextPreference android:key="@string/pref_tracking_mindistance" android:title="@string/pref_tracking_mindistance_title" android:summary="@string/pref_tracking_mindistance_summary" android:numeric="integer" android:maxLength="3" android:inputType="number" android:defaultValue="3" android:singleLine="true" />
-    <CheckBoxPreference android:key="@string/pref_tracking_currentload" android:title="@string/pref_tracking_currentload_title" android:summary="@string/pref_tracking_currentload_summary" android:defaultValue="@bool/def_tracking_currentload" />
-	<EditTextPreference android:key="@string/pref_tracking_currentlength" android:title="@string/pref_tracking_currentlength_title" android:summary="@string/pref_tracking_currentlength_summary" android:numeric="integer" android:maxLength="4" android:inputType="number" android:defaultValue="@string/def_tracking_currentlength" android:singleLine="true" />
-	<com.androzic.ui.ColorPreference android:key="@string/pref_tracking_currentcolor" android:title="@string/pref_tracking_currentcolor_title" android:dialogTitle="@string/pref_tracking_currentcolor_title" />
-	<ListPreference android:key="@string/pref_tracking_currentinterval" android:title="@string/pref_tracking_currentinterval_title" android:entries="@array/interval_names" android:entryValues="@array/interval_values" android:defaultValue="0" android:dialogTitle="@string/pref_tracking_currentinterval_title" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
+    android:title="@string/pref_tracking_title" >
+
+    <EditTextPreference
+        android:defaultValue="500"
+        android:inputType="number"
+        android:key="@string/pref_tracking_mintime"
+        android:maxLength="5"
+        android:numeric="integer"
+        android:singleLine="true"
+        android:summary="@string/pref_tracking_mintime_summary"
+        android:title="@string/pref_tracking_mintime_title" />
+    
+    <EditTextPreference
+        android:defaultValue="3"
+        android:inputType="number"
+        android:key="@string/pref_tracking_mindistance"
+        android:maxLength="3"
+        android:numeric="integer"
+        android:singleLine="true"
+        android:summary="@string/pref_tracking_mindistance_summary"
+        android:title="@string/pref_tracking_mindistance_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/def_tracking_currentload"
+        android:key="@string/pref_tracking_currentload"
+        android:summary="@string/pref_tracking_currentload_summary"
+        android:title="@string/pref_tracking_currentload_title" />
+
+    <EditTextPreference
+        android:defaultValue="@string/def_tracking_currentlength"
+        android:inputType="number"
+        android:key="@string/pref_tracking_currentlength"
+        android:maxLength="4"
+        android:numeric="integer"
+        android:singleLine="true"
+        android:summary="@string/pref_tracking_currentlength_summary"
+        android:title="@string/pref_tracking_currentlength_title" />
+
+    <com.androzic.ui.ColorPreference
+        android:defaultValue="@color/currenttrack"
+        android:dialogTitle="@string/pref_tracking_currentcolor_title"
+        android:key="@string/pref_tracking_currentcolor"
+        android:title="@string/pref_tracking_currentcolor_title" />
+
+    <ListPreference
+        android:defaultValue="0"
+        android:dialogTitle="@string/pref_tracking_currentinterval_title"
+        android:entries="@array/interval_names"
+        android:entryValues="@array/interval_values"
+        android:key="@string/pref_tracking_currentinterval"
+        android:title="@string/pref_tracking_currentinterval_title" />
+
 </PreferenceScreen>
