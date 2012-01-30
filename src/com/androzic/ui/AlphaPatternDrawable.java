@@ -72,7 +72,6 @@ public class AlphaPatternDrawable extends Drawable {
 	protected void onBoundsChange(Rect bounds) {
 		super.onBoundsChange(bounds);
 		generatePatternBitmap();
-
 	}
 
 	/**

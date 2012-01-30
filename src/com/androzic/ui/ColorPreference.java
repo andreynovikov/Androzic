@@ -24,25 +24,28 @@ package com.androzic.ui;
  * Fixes and enhancements by Andrey Novikov, 2010.
  */
 
-import com.androzic.R;
-
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.androzic.R;
+
 public class ColorPreference extends DialogPreference
 {
 	private int mCurrentColor;
-	private int mDefaultColor = 0;
+	private int mDefaultColor = Color.TRANSPARENT;
 	private float mDensity = 0;
 	private ColorPickerView mCPView;
 	private View mView;
@@ -53,10 +56,10 @@ public class ColorPreference extends DialogPreference
 
 		// default value is in private namespace because values from integer
 		// resource where incorrectly processed when specified in android namespace
-		TypedArray sattrs = context.obtainStyledAttributes(attrs, R.styleable.ColorPreference);
-		mDefaultColor = sattrs.getInt(R.styleable.ColorPreference_defaultColor, Color.RED);
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ColorPreference);
+		mDefaultColor = a.getColor(R.styleable.ColorPreference_defaultColor, Color.TRANSPARENT);
 		mDensity = getContext().getResources().getDisplayMetrics().density;
-		sattrs.recycle();
+		a.recycle();
 	}
 
 	public ColorPreference(Context context, AttributeSet attrs, int defStyle)
@@ -66,15 +69,16 @@ public class ColorPreference extends DialogPreference
 		// default value is in private namespace because values from integer
 		// resource where
 		// incorrectly processed when specified in android namespace
-		TypedArray sattrs = context.obtainStyledAttributes(attrs, R.styleable.ColorPreference);
-		mDefaultColor = sattrs.getInt(R.styleable.ColorPreference_defaultColor, Color.RED);
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ColorPreference);
+		mDefaultColor = a.getColor(R.styleable.ColorPreference_defaultColor, Color.TRANSPARENT);
 		mDensity = getContext().getResources().getDisplayMetrics().density;
+		a.recycle();
 	}
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index)
     {
-        return a.getColor(index, Color.TRANSPARENT);
+        return a.getColor(index, mDefaultColor);
     }
     
 	@Override
@@ -99,7 +103,14 @@ public class ColorPreference extends DialogPreference
 		LinearLayout widgetFrameView = ((LinearLayout) mView.findViewById(android.R.id.widget_frame));
 		if (widgetFrameView == null)
 			return;
-		widgetFrameView.setPadding(widgetFrameView.getPaddingLeft(), widgetFrameView.getPaddingTop(), (int) (mDensity * 8), widgetFrameView.getPaddingBottom());
+		widgetFrameView.setVisibility(View.VISIBLE);
+		final int rightPaddingDip = android.os.Build.VERSION.SDK_INT < 14 ? 8 : 5;
+		widgetFrameView.setPadding(
+		                      widgetFrameView.getPaddingLeft(),
+		                      widgetFrameView.getPaddingTop(),
+		                      (int)(mDensity * rightPaddingDip),
+		                      widgetFrameView.getPaddingBottom()
+		                );
 		// remove already create preview image
 		int count = widgetFrameView.getChildCount();
 		if (count > 0)
@@ -107,7 +118,6 @@ public class ColorPreference extends DialogPreference
 			widgetFrameView.removeViews(0, count);
 		}
 		widgetFrameView.addView(iView);
-		iView.setBackgroundDrawable(new AlphaPatternDrawable((int) (5 * mDensity)));
 		iView.setImageBitmap(getPreviewBitmap());
 	}
 
@@ -131,8 +141,15 @@ public class ColorPreference extends DialogPreference
 				}
 			}
 		}
+		
+		Bitmap b = Bitmap.createBitmap(d, d, Config.ARGB_8888);
+		Canvas bc = new Canvas(b);
+		Drawable drw = new AlphaPatternDrawable((int) (5 * mDensity));
+		drw.setBounds(0, 0, d, d);
+		drw.draw(bc);
+		bc.drawBitmap(bm, null, new Rect(0, 0, d, d), null);
 
-		return bm;
+		return b;
 	}
 
 	public int getValue()

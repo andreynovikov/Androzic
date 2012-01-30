@@ -24,6 +24,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.Bitmap.Config;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -80,17 +81,12 @@ public class ColorButton extends Button
 	{
 		return mColor;
 	}
-	
+
 	private BitmapDrawable getPreviewBitmap()
 	{
-		int d = (int) (mDensity * 41); // 40dip
+		int d = (int) (mDensity * 33);
 		int color = mColor;
-		Drawable drw = new AlphaPatternDrawable((int) (5 * mDensity));
-		drw.setBounds(0, 0, d, d);
 		Bitmap bm = Bitmap.createBitmap(d, d, Config.ARGB_8888);
-		Canvas bc = new Canvas(bm);
-		drw.draw(bc);
-
 		int w = bm.getWidth();
 		int h = bm.getHeight();
 		int c = color;
@@ -107,7 +103,14 @@ public class ColorButton extends Button
 			}
 		}
 
-		return new BitmapDrawable(getResources(), bm);
+		Bitmap b = Bitmap.createBitmap(d, d, Config.ARGB_8888);
+		Canvas bc = new Canvas(b);
+		Drawable drw = new AlphaPatternDrawable((int) (5 * mDensity));
+		drw.setBounds(0, 0, d, d);
+		drw.draw(bc);
+		bc.drawBitmap(bm, null, new Rect(0, 0, d, d), null);
+
+		return new BitmapDrawable(getResources(), b);
 	}
 	
 	private OnClickListener onClickListener = new OnClickListener()
