@@ -376,6 +376,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 				Log.d(TAG, "New location");
 				lastKnownLocation = location;
 				lastLocationMillis = time;
+				isContinous = false;
 				sendUpdate = true;
 			}
 			else
@@ -496,6 +497,10 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	@Override
 	public void onNmeaReceived(long timestamp, String nmea)
 	{
+        if (nmea.indexOf('\n') >= 0)
+        {
+        	nmea = nmea.substring(0, nmea.indexOf('\n') - 1);
+        }
         int len = nmea.length();
         if (len < 9)
         {
@@ -503,7 +508,6 @@ public class LocationService extends Service implements LocationListener, NmeaLi
         }
         if (nmea.charAt(len - 3) == '*')
         {
-            // String checksum = s.substring(len - 4, len);
         	nmea = nmea.substring(0, len - 3);
         }
         String[] tokens = nmea.split(",");
@@ -524,8 +528,9 @@ public class LocationService extends Service implements LocationListener, NmeaLi
                 String altitude = tokens[9];
                 //String altitudeUnits = tokens[10];
                 String heightOfGeoid = tokens[11];
-                Log.e(TAG, "A: "+altitude+" G:"+heightOfGeoid);
-                nmeaGeoidHeight = Float.parseFloat(heightOfGeoid);
+                Log.e(TAG, "A: "+altitude+" G:"+heightOfGeoid+" "+tokens[12]);
+                if (! "".equals(heightOfGeoid))
+                	nmeaGeoidHeight = Float.parseFloat(heightOfGeoid);
                 //String heightOfGeoidUnits = tokens[12];
                 //String timeSinceLastDgpsUpdate = tokens[13];
             }
