@@ -72,6 +72,7 @@ public class Preferences extends PreferenceActivity
             });
     	}
     	
+    	/*
 		Androzic application = (Androzic) getApplication();
     	Preference sharing = root.findPreference("pref_sharing");
     	sharing.setEnabled(application.isPaid);
@@ -79,6 +80,7 @@ public class Preferences extends PreferenceActivity
     	{
     		sharing.setSummary(R.string.donation_required);
     	}
+    	*/
     	
     	if (getIntent().hasExtra("pref"))
     	{

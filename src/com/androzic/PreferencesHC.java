@@ -54,6 +54,7 @@ public class PreferencesHC extends PreferenceActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        /*
 		Androzic application = (Androzic) getApplication();
     	if (! application.isPaid)
     	{
@@ -66,7 +67,8 @@ public class PreferencesHC extends PreferenceActivity
 				}
 			}
     	}
-    	
+    	*/
+        
     	if (getIntent().hasExtra("pref"))
     	{
 			for (int i = 0; i < getListAdapter().getCount(); i++)
