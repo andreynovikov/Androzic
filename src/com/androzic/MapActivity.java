@@ -941,8 +941,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 							aib.setImageDrawable(getResources().getDrawable(isTracking ? R.drawable.doc_delete : R.drawable.doc_edit));
 							break;
 						case R.id.share:
-							aib.setEnabled(application.isPaid);
-							aib.setColorFilter(aib.isEnabled() ? null : disable);
 							aib.setImageDrawable(getResources().getDrawable(isSharing ? R.drawable.user : R.drawable.users));
 							break;
 					}
@@ -1605,21 +1603,24 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			case R.id.menuPasteLocation:
 			{
 				ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-				String q = (String) clipboard.getText();
-				try
+				if (clipboard.hasText())
 				{
-					double c[] = CoordinateParser.parse(q);
-					if (! Double.isNaN(c[0]) && ! Double.isNaN(c[1]))
+					String q = clipboard.getText().toString();
+					try
 					{
-						boolean mapChanged = application.setMapCenter(c[0], c[1], false);
-						if (mapChanged)
-							map.updateMapInfo();
-						map.update();
-						map.setFollowing(false);
+						double c[] = CoordinateParser.parse(q);
+						if (! Double.isNaN(c[0]) && ! Double.isNaN(c[1]))
+						{
+							boolean mapChanged = application.setMapCenter(c[0], c[1], false);
+							if (mapChanged)
+								map.updateMapInfo();
+							map.update();
+							map.setFollowing(false);
+						}
 					}
-				}
-				catch (IllegalArgumentException e)
-				{
+					catch (IllegalArgumentException e)
+					{
+					}
 				}
 				return true;
 			}
@@ -1748,6 +1749,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				{
 					application.waypointsOverlay.clear();
 					application.saveWaypoints();
+					if (data != null && data.hasExtra("index") && PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_waypoint_visible), getResources().getBoolean(R.bool.def_waypoint_visible)))
+						application.ensureVisible(application.getWaypoint(data.getIntExtra("index", -1)));
 				}
 				break;
 			}
