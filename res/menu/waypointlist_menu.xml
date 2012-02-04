@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menuSortAz"
+     	android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/ic_menu_sort_alphabetically"
+        android:title="@string/menu_sort" />
+    <item
+        android:id="@+id/menuSortSize"
+     	android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/ic_menu_sort_by_size"
+        android:title="@string/menu_sort_distance" />
+    <item
+        android:id="@+id/menuLoadWaypoints"
+     	android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/ic_menu_archive"
+        android:title="@string/menu_open" />
+    <item
+        android:id="@+id/menuNewWaypointSet"
+     	android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/ic_menu_mark"
+        android:title="@string/menu_newwaypointset" />
+    <item
+        android:id="@+id/menuNewWaypoint"
+        android:icon="@drawable/ic_menu_add"
+        android:title="@string/menu_new" />
+    <item
+        android:id="@+id/menuProjectWaypoint"
+        android:icon="@drawable/ic_menu_goto"
+        android:title="@string/menu_project" />
+
+</menu>

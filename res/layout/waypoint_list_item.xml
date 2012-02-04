@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"    
+    android:paddingTop="2dip"
+    android:paddingBottom="2dip" >
+    
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="1dip"
+        android:layout_marginLeft="1dip" />
+
+    <TextView
+        android:id="@+id/name"
+
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        
+        android:layout_toRightOf="@id/icon"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/coordinates"
+        android:gravity="center_vertical"
+        
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:singleLine="true"
+        android:ellipsize="marquee" />
+    
+    <TextView  
+        android:id="@+id/distance"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_marginRight="2dip"
+        
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:singleLine="true" />
+    
+    <TextView  
+        android:id="@+id/coordinates"
+
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        
+        android:layout_toRightOf="@id/icon"
+        android:layout_toLeftOf="@id/distance"
+        android:layout_alignParentBottom="true"
+        
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:singleLine="true"
+        android:ellipsize="marquee" />
+
+</RelativeLayout>

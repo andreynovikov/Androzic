@@ -7,7 +7,6 @@
     <string name="savetrack_name">Save track to file</string>
     <string name="track2route_name">Convert track to route</string>
     <string name="loadwaypoints_name">Load waypoints from file</string>
-    <string name="savewaypoints_name">Save waypoints to file</string>
     <string name="managewaypoints_name">Manage waypoints</string>
     <string name="waypointproperties_name">Edit waypoint</string>
     <string name="waypointproject_name">Project new waypoint</string>
@@ -48,7 +47,7 @@
 
     <string name="err_nosdcard">SD card unavailable</string>
     <string name="err_nofile">No such file</string>
-    <string name="err_sdwrite">Unable to write to SD card</string>
+    <string name="err_write">Unable to write file</string>
     <string name="err_currentlog">Can not write current log</string>
     <string name="err_noconnection">Network connection error</string>
     <string name="err_wrongformat">Wrong file format</string>
@@ -157,11 +156,13 @@
     <string name="menu_project">Project new</string>
     <string name="menu_new">New</string>
     <string name="menu_edit">Edit</string>
+    <string name="menu_open">Open</string>
     <string name="menu_load">Load from file</string>
     <string name="menu_save">Save to file</string>
     <string name="menu_change">Change</string>
+    <string name="menu_delete">Delete</string>
     <string name="menu_remove">Remove</string>
-    <string name="menu_removeall">Remove all</string>
+    <string name="menu_clear">Clear</string>
     <string name="menu_search">Search</string>
     <string name="menu_dismiss">Dismiss</string>
 	<string name="menu_manage">Manage</string>
@@ -185,6 +186,7 @@
 	<string name="menu_sort_distance">Sort by distance</string>
     <string name="menu_track2route">Convert to route</string>
     <string name="menu_resetindex">Reset index</string>
+    <string name="menu_newwaypointset">New set</string>
     
     <string name="pref_advanced_title">Advanced</string>
 	<string name="pref_usemapindex_title">Use map index</string>
