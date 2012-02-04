@@ -20,30 +20,44 @@
 
 package com.androzic.waypoint;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import net.londatiga.android.ActionItem;
+import net.londatiga.android.QuickAction;
+import net.londatiga.android.QuickAction.OnActionItemClickListener;
+import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
-import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.ContextMenu;
+import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.ExpandableListAdapter;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.SimpleExpandableListAdapter;
-import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.androzic.Androzic;
 import com.androzic.R;
@@ -53,136 +67,100 @@ import com.androzic.navigation.NavigationService;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class WaypointList extends ExpandableListActivity
+public class WaypointList extends ExpandableListActivity implements OnItemLongClickListener
 {
-	protected Map<Long, Waypoint> waypoints = new HashMap<Long, Waypoint>();
-	protected List<Map<String, String>> setData = new ArrayList<Map<String, String>>();
-	protected List<List<Map<String, String>>> wptData = new ArrayList<List<Map<String, String>>>();
+	private static final int qaWaypointVisible = 1;
+	private static final int qaWaypointNavigate = 2;
+	private static final int qaWaypointProperties = 3;
+	private static final int qaWaypointShare = 4;
+	private static final int qaWaypointDelete = 5;
+	private static final int qaWaypointSetClear = 101;
+	private static final int qaWaypointSetRemove = 102;
 	
-	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
-	final Handler handler = new Handler();
+	private WaypointExpandableListAdapter adapter;
+    private QuickAction quickAction;
+    private QuickAction setQuickAction;
 
-	private final static String KEY_NAME = "NAME";
-	private final static String KEY_DESC = "DESC";
+	private long selectedKey;
+	private int selectedSetKey;
+	private Drawable selectedBackground;
 
-    private ExpandableListAdapter adapter;
-    
-	private boolean sortByDistance = false;
+	private boolean sortByDistance;
 	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-		registerForContextMenu(getExpandableListView());
+
+		adapter = new WaypointExpandableListAdapter(this);
+        setListAdapter(adapter);
+
+		getExpandableListView().setOnItemLongClickListener(this);
+		
+		Resources resources = getResources();
+		quickAction = new QuickAction(this);
+		quickAction.addActionItem(new ActionItem(qaWaypointVisible, getString(R.string.menu_view), resources.getDrawable(R.drawable.ic_menu_view)));
+		quickAction.addActionItem(new ActionItem(qaWaypointNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_menu_directions)));
+		quickAction.addActionItem(new ActionItem(qaWaypointProperties, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_menu_edit)));
+		quickAction.addActionItem(new ActionItem(qaWaypointShare, getString(R.string.menu_share), resources.getDrawable(R.drawable.ic_menu_share)));
+		quickAction.addActionItem(new ActionItem(qaWaypointDelete, getString(R.string.menu_delete), resources.getDrawable(R.drawable.ic_menu_delete)));
+
+		quickAction.setOnActionItemClickListener(waypointActionItemClickListener);
+		quickAction.setOnDismissListener(new PopupWindow.OnDismissListener() {			
+			@Override
+			public void onDismiss()
+			{
+				View v = getExpandableListView().findViewWithTag("selected");
+				if (v != null)
+				{
+					v.setBackgroundDrawable(selectedBackground);
+					v.setTag(null);
+				}
+			}
+		});
+		
+		setQuickAction = new QuickAction(this);
+		setQuickAction.addActionItem(new ActionItem(qaWaypointSetClear, getString(R.string.menu_clear), resources.getDrawable(R.drawable.ic_menu_clear_playlist)));
+		setQuickAction.addActionItem(new ActionItem(qaWaypointSetRemove, getString(R.string.menu_remove), resources.getDrawable(R.drawable.ic_menu_close_clear_cancel)));
+		setQuickAction.setOnActionItemClickListener(setActionItemClickListener);
 	}
 	
 	@Override
-	protected void onResume()
+	public void onResume()
 	{
-		populateItems();
 		super.onResume();
+		sortByDistance = false;
+		adapter.sort(0);
+		getExpandableListView().expandGroup(0);
 	}
-	
-	private void populateItems()
-	{
-		final ProgressDialog pd = new ProgressDialog(this);
-		pd.setIndeterminate(true);
-		pd.setMessage(getString(R.string.msg_wait)); 
-		pd.show();
-		
-		new Thread(new Runnable() 
-		{ 
-			public void run() 
-			{
-	   			setData.clear();
-				wptData.clear();
-				waypoints.clear();
-	   			
-				Androzic application = Androzic.getApplication();
-				final double[] loc = application.getLocation();
-				
-				List<WaypointSet> wptSets = application.getWaypointSets();
-				
-				for (WaypointSet set : wptSets)
-				{
-		            Map<String, String> setMap = new HashMap<String, String>();
-		            setData.add(setMap);
-		            setMap.put(KEY_NAME, set.name);
-					
-		            List<Waypoint> wpts = application.getWaypoints(set);
-
-		            Collections.sort(wpts, new Comparator<Waypoint>()
-	                {
-	                    @Override
-	                    public int compare(Waypoint o1, Waypoint o2)
-	                    {
-	                    	if (sortByDistance)
-	                    	{
-	                    		// TODO cache distances
-	                    		double dist1 = Geo.distance(loc[0], loc[1], o1.latitude, o1.longitude);
-	                    		double dist2 = Geo.distance(loc[0], loc[1], o2.latitude, o2.longitude);
-	                    		return (Double.compare(dist1, dist2));
-	                    	}
-	                    	else
-	                    	{
-	                    		return (o1.name.compareToIgnoreCase(o2.name));
-	                    	}
-	                    }
-	                });
-
-		            List<Map<String, String>> children = new ArrayList<Map<String, String>>();
-					int grps = wptData.size();
-
-					for (Waypoint wpt : wpts)
-					{
-						double dist = Geo.distance(loc[0], loc[1], wpt.latitude, wpt.longitude);
-						double bearing = Geo.bearing(loc[0], loc[1], wpt.latitude, wpt.longitude);
-						Map<String, String> child = new HashMap<String, String>();
-						child.put(KEY_NAME, wpt.name);
-						String desc = StringFormatter.coordinates(application.coordinateFormat, " ", wpt.latitude, wpt.longitude)
-									+ " | " + StringFormatter.distanceH(dist)+" "+StringFormatter.bearingSimpleH(bearing);
-						child.put(KEY_DESC, desc);
-		                children.add(child);
-						long key = (children.size() << 10) + grps;
-						waypoints.put(key, wpt);
-					}
-					wptData.add(children);
-				}
-
-				pd.dismiss(); 
-				handler.post(updateResults);
-			} 
-		}).start(); 
-	}
-
-	final Runnable updateResults = new Runnable() 
-	{
-		public void run() 
-        {
-	        // Set up our adapter
-	        adapter = new SimpleExpandableListAdapter(
-	                WaypointList.this,
-	                setData,
-	                android.R.layout.simple_expandable_list_item_1,
-	                new String[] { KEY_NAME, KEY_DESC },
-	                new int[] { android.R.id.text1, android.R.id.text2 },
-	                wptData,
-	                android.R.layout.simple_expandable_list_item_2,
-	                new String[] { KEY_NAME, KEY_DESC },
-	                new int[] { android.R.id.text1, android.R.id.text2 }
-	                );
-	        setListAdapter(adapter);
-			getExpandableListView().expandGroup(0);
-        }
-	};
 
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id)
 	{
-		long key = ((childPosition + 1) << 10) + groupPosition;
-		Androzic application = (Androzic) getApplication();
-		int position = application.getWaypointIndex(waypoints.get(key));
-		startActivity(new Intent(this, WaypointProperties.class).putExtra("INDEX", position));
+		v.setTag("selected");
+		selectedKey = adapter.getCombinedChildId(groupPosition, childPosition);
+		selectedBackground = v.getBackground();
+		int l = v.getPaddingLeft();
+		int t = v.getPaddingTop();
+		int r = v.getPaddingRight();
+		int b = v.getPaddingBottom();
+		v.setBackgroundResource(R.drawable.list_selector_background_focus);
+		v.setPadding(l, t, r, b);
+		quickAction.show(v);
+		//quickAction.setAnimStyle(QuickAction.ANIM_GROW_FROM_LEFT);
+		return true;
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) 
+	{
+		long pos = getExpandableListView().getExpandableListPosition(position);
+		if (ExpandableListView.getPackedPositionType(pos) == ExpandableListView.PACKED_POSITION_TYPE_GROUP)
+		{
+			selectedSetKey = ExpandableListView.getPackedPositionGroup(pos);
+			setQuickAction.show(view);
+		}
+		//quickAction.setAnimStyle(QuickAction.ANIM_GROW_FROM_LEFT);
 		return true;
 	}
 
@@ -190,7 +168,7 @@ public class WaypointList extends ExpandableListActivity
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.sort_menu, menu);
+		inflater.inflate(R.menu.waypointlist_menu, menu);
 		return true;
 	}
 
@@ -209,86 +187,328 @@ public class WaypointList extends ExpandableListActivity
 		{
 			case R.id.menuSortAz:
 				sortByDistance = false;
+				adapter.sort(0);
 				break;
 			case R.id.menuSortSize:
 				sortByDistance = true;
+				adapter.sort(1);
 				break;
+			case R.id.menuLoadWaypoints:
+				startActivity(new Intent(this, WaypointFileList.class));
+				break;
+			case R.id.menuNewWaypointSet:
+	            final EditText textEntryView = new EditText(this);
+	            textEntryView.setSingleLine(true);
+	            textEntryView.setPadding(8, 0, 8, 0);
+	            new AlertDialog.Builder(this)
+	                .setTitle(R.string.name)
+	                .setView(textEntryView)
+	                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+	                    public void onClick(DialogInterface dialog, int whichButton)
+	                    {
+	                    	String name = textEntryView.getText().toString();
+	                    	if (! "".equals(name))
+	                    	{
+	                    		WaypointSet set = new WaypointSet(name);
+	                    		Androzic.getApplication().addWaypointSet(set);
+	                    		adapter.notifyDataSetChanged();
+	                    		
+	                    	}
+	                    }
+	                })
+	                .setNegativeButton(R.string.cancel, null).create().show();
+	            break;
+			case R.id.menuNewWaypoint:
+				startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", -1), 0);
+				return true;
+			case R.id.menuProjectWaypoint:
+				startActivityForResult(new Intent(this, WaypointProject.class), 0);
+				return true;
 		}
-		populateItems();
 		return true;
 	}
-				
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
-    {
-    	ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
-        int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-
-    	MenuInflater inflater = getMenuInflater();
-        if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD)
-        {
-        	inflater.inflate(R.menu.waypoint_context_menu, menu);
-        }
-        else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP)
-        {
-        	inflater.inflate(R.menu.waypointset_context_menu, menu);
-    		int grouppos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-       		menu.findItem(R.id.menuWaypointSetRemove).setEnabled(grouppos > 0);
-        }
-    }
-
-    public boolean onContextItemSelected(final MenuItem item)
-    {
-    	ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
-		int grouppos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-		int childpos = ExpandableListView.getPackedPositionChild(info.packedPosition);
-		long key = ((childpos + 1) << 10) + grouppos;
-        Waypoint waypoint = waypoints.get(key);
-		Androzic application = (Androzic) getApplication();
-		int position = application.getWaypointIndex(waypoints.get(key));
-
-    	switch (item.getItemId())
-    	{
-    		case R.id.menuWaypointVisible:
-    			application.ensureVisible(waypoint);
-				finish();
-				return true;
-			case R.id.menuWaypointNavigate:
-				// FIXME context!
-				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", position));
-				finish();
-				return true;
-    		case R.id.menuWaypointProperties:
-    	        startActivity(new Intent(this, WaypointProperties.class).putExtra("INDEX", position));
-    			return true;
-			case R.id.menuWaypointShare:
-				Intent i=new Intent(android.content.Intent.ACTION_SEND);
-				i.setType("text/plain");
-				i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
-				String pos = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
-				i.putExtra(Intent.EXTRA_TEXT, waypoint.name + " @ " + pos);
-				startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
-				return true;
-    		case R.id.menuWaypointRemove:
-    			application.removeWaypoint(waypoint);
-    			populateItems();
-    			return true;
-    		case R.id.menuWaypointSetRemove:
-    			application.removeWaypointSet(grouppos);
-    			populateItems();
-    			return true;
-    		default:
-    			return super.onContextItemSelected(item);
-    	}
-    }
 
 	@Override
-	protected void onStop()
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		super.onStop();
-		waypoints.clear();
-		wptData.clear();
-		setData.clear();
+		super.onActivityResult(requestCode, resultCode, data);
+		Androzic.getApplication().saveWaypoints();
 	}
+	
+	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener(){
+		@Override
+		public void onItemClick(QuickAction source, int pos, int actionId)
+		{
+			Androzic application = (Androzic) getApplication();
+			Waypoint waypoint = (Waypoint) adapter.getChild(ExpandableListView.getPackedPositionGroup(selectedKey), ExpandableListView.getPackedPositionChild(selectedKey));
+			int position = application.getWaypointIndex(waypoint);
+	
+	    	switch (actionId)
+	    	{
+	    		case qaWaypointVisible:
+	    			application.ensureVisible(waypoint);
+					finish();
+					break;
+				case qaWaypointNavigate:
+					// FIXME context!
+					startService(new Intent(WaypointList.this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", position));
+					finish();
+					break;
+	    		case qaWaypointProperties:
+	    	        startActivity(new Intent(WaypointList.this, WaypointProperties.class).putExtra("INDEX", position));
+	    	        break;
+				case qaWaypointShare:
+					Intent i=new Intent(android.content.Intent.ACTION_SEND);
+					i.setType("text/plain");
+					i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
+					String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
+					i.putExtra(Intent.EXTRA_TEXT, waypoint.name + " @ " + coords);
+					startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
+					break;
+	    		case qaWaypointDelete:
+	    			application.removeWaypoint(waypoint);
+	    			adapter.notifyDataSetChanged();
+	    			break;
+	    		case qaWaypointSetClear:
+	    			WaypointSet set = application.getWaypointSets().get(selectedSetKey);
+					application.clearWaypoints(set);
+					application.saveWaypoints(set);
+	    			adapter.notifyDataSetChanged();
+					break;
+	    		case qaWaypointSetRemove:
+	    			if (selectedSetKey > 0)
+	    			{
+	    				application.removeWaypointSet(selectedSetKey);
+	    				adapter.notifyDataSetChanged();
+	    			}
+	    			break;
+	    	}
+		}
+	};
 
+	private OnActionItemClickListener setActionItemClickListener = new OnActionItemClickListener(){
+		@Override
+		public void onItemClick(QuickAction source, int pos, int actionId)
+		{
+			Androzic application = (Androzic) getApplication();
+	
+	    	switch (actionId)
+	    	{
+	    		case qaWaypointSetClear:
+	    			WaypointSet set = application.getWaypointSets().get(selectedSetKey);
+					application.clearWaypoints(set);
+					application.saveWaypoints(set);
+	    			adapter.notifyDataSetChanged();
+					break;
+	    		case qaWaypointSetRemove:
+	    			if (selectedSetKey > 0)
+	    			{
+	    				application.removeWaypointSet(selectedSetKey);
+	    				adapter.notifyDataSetChanged();
+	    			}
+	    			break;
+	    	}
+		}
+	};
+
+    public class WaypointExpandableListAdapter extends BaseExpandableListAdapter
+    {
+		private LayoutInflater mInflater;
+		private int mExpandedGroupLayout;
+		private int mCollapsedGroupLayout;
+		private int mChildLayout;
+		private float mDensity;
+		private Paint mBorderPaint;
+		private Paint mFillPaint;
+		private int mPointWidth;
+		private Androzic application;
+		private double[] loc;
+
+        public WaypointExpandableListAdapter(Context context)
+        {
+            mExpandedGroupLayout = android.R.layout.simple_expandable_list_item_1;
+            mCollapsedGroupLayout = android.R.layout.simple_expandable_list_item_1;
+            mChildLayout = R.layout.waypoint_list_item;
+        	mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        	mDensity = context.getResources().getDisplayMetrics().density;
+
+        	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        	
+            mPointWidth = settings.getInt(context.getString(R.string.pref_waypoint_width), context.getResources().getInteger(R.integer.def_waypoint_width));
+        	mFillPaint = new Paint();
+            mFillPaint.setAntiAlias(false);
+            mFillPaint.setStrokeWidth(1);
+            mFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            mFillPaint.setColor(settings.getInt(context.getString(R.string.pref_waypoint_color), context.getResources().getColor(R.color.waypoint)));
+            mBorderPaint = new Paint();
+            mBorderPaint.setAntiAlias(false);
+            mBorderPaint.setStrokeWidth(1);
+            mBorderPaint.setStyle(Paint.Style.STROKE);
+            mBorderPaint.setColor(context.getResources().getColor(R.color.waypointtext));
+            mBorderPaint.setColor(settings.getInt(context.getString(R.string.pref_waypoint_namecolor), context.getResources().getColor(R.color.waypointtext)));
+
+        	application = Androzic.getApplication();
+        	loc = application.getLocation();
+        }
+        
+        public Object getChild(int groupPosition, int childPosition)
+        {
+        	return application.getWaypoints(application.getWaypointSets().get(groupPosition)).get(childPosition);
+        }
+
+        public long getChildId(int groupPosition, int childPosition)
+        {
+            return childPosition;
+        }
+
+        public int getChildrenCount(int groupPosition)
+        {
+        	return application.getWaypointCount(application.getWaypointSets().get(groupPosition));
+        }
+
+        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+            View v;
+            if (convertView == null)
+            {
+                v = mInflater.inflate((isLastChild) ? mChildLayout : mChildLayout, parent, false);
+            }
+            else
+            {
+                v = convertView;
+            }
+            Waypoint wpt = (Waypoint) getChild(groupPosition, childPosition);
+            TextView text = (TextView) v.findViewById(R.id.name);
+            if (text != null)
+            {
+                text.setText(wpt.name);
+            }
+            String coordinates = StringFormatter.coordinates(application.coordinateFormat, " ", wpt.latitude, wpt.longitude);
+            text = (TextView) v.findViewById(R.id.coordinates);
+            if (text != null)
+            {
+                text.setText(coordinates);
+            }
+			double dist = Geo.distance(loc[0], loc[1], wpt.latitude, wpt.longitude);
+			double bearing = Geo.bearing(loc[0], loc[1], wpt.latitude, wpt.longitude);
+            String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.bearingSimpleH(bearing);
+            text = (TextView) v.findViewById(R.id.distance);
+            if (text != null)
+            {
+                text.setText(distance);
+            }
+			ImageView icon = (ImageView) v.findViewById(R.id.icon);
+			Bitmap b = null;
+    		if (application.iconsEnabled && wpt.drawImage)
+    		{
+    			BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inScaled = false;
+    			b = BitmapFactory.decodeFile(application.iconPath + File.separator + wpt.image, options);
+    		}
+    		int h = b != null ? b.getHeight() : 30;
+			Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity), h, Config.ARGB_8888);
+			bm.eraseColor(Color.TRANSPARENT);
+			Canvas bc = new Canvas(bm);
+    		if (b != null)
+    		{
+    			b.setDensity(Bitmap.DENSITY_NONE);    				
+    			int l = (int) ((38 * mDensity - b.getWidth()) / 2);
+    			bc.drawBitmap(b, null, new Rect(l, 0, b.getWidth() + l, b.getHeight()), null);
+    		}
+    		else
+    		{
+    			int tc = 0, bgc = 0;
+    			if (wpt.textcolor != Integer.MIN_VALUE)
+    			{
+    				tc = mBorderPaint.getColor();
+    				mBorderPaint.setColor(wpt.textcolor);
+    			}
+    			if (wpt.backcolor != Integer.MIN_VALUE)
+    			{
+    				bgc = mFillPaint.getColor();
+    				mFillPaint.setColor(wpt.backcolor);
+    			}
+    			Rect rect = new Rect(0, 0, mPointWidth, mPointWidth);
+        		bc.translate((38 * mDensity - mPointWidth) / 2, (30 - mPointWidth) / 2);
+	            bc.drawRect(rect, mBorderPaint);
+	            rect.inset(1, 1);
+	            bc.drawRect(rect, mFillPaint);
+    			if (wpt.textcolor != Integer.MIN_VALUE)
+    			{
+    				mBorderPaint.setColor(tc);
+    			}
+    			if (wpt.backcolor != Integer.MIN_VALUE)
+    			{
+    				mFillPaint.setColor(bgc);
+    			}
+    		}
+			icon.setImageBitmap(bm);
+
+            return v;
+        }
+
+        public Object getGroup(int groupPosition)
+        {
+        	return application.getWaypointSets().get(groupPosition);
+        }
+
+        public int getGroupCount()
+        {
+        	return application.getWaypointSets().size();
+        }
+
+        public long getGroupId(int groupPosition)
+        {
+            return groupPosition;
+        }
+
+        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent)
+        {
+            View v;
+            if (convertView == null) {
+                v = mInflater.inflate((isExpanded) ? mExpandedGroupLayout : mCollapsedGroupLayout, parent, false);
+            } else {
+                v = convertView;
+            }
+            
+            TextView text = (TextView) v.findViewById(android.R.id.text1);
+            if (text != null) {
+                text.setText(((WaypointSet)getGroup(groupPosition)).name);
+            }
+            
+            return v;
+        }
+
+        public boolean isChildSelectable(int groupPosition, int childPosition)
+        {
+            return true;
+        }
+
+        public boolean hasStableIds()
+        {
+            return true;
+        }
+        
+        public void sort(final int type)
+        {
+            Collections.sort(application.getWaypoints(), new Comparator<Waypoint>()
+            {
+                @Override
+                public int compare(Waypoint o1, Waypoint o2)
+                {
+                	if (type == 1)
+                	{
+                		// TODO cache distances
+                		double dist1 = Geo.distance(loc[0], loc[1], o1.latitude, o1.longitude);
+                		double dist2 = Geo.distance(loc[0], loc[1], o2.latitude, o2.longitude);
+                		return (Double.compare(dist1, dist2));
+                	}
+                	else
+                	{
+                		return (o1.name.compareToIgnoreCase(o2.name));
+                	}
+                }
+            });
+            notifyDataSetChanged();
+        }
+    }
 }
