@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:title="@string/menu_properties" android:id="@+id/menuTrackProperties" android:icon="@android:drawable/ic_menu_edit"></item>
-<item android:title="@string/menu_edit" android:id="@+id/menuTrackEdit" android:icon="@android:drawable/ic_menu_edit"></item>
-<item android:title="@string/menu_track2route" android:id="@+id/menuTrackToRoute" android:icon="@android:drawable/ic_menu_directions"></item>
-<item android:title="@string/menu_save" android:id="@+id/menuTrackSave" android:icon="@android:drawable/ic_menu_save"></item>
-<item android:title="@string/menu_remove" android:id="@+id/menuTrackRemove" android:icon="@android:drawable/ic_menu_delete"></item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menuTrackProperties"
+        android:icon="@drawable/ic_menu_edit"
+        android:title="@string/menu_properties">
+    </item>
+    <item
+        android:id="@+id/menuTrackEdit"
+        android:icon="@drawable/ic_menu_edit"
+        android:title="@string/menu_edit">
+    </item>
+    <item
+        android:id="@+id/menuTrackToRoute"
+        android:icon="@drawable/ic_menu_directions"
+        android:title="@string/menu_track2route">
+    </item>
+    <item
+        android:id="@+id/menuTrackSave"
+        android:icon="@drawable/ic_menu_save"
+        android:title="@string/menu_save">
+    </item>
+    <item
+        android:id="@+id/menuTrackRemove"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/menu_remove">
+    </item>
+
 </menu>

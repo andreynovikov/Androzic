@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:title="@string/menu_properties" android:id="@+id/menuRouteProperties" android:icon="@android:drawable/ic_menu_edit"></item>
-<item android:title="@string/menu_edit" android:id="@+id/menuRouteEdit" android:icon="@android:drawable/ic_menu_edit"></item>
-<item android:title="@string/menu_save" android:id="@+id/menuRouteSave" android:icon="@android:drawable/ic_menu_save"></item>
-<item android:title="@string/menu_remove" android:id="@+id/menuRouteRemove" android:icon="@android:drawable/ic_menu_delete"></item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menuRouteProperties"
+        android:icon="@drawable/ic_menu_edit"
+        android:title="@string/menu_properties">
+    </item>
+    <item
+        android:id="@+id/menuRouteEdit"
+        android:icon="@drawable/ic_menu_edit"
+        android:title="@string/menu_edit">
+    </item>
+    <item
+        android:id="@+id/menuRouteSave"
+        android:icon="@drawable/ic_menu_save"
+        android:title="@string/menu_save">
+    </item>
+    <item
+        android:id="@+id/menuRouteRemove"
+        android:icon="@drawable/ic_menu_delete"
+        android:title="@string/menu_remove">
+    </item>
+
 </menu>
