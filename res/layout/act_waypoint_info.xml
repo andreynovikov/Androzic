@@ -91,25 +91,28 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:lines="1"
+            android:drawableLeft="@drawable/ic_menu_directions"
             android:text="@string/menu_navigate" />
 
         <Button
-            android:id="@+id/properties_button"
+            android:id="@+id/edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:lines="1"
-            android:text="@string/menu_properties" />
+            android:drawableLeft="@drawable/ic_menu_edit"
+            android:text="@string/menu_edit" />
 
         <Button
-            android:id="@+id/remove_button"
+            android:id="@+id/share_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:lines="1"
-            android:text="@string/menu_remove" />
+            android:drawableLeft="@drawable/ic_menu_share"
+            android:text="@string/menu_share" />
     </LinearLayout>
 
 </LinearLayout>

@@ -117,8 +117,8 @@ public class WaypointInfo extends Activity implements OnClickListener
 			((TextView) findViewById(R.id.date)).setVisibility(View.GONE);
 			
 	    ((Button) findViewById(R.id.navigate_button)).setOnClickListener(this);
-	    ((Button) findViewById(R.id.properties_button)).setOnClickListener(this);
-	    ((Button) findViewById(R.id.remove_button)).setOnClickListener(this);
+	    ((Button) findViewById(R.id.edit_button)).setOnClickListener(this);
+	    ((Button) findViewById(R.id.share_button)).setOnClickListener(this);
     }
 
 	@Override
