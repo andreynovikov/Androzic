@@ -37,6 +37,7 @@ public class ColorButton extends Button
 	private float mDensity = 0;
 	private int mColor = 0;
 	private int mDefColor = 0;
+	private int mAlpha;
 	private OnColorChangedListener mColorChangedListener;
 
 	public ColorButton(Context context)
@@ -117,7 +118,8 @@ public class ColorButton extends Button
 	{
         public void onClick(View v)
         {
-        	new ColorPickerDialog(getContext(), onColorChangedListener, mColor, mDefColor, true).show();
+    		mAlpha = mColor | 0x00FFFFFF;
+    		new ColorPickerDialog(getContext(), onColorChangedListener, mColor | 0xFF000000, mDefColor, true).show();
         }
     };
 
@@ -126,6 +128,7 @@ public class ColorButton extends Button
 		@Override
 		public void colorChanged(int newColor)
 		{
+			newColor = newColor & mAlpha;
 			setColor(newColor, mDefColor);
 			if (mColorChangedListener != null)
 				mColorChangedListener.colorChanged(newColor);

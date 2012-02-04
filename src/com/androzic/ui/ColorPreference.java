@@ -46,6 +46,7 @@ public class ColorPreference extends DialogPreference
 {
 	private int mCurrentColor;
 	private int mDefaultColor = Color.TRANSPARENT;
+	private int mAlpha;
 	private float mDensity = 0;
 	private ColorPickerView mCPView;
 	private View mView;
@@ -84,7 +85,9 @@ public class ColorPreference extends DialogPreference
 	@Override
 	protected void onSetInitialValue(boolean restoreValue, Object defaultValue)
 	{
-		onColorChanged(restoreValue ? getValue() : (Integer) defaultValue);
+		int color = restoreValue ? getValue() : (Integer) defaultValue;
+		mAlpha = color | 0x00FFFFFF;
+		onColorChanged(color);
 	}
 
 	@Override
@@ -171,6 +174,7 @@ public class ColorPreference extends DialogPreference
 
 	public void onColorChanged(int color)
 	{
+		color = color & mAlpha;
 		if (callChangeListener(new Integer(color)) && shouldPersist())
 			persistInt(color);
 		mCurrentColor = color;
@@ -209,7 +213,8 @@ public class ColorPreference extends DialogPreference
 
 		SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
 		int initialColor = prefs.getInt(getKey(), mDefaultColor);
-
+		mAlpha = initialColor | 0x00FFFFFF;
+		initialColor = initialColor | 0xFF000000;
 		mCPView = new ColorPickerView(getContext(), l, initialColor);
 		builder.setView(mCPView);
 	}
