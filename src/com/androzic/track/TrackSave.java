@@ -111,7 +111,7 @@ public class TrackSave extends Activity
     		}
     		catch (Exception e)
     		{
-    			Toast.makeText(TrackSave.this, R.string.err_sdwrite, Toast.LENGTH_LONG).show();
+    			Toast.makeText(TrackSave.this, R.string.err_write, Toast.LENGTH_LONG).show();
     			Log.e("ANDROZIC", e.toString(), e);
     		}
         }

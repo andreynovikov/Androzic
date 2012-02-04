@@ -111,7 +111,7 @@ public class RouteSave extends Activity
     		}
     		catch (Exception e)
     		{
-    			Toast.makeText(RouteSave.this, R.string.err_sdwrite, Toast.LENGTH_LONG).show();
+    			Toast.makeText(RouteSave.this, R.string.err_write, Toast.LENGTH_LONG).show();
     			Log.e("ANDROZIC", e.toString(), e);
     		}
         }
