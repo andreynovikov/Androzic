@@ -23,7 +23,6 @@ package com.androzic;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -81,12 +80,13 @@ import com.androzic.overlay.SharingOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.overlay.WaypointsOverlay;
 import com.androzic.track.TrackingService;
+import com.androzic.util.Astro.Zenith;
 import com.androzic.util.CSV;
 import com.androzic.util.CoordinateParser;
+import com.androzic.util.FileUtils;
 import com.androzic.util.Geo;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
-import com.androzic.util.Astro.Zenith;
 import com.jhlabs.map.proj.ProjectionException;
 
 public class Androzic extends Application
@@ -342,21 +342,36 @@ public class Androzic extends Application
 		waypoints.remove(delWaypoint);
 	}
 
+	/**
+	 * Clear all waypoints.
+	 */
 	public void clearWaypoints()
 	{
 		waypoints.clear();
 	}
 	
-	public void clearDefaultWaypoints()
+	/**
+	 * Clear waypoints from specific waypoint set.
+	 * @param set waypoint set
+	 */
+	public void clearWaypoints(WaypointSet set)
 	{
 		for (Iterator<Waypoint> iter = waypoints.iterator(); iter.hasNext();)
 		{
 			Waypoint wpt = iter.next();
-			if (wpt.set == defWaypointSet)
+			if (wpt.set == set)
 			{
 				iter.remove();
 			}
 		}	
+	}
+	
+	/**
+	 * Clear waypoints from default waypoint set.
+	 */
+	public void clearDefaultWaypoints()
+	{
+		clearWaypoints(defWaypointSet);
 	}
 	
 	public Waypoint getWaypoint(final int index)
@@ -372,6 +387,19 @@ public class Androzic extends Application
 	public List<Waypoint> getWaypoints()
 	{
 		return waypoints;
+	}
+
+	public int getWaypointCount(WaypointSet set)
+	{
+		int n = 0;
+		for (Waypoint wpt : waypoints)
+		{
+			if (wpt.set == set)
+			{
+				n++;
+			}
+		}
+		return n;
 	}
 
 	public List<Waypoint> getWaypoints(WaypointSet set)
@@ -401,26 +429,20 @@ public class Androzic extends Application
 	{
 		try
 		{
-			String state = Environment.getExternalStorageState();
-			if (! Environment.MEDIA_MOUNTED.equals(state))
-				throw new FileNotFoundException(getString(R.string.err_nosdcard));
-			
-			File dir = new File(waypointPath);
+			if (set.path == null)
+				set.path = waypointPath + File.separator + FileUtils.sanitizeFilename(set.name) + ".wpt";
+			File file = new File(set.path);
+			File dir = file.getParentFile();
 			if (! dir.exists())
 				dir.mkdirs();
-			File file = new File(dir, "myWaypoints.wpt");
 			if (! file.exists())
-			{
 				file.createNewFile();
-			}
 			if (file.canWrite())
-			{
 				OziExplorerFiles.saveWaypointsToFile(file, getWaypoints(set));
-			}
 		}
 		catch (Exception e)
 		{
-			Toast.makeText(this, getString(R.string.err_sdwrite), Toast.LENGTH_LONG).show();
+			Toast.makeText(this, getString(R.string.err_write), Toast.LENGTH_LONG).show();
 			Log.e("ANDROZIC", e.toString(), e);
 		}
 	}
@@ -1481,7 +1503,7 @@ public class Androzic extends Application
 
 	void installData()
 	{
-		defWaypointSet = new WaypointSet(waypointPath, "myWaypoints");
+		defWaypointSet = new WaypointSet(waypointPath + File.separator + "myWaypoints.wpt", "myWaypoints");
 		waypointSets.add(defWaypointSet);
 		
 		File icons = new File(iconPath, "icons.dat");

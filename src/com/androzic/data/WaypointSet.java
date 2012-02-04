@@ -34,6 +34,11 @@ public class WaypointSet
 		name = name.substring(0, name.lastIndexOf("."));
 	}
 
+	public WaypointSet(String name)
+	{
+		this.name = name;
+	}
+
 	public WaypointSet(String path, String name)
 	{
 		this.path = path;

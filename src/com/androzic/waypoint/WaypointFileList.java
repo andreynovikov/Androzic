@@ -71,10 +71,12 @@ public class WaypointFileList extends FileListActivity
 			}
 			else if (lc.endsWith(".kml"))
 			{
+				wptset.path = null;
 				waypoints = KmlFiles.loadWaypointsFromFile(file);
 			}
 			else if (lc.endsWith(".gpx"))
 			{
+				wptset.path = null;
 				waypoints = GpxFiles.loadWaypointsFromFile(file);
 			}
 			if (waypoints != null)
