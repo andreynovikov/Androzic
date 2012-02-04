@@ -126,7 +126,6 @@ import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
 import com.androzic.waypoint.WaypointProject;
 import com.androzic.waypoint.WaypointProperties;
-import com.androzic.waypoint.WaypointSave;
 
 public class MapActivity extends Activity implements OnClickListener, OnSharedPreferenceChangeListener, OnSeekBarChangeListener, OnPanelListener
 {
@@ -1450,8 +1449,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		boolean nvr = navigationService != null && navigationService.isNavigatingViaRoute();
 
 		menu.findItem(R.id.menuManageWaypoints).setEnabled(wpt);
-		menu.findItem(R.id.menuSaveWaypoints).setEnabled(wpt);
-		menu.findItem(R.id.menuRemoveWaypoints).setEnabled(wpt);
 		menu.findItem(R.id.menuManageTracks).setEnabled(application.hasTracks());
 		menu.findItem(R.id.menuNewRoute).setVisible(!nvw);
 		menu.findItem(R.id.menuLoadRoute).setVisible(!nvr);
@@ -1471,14 +1468,12 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
-		if (map.waypointSelected < 0)
-			return;
-		menu.setHeaderTitle(application.getWaypoint(map.waypointSelected).name);
-		MenuInflater inflater = getMenuInflater();
-		if (editingRoute == null && editingTrack == null)
-			inflater.inflate(R.menu.waypoint_context_menu, menu);
-		else if (editingTrack == null)
+		if (editingRoute != null && map.waypointSelected >= 0)
+		{
+			menu.setHeaderTitle(application.getWaypoint(map.waypointSelected).name);
+			MenuInflater inflater = getMenuInflater();
 			inflater.inflate(R.menu.waypoint_editing_context_menu, menu);
+		}
 	}
 
 	@Override
@@ -1515,17 +1510,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			case R.id.menuLoadWaypoints:
 				startActivityForResult(new Intent(this, WaypointFileList.class), RESULT_LOAD_WAYPOINTS);
 				return true;
-			case R.id.menuSaveWaypoints:
-				startActivityForResult(new Intent(this, WaypointSave.class), RESULT_SAVE_WAYPOINTS);
-				return true;
-			case R.id.menuRemoveWaypoints:
-			{
-				application.clearDefaultWaypoints();
-				application.waypointsOverlay.clear();
-				application.saveDefaultWaypoints();
-				map.update();
-				return true;
-			}
 			case R.id.menuManageTracks:
 				startActivityForResult(new Intent(this, TrackList.class), RESULT_MANAGE_TRACKS);
 				return true;
@@ -1651,24 +1635,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	{
 		switch (item.getItemId())
 		{
-			case R.id.menuWaypointVisible:
-				boolean mapChanged = application.setMapCenter(application.getWaypoint(map.waypointSelected).latitude, application.getWaypoint(map.waypointSelected).longitude, false);
-				if (mapChanged)
-					map.updateMapInfo();
-				map.setFollowing(false);
-				return true;
-			case R.id.menuWaypointNavigate:
-				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", map.waypointSelected));
-				return true;
-			case R.id.menuWaypointProperties:
-				startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", map.waypointSelected), RESULT_SAVE_WAYPOINT);
-				return true;
-			case R.id.menuWaypointRemove:
-				WaypointSet set = application.getWaypoint(map.waypointSelected).set;
-				application.removeWaypoint(map.waypointSelected);
-				application.saveWaypoints(set);
-				map.invalidate();
-				return true;
 			case R.id.menuAddWaypointToRoute:
 				Waypoint wpt = application.getWaypoint(map.waypointSelected);
 				routeEditingWaypoints.push(editingRoute.addWaypoint(wpt.name, wpt.latitude, wpt.longitude));
@@ -1712,15 +1678,26 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 						case R.id.navigate_button:
 							startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", index));
 							break;
-						case R.id.properties_button:
+						case R.id.edit_button:
 							startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index), RESULT_SAVE_WAYPOINT);
 							break;
+						case R.id.share_button:
+							Waypoint waypoint = application.getWaypoint(index);
+							Intent i=new Intent(android.content.Intent.ACTION_SEND);
+							i.setType("text/plain");
+							i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
+							String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
+							i.putExtra(Intent.EXTRA_TEXT, waypoint.name + " @ " + coords);
+							startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
+							break;
+						/*	
 						case R.id.remove_button:
 							WaypointSet wptset = application.getWaypoint(index).set;
 							application.removeWaypoint(index);
 							application.saveWaypoints(wptset);
 							map.invalidate();
 							break;
+						*/
 					}
 				}
 				break;
