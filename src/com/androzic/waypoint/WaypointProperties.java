@@ -33,13 +33,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -49,7 +50,6 @@ import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.androzic.Androzic;
 import com.androzic.R;
@@ -92,12 +92,6 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	private int defMarkerColor;
 	private int defTextColor;
 	
-	private final class Coords
-	{
-		public double lat;
-		public double lon;
-	};
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -336,7 +330,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
         		waypoint.name = name.getText().toString();
 
         		waypoint.description = description.getText().toString();
-        		Coords coords = getLatLon();
+        		GeodeticPosition coords = getLatLon();
         		waypoint.latitude = coords.lat;
         		waypoint.longitude = coords.lon;
         		
@@ -370,6 +364,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
         		else
         		{
             		waypoint.image = iconValue;        			
+        			waypoint.drawImage = true;
         		}
     			int markerColorValue = markercolor.getColor();
         		if (markerColorValue != defMarkerColor)
@@ -409,12 +404,11 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
         }
     };
 
-    private Coords getLatLon()
+    private GeodeticPosition getLatLon()
     {
-		int degrees, minutes;
-		double min, seconds;
+		double degrees, minutes, seconds;
 		
-		Coords coords = new Coords();		
+		GeodeticPosition coords = new GeodeticPosition();		
 		switch (curFormat)
 		{
 			case -1:
@@ -427,23 +421,31 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 				break;
 			case 1:
 				degrees = Integer.valueOf(((TextView) findViewById(R.id.lat_md_text)).getText().toString());
-				min = Double.valueOf(((TextView) findViewById(R.id.lat_mm_text)).getText().toString()) / 60;
-				coords.lat = degrees + min * Math.signum(degrees);
+				minutes = Double.valueOf(((TextView) findViewById(R.id.lat_mm_text)).getText().toString()) / 60;
+				if (degrees != 0)
+					minutes *= Math.signum(degrees);
+				coords.lat = degrees + minutes;
 				degrees = Integer.valueOf(((TextView) findViewById(R.id.lon_md_text)).getText().toString());
-				min = Double.valueOf(((TextView) findViewById(R.id.lon_mm_text)).getText().toString()) / 60;
-				coords.lon = degrees + min * Math.signum(degrees);
+				minutes = Double.valueOf(((TextView) findViewById(R.id.lon_mm_text)).getText().toString()) / 60;
+				if (degrees != 0)
+					minutes *= Math.signum(degrees);
+				coords.lon = degrees + minutes;
 				break;
 			case 2:
 				degrees = Integer.valueOf(((TextView) findViewById(R.id.lat_sd_text)).getText().toString());
 				minutes = Integer.valueOf(((TextView) findViewById(R.id.lat_sm_text)).getText().toString());
 				seconds = Double.valueOf(((TextView) findViewById(R.id.lat_ss_text)).getText().toString()) / 60;
-				min = (((double) minutes) + seconds) / 60;
-				coords.lat = degrees + min * Math.signum(degrees);
+				minutes = (minutes + seconds) / 60;
+				if (degrees != 0)
+					minutes *= Math.signum(degrees);
+				coords.lat = degrees + minutes;
 				degrees = Integer.valueOf(((TextView) findViewById(R.id.lon_sd_text)).getText().toString());
 				minutes = Integer.valueOf(((TextView) findViewById(R.id.lon_sm_text)).getText().toString());
 				seconds = Double.valueOf(((TextView) findViewById(R.id.lon_ss_text)).getText().toString()) / 60;
-				min = (((double) minutes) + seconds) / 60;
-				coords.lon = degrees + min * Math.signum(degrees);
+				minutes = (minutes + seconds) / 60;
+				if (degrees != 0)
+					minutes *= Math.signum(degrees);
+				coords.lon = degrees + minutes;
 				break;
 			case 3:
 				int easting = Integer.valueOf(((TextView) findViewById(R.id.utm_easting_text)).getText().toString());
@@ -454,10 +456,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 				try
 				{
 					UTMReference utm = new UTMReference(zone, band, easting, northing);
-					GeodeticPosition pos = utm.toLatLng();
-					//FIXME Use GeodeticPosition instead of Coords
-					coords.lat = pos.lat;
-					coords.lon = pos.lon;
+					coords = utm.toLatLng();
 				}
 				catch (ReferenceException e)
 				{
@@ -473,7 +472,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		int degrees, minutes;
 		double min, seconds;
 		
-		Coords coords = getLatLon();
+		GeodeticPosition coords = getLatLon();
 		
 		switch (position)
 		{
