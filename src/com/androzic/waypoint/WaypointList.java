@@ -42,6 +42,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -86,6 +87,7 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
 	private Drawable selectedBackground;
 
 	private boolean sortByDistance;
+	private int mSortMode;
 	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) 
@@ -130,6 +132,7 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
 	{
 		super.onResume();
 		sortByDistance = false;
+		mSortMode = -1;
 		adapter.sort(0);
 		getExpandableListView().expandGroup(0);
 	}
@@ -169,16 +172,44 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
 	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.waypointlist_menu, menu);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+		{
+			menu.findItem(R.id.action_sort).setVisible(false);
+		}
+		else
+		{
+			menu.findItem(R.id.menuSortAz).setVisible(false);
+			menu.findItem(R.id.menuSortSize).setVisible(false);
+		}
+
 		return true;
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu)
 	{
-		menu.findItem(R.id.menuSortAz).setEnabled(sortByDistance);
-		menu.findItem(R.id.menuSortSize).setEnabled(! sortByDistance);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+		{
+			menu.findItem(R.id.menuSortAz).setEnabled(sortByDistance);
+			menu.findItem(R.id.menuSortSize).setEnabled(! sortByDistance);			
+		}
+		else
+		{
+	        if (mSortMode != -1)
+	        {
+	            Drawable icon = menu.findItem(mSortMode).getIcon();
+	            menu.findItem(R.id.action_sort).setIcon(icon);
+	        }
+		}
 		return true;
 	}
+
+    public void onSort(MenuItem item)
+    {
+        mSortMode = item.getItemId();
+        adapter.sort(mSortMode == R.id.action_sort_alpha ? 0 : 1);
+        invalidateOptionsMenu();
+    }
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item)

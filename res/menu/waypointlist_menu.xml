@@ -3,31 +3,47 @@
 
     <item
         android:id="@+id/menuSortAz"
-     	android:showAsAction="ifRoom|withText"
         android:icon="@drawable/ic_menu_sort_alphabetically"
-        android:title="@string/menu_sort" />
+        android:title="@string/menu_sort_alphabetically"/>
     <item
         android:id="@+id/menuSortSize"
-     	android:showAsAction="ifRoom|withText"
         android:icon="@drawable/ic_menu_sort_by_size"
-        android:title="@string/menu_sort_distance" />
+        android:title="@string/menu_sort_distance"/>
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_menu_sort_alphabetically"
+        android:showAsAction="always"
+        android:title="@string/menu_sort">
+        <menu>
+            <item
+                android:id="@+id/action_sort_alpha"
+                android:icon="@drawable/ic_menu_sort_alphabetically"
+                android:onClick="onSort"
+                android:title="@string/action_bar_sort_alpha"/>
+            <item
+                android:id="@+id/action_sort_size"
+                android:icon="@drawable/ic_menu_sort_by_size"
+                android:onClick="onSort"
+                android:title="@string/action_bar_sort_distance"/>
+        </menu>
+    </item>
     <item
         android:id="@+id/menuLoadWaypoints"
-     	android:showAsAction="ifRoom|withText"
         android:icon="@drawable/ic_menu_archive"
-        android:title="@string/menu_open" />
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_open"/>
     <item
         android:id="@+id/menuNewWaypointSet"
-     	android:showAsAction="ifRoom|withText"
         android:icon="@drawable/ic_menu_mark"
-        android:title="@string/menu_newwaypointset" />
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menu_newwaypointset"/>
     <item
         android:id="@+id/menuNewWaypoint"
         android:icon="@drawable/ic_menu_add"
-        android:title="@string/menu_new" />
+        android:title="@string/menu_new_waypoint"/>
     <item
         android:id="@+id/menuProjectWaypoint"
         android:icon="@drawable/ic_menu_goto"
-        android:title="@string/menu_project" />
+        android:title="@string/menu_project"/>
 
 </menu>
