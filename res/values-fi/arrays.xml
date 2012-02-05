@@ -75,6 +75,16 @@
     <item>Pysty</item>
     <item>Vaaka</item>
   </string-array>
+  <string-array name="cursorvector_names">
+    <item>Ei mitään</item>
+    <item>Lähi etäisyys</item>
+    <item>Aika (minuuttia)</item>
+  </string-array>
+  <string-array name="showdistance_names">
+    <item>Ei</item>
+    <item>Manuaalisesti</item>
+    <item>Aina</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 karttatuki</item>
     <item>Ohjelmaikoni</item>
@@ -88,16 +98,20 @@
     <item>Ranska, käännös</item>
     <item>Suomi, käännös</item>
     <item>Bulgaria käännös</item>
+    <item>Saksa, käännös</item>
+    <item>Turkki, käännös</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Lähennä</item>
     <item>Loitonna</item>
     <item>Enemmän skaalattu kartta</item>
     <item>Vähemmän skaalattu kartta</item>
-    <item>Hae sijainti</item>
-    <item>Kirjoita polku</item>
+    <item>Kartat kursorin kohdalla</item>
+    <item>Reittipisteiden hallinta</item>
     <item>Näytä tiedot</item>
     <item>Seuraa / lopeta seuranta</item>
+    <item>Hae sijainti</item>
+    <item>kirjoita polku</item>
     <item>Reaaliaikainen jako</item>
     <item>Näytä / piilota tilarivi</item>
   </string-array>

@@ -75,6 +75,16 @@
     <item>Vertical</item>
     <item>Apaisado</item>
   </string-array>
+  <string-array name="cursorvector_names">
+    <item>None</item>
+    <item>Proximity distance</item>
+    <item>Time (minutes)</item>
+  </string-array>
+  <string-array name="showdistance_names">
+    <item>No</item>
+    <item>Manually</item>
+    <item>Always</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Soporte de mapas ozf2, ozfx3</item>
     <item>Icono de la aplicacion</item>
@@ -88,16 +98,20 @@
     <item>Posicion francesa</item>
     <item>Posicion finlandesa</item>
     <item>Traducción al búlgaro</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
   </string-array>
   <string-array name="panel_action_names">
-    <item>Zoom in</item>
-    <item>Zoom out</item>
-    <item>More scaled map</item>
-    <item>Less scaled map</item>
+    <item>Acercar</item>
+    <item>Alejar</item>
+    <item>Mapa a mayor escala</item>
+    <item>Mapa a menor escala</item>
+    <item>Maps at cursor</item>
+    <item>Manage waypoints</item>
+    <item>Mostrar información</item>
+    <item>Seguir/Abandonar</item>
     <item>Obtain location</item>
     <item>Write track</item>
-    <item>Show information</item>
-    <item>Follow/unfollow</item>
     <item>Real-time sharing</item>
     <item>Show/hide status bar</item>
   </string-array>

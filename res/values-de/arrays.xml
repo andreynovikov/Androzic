@@ -75,6 +75,16 @@
     <item>Hochformat</item>
     <item>Querformat</item>
   </string-array>
+  <string-array name="cursorvector_names">
+    <item>None</item>
+    <item>Proximity distance</item>
+    <item>Time (minutes)</item>
+  </string-array>
+  <string-array name="showdistance_names">
+    <item>No</item>
+    <item>Manually</item>
+    <item>Always</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 Karten-Unterstützung</item>
     <item>Anwendungssymbol</item>
@@ -88,16 +98,20 @@
     <item>Französische Lokalisation</item>
     <item>Finnische Lokalisation</item>
     <item>Bulgarische Lokalisation</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zoom in</item>
     <item>Zoom out</item>
     <item>More scaled map</item>
     <item>Less scaled map</item>
-    <item>Obtain location</item>
-    <item>Write track</item>
+    <item>Maps at cursor</item>
+    <item>Manage waypoints</item>
     <item>Show information</item>
     <item>Follow/unfollow</item>
+    <item>Obtain location</item>
+    <item>Write track</item>
     <item>Real-time sharing</item>
     <item>Show/hide status bar</item>
   </string-array>

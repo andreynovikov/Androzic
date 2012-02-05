@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Androzic</string>
-    <string name="managetracks_name">Manage tracks</string>
+    <string name="managetracks_name">Tracks</string>
     <string name="trackproperties_name">Edit track</string>
     <string name="loadtrack_name">Load track from file</string>
     <string name="savetrack_name">Save track to file</string>
     <string name="track2route_name">Convert track to route</string>
-    <string name="loadwaypoints_name">Load waypoints from file</string>
-    <string name="managewaypoints_name">Manage waypoints</string>
+    <string name="loadwaypoints_name">Open waypoint set</string>
+    <string name="managewaypoints_name">Waypoints</string>
     <string name="waypointproperties_name">Edit waypoint</string>
     <string name="waypointproject_name">Project new waypoint</string>
     <string name="advanced_name">Advanced properties</string>
-    <string name="manageroutes_name">Manage routes</string>
+    <string name="manageroutes_name">Routes</string>
     <string name="selectroute_name">Select route</string>
     <string name="loadroute_name">Load route from file</string>
     <string name="saveroute_name">Save route to file</string>
@@ -56,6 +56,7 @@
     <string name="err_nogps">No GPS device found</string>
     <string name="err_nomemory">Memory shortage detected, please report this to developer</string>
     <string name="err_notconfigured">Not configured</string>
+    <string name="err_no_network_provider">No network location provider available</string>
     
     <string name="sat_stop">GPS disabled</string>
     <string name="sat_start">GPS enabled</string>
@@ -142,6 +143,7 @@
     <string name="menu_addwaypoint">Add waypoint</string>
     <string name="menu_addtoroute">Add to route</string>
     <string name="menu_tracks">Tracks</string>
+	<string name="menu_new_waypoint">New waypoint</string>
     <string name="menu_waypoints">Waypoints</string>
     <string name="menu_cleartail">Clear track tail</string>
     <string name="menu_navigation">Navigation</string>
@@ -183,10 +185,14 @@
 	<string name="menu_atcursor">At cursor</string>
 	<string name="menu_preferences">Settings</string>
 	<string name="menu_sort">Sort</string>
+	<string name="menu_sort_alphabetically">Sort alphabetically</string>
 	<string name="menu_sort_distance">Sort by distance</string>
     <string name="menu_track2route">Convert to route</string>
     <string name="menu_resetindex">Reset index</string>
     <string name="menu_newwaypointset">New set</string>
+
+    <string name="action_bar_sort_alpha">Alphabetically</string>
+    <string name="action_bar_sort_distance">By distance</string>
     
     <string name="pref_advanced_title">Advanced</string>
 	<string name="pref_usemapindex_title">Use map index</string>

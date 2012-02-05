@@ -75,6 +75,16 @@
     <item>Ritratto</item>
     <item>Paesaggio</item>
   </string-array>
+  <string-array name="cursorvector_names">
+    <item>Nessuno</item>
+    <item>Distanza di prossimità</item>
+    <item>Tempo (minuti)</item>
+  </string-array>
+  <string-array name="showdistance_names">
+    <item>No</item>
+    <item>Manualmente</item>
+    <item>Sempre</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Supporta mappe Ozf2 e Ozfx3</item>
     <item>Icona dell\'applicazione</item>
@@ -88,16 +98,20 @@
     <item>Localizzazione francese</item>
     <item>Localizzazione finlandese</item>
     <item>Localizzazione Bulgara</item>
+    <item>Localizzazione in tedesco</item>
+    <item>Localizzazione in turco</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zoom avanti</item>
     <item>Zoom indietro</item>
     <item>Ricerca una mappa più dettagliata</item>
     <item>Ricerca una mappa meno dettagliata</item>
-    <item>Ottieni la posizione corrente</item>
-    <item>Salva la traccia corrente</item>
+    <item>Mappe in corrispondenza del cursore</item>
+    <item>Gestione dei waypoint</item>
     <item>Visualizza informazioni</item>
     <item>Seguire/non seguire</item>
+    <item>Localizzazione immediata</item>
+    <item>Salva la traccia corrente</item>
     <item>Condivisione in tempo reale</item>
     <item>Mostra/Nascondi barra di stato</item>
   </string-array>

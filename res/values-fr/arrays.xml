@@ -75,6 +75,16 @@
     <item>Portrait</item>
     <item>Paysage</item>
   </string-array>
+  <string-array name="cursorvector_names">
+    <item>None</item>
+    <item>Proximity distance</item>
+    <item>Time (minutes)</item>
+  </string-array>
+  <string-array name="showdistance_names">
+    <item>No</item>
+    <item>Manually</item>
+    <item>Always</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Prise en charge des cartes Ozf2, ozfx3 </item>
     <item>Icônes de l\'application</item>
@@ -88,17 +98,21 @@
     <item>Traduction française</item>
     <item>Traduction finlandaise</item>
     <item>Traduction Bulgare</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zoom avant</item>
     <item>Zoom arrière</item>
     <item>Carte avec une meilleure échelle</item>
     <item>Carte avec une échelle inférieure</item>
-    <item>Obtenir la position</item>
-    <item>Écrire le tracé</item>
+    <item>Maps at cursor</item>
+    <item>Manage waypoints</item>
     <item>Afficher les informations</item>
     <item>Suivre / Ne plus suivre</item>
-    <item>Partage en temps réel</item>
-    <item>Afficher/masquer la barre d\'état</item>
+    <item>Obtain location</item>
+    <item>Write track</item>
+    <item>Real-time sharing</item>
+    <item>Show/hide status bar</item>
   </string-array>
 </resources>

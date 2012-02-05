@@ -75,29 +75,43 @@
     <item>Портрет</item>
     <item>Пейзаж</item>
   </string-array>
+  <string-array name="cursorvector_names">
+    <item>Няма</item>
+    <item>Близост от разстояние</item>
+    <item>Време (минути)</item>
+  </string-array>
+  <string-array name="showdistance_names">
+    <item>Не</item>
+    <item>Ръчно</item>
+    <item>Винаги</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Поддръжка на карти ozf2 и ozf3 формат</item>
     <item>Икона на приложението</item>
-    <item>Color picker initial code</item>
-    <item>Seekbar preference initial code</item>
+    <item>Избор на цвят за начален код</item>
+    <item>Настройка кода на скриващия панел</item>
     <item>Изчисление на изгрев/залез</item>
-    <item>Drag\'n\'drop list initial code</item>
+    <item>Начален код \"влачи и пусни\"</item>
     <item>Мултитъч контролер</item>
     <item>Икони</item>
     <item>Чешка локализация</item>
     <item>Френска локализация</item>
     <item>Финландска локализация</item>
     <item>Българска локализация</item>
+    <item>Немска локализация</item>
+    <item>Турска локализация</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Приближи</item>
     <item>Отдалечи</item>
-    <item>More scaled map</item>
-    <item>Less scaled map</item>
-    <item>Получаване на местоположение</item>
-    <item>Запис на маршрута</item>
+    <item>Едромащабна карта</item>
+    <item>Дребномащабна карта</item>
+    <item>Карти на курсора</item>
+    <item>Управление на точките</item>
     <item>Покажи информация</item>
     <item>Следвай/Не следвай</item>
+    <item>Получаване на местоположение</item>
+    <item>Запис на маршрута</item>
     <item>Споделяне в реално време</item>
     <item>Показване/скриване лентата на състоянието</item>
   </string-array>

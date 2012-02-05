@@ -75,6 +75,16 @@
     <item>Na výšku</item>
     <item>Na šířku</item>
   </string-array>
+  <string-array name="cursorvector_names">
+    <item>Žádný</item>
+    <item>Vzdálenost přiblížení</item>
+    <item>Čas (minuty)</item>
+  </string-array>
+  <string-array name="showdistance_names">
+    <item>Ne</item>
+    <item>Ručně</item>
+    <item>Vždy</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Podpora ozf2, ozfx3 map </item>
     <item>Ikona aplikace</item>
@@ -88,16 +98,20 @@
     <item>Francouzský překlad</item>
     <item>Finský překlad</item>
     <item>Bulharský překlad</item>
+    <item>Německá lokalizace</item>
+    <item>Turecká lokalizace</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Přiblížit</item>
     <item>Oddálit</item>
     <item>Více měřítková mapa</item>
     <item>Méně měřítková mapa</item>
-    <item>Získej umístění</item>
-    <item>Zapisovat stopu</item>
+    <item>Mapy na kurzoru</item>
+    <item>Správa navigačních bodů</item>
     <item>Zobrazit informace</item>
     <item>﻿Sledovat/nesledovat</item>
+    <item>Získej umístění</item>
+    <item>Zapisovat stopu</item>
     <item>Sdílení v reálném čase</item>
     <item>Zobrazi/skrýt stavový řádek</item>
   </string-array>

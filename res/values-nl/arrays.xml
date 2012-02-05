@@ -75,6 +75,16 @@
     <item>Portret</item>
     <item>Landschap</item>
   </string-array>
+  <string-array name="cursorvector_names">
+    <item>None</item>
+    <item>Proximity distance</item>
+    <item>Time (minutes)</item>
+  </string-array>
+  <string-array name="showdistance_names">
+    <item>No</item>
+    <item>Manually</item>
+    <item>Always</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 kaart ondersteunen</item>
     <item>Pictogram</item>
@@ -88,17 +98,21 @@
     <item>Franse lokalisatie</item>
     <item>Finse lokalisatie</item>
     <item>Bulgaarse lokalisatie</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Inzoomen</item>
     <item>Uitzoomen</item>
     <item>﻿Meer geschaalde kaarten</item>
     <item>Minder geschaalde kaarten</item>
-    <item>Locatie verkrijgen</item>
-    <item>Track schrijven</item>
+    <item>Maps at cursor</item>
+    <item>Manage waypoints</item>
     <item>Toon informatie</item>
     <item>Volgen / stop volgen</item>
-    <item>Real-time delen</item>
-    <item>Toon/Verberg statusbalk</item>
+    <item>Obtain location</item>
+    <item>Write track</item>
+    <item>Real-time sharing</item>
+    <item>Show/hide status bar</item>
   </string-array>
 </resources>

@@ -75,6 +75,16 @@
     <item>Портретная</item>
     <item>Альбомная</item>
   </string-array>
+  <string-array name="cursorvector_names">
+    <item>Нет</item>
+    <item>Значение близости</item>
+    <item>Время (мин)</item>
+  </string-array>
+  <string-array name="showdistance_names">
+    <item>Нет</item>
+    <item>Вручную</item>
+    <item>Всегда</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Поддержка карт формата ozf2, ozfx3</item>
     <item>Иконка приложения</item>
@@ -88,16 +98,20 @@
     <item>Французская локализация</item>
     <item>Финская локализация</item>
     <item>Болгарская локализация</item>
+    <item>Немецкая локализация</item>
+    <item>Турецкая локализация</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Увеличить масштаб</item>
     <item>Уменьшить масштаб</item>
     <item>Карта с большим масштабом</item>
     <item>Карта с меньшим масштабом</item>
-    <item>Получать местоположение</item>
-    <item>Писать трек</item>
+    <item>Карты под курсором</item>
+    <item>Управление точками</item>
     <item>Показать информацию</item>
     <item>Следить/не следить</item>
+    <item>Получать местоположение</item>
+    <item>Писать трек</item>
     <item>Обмен в реальном времени</item>
     <item>Показать/скрыть панель состояния</item>
   </string-array>
