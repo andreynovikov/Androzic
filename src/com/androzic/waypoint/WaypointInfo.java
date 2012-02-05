@@ -22,12 +22,6 @@ package com.androzic.waypoint;
 
 import java.io.File;
 
-import com.androzic.Androzic;
-import com.androzic.R;
-import com.androzic.data.Waypoint;
-import com.androzic.util.Geo;
-import com.androzic.util.StringFormatter;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,11 +31,17 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.androzic.Androzic;
+import com.androzic.R;
+import com.androzic.data.Waypoint;
+import com.androzic.util.Geo;
+import com.androzic.util.StringFormatter;
 
 public class WaypointInfo extends Activity implements OnClickListener
 {

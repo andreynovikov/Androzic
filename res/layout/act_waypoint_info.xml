@@ -78,41 +78,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_weight="0"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingBottom="5dip"
         android:paddingLeft="5dip"
         android:paddingRight="5dip"
         android:paddingTop="10dip" >
+        
+        <include layout="@layout/inc_waypoint_info_buttons" />
 
-        <Button
-            android:id="@+id/navigate_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:lines="1"
-            android:drawableLeft="@drawable/ic_menu_directions"
-            android:text="@string/menu_navigate" />
-
-        <Button
-            android:id="@+id/edit_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:lines="1"
-            android:drawableLeft="@drawable/ic_menu_edit"
-            android:text="@string/menu_edit" />
-
-        <Button
-            android:id="@+id/share_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:lines="1"
-            android:drawableLeft="@drawable/ic_menu_share"
-            android:text="@string/menu_share" />
     </LinearLayout>
 
 </LinearLayout>
