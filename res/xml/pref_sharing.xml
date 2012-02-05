@@ -22,7 +22,7 @@
         androzic:format="0"
         android:key="@string/pref_sharing_updateinterval"
         androzic:max="300"
-        androzic:min="10"
+        androzic:min="3"
         android:summary="@string/pref_sharing_updateinterval_summary"
         android:text=" s"
         android:title="@string/pref_sharing_updateinterval_title" />
