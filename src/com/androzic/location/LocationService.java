@@ -49,6 +49,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.androzic.MapActivity;
 import com.androzic.R;
@@ -217,8 +218,15 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 			locationManager.addGpsStatusListener(this);
 			if (useNetwork)
 			{
-				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-				Log.d(TAG, "Network provider set");
+				try
+				{
+					locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+					Log.d(TAG, "Network provider set");
+				}
+				catch (IllegalArgumentException e)
+				{
+					Toast.makeText(this, getString(R.string.err_no_network_provider), Toast.LENGTH_LONG).show();
+				}
 			}
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 			locationManager.addNmeaListener(this);
