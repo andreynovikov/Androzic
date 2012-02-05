@@ -127,10 +127,12 @@
         <item>zoomout</item>
         <item>nextmap</item>
         <item>prevmap</item>
-        <item>locate</item>
-        <item>tracking</item>
+        <item>maps</item>
+        <item>waypoints</item>
         <item>info</item>
         <item>follow</item>
+        <item>locate</item>
+        <item>tracking</item>
         <item>share</item>
         <item>expand</item>
     </string-array>

@@ -328,6 +328,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		findViewById(R.id.zoomout).setOnClickListener(this);
 		findViewById(R.id.nextmap).setOnClickListener(this);
 		findViewById(R.id.prevmap).setOnClickListener(this);
+		findViewById(R.id.maps).setOnClickListener(this);
+		findViewById(R.id.waypoints).setOnClickListener(this);
 		findViewById(R.id.info).setOnClickListener(this);
 		findViewById(R.id.follow).setOnClickListener(this);
 		findViewById(R.id.locate).setOnClickListener(this);
@@ -1930,6 +1932,12 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 						finishHandler.sendEmptyMessage(0);
 					}
 				});
+				break;
+			case R.id.maps:
+				startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
+				break;
+			case R.id.waypoints:
+				startActivityForResult(new Intent(this, WaypointList.class), RESULT_MANAGE_WAYPOINTS);
 				break;
 			case R.id.info:
 				startActivity(new Intent(this, Information.class));

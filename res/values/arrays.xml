@@ -105,10 +105,12 @@
         <item>Zoom out</item>
         <item>More scaled map</item>
         <item>Less scaled map</item>
-        <item>Obtain location</item>
-        <item>Write track</item>
+        <item>Maps at cursor</item>
+        <item>Manage waypoints</item>
         <item>Show information</item>
         <item>Follow/unfollow</item>
+        <item>Obtain location</item>
+        <item>Write track</item>
         <item>Real-time sharing</item>
         <item>Show/hide status bar</item>
     </string-array>

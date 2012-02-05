@@ -3,6 +3,7 @@
     android:id="@+id/panelContent"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
+    android:scrollbars="none"
     android:background="#88FFFFFF" >
 
     <LinearLayout
@@ -49,6 +50,24 @@
             android:paddingTop="8dip"
             android:src="@drawable/arrow_left" />
 
+        <ImageButton
+            android:id="@+id/maps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:paddingBottom="8dip"
+            android:paddingTop="8dip"
+            android:src="@drawable/globe" />
+        
+        <ImageButton
+            android:id="@+id/waypoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:paddingBottom="8dip"
+            android:paddingTop="8dip"
+            android:src="@drawable/flag" />
+        
         <ImageButton
             android:id="@+id/info"
             android:layout_width="wrap_content"
