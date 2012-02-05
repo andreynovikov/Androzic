@@ -505,7 +505,9 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	@Override
 	public void onNmeaReceived(long timestamp, String nmea)
 	{
-        if (nmea.indexOf('\n') >= 0)
+        if (nmea.indexOf('\n') == 0)
+        	return;
+        if (nmea.indexOf('\n') > 0)
         {
         	nmea = nmea.substring(0, nmea.indexOf('\n') - 1);
         }
