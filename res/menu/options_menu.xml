@@ -4,13 +4,13 @@
     <item
         android:id="@+id/menuAddWaypoint"
         android:icon="@drawable/ic_menu_add"
-        android:orderInCategory="1"
+        android:orderInCategory="0"
         android:showAsAction="always"
         android:title="@string/menu_addwaypoint"/>
     <item
         android:id="@+id/menuWaypoints"
         android:icon="@drawable/ic_menu_myplaces"
-        android:orderInCategory="1"
+        android:orderInCategory="0"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_waypoints">
         <menu>
@@ -34,7 +34,7 @@
     <item
         android:id="@+id/menuMaps"
         android:icon="@drawable/ic_menu_mapmode"
-        android:orderInCategory="1"
+        android:orderInCategory="0"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_maps">
         <menu>
@@ -52,7 +52,7 @@
     <item
         android:id="@+id/menuNavigation"
         android:icon="@drawable/ic_menu_directions"
-        android:orderInCategory="1"
+        android:orderInCategory="0"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_navigation">
         <menu>
@@ -82,7 +82,7 @@
     <item
         android:id="@+id/menuView"
         android:icon="@drawable/ic_menu_view"
-        android:orderInCategory="1"
+        android:orderInCategory="0"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_view">
         <menu>
@@ -100,7 +100,7 @@
     <item
         android:id="@+id/menuTrack"
         android:icon="@drawable/ic_menu_track"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/menu_tracks">
         <menu>
             <item
@@ -117,7 +117,7 @@
     <item
         android:id="@+id/menuLocation"
         android:icon="@drawable/ic_menu_mylocation"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/menu_location">
         <menu>
             <item
@@ -137,12 +137,12 @@
     <item
         android:id="@+id/menuGPS"
         android:icon="@drawable/ic_menu_compass"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/menu_gps"/>
     <item
         android:id="@+id/menuSetAnchor"
         android:icon="@drawable/ic_menu_goto"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/menu_anchor"/>
     <item
         android:id="@+id/menuSearch"
@@ -153,7 +153,7 @@
     <item
         android:id="@+id/menuPreferences"
         android:icon="@drawable/ic_menu_preferences"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/menu_preferences"/>
 
 </menu>
