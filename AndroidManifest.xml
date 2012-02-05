@@ -23,8 +23,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
     package="com.androzic"
-    android:versionCode="76"
-    android:versionName="1.3" >
+    android:versionCode="77"
+    android:versionName="1.4" >
 
     <supports-screens
         android:anyDensity="true"
@@ -163,10 +163,6 @@
         <activity
             android:label="@string/loadwaypoints_name"
             android:name=".waypoint.WaypointFileList"
-            android:theme="@style/BlackDialog" />
-        <activity
-            android:label="@string/savewaypoints_name"
-            android:name=".waypoint.WaypointSave"
             android:theme="@style/BlackDialog" />
         <activity
             android:label="@string/coordinates_name"
