@@ -33,8 +33,8 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.miscwidgets.interpolator.ExpoInterpolator;
 import org.miscwidgets.interpolator.EasingType.Type;
+import org.miscwidgets.interpolator.ExpoInterpolator;
 import org.miscwidgets.widget.Panel;
 import org.miscwidgets.widget.Panel.OnPanelListener;
 
@@ -72,29 +72,28 @@ import android.telephony.SmsMessage;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
-import com.androzic.data.WaypointSet;
 import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
@@ -1452,6 +1451,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 		menu.findItem(R.id.menuManageWaypoints).setEnabled(wpt);
 		menu.findItem(R.id.menuManageTracks).setEnabled(application.hasTracks());
+		menu.findItem(R.id.menuClearTrackTail).setEnabled(application.currentTrackOverlay != null);
 		menu.findItem(R.id.menuNewRoute).setVisible(!nvw);
 		menu.findItem(R.id.menuLoadRoute).setVisible(!nvr);
 		menu.findItem(R.id.menuManageRoutes).setVisible(!nvr);
@@ -1519,7 +1519,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				startActivityForResult(new Intent(this, TrackFileList.class), RESULT_LOAD_TRACK);
 				return true;
 			case R.id.menuClearTrackTail:
-				application.currentTrackOverlay.clear();
+				if (application.currentTrackOverlay != null)
+					application.currentTrackOverlay.clear();
 				return true;
 			case R.id.menuNewRoute:
 				startEditRoute(new Route("New route", "", true));
