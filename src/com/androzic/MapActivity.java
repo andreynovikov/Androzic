@@ -54,6 +54,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.LightingColorFilter;
+import android.graphics.Rect;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -80,6 +81,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
@@ -104,6 +107,7 @@ import com.androzic.overlay.CurrentTrackOverlay;
 import com.androzic.overlay.DistanceOverlay;
 import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.RouteOverlay;
+import com.androzic.overlay.ScaleOverlay;
 import com.androzic.overlay.SharingOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.overlay.WaypointsOverlay;
@@ -529,12 +533,13 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		{
 			application.updateLocationInfo(map.isBestMapEnabled());
 		}
+		updateMapViewArea();
 		map.updateMapInfo();
 		map.update();
 		application.notifyOverlays();
 		map.requestFocus();
 	}
-
+	
 	@Override
 	protected void onPause()
 	{
@@ -900,6 +905,39 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 	};
 
+	private void updateMapViewArea()
+	{
+		final ViewTreeObserver vto = map.getViewTreeObserver();
+		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
+		{
+		    public void onGlobalLayout()
+		    {
+				Rect area = new Rect();
+				map.getLocalVisibleRect(area);
+		    	View v = findViewById(R.id.topbar);
+		    	if (v != null)
+		    		area.top = v.getBottom();
+		    	v = findViewById(R.id.bottombar);
+		    	if (v != null)
+		    		area.bottom = v.getTop();
+		    	v = findViewById(R.id.rightbar);
+		    	if (v != null)
+		    		area.right = v.getLeft();
+				if (! area.isEmpty())
+					map.updateViewArea(area);
+		    	if (vto.isAlive())
+		    	{
+		    		vto.removeGlobalOnLayoutListener(this);
+		    	}
+		    	else
+		    	{
+		    		final ViewTreeObserver vto1 = map.getViewTreeObserver();
+		    		vto1.removeGlobalOnLayoutListener(this);
+		    	}
+		    }
+		});
+	}
+
 	public void updateMap()
 	{
 		if (map != null)
@@ -1008,7 +1046,13 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 	protected void updateGPSStatus()
 	{
-		findViewById(R.id.movinginfo).setVisibility(map.isMoving() && editingRoute == null && editingTrack == null ? View.VISIBLE : View.GONE);
+		int v = map.isMoving() && editingRoute == null && editingTrack == null ? View.VISIBLE : View.GONE;
+		View view = findViewById(R.id.movinginfo);
+		if (view.getVisibility() != v)
+		{
+			view.setVisibility(v);
+			updateMapViewArea();
+		}
 	}
 
 	protected void updateNavigationStatus()
@@ -1083,6 +1127,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			application.navigationOverlay.onBeforeDestroy();
 			application.navigationOverlay = null;
 		}
+		
+		updateMapViewArea();
 		map.update();
 	}
 
@@ -1190,6 +1236,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 		findViewById(R.id.satinfo).setVisibility(slVisible ? View.VISIBLE : View.GONE);
 		findViewById(R.id.mapinfo).setVisibility(mlVisible ? View.VISIBLE : View.GONE);
+		
+		updateMapViewArea();
 	}
 
 	private final void updateOverlays(final SharedPreferences settings, final boolean justRemove)
@@ -1200,6 +1248,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		boolean distEnabled = false;
 		boolean accEnabled = false;
 		boolean shareEnabled = false;
+		boolean scaleEnabled = false;
 
 		if (!justRemove)
 		{
@@ -1209,6 +1258,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			accEnabled = showAccuracy;
 			navEnabled = navigationService != null && navigationService.isNavigating();
 			shareEnabled = isSharing;
+			scaleEnabled = true;
 		}
 		if (ctEnabled && application.currentTrackOverlay == null)
 		{
@@ -1247,6 +1297,15 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		{
 			application.sharingOverlay.onBeforeDestroy();
 			application.sharingOverlay = null;
+		}
+		if (scaleEnabled && application.scaleOverlay == null)
+		{
+			application.scaleOverlay = new ScaleOverlay(this);
+		}
+		else if (! scaleEnabled && application.scaleOverlay != null)
+		{
+			application.scaleOverlay.onBeforeDestroy();
+			application.scaleOverlay = null;
 		}
 		if (accEnabled && application.accuracyOverlay == null)
 		{
@@ -1305,6 +1364,10 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			if (application.accuracyOverlay != null)
 			{
 				application.accuracyOverlay.onPreferencesChanged(settings);
+			}
+			if (application.scaleOverlay != null)
+			{
+				application.scaleOverlay.onPreferencesChanged(settings);
 			}
 			if (application.currentTrackOverlay != null)
 			{

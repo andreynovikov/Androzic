@@ -19,4 +19,5 @@
 <color name="gpsworking">#FFFFFFFF</color>
 <color name="usertag">#FF0000FF</color>
 <color name="usertagwithalpha">#88FFFFFF</color>
+<color name="scalebar">#FF000000</color>
 </resources>

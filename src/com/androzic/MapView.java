@@ -32,6 +32,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -79,18 +80,19 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	private long lastBestMap = 0;
 	private boolean bestMapEnabled = true;
 
-	int penX = 0;
-	int penY = 0;
-	int penOX = 0;
-	int penOY = 0;
-	int[] lookAheadXY = new int[] {0, 0};
-	int lookAhead = 0;
-	float lookAheadC = 0;
-	float lookAheadS = 0;
-	float lookAheadSS = 0;
-	int lookAheadPst = 0;
+	private int penX = 0;
+	private int penY = 0;
+	private int penOX = 0;
+	private int penOY = 0;
+	public int[] lookAheadXY = new int[] {0, 0};
+	private int lookAhead = 0;
+	private float lookAheadC = 0;
+	private float lookAheadS = 0;
+	private float lookAheadSS = 0;
+	private int lookAheadPst = 0;
+	public Rect viewArea;
 	
-	int waypointSelected = -1;
+	protected int waypointSelected = -1;
 		
 	public double[] mapCenter;
 	public int[] mapCenterXY;
@@ -99,7 +101,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	private float lookAheadB = 0;
 	private float smoothB = 0;
 	private float smoothBS = 0;
-	private float bearing = 0;
+	public float bearing = 0;
 	private float speed = 0;
 	private double mpp = 0;
 	private int vectorLength = 0;
@@ -162,6 +164,8 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 
    		multiTouchController = new MultiTouchController<Object>(this, false);
    	 
+   		viewArea = new Rect();
+   		
    		Log.d(TAG,"Map initialize");
    	}	
 	
@@ -185,19 +189,15 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 
         application.drawMap(mapCenter, lookAheadXY, getWidth(), getHeight(), canvas);
 
-		canvas.translate(lookAheadXY[0], lookAheadXY[1]);
-
-        canvas.translate(cx, cy);
+		canvas.translate(lookAheadXY[0] + cx, lookAheadXY[1] + cy);
+//        canvas.translate(cx, cy);
 
         // draw overlays
         if (! scaled && ready && ((penOX == 0 && penOY == 0) || ! hideOnDrag))
         {
-    		canvas.save();
-    		canvas.translate(-mapCenterXY[0], -mapCenterXY[1]);
-        	// TODO Should be synchronized?
+        	// TODO Optimize getOverlays()
         	for (MapOverlay mo : application.getOverlays(Androzic.ORDER_DRAW_PREFERENCE))
-       			mo.onManagedDraw(canvas, this);
-    		canvas.restore();
+       			mo.onManagedDraw(canvas, this, cx, cy);
         }
                 
         // draw cursor (it is always topmost)
@@ -291,7 +291,6 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 				newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false);
 				if (newMap)
 					loadBestMap = bestMapEnabled;
-				updateMapInfo();
 			}
 			if (newMap)
 				updateMapInfo();
@@ -581,10 +580,16 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		if ((w != oldw || h != oldh))
 		{
 			setLookAhead(lookAheadPst);
+			updateViewArea(new Rect(0, 0, w, h));
 			update();
 		}		
 	}
-	
+
+	public void updateViewArea(Rect area)
+	{
+		viewArea.set(area);
+	}
+
 	public void update()
 	{
         mapCenter = application.getMapCenter();

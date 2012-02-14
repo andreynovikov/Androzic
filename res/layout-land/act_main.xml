@@ -67,6 +67,7 @@
 		</RelativeLayout>
 
 		<LinearLayout
+		    android:id="@+id/rightbar"
 			android:orientation="horizontal"
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"

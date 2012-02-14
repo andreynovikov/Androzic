@@ -76,6 +76,7 @@ import com.androzic.overlay.MapOverlay;
 import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.OtherGridOverlay;
 import com.androzic.overlay.RouteOverlay;
+import com.androzic.overlay.ScaleOverlay;
 import com.androzic.overlay.SharingOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.overlay.WaypointsOverlay;
@@ -131,6 +132,7 @@ public class Androzic extends Application
 	public DistanceOverlay distanceOverlay;
 	public AccuracyOverlay accuracyOverlay;
 	public SharingOverlay sharingOverlay;
+	public ScaleOverlay scaleOverlay;
 	public List<TrackOverlay> fileTrackOverlays = new ArrayList<TrackOverlay>();
 	public List<RouteOverlay> routeOverlays = new ArrayList<RouteOverlay>();
 	
@@ -199,6 +201,10 @@ public class Androzic extends Application
 		{
 			sharingOverlay.setMapContext(mapActivity);
 		}
+		if (scaleOverlay != null)
+		{
+			scaleOverlay.setMapContext(mapActivity);
+		}
 		initGrids();
 	}
 	
@@ -221,6 +227,8 @@ public class Androzic extends Application
 				overlays.add(navigationOverlay);
 			if (waypointsOverlay != null)
 				overlays.add(waypointsOverlay);
+			if (scaleOverlay != null)
+				overlays.add(scaleOverlay);
 			if (sharingOverlay != null)
 				overlays.add(sharingOverlay);
 			if (distanceOverlay != null)
@@ -232,6 +240,8 @@ public class Androzic extends Application
 				overlays.add(accuracyOverlay);
 			if (distanceOverlay != null)
 				overlays.add(distanceOverlay);
+			if (scaleOverlay != null)
+				overlays.add(scaleOverlay);
 			if (navigationOverlay != null)
 				overlays.add(navigationOverlay);
 			if (currentTrackOverlay != null)
