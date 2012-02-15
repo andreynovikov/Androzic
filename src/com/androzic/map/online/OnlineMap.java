@@ -238,16 +238,22 @@ public class OnlineMap extends Map
 
 	public boolean getOsmXYByLatLon(double lat, double lon, int[] xy)
 	{
-		xy[0] = (int) Math.floor((lon + 180) / 360 * (1<<(int)zoom));
+		double n = Math.pow(2.0, zoom);
+
+		xy[0] = (int) Math.floor((lon + 180) / 360 * n);
+		if (xy[0] == n)
+			xy[0] -= 1;
 		if (tileProvider.ellipsoid)
 		{
 			double z = Math.sin(Math.toRadians(lat));
-			xy[1] = (int) Math.floor((1 - (atanh(z)-0.0818197*atanh(0.0818197*z)) / Math.PI) / 2 * (1<<(int)zoom));
+			xy[1] = (int) Math.floor((1 - (atanh(z)-0.0818197*atanh(0.0818197*z)) / Math.PI) / 2 * n);
 		}
 		else
 		{
-			xy[1] = (int) Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1<<(int)zoom));
+			xy[1] = (int) Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * n);
 		}
+		if (xy[1] < 0)
+			xy[1] = 0;
 		return true;
 	}
 	
