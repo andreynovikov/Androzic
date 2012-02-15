@@ -23,8 +23,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
     package="com.androzic"
-    android:versionCode="77"
-    android:versionName="1.4" >
+    android:versionCode="79"
+    android:versionName="1.4.1" >
 
     <supports-screens
         android:anyDensity="true"
