@@ -25,16 +25,15 @@ import java.io.IOException;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.util.Log;
 
 public class OzfReader
 {
 	static final double[] zoomLevelsSupported =
 	{
-		0.010,
-		0.025,
-		0.050,
-		0.075,
+		0.030,
+		0.060,
 		0.100,
 		0.250,
 		0.500,
@@ -345,7 +344,16 @@ public class OzfReader
 
 				if (tile != null)
 				{
-					c.drawBitmap(tile, tx, ty, null);
+					if (tile_dx(j, i) < tile_w || tile_dy(j, i) < tile_h)
+					{
+						Rect src = new Rect(0,0,tile_dx(j, i),tile_dy(j, i));
+						Rect dst = new Rect(tx, ty, tx + src.right, ty + src.bottom);
+						c.drawBitmap(tile, src, dst, null);
+					}
+					else
+					{
+						c.drawBitmap(tile, tx, ty, null);
+					}
 				}
 			}
 		}
