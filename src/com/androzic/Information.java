@@ -63,6 +63,8 @@ public class Information extends Activity
 	private TextView sunriseValue;
 	private TextView sunsetValue;
 	private TextView declinationValue;
+	private TextView hdopValue;
+	private TextView vdopValue;
 
 	protected Androzic application;
 
@@ -86,6 +88,8 @@ public class Information extends Activity
     	sunriseValue = (TextView) findViewById(R.id.sunrise);
     	sunsetValue = (TextView) findViewById(R.id.sunset);
     	declinationValue = (TextView) findViewById(R.id.declination);
+    	hdopValue = (TextView) findViewById(R.id.hdop);
+    	vdopValue = (TextView) findViewById(R.id.vdop);
 
 	    Button update = (Button) findViewById(R.id.almanac_button);
 	    update.setOnClickListener(updateOnClickListener);
@@ -169,6 +173,15 @@ public class Information extends Activity
 							satsValue.setText(String.valueOf(fsats) + "/" + String.valueOf(tsats));
 							satsValue.startAnimation(shake);
 							break;
+					}
+					if (locationService != null)
+					{
+						float hdop = locationService.getHDOP();
+						if (! Float.isNaN(hdop))
+							hdopValue.setText(String.format("%.1f", hdop));
+						float vdop = locationService.getVDOP();
+						if (! Float.isNaN(vdop))
+							vdopValue.setText(String.format("%.1f", vdop));
 					}
 				}
 			});

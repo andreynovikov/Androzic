@@ -124,7 +124,9 @@
 	<string name="icon">Icon</string>
 	<string name="primary">Primary</string>
 	<string name="advanced">Advanced</string>
-	    
+	<string name="hdop">HDOP</string>
+	<string name="vdop">VDOP</string>
+		    
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>
     <string name="nomaps_explained">Map folder \'%s\' is empty. Download and install world map (207KB)?</string>

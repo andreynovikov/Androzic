@@ -113,18 +113,20 @@
 			<TableRow android:paddingTop="5dip">
 			    <TextView
 			    	android:layout_width="fill_parent"
-					android:layout_height="wrap_content" />
-			    <TextView
+					android:layout_height="wrap_content"
+					android:text="@string/hdop" />
+				<TextView
 			    	android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:text="@string/declination" />
 			</TableRow>
 			<TableRow>
-			    <TextView android:id="@+id/nothing"
+			    <TextView android:id="@+id/hdop"
 			    	android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:textStyle="bold"
-					android:textAppearance="?android:attr/textAppearanceMedium" />
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:text="--" />
 			    <TextView android:id="@+id/declination"
 			    	android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
@@ -132,7 +134,28 @@
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					android:text="--" />
 			</TableRow>
-			
+			<TableRow android:paddingTop="5dip">
+			    <TextView
+			    	android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/vdop" />
+			    <TextView
+			    	android:layout_width="fill_parent"
+					android:layout_height="wrap_content" />
+			</TableRow>
+			<TableRow>
+			    <TextView android:id="@+id/vdop"
+			    	android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textStyle="bold"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:text="--" />
+			    <TextView android:id="@+id/nothing"
+			    	android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textStyle="bold"
+					android:textAppearance="?android:attr/textAppearanceMedium" />
+			</TableRow>
 		</TableLayout>
 	</ScrollView>
 	<LinearLayout
