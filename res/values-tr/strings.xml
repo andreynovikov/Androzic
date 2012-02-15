@@ -235,9 +235,9 @@
   <string name="pref_cursorcolor_title">Aktif imleç rengi</string>
   <string name="pref_cursorcolor_summary">Geçerli konumdaki imleç rengini belirleyin</string>
   <string name="pref_cursorvector_title">Vektör çizgi türü</string>
-  <string name="pref_cursorvector_summary">Vektör çizgi uzunluğunu için zemin seçin</string>
+  <string name="pref_cursorvector_summary">Vektör çizgi uzunluğu türünü seçin</string>
   <string name="pref_cursorvectormlpr_title">Vektör çizgi uzunluğu</string>
-  <string name="pref_cursorvectormlpr_summary">Select how many vector line bases will be used to set its length</string>
+  <string name="pref_cursorvectormlpr_summary">Vektör çizgi uzunluğunu belirleyin</string>
   <string name="pref_showsatinfo_title">Uydu panelini göster</string>
   <string name="pref_showsatinfo_summary">Geçerli kordinat ve GPS durum panelini göstermek için işaretle</string>
   <string name="pref_showmapinfo_title">Harita panelini göster</string>

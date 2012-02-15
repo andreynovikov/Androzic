@@ -76,14 +76,14 @@
     <item>Landschap</item>
   </string-array>
   <string-array name="cursorvector_names">
-    <item>None</item>
-    <item>Proximity distance</item>
-    <item>Time (minutes)</item>
+    <item>Geen</item>
+    <item>Nabijheids afstand</item>
+    <item>Tijd (minuten)</item>
   </string-array>
   <string-array name="showdistance_names">
-    <item>No</item>
-    <item>Manually</item>
-    <item>Always</item>
+    <item>Nee</item>
+    <item>Handmatig</item>
+    <item>Altijd</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 kaart ondersteunen</item>
@@ -98,21 +98,21 @@
     <item>Franse lokalisatie</item>
     <item>Finse lokalisatie</item>
     <item>Bulgaarse lokalisatie</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
+    <item>Duitse lokalisatie</item>
+    <item>Turkse lokalisatie</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Inzoomen</item>
     <item>Uitzoomen</item>
     <item>﻿Meer geschaalde kaarten</item>
     <item>Minder geschaalde kaarten</item>
-    <item>Maps at cursor</item>
-    <item>Manage waypoints</item>
+    <item>Kaarten op cursor</item>
+    <item>Waypoint beheren</item>
     <item>Toon informatie</item>
     <item>Volgen / stop volgen</item>
-    <item>Obtain location</item>
-    <item>Write track</item>
-    <item>Real-time sharing</item>
-    <item>Show/hide status bar</item>
+    <item>Locatie verkrijgen</item>
+    <item>Track schrijven</item>
+    <item>Real-time delen</item>
+    <item>Toon/Verberg statusbalk</item>
   </string-array>
 </resources>

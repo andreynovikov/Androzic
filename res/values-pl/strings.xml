@@ -80,7 +80,7 @@
   <string name="color">Kolor</string>
   <string name="latitude">Szerokość</string>
   <string name="longitude">Długość</string>
-  <string name="altitude">Altitude</string>
+  <string name="altitude">Wysokość</string>
   <string name="proximity">Proximity</string>
   <string name="accuracy">Dokładność</string>
   <string name="filename">Nazwa pliku</string>
@@ -150,13 +150,13 @@
   <string name="menu_project">Projektuj nowy</string>
   <string name="menu_new">New</string>
   <string name="menu_edit">Edytuj</string>
-  <string name="menu_open">Open</string>
+  <string name="menu_open">Otwórz</string>
   <string name="menu_load">Wczytaj z pliku</string>
   <string name="menu_save">Zapisz do pliku</string>
   <string name="menu_change">Change</string>
-  <string name="menu_delete">Delete</string>
+  <string name="menu_delete">Usuń</string>
   <string name="menu_remove">Usuń</string>
-  <string name="menu_clear">Clear</string>
+  <string name="menu_clear">Wyczyść</string>
   <string name="menu_search">Wyszukiwanie</string>
   <string name="menu_dismiss">Odrzucić</string>
   <string name="menu_manage">Zarządzaj</string>
