@@ -160,17 +160,19 @@ public class WaypointsOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(final Canvas c, final MapView mapView)
+	protected void onDraw(final Canvas c, final MapView mapVie, int centerX, int centerYw)
 	{
 	}
 
 	@Override
-	protected void onDrawFinished(final Canvas c, final MapView mapView)
+	protected void onDrawFinished(final Canvas c, final MapView mapView, int centerX, int centerY)
 	{
 		if (! visible)
 			return;
 
 		Androzic application = (Androzic) context.getApplication();
+
+		final int[] cxy = mapView.mapCenterXY;
 
         synchronized (waypoints)
         {  
@@ -269,10 +271,10 @@ public class WaypointsOverlay extends MapOverlay
 	        	}
 	            int[] xy = application.getXYbyLatLon(wpt.latitude,wpt.longitude);
 	        	if (wpt.proximity > 0 && mpp > 0)
-		            c.drawCircle(xy[0], xy[1], (float) (wpt.proximity / mpp), proximityPaint);
+		            c.drawCircle(xy[0] - cxy[0], xy[1] - cxy[1], (float) (wpt.proximity / mpp), proximityPaint);
 	            int dx = wpt.drawImage ? application.iconX : pointWidth / 2;
 	            int dy = wpt.drawImage ? application.iconY : bitmap.getHeight() / 2;
-	        	c.drawBitmap(bitmap, xy[0] - dx, xy[1] - dy, null);
+	        	c.drawBitmap(bitmap, xy[0] - dx - cxy[0], xy[1] - dy - cxy[1], null);
 	        }
         }
 	}

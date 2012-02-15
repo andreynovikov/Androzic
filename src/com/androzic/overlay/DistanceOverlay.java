@@ -102,7 +102,7 @@ public class DistanceOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(Canvas c, MapView mapView)
+	protected void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
 	{
 		if (ancor == null)
 			return;
@@ -110,35 +110,34 @@ public class DistanceOverlay extends MapOverlay
 		final double[] loc = mapView.mapCenter;
 		final int[] cxy = mapView.mapCenterXY;
 
-        int sx = ancorXY[0] - cxy[0] + Math.round(mapView.getWidth() / 2);
-        int sy = ancorXY[1] - cxy[1] + Math.round(mapView.getHeight() / 2);
+        int sx = ancorXY[0] - cxy[0] + centerX;
+        int sy = ancorXY[1] - cxy[1] + centerY;
         
         if (ancorXY[0] != cxy[0] || ancorXY[1] != cxy[1])
         {
 	        if (sx >= 0 && sy >= 0 && sx <= mapView.getWidth() && sy <= mapView.getHeight())
 	        {
-	        	c.drawLine(cxy[0], cxy[1], ancorXY[0], ancorXY[1], linePaint);
-	        	c.drawCircle(ancorXY[0], ancorXY[1], linePaint.getStrokeWidth(), circlePaint);
+	        	c.drawLine(0, 0, ancorXY[0]-cxy[0], ancorXY[1]-cxy[1], linePaint);
+	        	c.drawCircle(ancorXY[0]-cxy[0], ancorXY[1]-cxy[1], linePaint.getStrokeWidth(), circlePaint);
 	        }
 	        else
 	        {
 	        	double bearing = Geo.bearing(loc[0], loc[1], ancor[0], ancor[1]);
 	        	c.save();
-	        	c.rotate((float) bearing, cxy[0], cxy[1]);
-	        	c.drawLine(cxy[0], cxy[1], cxy[0], 0, linePaint);
+	        	c.rotate((float) bearing, 0, 0);
+	        	c.drawLine(0, 0, 0, -centerY-centerX, linePaint);
 	        	c.restore();
 	        }
         }
 	}
 
 	@Override
-	protected void onDrawFinished(Canvas c, MapView mapView)
+	protected void onDrawFinished(Canvas c, MapView mapView, int centerX, int centerY)
 	{
 		if (ancor == null)
 			return;
 		
 		final double[] loc = mapView.mapCenter;
-		final int[] cxy = mapView.mapCenterXY;
 		
 		double dist = Geo.distance(loc[0], loc[1], ancor[0], ancor[1]);
 		double bearing = Geo.bearing(loc[0], loc[1], ancor[0], ancor[1]);
@@ -150,10 +149,10 @@ public class DistanceOverlay extends MapOverlay
 	    	textPaint.getTextBounds(distance, 0, distance.length(), rect);
 	    	int half = rect.width() / 2;
 	    	int dy = bearing > 90 && bearing < 270 ? -60 : 60+rect.height()/2;
-	        rect.offset(cxy[0]-half, cxy[1]+dy);
+	        rect.offset(-half, +dy);
 	        rect.inset(-4, -4);
 	        c.drawRect(rect, textFillPaint);
-	    	c.drawText(distance, cxy[0]-half, cxy[1]+dy, textPaint);
+	    	c.drawText(distance, -half, +dy, textPaint);
 		}
 	}
 

@@ -114,12 +114,14 @@ public class TrackOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(final Canvas c, final MapView mapView)
+	protected void onDraw(final Canvas c, final MapView mapView, int centerX, int centerY)
 	{
 		if (! track.show)
 			return;
 
 		Androzic application = (Androzic) context.getApplication();
+
+		final int[] cxy = mapView.mapCenterXY;
 
 		final Path path = new Path();
         int i = 0;
@@ -142,7 +144,7 @@ public class TrackOverlay extends MapOverlay
 	            
 	            if (i == 0)
 	            {
-	            	path.setLastPoint(xy[0], xy[1]);
+	            	path.setLastPoint(xy[0]-cxy[0], xy[1]-cxy[1]);
 		            lastX = xy[0];
 		            lastY = xy[1];
 	            }
@@ -152,9 +154,9 @@ public class TrackOverlay extends MapOverlay
 	            	{
 	
 	            		if (tp.continous)
-	            			path.lineTo(xy[0], xy[1]);
+	            			path.lineTo(xy[0]-cxy[0], xy[1]-cxy[1]);
 	            		else
-	            			path.moveTo(xy[0], xy[1]);
+	            			path.moveTo(xy[0]-cxy[0], xy[1]-cxy[1]);
 	    	            lastX = xy[0];
 	    	            lastY = xy[1];
 	            	}
@@ -166,7 +168,7 @@ public class TrackOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDrawFinished(final Canvas c, final MapView mapView)
+	protected void onDrawFinished(final Canvas c, final MapView mapView, int centerX, int centerY)
 	{
 	}
 

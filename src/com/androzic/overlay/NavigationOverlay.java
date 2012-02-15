@@ -90,35 +90,21 @@ public class NavigationOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(Canvas c, MapView mapView)
+	protected void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
 	{
 		if (navigationService.navWaypoint == null)
 			return;
 		
 		Androzic application = (Androzic) context.getApplication();
 
+		final int[] cxy = mapView.mapCenterXY;
+
 		int[] xy = application.getXYbyLatLon(navigationService.navWaypoint.latitude, navigationService.navWaypoint.longitude);
 
-        final double[] loc = mapView.currentLocation;
-        final int[] cxy = mapView.currentLocationXY;
-        
-        if (loc != null)
+        if (mapView.currentLocation != null)
         {
-	        int sx = xy[0] - cxy[0] + Math.round(mapView.getWidth() / 2);
-	        int sy = xy[1] - cxy[1] + Math.round(mapView.getHeight() / 2);
-	        
-	        if (sx >= 0 && sy >= 0 && sx <= mapView.getWidth() && sy <= mapView.getHeight())
-	        {
-	        	c.drawLine(cxy[0], cxy[1], xy[0], xy[1], paint);
-	        }
-	        else
-	        {
-	        	double bearing = Geo.bearing(loc[0], loc[1], navigationService.navWaypoint.latitude, navigationService.navWaypoint.longitude);
-	        	c.save();
-	        	c.rotate((float) bearing, cxy[0], cxy[1]);
-	        	c.drawLine(cxy[0], cxy[1], cxy[0], 0, paint);
-	        	c.restore();
-	        }
+            final int[] lxy = mapView.currentLocationXY;
+        	c.drawLine(lxy[0] - cxy[0], lxy[1] - cxy[1], xy[0] - cxy[0], xy[1] - cxy[1], paint);
         }
         if (drawCircle && navigationService.navRoute != null)
         {
@@ -128,14 +114,14 @@ public class NavigationOverlay extends MapOverlay
 		        for (Waypoint wpt : waypoints)
 		        {
 		            xy = application.getXYbyLatLon(wpt.latitude, wpt.longitude);
-		            c.drawCircle(xy[0], xy[1], radius, paint);
+		            c.drawCircle(xy[0] - cxy[0], xy[1] - cxy[1], radius, paint);
 		        }
 	        }
         }
 	}
 
 	@Override
-	protected void onDrawFinished(Canvas c, MapView mapView)
+	protected void onDrawFinished(Canvas c, MapView mapView, int centerX, int centerY)
 	{
 	}
 

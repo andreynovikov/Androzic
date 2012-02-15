@@ -23,6 +23,7 @@ package com.androzic.overlay;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -54,18 +55,18 @@ public abstract class MapOverlay
 	 * Managed Draw calls gives Overlays the possibility to first draw manually and after 
 	 * that do a final draw. This is very useful, i sth. to be drawn needs to be <b>topmost</b>.
 	 */
-	public void onManagedDraw(final Canvas c, final MapView mapView)
+	public void onManagedDraw(final Canvas c, final MapView mapView, int centerX, int centerY)
 	{
 		if (enabled)
 		{
-			onDraw(c, mapView);
-			onDrawFinished(c, mapView);
+			onDraw(c, mapView, centerX, centerY);
+			onDrawFinished(c, mapView, centerX, centerY);
 		}
 	}
 
-	protected abstract void onDraw(final Canvas c, final MapView mapView);
+	protected abstract void onDraw(final Canvas c, final MapView mapView, final int centerX, final int centerY);
 		
-	protected abstract void onDrawFinished(final Canvas c, final MapView mapView);
+	protected abstract void onDrawFinished(final Canvas c, final MapView mapView, final int centerX, final int centerY);
 	
 	public void onBeforeDestroy()
 	{

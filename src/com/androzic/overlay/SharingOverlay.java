@@ -132,9 +132,11 @@ public class SharingOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(Canvas c, MapView mapView)
+	protected void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
 	{
 		Androzic application = (Androzic) context.getApplication();
+
+		final int[] cxy = mapView.mapCenterXY;
 
 		final int half = Math.round(pointWidth / 2);
 
@@ -145,6 +147,8 @@ public class SharingOverlay extends MapOverlay
 				linePaint.setAlpha(loc.silent ? 128 : 255);
 				textPaint.setAlpha(loc.silent ? 128 : 255);
 				int[] xy = application.getXYbyLatLon(loc.latitude, loc.longitude);
+				xy[0] -= cxy[0];
+				xy[1] -= cxy[1];
 	    		Rect rect = new Rect(xy[0]-half, xy[1]-half, xy[0]+half, xy[1]+half);
 	            c.drawRect(rect, linePaint);
 	            c.drawLine(xy[0], xy[1], xy[0]+pointWidth*3, xy[1]-pointWidth*3, linePaint);
@@ -169,7 +173,7 @@ public class SharingOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDrawFinished(Canvas c, MapView mapView)
+	protected void onDrawFinished(Canvas c, MapView mapView, int centerX, int centerY)
 	{
 	}
 

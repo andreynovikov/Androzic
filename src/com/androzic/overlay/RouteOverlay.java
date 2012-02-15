@@ -146,12 +146,14 @@ public class RouteOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(final Canvas c, final MapView mapView)
+	protected void onDraw(final Canvas c, final MapView mapView, int centerX, int centerY)
 	{
 		if (! route.show)
 			return;
 		
     	Androzic application = (Androzic) context.getApplication();
+
+		final int[] cxy = mapView.mapCenterXY;
 
 		final Path path = new Path();
         int i = 0;
@@ -165,7 +167,7 @@ public class RouteOverlay extends MapOverlay
 	            
 	            if (i == 0)
 	            {
-	            	path.setLastPoint(xy[0], xy[1]);
+	            	path.setLastPoint(xy[0] - cxy[0], xy[1] - cxy[1]);
 		            lastX = xy[0];
 		            lastY = xy[1];
 	            }
@@ -173,8 +175,7 @@ public class RouteOverlay extends MapOverlay
 	            {
 	            	if (Math.abs(lastX - xy[0]) > 2 || Math.abs(lastY - xy[1]) > 2)
 	            	{
-	
-            			path.lineTo(xy[0], xy[1]);
+            			path.lineTo(xy[0] - cxy[0], xy[1] - cxy[1]);
 	    	            lastX = xy[0];
 	    	            lastY = xy[1];
 	            	}
@@ -186,12 +187,14 @@ public class RouteOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDrawFinished(final Canvas c, final MapView mapView)
+	protected void onDrawFinished(final Canvas c, final MapView mapView, int centerX, int centerY)
 	{
 		if (! route.show)
 			return;
 
 		Androzic application = (Androzic) context.getApplication();
+
+		final int[] cxy = mapView.mapCenterXY;
 
         final int half = Math.round(pointWidth / 2);
 
@@ -238,7 +241,7 @@ public class RouteOverlay extends MapOverlay
 		            bitmaps.put(wpt, bitmap);
 	        	}
 	            int[] xy = application.getXYbyLatLon(wpt.latitude,wpt.longitude);
-	        	c.drawBitmap(bitmap, xy[0]-half, xy[1]-half, null);
+	        	c.drawBitmap(bitmap, xy[0]-half-cxy[0], xy[1]-half-cxy[1], null);
 	        }
         }
 	}

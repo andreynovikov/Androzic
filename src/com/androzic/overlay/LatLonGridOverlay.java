@@ -126,9 +126,10 @@ public class LatLonGridOverlay extends MapOverlay
 	}
 
 	@Override
-	protected synchronized void onDraw(Canvas c, MapView mapView)
+	protected synchronized void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
 	{
 		c.save();
+		c.translate(-mapView.mapCenterXY[0], -mapView.mapCenterXY[1]);
 		if (clip != null)
 		{
 			c.clipRect(clip);
@@ -147,7 +148,7 @@ public class LatLonGridOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDrawFinished(Canvas c, MapView mapView)
+	protected void onDrawFinished(Canvas c, MapView mapView, int centerX, int centerY)
 	{
 	}
 
