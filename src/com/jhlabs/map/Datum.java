@@ -154,7 +154,8 @@ public class Datum {
 	    new Datum("Ordnance Survey 1936", Ellipsoid.AIRY, 375, -111, 431, new String[] {"OSGB36"}),
 	    new Datum("Pico De Las Nieves", Ellipsoid.INTERNATIONAL_1924, -307, -92, 127),
 	    new Datum("Pitcairn Astro 67", Ellipsoid.INTERNATIONAL_1924, 185, 165, 42),
-
+	    new Datum("Potsdam Rauenberg DHDN", Ellipsoid.BESSEL, 606, 23, 413),
+	    
 	    // different sources state different ellipsoids
 	    new Datum("PROVISIONAL_S_AMERICAN_1956", Ellipsoid.INTERNATIONAL_1967, -288, 175, -376),
 	    new Datum("S. Am. 1956 mean(P)", Ellipsoid.INTERNATIONAL_1924, -288, 175, -376),
@@ -162,7 +163,6 @@ public class Datum {
 	    new Datum("Puerto Rico", Ellipsoid.CLARKE_1866, 11, 72, -101),
 	    new Datum("Pulkovo 1942", Ellipsoid.KRASOVSKY, 27, -135, -89),
 	    new Datum("Pulkovo 1942 (1)", Ellipsoid.KRASOVSKY, 28, -130, -95, new String[] {"Pulkovo 1942 (2)"}),
-	    new Datum("Pulkovo 1942 (2)", Ellipsoid.KRASOVSKY, 28, -130, -95),
 	    new Datum("Pulkovo 1942 POL", Ellipsoid.KRASOVSKY, 23.74, -123.83, -81.81),
 	    new Datum("Qornoq", Ellipsoid.INTERNATIONAL_1924, 164, 138, -189),
 	    new Datum("Quatar National", Ellipsoid.INTERNATIONAL_1924, -128, -283, 22),
