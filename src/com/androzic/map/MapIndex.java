@@ -34,7 +34,7 @@ import com.androzic.util.MapFilenameFilter;
 
 public class MapIndex implements Serializable
 {
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 	
 	private ArrayList<Map> maps;
 	private String mapsRoot;

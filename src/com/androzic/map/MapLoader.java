@@ -24,12 +24,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 import android.util.Log;
 
+import com.androzic.util.CSV;
 import com.androzic.util.OziExplorerFiles;
 import com.jhlabs.Point2D;
 import com.jhlabs.map.Datum;
@@ -99,13 +98,16 @@ public class MapLoader
 		    map.imagePath = line;
 		    reader.readLine(); // Map Code
 		    line = reader.readLine();
-		    fields = parseLine(line);
+		    fields = CSV.parseLine(line);
 		    map.datum = fields[0];
-		    reader.readLine(); // Reserved
+		    line = reader.readLine();
+		    fields = CSV.parseLine(line);
+		    if (fields[0].equals("MSF"))
+		    	map.scaleFactor = 1 / Double.parseDouble(fields[1]);
 		    reader.readLine(); // Reserved
 		    while ((line = reader.readLine()) != null)
 			{
-				fields = parseLine(line);
+				fields = CSV.parseLine(line);
 				if (fields[0].startsWith("Point") && fields.length == 17)
 				{
 					MapPoint point = parsePoint(map, fields);
@@ -122,8 +124,8 @@ public class MapLoader
 				}
 				if ("IWH".equals(fields[0]))
 				{
-					map.width = Integer.parseInt(fields[2]);
-					map.height = Integer.parseInt(fields[3]);
+					map.width = (int) (Integer.parseInt(fields[2]) * map.scaleFactor);
+					map.height = (int) (Integer.parseInt(fields[3]) * map.scaleFactor);
 				}
 				if ("MMPNUM".equals(fields[0]))
 				{
@@ -134,8 +136,8 @@ public class MapLoader
 					try
 					{
 						int i = Integer.parseInt(fields[1]) - 1;
-						int x = Integer.parseInt(fields[2]);
-						int y = Integer.parseInt(fields[3]);
+						int x = (int) (Integer.parseInt(fields[2]) * map.scaleFactor);
+						int y = (int) (Integer.parseInt(fields[3]) * map.scaleFactor);
 						map.cornerMarkers[i].x = x;
 						map.cornerMarkers[i].y = y;
 					}
@@ -415,7 +417,7 @@ public class MapLoader
 			return null;
 		try
 		{
-			point.x = Integer.parseInt(fields[2]);
+			point.x = (int) (Integer.parseInt(fields[2]) * map.scaleFactor);
 		}
 		catch (NumberFormatException e)
 		{
@@ -423,7 +425,7 @@ public class MapLoader
 		}
 		try
 		{
-			point.y = Integer.parseInt(fields[3]);
+			point.y = (int) (Integer.parseInt(fields[3]) * map.scaleFactor);
 		}
 		catch (NumberFormatException e)
 		{
@@ -661,126 +663,6 @@ public class MapLoader
 	static double dms_to_deg(double deg, double min, double sec)
 	{
 		return deg + min / 60 + sec / 3600;
-	}
-
-	private static final char ESCAPE = '\\';
-	private static final char QUOTE = '"';
-	private static final char SEPARATOR = ',';
-
-	private static String field(final StringBuffer field, final int begin, final int end)
-	{
-	     if (begin < 0) {
-	         return field.substring(0, end);
-	     } else {
-	         return field.substring(begin, end);
-	     }
-	}
-
-	private static char escape(final char c)
-	{
-		switch (c) {
-		case 'n':
-		         return '\n';
-		     case 't':
-		         return '\t';
-		     case 'r':
-		         return '\r';
-		     default:
-		         return c;
-		     }
-	}
-
-	private static String[] parseLine(final String line)
-	{
-		int length = line.length();
-		
-		if (length == 0)
-			return new String[] {""};
-
-		// Check here if the last character is an escape character so
-		// that we don't need to check in the main loop.
-		if (line.charAt(length - 1) == ESCAPE)
-		{
-			throw new IllegalArgumentException(": last character is an escape character\n" + line);
-		}
-
-		// The set of parsed fields.
-		List<String> result = new ArrayList<String>();
-
-		// The characters between separators
-		StringBuffer buf = new StringBuffer(length);
-		// Marks the beginning of the field relative to buffer, -1 indicates the beginning of buffer
-		int begin = -1;
-		// Marks the end of the field relative to buffer
-		int end = 0;
-
-		// Indicates whether or not we're in a quoted string
-		boolean quote = false;
-
-		for (int i = 0; i < length; i++)
-		{
-			char c = line.charAt(i);
-			if (quote)
-			{
-				switch (c)
-				{
-					case QUOTE:
-						quote = false;
-						break;
-					case ESCAPE:
-						buf.append(escape(line.charAt(++i)));
-						break;
-					default:
-						buf.append(c);
-						break;
-				}
-
-				end = buf.length();
-			}
-			else
-			{
-				switch (c)
-				{
-					case SEPARATOR:
-						result.add(field(buf, begin, end));
-						buf = new StringBuffer(length);
-						begin = -1;
-						end = 0;
-						break;
-					case ESCAPE:
-						if (begin < 0) { begin = buf.length(); }
-						buf.append(escape(line.charAt(++i)));
-						end = buf.length();
-						break;
-					case QUOTE:
-						if (begin < 0) { begin = buf.length(); }
-						quote = true;
-						end = buf.length();
-						break;
-					default:
-						if (begin < 0 && !Character.isWhitespace(c))
-						{
-							begin = buf.length();
-						}
-						buf.append(c);
-						if (!Character.isWhitespace(c)) { end = buf.length(); }
-						break;
-				}
-			}
-		}
-
-		if (quote)
-		{
-			throw new IllegalArgumentException("unterminated string\n" + line);
-		}
-		else
-		{
-			result.add(field(buf, begin, end));
-		}
-
-		String[] fields = new String[result.size()];
-		result.toArray(fields);
-		return fields;
 	}
 	
 	public static Ellipsoid getEllipsoid(int index)

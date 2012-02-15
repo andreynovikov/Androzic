@@ -36,7 +36,7 @@ import com.jhlabs.map.proj.Projection;
 
 public class Map implements Serializable
 {
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 	
 	public int id;
 	public String title;
@@ -46,6 +46,7 @@ public class Map implements Serializable
 	public int width;
 	public int height;
 	public double mpp;
+	public double scaleFactor;
 	public String prjName;
 	public Grid llGrid;
 	public Grid grGrid;
@@ -65,6 +66,7 @@ public class Map implements Serializable
 		mappath = filepath;
 		id = mappath.hashCode();
 		scale = 1.0;
+		scaleFactor = 1.0;
 		loadError = null;
 		cache = null;
 	}
@@ -595,10 +597,11 @@ public class Map implements Serializable
 			info.add("ellipsoid: " + projection.getEllipsoid().toString());
 		}
 		info.add("datum: " + datum);
-		info.add("scale (mpp): " + mpp);
+		info.add("mpp: " + mpp);
 		info.add("image width: " + width);
 		info.add("image height: " + height);
-		info.add("image file: " + imagePath);		
+		info.add("image file: " + imagePath);
+		info.add("scale factor: " + 1 / scaleFactor);
 		info.add("calibration points:");
 		
 		int i = 1;
