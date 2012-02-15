@@ -121,15 +121,14 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		if (sensorManager != null)
 		{
-			// Sensor acc = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-			// Sensor mag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-			Sensor orn = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-			// if (acc != null && mag != null)
-			if (orn != null)
+			Log.e(TAG, "Sensor manager");
+
+			Sensor acc = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+			Sensor mag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+			if (acc != null && mag != null)
 			{
-				// sensorManager.registerListener(this, acc, SensorManager.SENSOR_DELAY_UI);
-				// sensorManager.registerListener(this, mag, SensorManager.SENSOR_DELAY_UI);
-				sensorManager.registerListener(this, orn, SensorManager.SENSOR_DELAY_UI);
+				sensorManager.registerListener(this, acc, SensorManager.SENSOR_DELAY_NORMAL);
+				sensorManager.registerListener(this, mag, SensorManager.SENSOR_DELAY_NORMAL);
 				Log.d(TAG, "Sensor listener set");
 			}
 		}
@@ -535,10 +534,9 @@ public class LocationService extends Service implements LocationListener, NmeaLi
                 //String fixQuality = tokens[6];
                 //String numSatellites = tokens[7];
                 //String horizontalDilutionOfPrecision = tokens[8];
-                String altitude = tokens[9];
+                //String altitude = tokens[9];
                 //String altitudeUnits = tokens[10];
                 String heightOfGeoid = tokens[11];
-                Log.e(TAG, "A: "+altitude+" G:"+heightOfGeoid+" "+tokens[12]);
                 if (! "".equals(heightOfGeoid))
                 	nmeaGeoidHeight = Float.parseFloat(heightOfGeoid);
                 //String heightOfGeoidUnits = tokens[12];
@@ -552,6 +550,10 @@ public class LocationService extends Service implements LocationListener, NmeaLi
                 String hdop = tokens[16];
                 String vdop = tokens[17];
                 Log.e(TAG, "PDOP: "+pdop+" HDOP: "+hdop+" VDOP: "+vdop);
+                if (! "".equals(hdop))
+                	HDOP = Float.parseFloat(hdop);
+                if (! "".equals(vdop))
+                	VDOP = Float.parseFloat(vdop);                
 			}
         }
         catch (NumberFormatException e)
@@ -647,39 +649,24 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	@Override
 	public void onSensorChanged(SensorEvent event)
 	{
-		boolean ready = false;
-
 		if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
 			return;
 
 		switch (event.sensor.getType())
 		{
-			case Sensor.TYPE_ORIENTATION:
-				float[] orientation = event.values.clone();
-
-				// orientation[0] = (float) Math.toDegrees(orientation[0]);
-				// orientation[1] = (float) Math.toDegrees(orientation[1]);
-				// orientation[2] = (float) Math.toDegrees(orientation[2]);
-
-				azimuth = orientation[0];
-				pitch = orientation[1];
-				roll = orientation[2];
-
-				updateSensor();
-				break;
 			case Sensor.TYPE_MAGNETIC_FIELD:
 				magneticValues = event.values.clone();
 				break;
 			case Sensor.TYPE_ACCELEROMETER:
 				accelerometerValues = event.values.clone();
-				// ready = true;
 				break;
 		}
 
-		if (magneticValues != null && accelerometerValues != null && ready)
+		if (magneticValues != null && accelerometerValues != null)
 		{
-			float[] R = new float[16];
-			boolean success = SensorManager.getRotationMatrix(R, null, accelerometerValues, magneticValues);
+			float R[] = new float[16];
+			float I[] = new float[16];
+			boolean success = SensorManager.getRotationMatrix(R, I, accelerometerValues, magneticValues);
 			if (success)
 			{
 				float[] orientation = new float[3];
@@ -727,6 +714,18 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 		public boolean isLocating()
 		{
 			return locationsEnabled;
+		}
+
+		@Override
+		public float getHDOP()
+		{
+			return HDOP;
+		}
+
+		@Override
+		public float getVDOP()
+		{
+			return VDOP;
 		}
 	}
 }

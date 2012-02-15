@@ -110,7 +110,7 @@ public class CompassActivity extends Activity
 		public void onServiceConnected(ComponentName name, IBinder service)
 		{
 			locationService = (ILocationService) service;
-			//locationService.registerCallback(locationCallback);
+			locationService.registerCallback(locationListener);
 		}
 
 		public void onServiceDisconnected(ComponentName className)
