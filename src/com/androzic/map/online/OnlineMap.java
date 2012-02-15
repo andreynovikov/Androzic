@@ -58,7 +58,7 @@ public class OnlineMap extends Map
 	    tileProvider = provider;
 	    tileController = new TileController();
 
-	    title = tileProvider.name;
+	    title = String.format("%s (%d)", tileProvider.name, zoom);
 		this.zoom = zoom;
 		this.defZoom = zoom;
 		scale = 1.0;
@@ -294,6 +294,7 @@ public class OnlineMap extends Map
 		if (this.zoom < tileProvider.minZoom)
 			this.zoom = tileProvider.minZoom;
 		scale = Math.pow(2, this.zoom - defZoom);
+	    title = String.format("%s (%d)", tileProvider.name, this.zoom);
 	}
 
 	public int getScaledWidth()
