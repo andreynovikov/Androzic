@@ -31,6 +31,7 @@ public class TileProvider
 	public String path;
 	public String name;
 	public String code;
+	public String secret;
 	public byte minZoom;
 	public byte maxZoom;
 	public boolean inverseY = false;
@@ -58,7 +59,13 @@ public class TileProvider
     	uri = uri.replace("{$y}", String.valueOf(y));
     	if (uri.contains("{$q}"))
     		uri = uri.replace("{$q}", encodeQuadTree(z, x, y));
-        return uri;
+    	if (uri.contains("{$g}") && secret != null)
+    	{
+    		int stringlen = (3 * x + y) & 7;
+    		uri = uri.replace("{$g}", secret.substring(0, stringlen));
+    	}
+    	
+		return uri;
 	}
 	
 	public static TileProvider fromString(String s)
@@ -94,6 +101,8 @@ public class TileProvider
 			provider.servers.add(fields[9]);
 		provider.inverseY = fields.length > 10 && "yinverse".equals(fields[10]);
 		provider.ellipsoid = fields.length > 10 && "ellipsoid".equals(fields[10]);
+		if (fields.length > 11 && ! "".equals(fields[11]))
+			provider.secret = fields[11];
 
 		return provider;
 	}
