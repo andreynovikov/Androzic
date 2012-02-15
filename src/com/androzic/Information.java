@@ -20,7 +20,6 @@
 
 package com.androzic;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -35,6 +34,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -70,31 +70,31 @@ public class Information extends Activity
 
 	protected Animation shake;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_information);
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.act_information);
 
 		application = (Androzic) getApplication();
-        shake = AnimationUtils.loadAnimation(Information.this, R.anim.shake);
+		shake = AnimationUtils.loadAnimation(Information.this, R.anim.shake);
 
 		satsValue = (TextView) findViewById(R.id.sats);
-    	lastfixValue = (TextView) findViewById(R.id.lastfix);
-    	accuracyValue = (TextView) findViewById(R.id.accuracy);
-    	providerValue = (TextView) findViewById(R.id.provider);
-    	latitudeValue = (TextView) findViewById(R.id.latitude);
-    	longitudeValue = (TextView) findViewById(R.id.longitude);
-    	sunriseValue = (TextView) findViewById(R.id.sunrise);
-    	sunsetValue = (TextView) findViewById(R.id.sunset);
-    	declinationValue = (TextView) findViewById(R.id.declination);
-    	hdopValue = (TextView) findViewById(R.id.hdop);
-    	vdopValue = (TextView) findViewById(R.id.vdop);
+		lastfixValue = (TextView) findViewById(R.id.lastfix);
+		accuracyValue = (TextView) findViewById(R.id.accuracy);
+		providerValue = (TextView) findViewById(R.id.provider);
+		latitudeValue = (TextView) findViewById(R.id.latitude);
+		longitudeValue = (TextView) findViewById(R.id.longitude);
+		sunriseValue = (TextView) findViewById(R.id.sunrise);
+		sunsetValue = (TextView) findViewById(R.id.sunset);
+		declinationValue = (TextView) findViewById(R.id.declination);
+		hdopValue = (TextView) findViewById(R.id.hdop);
+		vdopValue = (TextView) findViewById(R.id.vdop);
 
-	    Button update = (Button) findViewById(R.id.almanac_button);
-	    update.setOnClickListener(updateOnClickListener);
-    }
-    
+		Button update = (Button) findViewById(R.id.almanac_button);
+		update.setOnClickListener(updateOnClickListener);
+	}
+
 	@Override
 	protected void onResume()
 	{
@@ -152,8 +152,7 @@ public class Information extends Activity
 		}
 	};
 
-	private ILocationListener locationListener = new ILocationListener()
-	{
+	private ILocationListener locationListener = new ILocationListener() {
 
 		@Override
 		public void onGpsStatusChanged(final String provider, final int status, final int fsats, final int tsats)
@@ -164,7 +163,7 @@ public class Information extends Activity
 					switch (status)
 					{
 						case LocationService.GPS_OK:
-					    	satsValue.setText(String.valueOf(fsats) + "/" + String.valueOf(tsats));
+							satsValue.setText(String.valueOf(fsats) + "/" + String.valueOf(tsats));
 							break;
 						case LocationService.GPS_OFF:
 							satsValue.setText(R.string.sat_stop);
@@ -177,10 +176,10 @@ public class Information extends Activity
 					if (locationService != null)
 					{
 						float hdop = locationService.getHDOP();
-						if (! Float.isNaN(hdop))
+						if (!Float.isNaN(hdop))
 							hdopValue.setText(String.format("%.1f", hdop));
 						float vdop = locationService.getVDOP();
-						if (! Float.isNaN(vdop))
+						if (!Float.isNaN(vdop))
 							vdopValue.setText(String.format("%.1f", vdop));
 					}
 				}
@@ -193,12 +192,14 @@ public class Information extends Activity
 			runOnUiThread(new Runnable() {
 				public void run()
 				{
-			    	lastfixValue.setText(SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM).format(new Date(loc.getTime())));
-			    	providerValue.setText(loc.getProvider() != null ? loc.getProvider() : "N/A");
-			    	// FIXME Needs UTM support here
-			    	latitudeValue.setText(StringFormatter.coordinate(application.coordinateFormat, loc.getLatitude()));
-			    	longitudeValue.setText(StringFormatter.coordinate(application.coordinateFormat, loc.getLongitude()));
-			    	accuracyValue.setText(loc.hasAccuracy() ? StringFormatter.distanceH(loc.getAccuracy(), "%.1f", 1000) : "N/A");
+					Date date = new Date(loc.getTime());
+					lastfixValue.setText(DateFormat.getDateFormat(Information.this).format(date) + " "
+							+ DateFormat.getTimeFormat(Information.this).format(date));
+					providerValue.setText(loc.getProvider() != null ? loc.getProvider() : "N/A");
+					// FIXME Needs UTM support here
+					latitudeValue.setText(StringFormatter.coordinate(application.coordinateFormat, loc.getLatitude()));
+					longitudeValue.setText(StringFormatter.coordinate(application.coordinateFormat, loc.getLongitude()));
+					accuracyValue.setText(loc.hasAccuracy() ? StringFormatter.distanceH(loc.getAccuracy(), "%.1f", 1000) : "N/A");
 
 					Calendar now = GregorianCalendar.getInstance(TimeZone.getDefault());
 					double sunrise = Astro.computeSunriseTime(application.getZenith(), loc, now);
@@ -230,21 +231,21 @@ public class Information extends Activity
 		public void onProviderChanged(String provider)
 		{
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onProviderDisabled(String provider)
 		{
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onProviderEnabled(String provider)
 		{
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
@@ -252,17 +253,16 @@ public class Information extends Activity
 		{
 		}
 	};
-	
-	private OnClickListener updateOnClickListener = new OnClickListener()
-	{
-        public void onClick(View v)
-        {
-    		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    		if (locationManager != null)
-    		{
-    			locationManager.sendExtraCommand(LocationManager.GPS_PROVIDER, "force_xtra_injection", null);
-    			locationManager.sendExtraCommand(LocationManager.GPS_PROVIDER, "force_time_injection", null);
-    		}        		
-        }
-    };
+
+	private OnClickListener updateOnClickListener = new OnClickListener() {
+		public void onClick(View v)
+		{
+			LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			if (locationManager != null)
+			{
+				locationManager.sendExtraCommand(LocationManager.GPS_PROVIDER, "force_xtra_injection", null);
+				locationManager.sendExtraCommand(LocationManager.GPS_PROVIDER, "force_time_injection", null);
+			}
+		}
+	};
 }
