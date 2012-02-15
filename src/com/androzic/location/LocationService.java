@@ -490,12 +490,6 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 		 * lastKnownLocation.setLongitude(29.451150);
 		 */
 
-		 lastKnownLocation.setSpeed(20); lastKnownLocation.setBearing(340);
-		 lastKnownLocation.setAltitude(169);
-		 lastKnownLocation.setLatitude(55.852527);
-		 lastKnownLocation.setLongitude(29.451150);
-		 
-
 		if (useCompass && lastKnownLocation.getSpeed() == 0)
 		{
 			location.setBearing(azimuth);
