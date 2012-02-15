@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.widget.Toast;
+
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
@@ -76,83 +78,91 @@ public class OziExplorerFiles
 		//21,PTRS          , -26.636541, 152.449640,35640.91155, 0, 1, 3,  16777215,  16711935,Peach Trees Camping area                , 0, 0
 	    while ((line = reader.readLine()) != null)
 		{
-	    	String[] fields = CSV.parseLine(line);
-	    	if (fields.length >= 11)
+	    	try
 	    	{
-		    	if ("".equals(fields[1]))
-		    		fields[1] = "WPT"+fields[0];
-		    	
-	    		Waypoint waypoint = new Waypoint(fields[1].replace((char) 209, ','), fields[10].replace((char) 209, ','), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
-
-	    		if (! "".equals(fields[4]))
-	    		{
-	    			try 
-	    			{
-	    				waypoint.date = TDateTime.dateFromDateTime(Double.parseDouble(fields[4]));
-	    			}
-		    		catch (NumberFormatException e)
-		    		{
-		    			e.printStackTrace();
-		    		}
-	    		}
-	    		
-		    	if (! "".equals(fields[8]))
+	    		String[] fields = CSV.parseLine(line);
+		    	if (fields.length >= 11)
 		    	{
-		    		try
+			    	if ("".equals(fields[1]))
+			    		fields[1] = "WPT"+fields[0];
+			    	
+		    		Waypoint waypoint = new Waypoint(fields[1].replace((char) 209, ','), fields[10].replace((char) 209, ','), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
+	
+		    		if (! "".equals(fields[4]))
 		    		{
-		    			int fgcolor = Integer.parseInt(fields[8]);
-		    			if (fgcolor != 0)
-		    				waypoint.textcolor = bgr2rgb(fgcolor);
+		    			try 
+		    			{
+		    				waypoint.date = TDateTime.dateFromDateTime(Double.parseDouble(fields[4]));
+		    			}
+			    		catch (NumberFormatException e)
+			    		{
+			    			e.printStackTrace();
+			    		}
 		    		}
-		    		catch (NumberFormatException e)
+		    		
+			    	if (! "".equals(fields[8]))
+			    	{
+			    		try
+			    		{
+			    			int fgcolor = Integer.parseInt(fields[8]);
+			    			if (fgcolor != 0)
+			    				waypoint.textcolor = bgr2rgb(fgcolor);
+			    		}
+			    		catch (NumberFormatException e)
+			    		{
+			    			e.printStackTrace();
+			    		}
+			    	}
+			    	if (! "".equals(fields[9]))
+			    	{
+			    		try
+			    		{
+			    			int bgcolor = Integer.parseInt(fields[9]);
+				    		if (bgcolor != 65535)
+				    			waypoint.backcolor = bgr2rgb(bgcolor);
+			    		}
+			    		catch (NumberFormatException e)
+			    		{
+			    			e.printStackTrace();
+			    		}
+			    	}
+	
+		    		if (fields.length >= 14 && ! "".equals(fields[13]))
 		    		{
-		    			e.printStackTrace();
-		    		}
+			    		try
+			    		{
+			    			waypoint.proximity = Integer.parseInt(fields[13]);
+			    		}
+			    		catch (NumberFormatException e)
+			    		{
+			    			e.printStackTrace();
+			    		}
+			    	}
+	
+		    		if (fields.length >= 15 && ! "".equals(fields[14]))
+		    		{
+			    		try
+			    		{
+			    			int alt = Integer.parseInt(fields[14]);
+			    			waypoint.altitude = alt == -777 ? Integer.MIN_VALUE : alt;
+		    			}
+			    		catch (NumberFormatException e)
+			    		{
+			    			e.printStackTrace();
+			    		}
+			    	}
+	
+		    		if (fields.length >= 22 && ! "".equals(fields[21]))
+		    		{
+		    			waypoint.image = fields[21];
+			    	}
+		    		waypoints.add(waypoint);
 		    	}
-		    	if (! "".equals(fields[9]))
-		    	{
-		    		try
-		    		{
-		    			int bgcolor = Integer.parseInt(fields[9]);
-			    		if (bgcolor != 65535)
-			    			waypoint.backcolor = bgr2rgb(bgcolor);
-		    		}
-		    		catch (NumberFormatException e)
-		    		{
-		    			e.printStackTrace();
-		    		}
-		    	}
-
-	    		if (fields.length >= 14 && ! "".equals(fields[13]))
-	    		{
-		    		try
-		    		{
-		    			waypoint.proximity = Integer.parseInt(fields[13]);
-		    		}
-		    		catch (NumberFormatException e)
-		    		{
-		    			e.printStackTrace();
-		    		}
-		    	}
-
-	    		if (fields.length >= 15 && ! "".equals(fields[14]))
-	    		{
-		    		try
-		    		{
-		    			int alt = Integer.parseInt(fields[14]);
-		    			waypoint.altitude = alt == -777 ? Integer.MIN_VALUE : alt;
-	    			}
-		    		catch (NumberFormatException e)
-		    		{
-		    			e.printStackTrace();
-		    		}
-		    	}
-
-	    		if (fields.length >= 22 && ! "".equals(fields[21]))
-	    		{
-	    			waypoint.image = fields[21];
-		    	}
-	    		waypoints.add(waypoint);
+	    	}
+	    	catch (IllegalArgumentException e)
+	    	{
+	    		//TODO Show error to user
+	    		e.printStackTrace();
 	    	}
 	    }
 		reader.close();
