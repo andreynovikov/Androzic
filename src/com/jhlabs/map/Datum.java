@@ -225,6 +225,11 @@ public class Datum {
 		return registry.get(name);
 	}
 	
+	public Ellipsoid getEllipsoid()
+	{
+		return ellipsoid;
+	}
+	
     public String toString()
     {
     	return name;

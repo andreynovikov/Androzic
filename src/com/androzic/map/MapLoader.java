@@ -180,11 +180,17 @@ public class MapLoader
 					parseProjectionParams(map, fields);
 				}
 			}
+			Datum datum = Datum.get(map.datum);
+			if (datum == null)
+				throw new IllegalArgumentException("Datum "+map.datum+" not found");
+			
+			if (! Datum.WGS_1984.equals(datum))
+				map.projection.setEllipsoid(datum.getEllipsoid());
 		    if ("".equals(map.projection.getEllipsoid().shortName))
 		    	map.projection.setEllipsoid(Ellipsoid.WGS_1984);
 		    map.projection.initialize();
 		    fixCalibration(map);
-			fixCoords(map);
+			fixCoords(map, datum);
 		    map.bind();
 			fixCornerMarkers(map);
 		    map.debug();
@@ -214,12 +220,8 @@ public class MapLoader
 		return map;
 	}
 
-	private static void fixCoords(Map map)
+	private static void fixCoords(Map map, Datum datum)
 	{
-		Datum datum = Datum.get(map.datum);
-		if (datum == null)
-			throw new IllegalArgumentException("Datum "+map.datum+" not found");
-
 		Log.d("OZI", "map datum: " + datum);
 		
 		if (Datum.WGS_1984.equals(datum))
@@ -245,6 +247,7 @@ public class MapLoader
 				mp.lon = to.lon;
 			}
 		}
+		map.origDatum = map.datum;
 		map.datum = "WGS84";
 		Log.d("OZI", "new datum: " + map.datum);
 	}
@@ -269,13 +272,13 @@ public class MapLoader
 		    }
 			if (mp.n != 0 && mp.e != 0)
 			{
-//				Log.e("OZI", "fix: "+map.projection.getPROJ4Description());
+				//Log.e("OZI", "fix: "+map.projection.getPROJ4Description());
 		        Point2D.Double src = new Point2D.Double(mp.e, mp.n);
 		        Point2D.Double dst = new Point2D.Double();
 				map.projection.inverseTransform(src, dst);
 				mp.lat = dst.y;
 				mp.lon = dst.x;
-//				Log.e("OZI", "fix: "+mp.n+" "+mp.e+" | "+mp.lat+" "+mp.lon);
+				//Log.e("OZI", "fix: "+mp.n+" "+mp.e+" | "+mp.lat+" "+mp.lon);
 			}		
 		}
 			
