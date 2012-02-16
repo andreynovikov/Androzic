@@ -36,13 +36,14 @@ import com.jhlabs.map.proj.Projection;
 
 public class Map implements Serializable
 {
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 	
 	public int id;
 	public String title;
 	public String mappath;
 	public String imagePath;
 	public String datum;
+	public String origDatum;
 	public int width;
 	public int height;
 	public double mpp;
@@ -596,7 +597,15 @@ public class Map implements Serializable
 			info.add("\t" + projection.getPROJ4Description());
 			info.add("ellipsoid: " + projection.getEllipsoid().toString());
 		}
-		info.add("datum: " + datum);
+		if (origDatum != null)
+		{
+			info.add("datum: " + origDatum + " -> " + datum);
+			info.add("  (coordinates shown in " + datum + ")");
+		}
+		else
+		{
+			info.add("datum: " + datum);
+		}
 		info.add("mpp: " + mpp);
 		info.add("image width: " + width);
 		info.add("image height: " + height);
