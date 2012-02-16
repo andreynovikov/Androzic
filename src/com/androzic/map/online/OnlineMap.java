@@ -112,7 +112,7 @@ public class OnlineMap extends Map
 	{
 		if (! isActive)
 			mpp = projection.getEllipsoid().equatorRadius * Math.PI * 2 * Math.cos(Math.toRadians(lat)) / Math.pow(2.0, (zoom + 8));
-		return true;
+		return lat < 85.051129 && lat > -85.047336;
 	}
 
 	@Override
