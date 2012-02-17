@@ -74,7 +74,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	private TextView proximity;
 	private ColorButton markercolor;
 	private ColorButton textcolor;
-	
+
 	private ViewGroup coordDeg;
 	private ViewGroup coordUtm;
 	private ViewGroup coordLatDeg;
@@ -84,40 +84,39 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	private ViewGroup coordLonMin;
 	private ViewGroup coordLonSec;
 
-	
 	private int curFormat = -1;
 	private String iconValue;
 	private int route;
 
 	private int defMarkerColor;
 	private int defTextColor;
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.act_waypoint_properties);
 
-        int index = getIntent().getExtras().getInt("INDEX");
-        route = getIntent().getExtras().getInt("ROUTE");
-        
-        tabHost = (TabHost) findViewById(R.id.tabhost);
-        tabHost.setup();
-        tabHost.addTab(tabHost.newTabSpec("main").setIndicator(getString(R.string.primary)).setContent(R.id.properties));
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-			tabHost.getTabWidget().getChildAt(0).getLayoutParams().height=50;
+		int index = getIntent().getExtras().getInt("INDEX");
+		route = getIntent().getExtras().getInt("ROUTE");
 
-	    if (route == 0)
+		tabHost = (TabHost) findViewById(R.id.tabhost);
+		tabHost.setup();
+		tabHost.addTab(tabHost.newTabSpec("main").setIndicator(getString(R.string.primary)).setContent(R.id.properties));
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+			tabHost.getTabWidget().getChildAt(0).getLayoutParams().height = 50;
+
+		if (route == 0)
 		{
-	        tabHost.addTab(tabHost.newTabSpec("advanced").setIndicator(getString(R.string.advanced)).setContent(R.id.advanced));
-    		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-    			tabHost.getTabWidget().getChildAt(1).getLayoutParams().height=50;
+			tabHost.addTab(tabHost.newTabSpec("advanced").setIndicator(getString(R.string.advanced)).setContent(R.id.advanced));
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+				tabHost.getTabWidget().getChildAt(1).getLayoutParams().height = 50;
 		}
 
-        if (savedInstanceState != null)
-        {
-            tabHost.setCurrentTabByTag(savedInstanceState.getString("tab"));
-        }
+		if (savedInstanceState != null)
+		{
+			tabHost.setCurrentTabByTag(savedInstanceState.getString("tab"));
+		}
 
 		Androzic application = (Androzic) getApplication();
 		if (route > 0)
@@ -135,7 +134,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 			waypoint = new Waypoint();
 			waypoint.date = Calendar.getInstance().getTime();
 		}
-		
+
 		name = (TextView) findViewById(R.id.name_text);
 		name.setText(waypoint.name);
 		description = (TextView) findViewById(R.id.description_text);
@@ -163,10 +162,10 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 				}
 			}
 			icon.setOnClickListener(iconOnClickListener);
-    		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-    		{
-    			registerForContextMenu(icon);
-    		}
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+			{
+				registerForContextMenu(icon);
+			}
 		}
 		else
 		{
@@ -180,7 +179,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		{
 			items.add(wptset.name);
 		}
-	
+
 		Spinner spinner = (Spinner) findViewById(R.id.set_spinner);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -189,7 +188,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 
 		int markerColorValue = waypoint.backcolor;
 		int textColorValue = waypoint.textcolor;
-		
+
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		defMarkerColor = settings.getInt(getString(R.string.pref_waypoint_color), getResources().getColor(R.color.waypoint));
 		defTextColor = settings.getInt(getString(R.string.pref_waypoint_namecolor), getResources().getColor(R.color.waypointtext));
@@ -202,31 +201,36 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		{
 			textColorValue = defTextColor;
 		}
-		
-        markercolor = (ColorButton) findViewById(R.id.markercolor_button);
-        markercolor.setColor(markerColorValue, defMarkerColor);
 
-        textcolor = (ColorButton) findViewById(R.id.textcolor_button);
-        textcolor.setColor(textColorValue, defTextColor);
+		markercolor = (ColorButton) findViewById(R.id.markercolor_button);
+		markercolor.setColor(markerColorValue, defMarkerColor);
 
-		coordDeg    = (ViewGroup) findViewById(R.id.coord_deg);
-		coordUtm    = (ViewGroup) findViewById(R.id.coord_utm);
+		textcolor = (ColorButton) findViewById(R.id.textcolor_button);
+		textcolor.setColor(textColorValue, defTextColor);
+
+		coordDeg = (ViewGroup) findViewById(R.id.coord_deg);
+		coordUtm = (ViewGroup) findViewById(R.id.coord_utm);
 		coordLatDeg = (ViewGroup) findViewById(R.id.coord_lat_deg);
 		coordLatMin = (ViewGroup) findViewById(R.id.coord_lat_min);
 		coordLatSec = (ViewGroup) findViewById(R.id.coord_lat_sec);
 		coordLonDeg = (ViewGroup) findViewById(R.id.coord_lon_deg);
 		coordLonMin = (ViewGroup) findViewById(R.id.coord_lon_min);
 		coordLonSec = (ViewGroup) findViewById(R.id.coord_lon_sec);
-		
+
 		Spinner coordformat = (Spinner) findViewById(R.id.coordformat_spinner);
 		coordformat.setOnItemSelectedListener(this);
 		coordformat.setSelection(application.coordinateFormat);
-		
-	    ((Button) findViewById(R.id.done_button)).setOnClickListener(doneOnClickListener);
-	    ((Button) findViewById(R.id.cancel_button)).setOnClickListener(new OnClickListener() { public void onClick(View v) { finish(); } });
-    }
 
-    @Override
+		((Button) findViewById(R.id.done_button)).setOnClickListener(doneOnClickListener);
+		((Button) findViewById(R.id.cancel_button)).setOnClickListener(new OnClickListener() {
+			public void onClick(View v)
+			{
+				finish();
+			}
+		});
+	}
+
+	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState)
 	{
 		super.onRestoreInstanceState(savedInstanceState);
@@ -246,12 +250,12 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	}
 
 	@Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-        super.onSaveInstanceState(outState);
-        outState.putString("tab", tabHost.getCurrentTabTag());
-        outState.putString("icon", iconValue);
-    }
+	protected void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+		outState.putString("tab", tabHost.getCurrentTabTag());
+		outState.putString("icon", iconValue);
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -271,7 +275,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
-//		menu.setHeaderTitle(application.getWaypoint(map.waypointSelected).name);
+		// menu.setHeaderTitle(application.getWaypoint(map.waypointSelected).name);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.marker_popup, menu);
 	}
@@ -279,136 +283,138 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	@Override
 	public boolean onContextItemSelected(final MenuItem item)
 	{
-    	switch (item.getItemId())
-    	{
-    		case R.id.change:
-    			startActivityForResult(new Intent(this, MarkerPickerActivity.class), 0);
-    			break;
-    		case R.id.remove:
-    			iconValue = null;
-    			ImageButton icon = (ImageButton) findViewById(R.id.icon_button);
-    			icon.setImageDrawable(this.getResources().getDrawable(R.drawable.no));
-    			break;
-    	}
-        return true;
+		switch (item.getItemId())
+		{
+			case R.id.change:
+				startActivityForResult(new Intent(this, MarkerPickerActivity.class), 0);
+				break;
+			case R.id.remove:
+				iconValue = null;
+				ImageButton icon = (ImageButton) findViewById(R.id.icon_button);
+				icon.setImageDrawable(this.getResources().getDrawable(R.drawable.no));
+				break;
+		}
+		return true;
 	}
-	
-	private OnClickListener iconOnClickListener = new OnClickListener()
-	{
-        public void onClick(View v)
-        {
-    		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-    		{
-    			v.showContextMenu();
-    		}
-    		else
-    		{
-	            PopupMenu popup = new PopupMenu(WaypointProperties.this, v);
-	            popup.getMenuInflater().inflate(R.menu.marker_popup, popup.getMenu());
-	            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
-	                public boolean onMenuItemClick(MenuItem item)
-	                {
-	                    return onContextItemSelected(item);
-	                }
-	            });
-	            popup.show();
-    		}
-        }
+
+	private OnClickListener iconOnClickListener = new OnClickListener() {
+		public void onClick(View v)
+		{
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+			{
+				v.showContextMenu();
+			}
+			else
+			{
+				PopupMenu popup = new PopupMenu(WaypointProperties.this, v);
+				popup.getMenuInflater().inflate(R.menu.marker_popup, popup.getMenu());
+				popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item)
+					{
+						return onContextItemSelected(item);
+					}
+				});
+				popup.show();
+			}
+		}
 	};
-	
-	private OnClickListener doneOnClickListener = new OnClickListener()
-	{
-        public void onClick(View v)
-        {
-        	try
-        	{
-        		Androzic application = (Androzic) getApplication();
 
-        		if (name.getText().length() == 0)
-        			return;
-        		
-        		waypoint.name = name.getText().toString();
+	private OnClickListener doneOnClickListener = new OnClickListener() {
+		public void onClick(View v)
+		{
+			try
+			{
+				Androzic application = (Androzic) getApplication();
 
-        		waypoint.description = description.getText().toString();
-        		GeodeticPosition coords = getLatLon();
-        		waypoint.latitude = coords.lat;
-        		waypoint.longitude = coords.lon;
-        		
-        		try
+				if (name.getText().length() == 0)
+					return;
+
+				waypoint.name = name.getText().toString();
+
+				waypoint.description = description.getText().toString();
+				GeodeticPosition coords = getLatLon();
+				waypoint.latitude = coords.lat;
+				waypoint.longitude = coords.lon;
+
+				try
 				{
-					int prx = Integer.parseInt(proximity.getText().toString());
-					if (prx != 0)
-						waypoint.proximity = prx;
+					String p = proximity.getText().toString();
+					if ("".equals(p))
+						waypoint.proximity = 0;
+					else
+						waypoint.proximity = Integer.parseInt(p);
 				}
 				catch (NumberFormatException e)
 				{
 					e.printStackTrace();
 				}
 
-        		try
+				try
 				{
-					int alt = Integer.parseInt(altitude.getText().toString());
-					if (alt != 0)
-						waypoint.altitude = alt;
+					String a = altitude.getText().toString();
+					if ("".equals(a))
+						waypoint.altitude = Integer.MIN_VALUE;
+					else
+						waypoint.altitude = Integer.parseInt(a);
 				}
 				catch (NumberFormatException e)
 				{
 					e.printStackTrace();
 				}
 
-        		if (iconValue == null)
-        		{
-            		waypoint.image = "";
-        			waypoint.drawImage = false;
-        		}
-        		else
-        		{
-            		waypoint.image = iconValue;        			
-        			waypoint.drawImage = true;
-        		}
-    			int markerColorValue = markercolor.getColor();
-        		if (markerColorValue != defMarkerColor)
-        			waypoint.backcolor = markerColorValue;
-    			int textColorValue = textcolor.getColor();
-        		if (textColorValue != defTextColor)
-        			waypoint.textcolor = textColorValue;
+				if (iconValue == null)
+				{
+					waypoint.image = "";
+					waypoint.drawImage = false;
+				}
+				else
+				{
+					waypoint.image = iconValue;
+					waypoint.drawImage = true;
+				}
+				int markerColorValue = markercolor.getColor();
+				if (markerColorValue != defMarkerColor)
+					waypoint.backcolor = markerColorValue;
+				int textColorValue = textcolor.getColor();
+				if (textColorValue != defTextColor)
+					waypoint.textcolor = textColorValue;
 
-        		int index = -1;
-        		if (route == 0)
-        		{
-        			if (waypoint.set == null)
-        			{
-        				application.addWaypoint(waypoint);
-        				index = application.getWaypointIndex(waypoint);
-        			}
-        		
-        			int set = ((Spinner) findViewById(R.id.set_spinner)).getSelectedItemPosition();
-        			waypoint.set = application.getWaypointSets().get(set);
-        		}
-        		
-        		if (index != -1)
-        		{
-        			setResult(Activity.RESULT_OK, new Intent().putExtra("index", index));
-        		}
-        		else
-        		{
-        			setResult(Activity.RESULT_OK);
-        		}
-        		finish();
-        	}
-        	catch (Exception e)
-        	{
+				int index = -1;
+				if (route == 0)
+				{
+					if (waypoint.set == null)
+					{
+						application.addWaypoint(waypoint);
+						index = application.getWaypointIndex(waypoint);
+					}
+
+					int set = ((Spinner) findViewById(R.id.set_spinner)).getSelectedItemPosition();
+					waypoint.set = application.getWaypointSets().get(set);
+				}
+
+				if (index != -1)
+				{
+					setResult(Activity.RESULT_OK, new Intent().putExtra("index", index));
+				}
+				else
+				{
+					setResult(Activity.RESULT_OK);
+				}
+				finish();
+			}
+			catch (Exception e)
+			{
 				e.printStackTrace();
-    			Toast.makeText(getBaseContext(), "Invalid input", Toast.LENGTH_LONG).show();        		
-        	}
-        }
-    };
+				Toast.makeText(getBaseContext(), "Invalid input", Toast.LENGTH_LONG).show();
+			}
+		}
+	};
 
-    private GeodeticPosition getLatLon()
-    {
+	private GeodeticPosition getLatLon()
+	{
 		double degrees, minutes, seconds;
-		
-		GeodeticPosition coords = new GeodeticPosition();		
+
+		GeodeticPosition coords = new GeodeticPosition();
 		switch (curFormat)
 		{
 			case -1:
@@ -460,20 +466,20 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 				}
 				catch (ReferenceException e)
 				{
-		   			Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();					
+					Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 				}
 		}
 		return coords;
-    }
+	}
 
-    @Override
+	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
 	{
 		int degrees, minutes;
 		double min, seconds;
-		
+
 		GeodeticPosition coords = getLatLon();
-		
+
 		switch (position)
 		{
 			case 0:
@@ -554,7 +560,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 				}
 				catch (ReferenceException e)
 				{
-		   			Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+					Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 				}
 		}
 		curFormat = position;
@@ -564,7 +570,6 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	public void onNothingSelected(AdapterView<?> parent)
 	{
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -573,7 +578,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		super.onDestroy();
 		waypoint = null;
 		name = null;
-		description = null;		
+		description = null;
 		coordLatDeg = null;
 		coordLatMin = null;
 		coordLatSec = null;
