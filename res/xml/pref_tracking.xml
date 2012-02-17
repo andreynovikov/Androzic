@@ -4,7 +4,7 @@
     android:title="@string/pref_tracking_title" >
 
     <EditTextPreference
-        android:defaultValue="500"
+        android:defaultValue="2000"
         android:inputType="number"
         android:key="@string/pref_tracking_mintime"
         android:maxLength="5"

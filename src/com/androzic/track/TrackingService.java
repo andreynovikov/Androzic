@@ -98,7 +98,7 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 	private long timeFromLastWriting = 0;
 	private boolean isContinous;
 
-	private long minTime = 500; // half a second (default)
+	private long minTime = 2000; // 2 seconds (default)
 	private long maxTime = 300000; // 5 minutes
 	private int minDistance = 3; // 3 meters (default)
 	private int color = Color.RED;
@@ -426,6 +426,7 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 					case LocationService.GPS_SEARCHING:
 	        			if (lastLocation != null && (lastWritenLocation == null || ! lastLocation.toString().equals(lastWritenLocation.toString())))
 	        				writeLocation(lastLocation, isContinous);
+	        			isContinous = false;
 				}
 			}
 		}
