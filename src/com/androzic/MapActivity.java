@@ -33,6 +33,10 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import net.londatiga.android.ActionItem;
+import net.londatiga.android.QuickAction3D;
+import net.londatiga.android.QuickAction3D.OnActionItemClickListener;
+
 import org.miscwidgets.interpolator.EasingType.Type;
 import org.miscwidgets.interpolator.ExpoInterpolator;
 import org.miscwidgets.widget.Panel;
@@ -72,8 +76,6 @@ import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.SmsMessage;
 import android.text.ClipboardManager;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -147,6 +149,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	private static final int RESULT_LOAD_MAP_ATPOSITION = 0x120;
 	private static final int RESULT_SHOW_WAYPOINT = 0x130;
 	private static final int RESULT_SAVE_WAYPOINTS = 0x140;
+	
+	private static final int qaAddWaypointToRoute = 1;
+	private static final int qaNavigateToWaypoint = 2;
 
 	// main preferences
 	protected double speedFactor;
@@ -193,6 +198,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	protected SeekBar trackBar;
 	protected ProgressBar waitBar;
 	protected MapView map;
+	protected QuickAction3D wptQuickAction;
+	protected QuickAction3D rteQuickAction;
+
 	protected Androzic application;
 
 	protected ExecutorService executorThread = Executors.newSingleThreadExecutor();
@@ -200,6 +208,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	protected Route editingRoute = null;
 	protected Track editingTrack = null;
 	protected Stack<Waypoint> routeEditingWaypoints = null;
+
+	private int waypointSelected = -1;
+	private int routeSelected = -1;
 
 	private ILocationService locationService = null;
 	private ITrackingService trackingService = null;
@@ -352,9 +363,17 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		panel.setOnPanelListener(this);
 		panel.setInterpolator(new ExpoInterpolator(Type.OUT));
 
-		trackBar.setOnSeekBarChangeListener(this);
+		Resources resources = getResources();
+		
+		wptQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
+		wptQuickAction.addActionItem(new ActionItem(qaAddWaypointToRoute, getString(R.string.menu_addtoroute), resources.getDrawable(R.drawable.ic_menu_add)));
+		wptQuickAction.setOnActionItemClickListener(waypointActionItemClickListener);
 
-		registerForContextMenu(map);
+		rteQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
+		rteQuickAction.addActionItem(new ActionItem(qaNavigateToWaypoint, getString(R.string.menu_thisnavpoint), resources.getDrawable(R.drawable.ic_menu_goto)));
+		rteQuickAction.setOnActionItemClickListener(routeActionItemClickListener);
+		
+		trackBar.setOnSeekBarChangeListener(this);
 
 		map.initialize(application);
 
@@ -1397,6 +1416,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		map.setFocusable(false);
 		map.setFocusableInTouchMode(false);
 		trackBar.requestFocus();
+		updateMapViewArea();
 		map.invalidate();
 	}
 
@@ -1427,9 +1447,10 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		routeEditingWaypoints = new Stack<Waypoint>();
 		if (showDistance > 0)
 			application.distanceOverlay.disable();
+		updateMapViewArea();
 		map.invalidate();
 	}
-
+	
 	public void setFollowing(boolean follow)
 	{
 		if (editingRoute == null && editingTrack == null)
@@ -1487,10 +1508,45 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 	}
 
-	public void showWaypointInfo()
+	public boolean waypointTapped(int index, int x, int y)
 	{
-		Location loc = application.getLocationAsLocation();
-		startActivityForResult(new Intent(this, WaypointInfo.class).putExtra("INDEX", map.waypointSelected).putExtra("lat", loc.getLatitude()).putExtra("lon", loc.getLongitude()), RESULT_SHOW_WAYPOINT);
+		try
+		{
+			if (editingRoute != null)
+			{
+				routeSelected = -1;
+				waypointSelected = index;
+				wptQuickAction.show(map, x, y);
+				return true;
+			}
+			else
+			{
+				Location loc = application.getLocationAsLocation();
+				startActivityForResult(new Intent(this, WaypointInfo.class).putExtra("INDEX", index).putExtra("lat", loc.getLatitude()).putExtra("lon", loc.getLongitude()), RESULT_SHOW_WAYPOINT);
+				return true;
+			}
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
+	}
+
+	public boolean routeWaypointTapped(int route, int index, int x, int y)
+	{
+		if (editingRoute != null && editingRoute == application.getRoute(route))
+		{
+			startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index).putExtra("ROUTE", route+1), RESULT_EDIT_ROUTE);
+			return true;
+		}
+		else if (navigationService != null && navigationService.navRoute == application.getRoute(route))
+		{
+//			routeSelected = route;
+			waypointSelected = index;
+			rteQuickAction.show(map, x, y);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -1528,17 +1584,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		menu.findItem(R.id.menuSetAnchor).setVisible(showDistance > 0 && ! map.isFollowing());
 
 		return true;
-	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
-	{
-		if (editingRoute != null && map.waypointSelected >= 0)
-		{
-			menu.setHeaderTitle(application.getWaypoint(map.waypointSelected).name);
-			MenuInflater inflater = getMenuInflater();
-			inflater.inflate(R.menu.waypoint_editing_context_menu, menu);
-		}
 	}
 
 	@Override
@@ -1696,20 +1741,36 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		return false;
 	}
 
-	@Override
-	public boolean onContextItemSelected(final MenuItem item)
-	{
-		switch (item.getItemId())
+	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener(){
+		@Override
+		public void onItemClick(QuickAction3D source, int pos, int actionId)
 		{
-			case R.id.menuAddWaypointToRoute:
-				Waypoint wpt = application.getWaypoint(map.waypointSelected);
-				routeEditingWaypoints.push(editingRoute.addWaypoint(wpt.name, wpt.latitude, wpt.longitude));
-				map.invalidate();
-				return true;
-			default:
-				return super.onContextItemSelected(item);
+			Waypoint wpt = application.getWaypoint(waypointSelected);
+	
+	    	switch (actionId)
+	    	{
+	    		case qaAddWaypointToRoute:
+					routeEditingWaypoints.push(editingRoute.addWaypoint(wpt.name, wpt.latitude, wpt.longitude));
+					map.invalidate();
+					break;
+	    	}
+			waypointSelected = -1;
 		}
-	}
+	};
+
+	private OnActionItemClickListener routeActionItemClickListener = new OnActionItemClickListener(){
+		@Override
+		public void onItemClick(QuickAction3D source, int pos, int actionId)
+		{
+	    	switch (actionId)
+	    	{
+	    		case qaNavigateToWaypoint:
+					navigationService.setRouteWaypoint(waypointSelected);
+					break;
+	    	}
+			waypointSelected = -1;
+		}
+	};
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -2144,6 +2205,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				{
 					application.distanceOverlay.enable();
 				}
+				updateMapViewArea();
 				map.invalidate();
 				map.requestFocus();
 				break;
@@ -2257,6 +2319,10 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		wasDimmed = savedInstanceState.getBoolean("wasDimmed");
 		isSharing = savedInstanceState.getBoolean("isSharing");
 		lastGeoid = savedInstanceState.getBoolean("lastGeoid");
+		
+		waypointSelected = savedInstanceState.getInt("waypointSelected");
+		routeSelected = savedInstanceState.getInt("routeSelected");
+
 		/*
 		double[] distAncor = savedInstanceState.getDoubleArray("distAncor");
 		if (distAncor != null)
@@ -2279,6 +2345,10 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		outState.putBoolean("wasDimmed", wasDimmed);
 		outState.putBoolean("isSharing", isSharing);
 		outState.putBoolean("lastGeoid", lastGeoid);
+		
+		outState.putInt("waypointSelected", waypointSelected);
+		outState.putInt("routeSelected", routeSelected);
+
 		if (application.distanceOverlay != null)
 		{
 			outState.putDoubleArray("distAncor", application.distanceOverlay.getAncor());
