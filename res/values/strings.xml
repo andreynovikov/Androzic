@@ -154,6 +154,7 @@
 	<string name="menu_startnavigation">Navigate via route</string>
 	<string name="menu_nextnavpoint">Skip to next</string>
 	<string name="menu_prevnavpoint">Go to previous</string>
+	<string name="menu_thisnavpoint">Navigate here</string>
 	<string name="menu_routes">Routes</string>
 	<string name="menu_newroute">New route</string>
     <string name="menu_properties">Properties</string>
