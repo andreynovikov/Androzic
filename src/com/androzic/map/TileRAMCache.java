@@ -86,7 +86,10 @@ public class TileRAMCache
 	 */
 	public synchronized boolean containsKey(long key)
 	{
-		return map.containsKey(key);
+		if (map != null)
+			return map.containsKey(key);
+		else
+			return false;
 	}
 
 	/**
@@ -94,14 +97,14 @@ public class TileRAMCache
 	 */
 	synchronized void clear()
 	{
-		if (this.map != null)
+		if (map != null)
 		{
-			for (Tile tile : this.map.values())
+			for (Tile tile : map.values())
 			{
 				tile.bitmap.recycle();
 				tile.bitmap = null;
 			}
-			this.map.clear();
+			map.clear();
 		}
 	}
 
@@ -111,7 +114,7 @@ public class TileRAMCache
 	public synchronized void destroy()
 	{
 		clear();
-		this.map = null;
+		map = null;
 	}
 
 	/**
@@ -122,7 +125,9 @@ public class TileRAMCache
 	 */
 	public synchronized Tile get(long key)
 	{
-		return map.get(key);
+		if (map != null)
+			return map.get(key);
+		else return null;
 	}
 
 	/**
@@ -132,7 +137,7 @@ public class TileRAMCache
 	 */
 	public synchronized void put(Tile tile)
 	{
-		if (capacity > 0)
+		if (capacity > 0 && map != null)
 		{
 			long key = Tile.getKey(tile.x, tile.y, tile.zoomLevel);
 			if (map.containsKey(key))
@@ -140,7 +145,7 @@ public class TileRAMCache
 				// the item is already in the cache
 				return;
 			}
-			this.map.put(key, tile);
+			map.put(key, tile);
 		}
 	}
 }

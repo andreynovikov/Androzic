@@ -261,28 +261,30 @@ public class Preferences extends PreferenceActivity
 			SeekbarPreference mapzoom = (SeekbarPreference) findPreference(getString(R.string.pref_onlinemapscale));
 	        // initialize map list
 	    	List<TileProvider> providers = application.getOnlineMaps();
-			String[] entries = new String[providers.size()];
-			String[] entryValues = new String[providers.size()];
-			String current = getString(R.string.pref_onlinemap, getResources().getString(R.string.def_onlinemap));
-			TileProvider curProvider = null;
-			int i = 0;
-			for (TileProvider provider : providers)
-			{
-				entries[i] = provider.name;
-				entryValues[i] = provider.code;
-				if (current.equals(provider.code))
-					curProvider = provider;
-				i++;
+	    	if (providers != null)
+	    	{
+				String[] entries = new String[providers.size()];
+				String[] entryValues = new String[providers.size()];
+				String current = getString(R.string.pref_onlinemap, getResources().getString(R.string.def_onlinemap));
+				TileProvider curProvider = null;
+				int i = 0;
+				for (TileProvider provider : providers)
+				{
+					entries[i] = provider.name;
+					entryValues[i] = provider.code;
+					if (current.equals(provider.code))
+						curProvider = provider;
+					i++;
+				}
+				maps.setEntries(entries);
+				maps.setEntryValues(entryValues);
+				
+				if (curProvider != null)
+				{
+					mapzoom.setMin(curProvider.minZoom);
+					mapzoom.setMax(curProvider.maxZoom);
+				}
 			}
-			maps.setEntries(entries);
-			maps.setEntryValues(entryValues);
-			
-			if (curProvider != null)
-			{
-				mapzoom.setMin(curProvider.minZoom);
-				mapzoom.setMax(curProvider.maxZoom);
-			}
-
 			super.onResume();
 	    }
 	}
