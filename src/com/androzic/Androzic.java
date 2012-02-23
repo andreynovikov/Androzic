@@ -816,7 +816,7 @@ public class Androzic extends Application
 	{
 		if (angleType == 1)
 		{
-			declination += magneticDeclination;
+			declination -= magneticDeclination;
 			declination = (declination + 360.0) % 360.0;
 		}
 		return declination;

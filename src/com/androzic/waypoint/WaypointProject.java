@@ -133,7 +133,7 @@ public class WaypointProject extends Activity
         		if (bf == 1)
         		{
         			GeomagneticField mag = new GeomagneticField((float) loc[0], (float) loc[1], 0.0f, System.currentTimeMillis());
-        			bearing += mag.getDeclination();
+        			bearing -= mag.getDeclination();
         		}
         		double[] prj = Geo.projection(loc[0], loc[1], distance, bearing);
         		waypoint.latitude = prj[0];
