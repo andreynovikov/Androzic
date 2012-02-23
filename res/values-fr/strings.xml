@@ -118,6 +118,8 @@
   <string name="icon">Icone</string>
   <string name="primary">Primaire</string>
   <string name="advanced">Avancé</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Erreur d’indexation des cartes</string>
   <string name="nomaps">Pas de cartes trouv�es</string>
   <string name="nomaps_explained">Le répertoire des cartes \'%s\' est vide. Télécharger et installer la carte du monde (207KB)?</string>
@@ -140,6 +142,7 @@
   <string name="menu_startnavigation">Naviguer suivant une route</string>
   <string name="menu_nextnavpoint">Passer au suivant</string>
   <string name="menu_prevnavpoint">Aller au précédent</string>
+  <string name="menu_thisnavpoint">Navigate here</string>
   <string name="menu_routes">Itinéraires</string>
   <string name="menu_newroute">Nouvelle route</string>
   <string name="menu_properties">Propriétés</string>

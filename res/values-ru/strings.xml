@@ -118,6 +118,8 @@
   <string name="icon">Иконка</string>
   <string name="primary">Основные</string>
   <string name="advanced">Расширенные</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Ошибка индексирования карт</string>
   <string name="nomaps">Карт не найдено</string>
   <string name="nomaps_explained">Папка с картами \'%s\' пустая. Загрузить и установить карту мира (207KB)?</string>
@@ -145,6 +147,7 @@
   <string name="menu_startnavigation">Двигаться по маршруту</string>
   <string name="menu_nextnavpoint">Перейти к следующему</string>
   <string name="menu_prevnavpoint">Вернуться к предыдущему</string>
+  <string name="menu_thisnavpoint">Двигаться сюда</string>
   <string name="menu_routes">Маршруты</string>
   <string name="menu_newroute">Новый маршрут</string>
   <string name="menu_properties">Свойства</string>

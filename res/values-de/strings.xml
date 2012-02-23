@@ -118,6 +118,8 @@
   <string name="icon">Symbol</string>
   <string name="primary">Primäre</string>
   <string name="advanced">Erweitert</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Karten-Index Fehler</string>
   <string name="nomaps">Keine Karten gefunden</string>
   <string name="nomaps_explained">Der Karten-Ordner \'%s\' ist leer. Möchten Sie eine Weltkarte herunterladen und installieren (207 KB)?</string>
@@ -144,6 +146,7 @@
   <string name="menu_startnavigation">Navigieren entlang Route</string>
   <string name="menu_nextnavpoint">Zum nächsten</string>
   <string name="menu_prevnavpoint">Zum vorherigen</string>
+  <string name="menu_thisnavpoint">Navigate here</string>
   <string name="menu_routes">Routen</string>
   <string name="menu_newroute">Neue Route</string>
   <string name="menu_properties">Eigenschaften</string>

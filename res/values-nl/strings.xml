@@ -118,6 +118,8 @@
   <string name="icon">Pictogram</string>
   <string name="primary">Primaire</string>
   <string name="advanced">Geavanceerd</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Kaart index fout</string>
   <string name="nomaps">Geen kaarten gevonden</string>
   <string name="nomaps_explained">Kaart-map \'%s\' is leeg. Downloaden en installeren van de kaart van de wereld (207 KB)?</string>
@@ -140,6 +142,7 @@
   <string name="menu_startnavigation">Navigeren via route</string>
   <string name="menu_nextnavpoint">Ga naar de volgende</string>
   <string name="menu_prevnavpoint">Ga naar de vorige</string>
+  <string name="menu_thisnavpoint">Navigate here</string>
   <string name="menu_routes">Routes</string>
   <string name="menu_newroute">Nieuwe route</string>
   <string name="menu_properties">Eigenschappen</string>

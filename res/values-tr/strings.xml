@@ -118,6 +118,8 @@
   <string name="icon">Simge</string>
   <string name="primary">Birincil</string>
   <string name="advanced">Gelişmiş</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Harita dizin-indeks hatası</string>
   <string name="nomaps">Hiç harita bulunamadı</string>
   <string name="nomaps_explained">Harita klasörü \'%s\' boştur. Dünya Haritası(207 kb) yüklensin mi?</string>
@@ -140,6 +142,7 @@
   <string name="menu_startnavigation">Rota seyrüseferi yap</string>
   <string name="menu_nextnavpoint">Sonraki</string>
   <string name="menu_prevnavpoint">Önceki</string>
+  <string name="menu_thisnavpoint">Navigate here</string>
   <string name="menu_routes">Rotalar</string>
   <string name="menu_newroute">Yeni rota</string>
   <string name="menu_properties">Özellikler</string>

@@ -118,6 +118,8 @@
   <string name="icon">Kuvake</string>
   <string name="primary">Ensisijainen</string>
   <string name="advanced">Lisäasetukset</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Kartan indeksointivirhe</string>
   <string name="nomaps">Karttoja ei löydy</string>
   <string name="nomaps_explained">Karttakansio \'%s\' on tyhjä. lataa ja asenna maailmankartta (207KB)?</string>
@@ -142,6 +144,7 @@
   <string name="menu_startnavigation">Navigoi reitillä</string>
   <string name="menu_nextnavpoint">Siirry seuraavaan</string>
   <string name="menu_prevnavpoint">Mene edelliseen</string>
+  <string name="menu_thisnavpoint">Navigate here</string>
   <string name="menu_routes">Reitit</string>
   <string name="menu_newroute">Uusi reitti</string>
   <string name="menu_properties">Ominaisuudet</string>

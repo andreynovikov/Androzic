@@ -118,6 +118,8 @@
   <string name="icon">Icon</string>
   <string name="primary">Primary</string>
   <string name="advanced">Advanced</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Błąd indeksu mapy</string>
   <string name="nomaps">Nie znaleziono map</string>
   <string name="nomaps_explained">Folder map \'%s\' jest pusty. Pobrać i zainstalować mapę świata (207 KB)?</string>
@@ -144,6 +146,7 @@
   <string name="menu_startnavigation">Nawiguj używając trasy</string>
   <string name="menu_nextnavpoint">Przejdź do następnego</string>
   <string name="menu_prevnavpoint">Przejdź do poprzedniego</string>
+  <string name="menu_thisnavpoint">Navigate here</string>
   <string name="menu_routes">Trasy</string>
   <string name="menu_newroute">Nowa trasa</string>
   <string name="menu_properties">Ustawienia</string>

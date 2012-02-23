@@ -118,6 +118,8 @@
   <string name="icon">Icona</string>
   <string name="primary">Primaria</string>
   <string name="advanced">Avanzata</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Mappa indice errore</string>
   <string name="nomaps">No mappe trovati</string>
   <string name="nomaps_explained">Mappa cartella \'%s\' è vuota. Scaricare e installare la mappa del mondo (207 KB)?</string>
@@ -140,6 +142,7 @@
   <string name="menu_startnavigation">Navigare via rotta</string>
   <string name="menu_nextnavpoint">Salta al prossimo</string>
   <string name="menu_prevnavpoint">Vai al precedente</string>
+  <string name="menu_thisnavpoint">Navigate here</string>
   <string name="menu_routes">Itinerari</string>
   <string name="menu_newroute">Nuovo percorso</string>
   <string name="menu_properties">Proprietà</string>

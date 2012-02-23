@@ -118,6 +118,8 @@
   <string name="icon">Ikona</string>
   <string name="primary">Primární</string>
   <string name="advanced">Pokročilé</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Chyba v mapovém indexu</string>
   <string name="nomaps">Mapy nenalezeny</string>
   <string name="nomaps_explained">Mapový adresář \'%s\' je prázdný. Stáhni a instaluj mapu světa (207KB)?</string>
@@ -140,6 +142,7 @@
   <string name="menu_startnavigation">Naviguj po routě</string>
   <string name="menu_nextnavpoint">Přeskoč na další</string>
   <string name="menu_prevnavpoint">Jdi na předchozí</string>
+  <string name="menu_thisnavpoint">Navigate here</string>
   <string name="menu_routes">Routy</string>
   <string name="menu_newroute">Nová routa</string>
   <string name="menu_properties">Vlastnosti</string>

@@ -118,6 +118,8 @@
   <string name="icon">Икона</string>
   <string name="primary">Първичен</string>
   <string name="advanced">Разширени</string>
+  <string name="hdop">HDOP</string>
+  <string name="vdop">VDOP</string>
   <string name="badmaps">Грешка при индексиране на картата</string>
   <string name="nomaps">Не е намерена карта</string>
   <string name="nomaps_explained">Папката с карти \'%s\' е празна. Теглене и инсталиране на пробна световна карта (207KB)?</string>
@@ -144,6 +146,7 @@
   <string name="menu_startnavigation">Навигиране по маршрута</string>
   <string name="menu_nextnavpoint">Към следващата</string>
   <string name="menu_prevnavpoint">Към предишната</string>
+  <string name="menu_thisnavpoint">Navigate here</string>
   <string name="menu_routes">Маршрути</string>
   <string name="menu_newroute">Нов маршрут</string>
   <string name="menu_properties">Свойства</string>
