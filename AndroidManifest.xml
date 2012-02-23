@@ -23,8 +23,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
     package="com.androzic"
-    android:versionCode="79"
-    android:versionName="1.4.1" >
+    android:versionCode="80"
+    android:versionName="1.4.2" >
 
     <supports-screens
         android:anyDensity="true"
@@ -136,7 +136,8 @@
             android:name=".PreferencesHC" />
         <activity
             android:label="@string/maplist_name"
-            android:name=".MapList" />
+            android:name=".MapList"
+            android:theme="@style/BlackDialog" />
         <activity
             android:name=".ErrorDialog"
             android:theme="@style/BlackDialog" />
