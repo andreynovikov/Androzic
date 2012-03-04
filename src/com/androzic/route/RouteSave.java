@@ -21,24 +21,21 @@
 package com.androzic.route;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.androzic.Androzic;
-import com.androzic.R;
-import com.androzic.data.Route;
-import com.androzic.util.OziExplorerFiles;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.androzic.Androzic;
+import com.androzic.R;
+import com.androzic.data.Route;
+import com.androzic.util.FileUtils;
+import com.androzic.util.OziExplorerFiles;
 
 public class RouteSave extends Activity
 {
@@ -65,9 +62,7 @@ public class RouteSave extends Activity
 		}
 		else
 		{
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
-			String dateString = formatter.format(new Date());
-			filename.setText(dateString+".rt2");
+			filename.setText(FileUtils.sanitizeFilename(route.name) + ".rt2");
 		}
 		
 	    Button save = (Button) findViewById(R.id.save_button);
@@ -89,10 +84,6 @@ public class RouteSave extends Activity
     		
     		try
     		{
-    			String state = Environment.getExternalStorageState();
-    			if (! Environment.MEDIA_MOUNTED.equals(state))
-    				throw new FileNotFoundException(getString(R.string.err_nosdcard));
-    			
     			Androzic application = (Androzic) getApplication();
     			File dir = new File(application.routePath);
     			if (! dir.exists())
