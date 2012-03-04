@@ -69,6 +69,9 @@
                 android:id="@+id/menuStartNavigation"
                 android:title="@string/menu_startnavigation"/>
             <item
+                android:id="@+id/menuNavigationDetails"
+                android:title="@string/menu_details"/>
+            <item
                 android:id="@+id/menuNextNavPoint"
                 android:title="@string/menu_nextnavpoint"/>
             <item

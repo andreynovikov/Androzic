@@ -16,6 +16,7 @@
     <string name="loadroute_name">Load route from file</string>
     <string name="saveroute_name">Save route to file</string>
     <string name="routeproperties_name">Edit route</string>
+    <string name="routedetails_name">Route details</string>
     <string name="markericon_name">Select marker icon</string>
     <string name="pref_name">Androzic settings</string>
     <string name="hsi_name">HSI</string>
@@ -171,6 +172,7 @@
     <string name="menu_search">Search</string>
     <string name="menu_dismiss">Dismiss</string>
 	<string name="menu_manage">Manage</string>
+	<string name="menu_details">Details</string>
 	<string name="menu_visible">Ensure visible</string>
 	<string name="menu_follow">Enable follow</string>
 	<string name="menu_location">Location</string>

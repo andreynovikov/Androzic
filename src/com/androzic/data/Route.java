@@ -180,4 +180,12 @@ public class Route
 		}
 		return dist;
 	}
+
+	public double course(int prev, int next)
+	{
+		synchronized (waypoints)
+		{
+			return Geo.bearing(waypoints.get(prev).latitude, waypoints.get(prev).longitude, waypoints.get(next).latitude, waypoints.get(next).longitude);
+		}
+	}
 }

@@ -186,4 +186,22 @@ public class StringFormatter
 		
 		return new String[] {timeFormat.format(hour)+":"+timeFormat.format(min), "min"};
 	}
+
+	public static final String timeR(int minutes)
+	{
+		int hour = 0;
+		int min = minutes;
+
+		if (min > 59)
+		{
+			hour = (int) Math.floor(min / 60);
+			min = min - hour * 60;
+		}
+		if (hour > 99)
+		{
+			return "--:--";
+		}
+		
+		return timeFormat.format(hour)+":"+timeFormat.format(min);
+	}
 }

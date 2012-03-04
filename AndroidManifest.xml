@@ -205,6 +205,9 @@
         <activity
             android:label="@string/routeproperties_name"
             android:name=".route.RouteProperties" />
+        <activity
+            android:label="@string/routedetails_name"
+            android:name=".route.RouteDetails" />
 
         <receiver
             android:icon="@drawable/icon"

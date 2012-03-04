@@ -113,6 +113,7 @@ import com.androzic.overlay.ScaleOverlay;
 import com.androzic.overlay.SharingOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.overlay.WaypointsOverlay;
+import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
 import com.androzic.route.RouteFileList;
 import com.androzic.route.RouteList;
@@ -437,7 +438,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		onSharedPreferenceChanged(settings, getString(R.string.pref_panelactions));
 
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "DoNotDimScreen");
+		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
 
 		ready = true;
 	}
@@ -446,14 +447,29 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	protected void onStart()
 	{
 		super.onStart();
-		Log.e(TAG,"onStart()");
+		Log.e(TAG, "onStart()");
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent)
+	{
+		super.onNewIntent(intent);
+		Log.e(TAG, "onNewIntent()");
+		if (intent.hasExtra("launch"))
+		{
+			Class<Activity> activity = (Class<Activity>) intent.getExtras().getSerializable("launch");
+			Intent launch = new Intent(this, activity);
+			launch.putExtras(intent);
+			launch.removeExtra("launch");
+			startActivity(launch);
+		}
 	}
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		Log.e(TAG,"onResume()");
+		Log.e(TAG, "onResume()");
 
 		map.becomeNotReady();
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1575,7 +1591,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		menu.findItem(R.id.menuLoadRoute).setVisible(!nvr);
 		menu.findItem(R.id.menuManageRoutes).setVisible(!nvr);
 		menu.findItem(R.id.menuManageRoutes).setEnabled(rts);
+		menu.findItem(R.id.menuStartNavigation).setVisible(!nvr);
 		menu.findItem(R.id.menuStartNavigation).setEnabled(rts);
+		menu.findItem(R.id.menuNavigationDetails).setVisible(nvr);
 		menu.findItem(R.id.menuNextNavPoint).setVisible(nvr);
 		menu.findItem(R.id.menuPrevNavPoint).setVisible(nvr);
 		menu.findItem(R.id.menuNextNavPoint).setEnabled(navigationService != null && navigationService.hasNextRouteWaypoint());
@@ -1648,6 +1666,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				{
 					startActivityForResult(new Intent(this, RouteStart.class).putExtra("INDEX", 0), RESULT_START_ROUTE);
 				}
+				return true;
+			case R.id.menuNavigationDetails:
+				startActivity(new Intent(this, RouteDetails.class).putExtra("index", application.getRouteIndex(navigationService.navRoute)).putExtra("nav", true));
 				return true;
 			case R.id.menuNextNavPoint:
 				navigationService.nextRouteWaypoint();
