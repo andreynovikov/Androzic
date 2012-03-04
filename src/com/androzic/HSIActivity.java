@@ -109,7 +109,7 @@ public class HSIActivity extends Activity
 		eteUnit = (TextView) findViewById(R.id.eteunit);
 
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "DoNotDimScreen");
+		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
     }
 
     
@@ -117,7 +117,6 @@ public class HSIActivity extends Activity
 	protected void onResume()
 	{
 		super.onResume();
-		wakeLock.acquire();
 		
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		Resources resources = getResources();
@@ -141,13 +140,16 @@ public class HSIActivity extends Activity
 		courseUnit.setText((application.angleType == 0 ? "deg" : getString(R.string.degmag)));
 		int proximity = Integer.parseInt(settings.getString(getString(R.string.pref_navigation_proximity), getString(R.string.def_navigation_proximity)));
 
-		//Androzic application = (Androzic) getApplication();
-		//Location loc = application.getLastKnownLocation();
-		//hsiView.initialize(proximity, 0); loc.getBearing());
 		hsiView.setProximity(proximity);
 		
         bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
 		bindService(new Intent(this, NavigationService.class), navigationConnection, BIND_AUTO_CREATE);
+		
+		boolean lock = settings.getBoolean(getString(R.string.pref_wakelock), resources.getBoolean(R.bool.def_wakelock));
+		if (lock)
+		{
+			wakeLock.acquire();
+		}
 	}
 
 	@Override
@@ -162,7 +164,10 @@ public class HSIActivity extends Activity
 		}
     	unregisterReceiver(navigationReceiver);
 		unbindService(navigationConnection);
-		wakeLock.release();
+		if (wakeLock.isHeld())
+		{
+			wakeLock.release();
+		}
 	}
 
 	@Override

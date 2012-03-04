@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -56,15 +57,18 @@ public class CompassActivity extends Activity
 		hsiView.setCompassMode(true);
 
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "DoNotDimScreen");
+		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
     }
-
     
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		wakeLock.acquire();
+		boolean lock = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_wakelock), getResources().getBoolean(R.bool.def_wakelock));
+		if (lock)
+		{
+			wakeLock.acquire();
+		}
         bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
 	}
 
@@ -78,7 +82,10 @@ public class CompassActivity extends Activity
 			unbindService(locationConnection);
 			locationService = null;
 		}
-		wakeLock.release();
+		if (wakeLock.isHeld())
+		{
+			wakeLock.release();
+		}
 	}
 
 	@Override
