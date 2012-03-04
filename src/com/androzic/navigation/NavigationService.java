@@ -17,6 +17,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.androzic.Androzic;
+import com.androzic.HSIActivity;
 import com.androzic.MapActivity;
 import com.androzic.R;
 import com.androzic.data.Route;
@@ -24,6 +25,7 @@ import com.androzic.data.Waypoint;
 import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
+import com.androzic.route.RouteDetails;
 import com.androzic.util.Geo;
 
 public class NavigationService extends Service implements OnSharedPreferenceChangeListener
@@ -57,14 +59,30 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 	public int routeProximity = 200;
 	private boolean useTraverse = true;
 
+	/**
+	 * Active route waypoint
+	 */
 	public Waypoint navWaypoint = null;
+	/**
+	 * Previous route waypoint
+	 */
 	public Waypoint prevWaypoint = null;
+	/**
+	 * Active route
+	 */
 	public Route navRoute = null;
 
 	public int navDirection = 0;
+	/**
+	 * Active route waypoint index
+	 */
 	public int navCurrentRoutePoint = -1;
 	private double navRouteDistance = -1;
+	private int navRouteETE = -1;
 
+	/**
+	 * Distance to active waypoint
+	 */
 	public double navDistance = 0.0;
 	public double navBearing = 0.0;
 	public long navTurn = 0;
@@ -100,10 +118,13 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 	{
 		if (intent != null)
 		{
+			Intent activity = new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 			Bundle extras = intent.getExtras();
 			if (intent.getAction().equals(NAVIGATE_WAYPOINT))
 			{
 				int index = extras.getInt("index");
+				activity.putExtra("launch", HSIActivity.class);
+				contentIntent = PendingIntent.getActivity(this, 0, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				navigateTo(index);
 			}
 			if (intent.getAction().equals(NAVIGATE_ROUTE))
@@ -111,6 +132,10 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 				int index = extras.getInt("index");
 				int dir = extras.getInt("direction", DIRECTION_FORWARD);
 				int start = extras.getInt("start", -1);
+				activity.putExtra("launch", RouteDetails.class);
+				activity.putExtra("index", index);
+				activity.putExtra("nav", true);
+				contentIntent = PendingIntent.getActivity(this, 0, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				navigateTo(application.getRoute(index), dir);
 				if (start != -1)
 					setRouteWaypoint(start);
@@ -246,6 +271,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		navWaypoint = navRoute.getWaypoint(navCurrentRoutePoint);
 		prevWaypoint = navRoute.getWaypoint(navCurrentRoutePoint - navDirection);
 		navRouteDistance = -1;
+		navRouteETE = -1;
 		navCourse = Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
 		updateNavigationState(STATE_STARTED);
 		if (lastKnownLocation != null)
@@ -262,6 +288,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		else
 			prevWaypoint = null;
 		navRouteDistance = -1;
+		navRouteETE = -1;
 		navCourse = prevWaypoint == null ? 0.0 : Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
 		updateNavigationState(STATE_NEXTWPT);
 	}
@@ -284,6 +311,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		navWaypoint = navRoute.getWaypoint(navCurrentRoutePoint);
 		prevWaypoint = navRoute.getWaypoint(navCurrentRoutePoint - navDirection);
 		navRouteDistance = -1;
+		navRouteETE = -1;
 		navCourse = Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
 		updateNavigationState(STATE_NEXTWPT);
 	}
@@ -298,6 +326,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		else
 			prevWaypoint = null;
 		navRouteDistance = -1;
+		navRouteETE = -1;
 		navCourse = prevWaypoint == null ? 0.0 : Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
 		updateNavigationState(STATE_NEXTWPT);
 	}
@@ -326,18 +355,89 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		return hasPrev;
 	}
 	
+	public int navRouteCurrentIndex()
+	{
+		return navDirection == DIRECTION_FORWARD ? navCurrentRoutePoint : navRoute.length() - navCurrentRoutePoint - 1;
+	}
+	
+	/**
+	 * Calculates distance between current route waypoint and last route waypoint.
+	 * @return distance left
+	 */
 	public double navRouteDistanceLeft()
 	{
-		if (! hasNextRouteWaypoint())
-			return 0.0;
 		if (navRouteDistance < 0)
 		{
-			if (navDirection == DIRECTION_FORWARD)
-				navRouteDistance = navRoute.distanceBetween(navCurrentRoutePoint, navRoute.length() - 1);
-			if (navDirection == DIRECTION_REVERSE)
-				navRouteDistance = navRoute.distanceBetween(0, navCurrentRoutePoint);
+			navRouteDistance = navRouteDistanceLeftTo(navRoute.length() - 1);
 		}
 		return navRouteDistance;
+	}
+
+	/**
+	 * Calculates distance between current route waypoint and route waypoint with specified index.
+	 * Method honors navigation direction.
+	 * @param index
+	 * @return distance left
+	 */
+	public double navRouteDistanceLeftTo(int index)
+	{
+		int current = navRouteCurrentIndex();
+		int progress = index - current;
+		
+		if (progress <= 0)
+			return 0.0;
+		
+		double distance = 0.0;
+		if (navDirection == DIRECTION_FORWARD)
+			distance = navRoute.distanceBetween(navCurrentRoutePoint, index);
+		if (navDirection == DIRECTION_REVERSE)
+			distance = navRoute.distanceBetween(navRoute.length() - index - 1, navCurrentRoutePoint);
+
+		return distance;
+	}
+	
+	public int navRouteWaypointETE(int index)
+	{
+		if (index == 0)
+			return 0;
+		int ete = Integer.MAX_VALUE;
+		if (avvmg > 0)
+		{
+			int i = navDirection == DIRECTION_FORWARD ? index : navRoute.length() - index - 1;
+			int j = i - navDirection;
+			Waypoint w1 = navRoute.getWaypoint(i);
+			Waypoint w2 = navRoute.getWaypoint(j);
+			double distance = Geo.distance(w1.latitude, w1.longitude, w2.latitude, w2.longitude);
+			ete = (int) Math.round(distance / avvmg / 60);
+		}
+		return ete;
+	}
+
+	/**
+	 * Calculates route ETE.
+	 * @return route ETE
+	 */
+	public int navRouteETE()
+	{
+		if (navRouteETE < 0)
+		{
+			navRouteETE = navRouteETETo(navRoute.length() - 1);
+		}
+		return navRouteETE;
+	}
+
+	public int navRouteETETo(int index)
+	{
+		double distance = navRouteDistanceLeftTo(index);
+		if (distance <= 0.0)
+			return 0;
+
+		int eta = Integer.MAX_VALUE;
+		if (avvmg > 0)
+		{
+			eta = (int) Math.round(distance / avvmg / 60);
+		}
+		return eta;
 	}
 	
 	private void calculateNavigationStatus(Location loc, float smoothspeed, float avgspeed)
@@ -370,10 +470,8 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 			avvmg = avvmg / vmgav.length;
 		}
 
-		int ete;
-		if (avvmg <= 0)
-			ete = Integer.MAX_VALUE;
-		else
+		int ete = Integer.MAX_VALUE;
+		if (avvmg > 0)
 			ete = (int) Math.round(distance / avvmg / 60);
 		
 		double xtk = Double.NEGATIVE_INFINITY;
@@ -453,14 +551,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 
 	private void updateNavigationStatus()
 	{
-/*		executorThread.execute(new Runnable()
-        {
-			@Override
-			public void run()
-			{*/
-				sendBroadcast(new Intent(BROADCAST_NAVIGATION_STATUS));
-/*			}
-        });*/
+		sendBroadcast(new Intent(BROADCAST_NAVIGATION_STATUS));
 		Log.d(TAG, "Status dispatched");
 	}
 	
