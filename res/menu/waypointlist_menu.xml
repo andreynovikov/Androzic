@@ -31,7 +31,7 @@
         android:id="@+id/menuLoadWaypoints"
         android:icon="@drawable/ic_menu_archive"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_open"/>
+        android:title="@string/menu_load"/>
     <item
         android:id="@+id/menuNewWaypointSet"
         android:icon="@drawable/ic_menu_mark"

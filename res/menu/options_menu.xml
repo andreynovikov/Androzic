@@ -28,7 +28,7 @@
             <item
                 android:id="@+id/menuLoadWaypoints"
                 android:icon="@drawable/ic_menu_archive"
-                android:title="@string/menu_open"/>
+                android:title="@string/menu_load"/>
         </menu>
     </item>
     <item
@@ -57,14 +57,8 @@
         android:title="@string/menu_navigation">
         <menu>
             <item
-                android:id="@+id/menuNewRoute"
-                android:title="@string/menu_newroute"/>
-            <item
                 android:id="@+id/menuManageRoutes"
-                android:title="@string/menu_manage"/>
-            <item
-                android:id="@+id/menuLoadRoute"
-                android:title="@string/menu_load"/>
+                android:title="@string/menu_routes"/>
             <item
                 android:id="@+id/menuStartNavigation"
                 android:title="@string/menu_startnavigation"/>
