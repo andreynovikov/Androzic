@@ -27,57 +27,89 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import net.londatiga.android.ActionItem;
+import net.londatiga.android.QuickAction;
+import net.londatiga.android.QuickAction.OnActionItemClickListener;
+import android.app.Activity;
+import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.SimpleAdapter;
+
 import com.androzic.Androzic;
 import com.androzic.MapActivity;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.util.StringFormatter;
 
-import android.app.Activity;
-import android.app.ListActivity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-
 public class RouteList extends ListActivity
 {
 	public static final int MODE_MANAGE = 1;
 	public static final int MODE_START = 2;
-	
+
+	private static final int qaRouteDetails = 1;
+	private static final int qaRouteNavigate = 2;
+	private static final int qaRouteProperties = 3;
+	private static final int qaRouteEdit = 4;
+	private static final int qaRouteSave = 5;
+	private static final int qaRouteRemove = 6;
+
 	List<Route> routes = null;
 	List<Map<String, String>> routeData = new ArrayList<Map<String, String>>();
 
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
 	final Handler handler = new Handler();
 
+	private QuickAction quickAction;
+	private int selectedKey;
+	private Drawable selectedBackground;
+
 	private final static String KEY_NAME = "NAME";
 	private final static String KEY_DESC = "DESC";
-	
+
 	private int mode;
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) 
+	protected void onCreate(final Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 
 		mode = getIntent().getExtras().getInt("MODE");
 
-		if (mode == MODE_MANAGE)
-			registerForContextMenu(getListView());
-		
 		if (mode == MODE_START)
 			setTitle(getString(R.string.selectroute_name));
+
+		Resources resources = getResources();
+		quickAction = new QuickAction(this);
+		quickAction.addActionItem(new ActionItem(qaRouteDetails, getString(R.string.menu_details), resources.getDrawable(R.drawable.ic_menu_info_details)));
+		quickAction.addActionItem(new ActionItem(qaRouteNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_menu_directions)));
+		quickAction.addActionItem(new ActionItem(qaRouteProperties, getString(R.string.menu_properties), resources.getDrawable(R.drawable.ic_menu_edit)));
+		quickAction.addActionItem(new ActionItem(qaRouteEdit, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_menu_track)));
+		quickAction.addActionItem(new ActionItem(qaRouteSave, getString(R.string.menu_save), resources.getDrawable(R.drawable.ic_menu_save)));
+		quickAction.addActionItem(new ActionItem(qaRouteRemove, getString(R.string.menu_remove), resources.getDrawable(R.drawable.ic_menu_close_clear_cancel)));
+
+		quickAction.setOnActionItemClickListener(routeActionItemClickListener);
+		quickAction.setOnDismissListener(new PopupWindow.OnDismissListener() {
+			@Override
+			public void onDismiss()
+			{
+				View v = getListView().findViewWithTag("selected");
+				if (v != null)
+				{
+					v.setBackgroundDrawable(selectedBackground);
+					v.setTag(null);
+				}
+			}
+		});
 	}
-	
+
 	@Override
 	protected void onResume()
 	{
@@ -89,30 +121,25 @@ public class RouteList extends ListActivity
 	{
 		final ProgressDialog pd = new ProgressDialog(this);
 		pd.setIndeterminate(true);
-		pd.setMessage(getString(R.string.msg_wait)); 
+		pd.setMessage(getString(R.string.msg_wait));
 		pd.show();
-		
-		new Thread(new Runnable() 
-		{ 
-			public void run() 
+
+		new Thread(new Runnable() {
+			public void run()
 			{
 				Androzic application = (Androzic) getApplication();
 				routes = application.getRoutes();
 
-/*
-				Collections.sort(files, new Comparator()
-                        {
-                            @Override
-                            public int compare(Object o1, Object o2)
-                            {
-                        	return ((File) o1).getName().compareToIgnoreCase(((File) o2).getName());
-                            }
-                        });
-*/            	
+				/*
+				 * Collections.sort(files, new Comparator() {
+				 * @Override public int compare(Object o1, Object o2) { return
+				 * ((File) o1).getName().compareToIgnoreCase(((File)
+				 * o2).getName()); } });
+				 */
 				Map<String, String> group;
-	   			
-	   			routeData.clear();
-	   			
+
+				routeData.clear();
+
 				for (Route route : routes)
 				{
 					group = new HashMap<String, String>();
@@ -122,30 +149,37 @@ public class RouteList extends ListActivity
 					routeData.add(group);
 				}
 
-				pd.dismiss(); 
+				pd.dismiss();
 				handler.post(updateResults);
-			} 
-		}).start(); 
+			}
+		}).start();
 	}
 
-	final Runnable updateResults = new Runnable() 
-	{
-		public void run() 
-        {
-			setListAdapter(new SimpleAdapter(RouteList.this, routeData, android.R.layout.simple_list_item_2, new String[] { KEY_NAME, KEY_DESC }, new int[]{ android.R.id.text1, android.R.id.text2 } ));
+	final Runnable updateResults = new Runnable() {
+		public void run()
+		{
+			setListAdapter(new SimpleAdapter(RouteList.this, routeData, android.R.layout.simple_list_item_2, new String[] { KEY_NAME, KEY_DESC }, new int[] { android.R.id.text1, android.R.id.text2 }));
 			getListView().setTextFilterEnabled(true);
-        }
+		}
 	};
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) 
+	protected void onListItemClick(ListView lv, View v, int position, long id)
 	{
-		super.onListItemClick(l, v, position, id);
 		switch (mode)
 		{
 			case MODE_MANAGE:
-		        startActivity(new Intent(this, RouteProperties.class).putExtra("index", position));
-		        break;
+				v.setTag("selected");
+				selectedKey = position;
+				selectedBackground = v.getBackground();
+				int l = v.getPaddingLeft();
+				int t = v.getPaddingTop();
+				int r = v.getPaddingRight();
+				int b = v.getPaddingBottom();
+				v.setBackgroundResource(R.drawable.list_selector_background_focus);
+				v.setPadding(l, t, r, b);
+				quickAction.show(v);
+				break;
 			case MODE_START:
 				startActivityForResult(new Intent(this, RouteStart.class).putExtra("index", position), MapActivity.RESULT_START_ROUTE);
 		}
@@ -172,47 +206,45 @@ public class RouteList extends ListActivity
 	}
 
 	@Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
-    {
-    	MenuInflater inflater = getMenuInflater();
-    	inflater.inflate(R.menu.route_context_menu, menu);
-    }
-	
-    public boolean onContextItemSelected(final MenuItem item)
-    {
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        final int position = info.position;
-		final Route route = routes.get(position);
-		final Androzic application = (Androzic) getApplication();
-
-    	switch (item.getItemId())
-    	{
-    		case R.id.menuRouteProperties:
-    	        startActivity(new Intent(this, RouteProperties.class).putExtra("index", position));
-    			return true;
-    		case R.id.menuRouteEdit:
-				setResult(Activity.RESULT_OK, new Intent().putExtra("index", position));
-				finish();
-				return true;    			
-    		case R.id.menuRouteSave:
-    	        startActivity(new Intent(this, RouteSave.class).putExtra("index", position));
-    			return true;
-    		case R.id.menuRouteRemove:
-    			application.removeRoute(route);
-    			populateItems();
-    			return true;
-    		default:
-    			return super.onContextItemSelected(item);
-    	}
-    }
-
-	@Override
 	protected void onStop()
 	{
 		super.onStop();
 		routes = null;
 		routeData.clear();
-		
+
 	}
 
+	private OnActionItemClickListener routeActionItemClickListener = new OnActionItemClickListener() {
+		@Override
+		public void onItemClick(QuickAction source, int pos, int actionId)
+		{
+			final int position = selectedKey;
+			final Route route = routes.get(position);
+			final Androzic application = (Androzic) getApplication();
+
+			switch (actionId)
+			{
+				case qaRouteDetails:
+					startActivity(new Intent(RouteList.this, RouteDetails.class).putExtra("index", position));
+					break;
+				case qaRouteNavigate:
+					startActivityForResult(new Intent(RouteList.this, RouteStart.class).putExtra("index", position), MapActivity.RESULT_START_ROUTE);
+					break;
+				case qaRouteProperties:
+					startActivity(new Intent(RouteList.this, RouteProperties.class).putExtra("index", position));
+					break;
+				case qaRouteEdit:
+					setResult(Activity.RESULT_OK, new Intent().putExtra("index", position));
+					finish();
+					break;
+				case qaRouteSave:
+					startActivity(new Intent(RouteList.this, RouteSave.class).putExtra("index", position));
+					break;
+				case qaRouteRemove:
+					application.removeRoute(route);
+					populateItems();
+					break;
+			}
+		}
+	};
 }

@@ -1240,7 +1240,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			}
 
 			String rdist = StringFormatter.distanceH(navigationService.navRouteDistanceLeft() + distance, 1000);
-			extra = rdist;
+			extra = rdist + " | " + StringFormatter.timeH(navigationService.navRouteETE());
 			routeExtra.setText(extra);
 		}
 	}
@@ -1919,7 +1919,11 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				{
 					Bundle extras = data.getExtras();
 					int index = extras.getInt("index");
-					startEditRoute(application.getRoute(index));
+					int dir = extras.getInt("dir");
+					if (dir != 0)
+						startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra("index", index).putExtra("direction", dir));
+					else
+						startEditRoute(application.getRoute(index));
 				}
 				break;
 			}
