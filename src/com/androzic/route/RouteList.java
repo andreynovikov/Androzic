@@ -38,19 +38,24 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.androzic.Androzic;
-import com.androzic.MapActivity;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.util.StringFormatter;
 
 public class RouteList extends ListActivity
 {
+	private static final int RESULT_START_ROUTE = 1;
+	
 	public static final int MODE_MANAGE = 1;
 	public static final int MODE_START = 2;
 
@@ -80,6 +85,11 @@ public class RouteList extends ListActivity
 	protected void onCreate(final Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.list_with_empty_view);
+
+		TextView emptyView = (TextView) getListView().getEmptyView();
+		if (emptyView != null)
+			emptyView.setText(R.string.msg_empty_route_list);
 
 		mode = getIntent().getExtras().getInt("MODE");
 
@@ -164,6 +174,34 @@ public class RouteList extends ListActivity
 	};
 
 	@Override
+	public boolean onCreateOptionsMenu(final Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.routelist_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.menuNewRoute:
+				Androzic application = (Androzic) getApplication();
+				Route route = new Route("New route", "", true);
+				application.addRoute(route);
+				int position = application.getRouteIndex(route);
+				setResult(Activity.RESULT_OK, new Intent().putExtra("index", position));
+				finish();
+				return true;
+			case R.id.menuLoadRoute:
+				startActivity(new Intent(this, RouteFileList.class));
+				return true;
+		}
+		return false;
+	}
+	
+	@Override
 	protected void onListItemClick(ListView lv, View v, int position, long id)
 	{
 		switch (mode)
@@ -181,7 +219,7 @@ public class RouteList extends ListActivity
 				quickAction.show(v);
 				break;
 			case MODE_START:
-				startActivityForResult(new Intent(this, RouteStart.class).putExtra("index", position), MapActivity.RESULT_START_ROUTE);
+				startActivityForResult(new Intent(this, RouteStart.class).putExtra("index", position), RESULT_START_ROUTE);
 		}
 	}
 
@@ -192,7 +230,7 @@ public class RouteList extends ListActivity
 
 		switch (requestCode)
 		{
-			case MapActivity.RESULT_START_ROUTE:
+			case RESULT_START_ROUTE:
 				if (resultCode == RESULT_OK)
 				{
 					setResult(Activity.RESULT_OK, new Intent().putExtras(data.getExtras()));
@@ -202,6 +240,7 @@ public class RouteList extends ListActivity
 				{
 					setResult(Activity.RESULT_CANCELED);
 				}
+				break;
 		}
 	}
 
@@ -228,7 +267,7 @@ public class RouteList extends ListActivity
 					startActivity(new Intent(RouteList.this, RouteDetails.class).putExtra("index", position));
 					break;
 				case qaRouteNavigate:
-					startActivityForResult(new Intent(RouteList.this, RouteStart.class).putExtra("index", position), MapActivity.RESULT_START_ROUTE);
+					startActivityForResult(new Intent(RouteList.this, RouteStart.class).putExtra("index", position), RESULT_START_ROUTE);
 					break;
 				case qaRouteProperties:
 					startActivity(new Intent(RouteList.this, RouteProperties.class).putExtra("index", position));

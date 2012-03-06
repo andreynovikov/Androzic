@@ -21,6 +21,7 @@
 package com.androzic;
 
 import java.io.File;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -115,7 +116,6 @@ import com.androzic.overlay.TrackOverlay;
 import com.androzic.overlay.WaypointsOverlay;
 import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
-import com.androzic.route.RouteFileList;
 import com.androzic.route.RouteList;
 import com.androzic.route.RouteStart;
 import com.androzic.track.ITrackingService;
@@ -143,8 +143,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	private static final int RESULT_SAVE_WAYPOINT = 0x400;
 	private static final int RESULT_LOAD_MAP = 0x500;
 	private static final int RESULT_MANAGE_TRACKS = 0x600;
-	private static final int RESULT_LOAD_ROUTE = 0x700;
-	public static final int RESULT_START_ROUTE = 0x800;
+	private static final int RESULT_START_ROUTE = 0x800;
 	private static final int RESULT_MANAGE_ROUTES = 0x900;
 	private static final int RESULT_EDIT_ROUTE = 0x110;
 	private static final int RESULT_LOAD_MAP_ATPOSITION = 0x120;
@@ -457,11 +456,14 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		Log.e(TAG, "onNewIntent()");
 		if (intent.hasExtra("launch"))
 		{
-			Class<Activity> activity = (Class<Activity>) intent.getExtras().getSerializable("launch");
-			Intent launch = new Intent(this, activity);
-			launch.putExtras(intent);
-			launch.removeExtra("launch");
-			startActivity(launch);
+			Serializable object = intent.getExtras().getSerializable("launch");
+			if (Activity.class.isInstance(object))
+			{
+				Intent launch = new Intent(this, (Class<?>) object);
+				launch.putExtras(intent);
+				launch.removeExtra("launch");
+				startActivity(launch);
+			}
 		}
 	}
 
@@ -1454,7 +1456,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 		if (newroute)
 		{
-			application.addRoute(editingRoute);
 			RouteOverlay newRoute = new RouteOverlay(this, editingRoute);
 			application.routeOverlays.add(newRoute);
 		}
@@ -1587,10 +1588,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		menu.findItem(R.id.menuManageWaypoints).setEnabled(wpt);
 		menu.findItem(R.id.menuManageTracks).setEnabled(application.hasTracks());
 		menu.findItem(R.id.menuClearTrackTail).setEnabled(application.currentTrackOverlay != null);
-		menu.findItem(R.id.menuNewRoute).setVisible(!nvw);
-		menu.findItem(R.id.menuLoadRoute).setVisible(!nvr);
 		menu.findItem(R.id.menuManageRoutes).setVisible(!nvr);
-		menu.findItem(R.id.menuManageRoutes).setEnabled(rts);
 		menu.findItem(R.id.menuStartNavigation).setVisible(!nvr);
 		menu.findItem(R.id.menuStartNavigation).setEnabled(rts);
 		menu.findItem(R.id.menuNavigationDetails).setVisible(nvr);
@@ -1648,14 +1646,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				if (application.currentTrackOverlay != null)
 					application.currentTrackOverlay.clear();
 				return true;
-			case R.id.menuNewRoute:
-				startEditRoute(new Route("New route", "", true));
-				return true;
 			case R.id.menuManageRoutes:
 				startActivityForResult(new Intent(this, RouteList.class).putExtra("MODE", RouteList.MODE_MANAGE), RESULT_MANAGE_ROUTES);
-				return true;
-			case R.id.menuLoadRoute:
-				startActivityForResult(new Intent(this, RouteFileList.class), RESULT_LOAD_ROUTE);
 				return true;
 			case R.id.menuStartNavigation:
 				if (application.getRoutes().size() > 1)
@@ -1944,19 +1936,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 						ro.onRoutePropertiesChanged();
 				}
 				map.invalidate();
-				break;
-			case RESULT_LOAD_ROUTE:
-				if (resultCode == RESULT_OK)
-				{
-					Bundle extras = data.getExtras();
-					int[] index = extras.getIntArray("index");
-					for (int i : index)
-					{
-						Route route = application.getRoute(i);
-						RouteOverlay newRoute = new RouteOverlay(this, route);
-						application.routeOverlays.add(newRoute);
-					}
-				}
 				break;
 			case RESULT_LOAD_MAP:
 				if (resultCode == RESULT_OK)
