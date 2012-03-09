@@ -20,10 +20,6 @@
 
 package com.androzic.route;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,30 +28,43 @@ import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
 import android.app.Activity;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
+import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.StringFormatter;
 
 public class RouteList extends ListActivity
 {
 	private static final int RESULT_START_ROUTE = 1;
-	
+	private static final int RESULT_LOAD_ROUTE = 2;
+
 	public static final int MODE_MANAGE = 1;
 	public static final int MODE_START = 2;
 
@@ -66,18 +75,13 @@ public class RouteList extends ListActivity
 	private static final int qaRouteSave = 5;
 	private static final int qaRouteRemove = 6;
 
-	List<Route> routes = null;
-	List<Map<String, String>> routeData = new ArrayList<Map<String, String>>();
-
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
 	final Handler handler = new Handler();
 
+	private RouteListAdapter adapter;
 	private QuickAction quickAction;
 	private int selectedKey;
 	private Drawable selectedBackground;
-
-	private final static String KEY_NAME = "NAME";
-	private final static String KEY_DESC = "DESC";
 
 	private int mode;
 
@@ -95,6 +99,9 @@ public class RouteList extends ListActivity
 
 		if (mode == MODE_START)
 			setTitle(getString(R.string.selectroute_name));
+
+		adapter = new RouteListAdapter(this);
+		setListAdapter(adapter);
 
 		Resources resources = getResources();
 		quickAction = new QuickAction(this);
@@ -121,57 +128,11 @@ public class RouteList extends ListActivity
 	}
 
 	@Override
-	protected void onResume()
+	public void onResume()
 	{
-		populateItems();
 		super.onResume();
+		adapter.notifyDataSetChanged();
 	}
-
-	private void populateItems()
-	{
-		final ProgressDialog pd = new ProgressDialog(this);
-		pd.setIndeterminate(true);
-		pd.setMessage(getString(R.string.msg_wait));
-		pd.show();
-
-		new Thread(new Runnable() {
-			public void run()
-			{
-				Androzic application = (Androzic) getApplication();
-				routes = application.getRoutes();
-
-				/*
-				 * Collections.sort(files, new Comparator() {
-				 * @Override public int compare(Object o1, Object o2) { return
-				 * ((File) o1).getName().compareToIgnoreCase(((File)
-				 * o2).getName()); } });
-				 */
-				Map<String, String> group;
-
-				routeData.clear();
-
-				for (Route route : routes)
-				{
-					group = new HashMap<String, String>();
-					group.put(KEY_NAME, route.name);
-					String desc = StringFormatter.distanceH(route.distance);
-					group.put(KEY_DESC, desc);
-					routeData.add(group);
-				}
-
-				pd.dismiss();
-				handler.post(updateResults);
-			}
-		}).start();
-	}
-
-	final Runnable updateResults = new Runnable() {
-		public void run()
-		{
-			setListAdapter(new SimpleAdapter(RouteList.this, routeData, android.R.layout.simple_list_item_2, new String[] { KEY_NAME, KEY_DESC }, new int[] { android.R.id.text1, android.R.id.text2 }));
-			getListView().setTextFilterEnabled(true);
-		}
-	};
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
@@ -195,12 +156,12 @@ public class RouteList extends ListActivity
 				finish();
 				return true;
 			case R.id.menuLoadRoute:
-				startActivity(new Intent(this, RouteFileList.class));
+				startActivityForResult(new Intent(this, RouteFileList.class), RESULT_LOAD_ROUTE);
 				return true;
 		}
 		return false;
 	}
-	
+
 	@Override
 	protected void onListItemClick(ListView lv, View v, int position, long id)
 	{
@@ -241,16 +202,18 @@ public class RouteList extends ListActivity
 					setResult(Activity.RESULT_CANCELED);
 				}
 				break;
+			case RESULT_LOAD_ROUTE:
+				if (resultCode == RESULT_OK)
+				{
+					final Androzic application = (Androzic) getApplication();
+					int[] indexes = data.getExtras().getIntArray("index");
+					for (int index : indexes)
+					{
+						RouteOverlay newRoute = new RouteOverlay(this, application.getRoute(index));
+						application.routeOverlays.add(newRoute);
+					}
+				}
 		}
-	}
-
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		routes = null;
-		routeData.clear();
-
 	}
 
 	private OnActionItemClickListener routeActionItemClickListener = new OnActionItemClickListener() {
@@ -258,8 +221,8 @@ public class RouteList extends ListActivity
 		public void onItemClick(QuickAction source, int pos, int actionId)
 		{
 			final int position = selectedKey;
-			final Route route = routes.get(position);
 			final Androzic application = (Androzic) getApplication();
+			final Route route = application.getRoute(position);
 
 			switch (actionId)
 			{
@@ -281,9 +244,103 @@ public class RouteList extends ListActivity
 					break;
 				case qaRouteRemove:
 					application.removeRoute(route);
-					populateItems();
+					adapter.notifyDataSetChanged();
 					break;
 			}
 		}
 	};
+
+	public class RouteListAdapter extends BaseAdapter
+	{
+		private LayoutInflater mInflater;
+		private int mItemLayout;
+		private float mDensity;
+		private Path mLinePath;
+		private Paint mLinePaint;
+		private int mRouteWidth;
+		private Androzic application;
+
+		public RouteListAdapter(Context context)
+		{
+			mItemLayout = R.layout.route_list_item;
+			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			mDensity = context.getResources().getDisplayMetrics().density;
+
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+			mLinePath = new Path();
+			mLinePath.setLastPoint(12 * mDensity, 5 * mDensity);
+			mLinePath.lineTo(33 * mDensity, 12 * mDensity);
+			mLinePath.lineTo(7 * mDensity, 24 * mDensity);
+			mLinePath.lineTo(28 * mDensity, 35 * mDensity);
+
+			mRouteWidth = settings.getInt(context.getString(R.string.pref_route_linewidth), context.getResources().getInteger(R.integer.def_route_linewidth));
+			mLinePaint = new Paint();
+			mLinePaint.setAntiAlias(true);
+			mLinePaint.setStrokeWidth(mRouteWidth * mDensity);
+			mLinePaint.setStyle(Paint.Style.STROKE);
+			mLinePaint.setColor(context.getResources().getColor(R.color.routeline));
+
+			application = Androzic.getApplication();
+		}
+
+		@Override
+		public Route getItem(int position)
+		{
+			return application.getRoute(position);
+		}
+
+		@Override
+		public long getItemId(int position)
+		{
+			return position;
+		}
+
+		@Override
+		public int getCount()
+		{
+			return application.getRoutes().size();
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
+			View v;
+			if (convertView == null)
+			{
+				v = mInflater.inflate(mItemLayout, parent, false);
+			}
+			else
+			{
+				v = convertView;
+			}
+			Route route = getItem(position);
+			TextView text = (TextView) v.findViewById(R.id.name);
+			if (text != null)
+			{
+				text.setText(route.name);
+			}
+			String distance = StringFormatter.distanceH(route.distance);
+			text = (TextView) v.findViewById(R.id.distance);
+			if (text != null)
+			{
+				text.setText(distance);
+			}
+			ImageView icon = (ImageView) v.findViewById(R.id.icon);
+			Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity),(int) (40 * mDensity), Config.ARGB_8888);
+			bm.eraseColor(Color.TRANSPARENT);
+			Canvas bc = new Canvas(bm);
+			mLinePaint.setColor(route.lineColor);
+			bc.drawPath(mLinePath, mLinePaint);
+			icon.setImageBitmap(bm);
+
+			return v;
+		}
+
+		@Override
+		public boolean hasStableIds()
+		{
+			return true;
+		}
+	}
 }
