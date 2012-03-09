@@ -382,21 +382,25 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
         	loc = application.getLocation();
         }
         
+		@Override
         public Object getChild(int groupPosition, int childPosition)
         {
         	return application.getWaypoints(application.getWaypointSets().get(groupPosition)).get(childPosition);
         }
 
+		@Override
         public long getChildId(int groupPosition, int childPosition)
         {
             return childPosition;
         }
 
+		@Override
         public int getChildrenCount(int groupPosition)
         {
         	return application.getWaypointCount(application.getWaypointSets().get(groupPosition));
         }
 
+		@Override
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
             View v;
             if (convertView == null)
@@ -477,21 +481,25 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
             return v;
         }
 
+		@Override
         public Object getGroup(int groupPosition)
         {
         	return application.getWaypointSets().get(groupPosition);
         }
 
+		@Override
         public int getGroupCount()
         {
         	return application.getWaypointSets().size();
         }
 
+		@Override
         public long getGroupId(int groupPosition)
         {
             return groupPosition;
         }
 
+		@Override
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent)
         {
             View v;
@@ -509,11 +517,13 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
             return v;
         }
 
+		@Override
         public boolean isChildSelectable(int groupPosition, int childPosition)
         {
             return true;
         }
 
+		@Override
         public boolean hasStableIds()
         {
             return true;

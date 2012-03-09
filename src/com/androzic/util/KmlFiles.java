@@ -187,13 +187,13 @@ class KmlParser extends DefaultHandler
 	{
 		if (localName.equalsIgnoreCase(PLACEMARK))
 		{
-			if (ispoint && waypoints != null)
+			if (ispoint && waypoints != null && waypoint != null)
 			{
 				if (waypoint.name.equals(""))
 					waypoint.name = "WPT"+waypoints.size();
 				waypoints.add(waypoint);
 			}
-			if (istrack && tracks != null)
+			if (istrack && tracks != null && track != null)
 			{
 				if (track.name.equals(""))
 				{
