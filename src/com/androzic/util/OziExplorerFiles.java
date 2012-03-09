@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import android.widget.Toast;
-
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
@@ -110,7 +108,6 @@ public class OziExplorerFiles
 			    		}
 			    		catch (NumberFormatException e)
 			    		{
-			    			e.printStackTrace();
 			    		}
 			    	}
 			    	if (! "".equals(fields[9]))
@@ -123,7 +120,6 @@ public class OziExplorerFiles
 			    		}
 			    		catch (NumberFormatException e)
 			    		{
-			    			e.printStackTrace();
 			    		}
 			    	}
 	
@@ -135,7 +131,6 @@ public class OziExplorerFiles
 			    		}
 			    		catch (NumberFormatException e)
 			    		{
-			    			e.printStackTrace();
 			    		}
 			    	}
 	
@@ -148,7 +143,6 @@ public class OziExplorerFiles
 		    			}
 			    		catch (NumberFormatException e)
 			    		{
-			    			e.printStackTrace();
 			    		}
 			    	}
 	
@@ -430,8 +424,15 @@ public class OziExplorerFiles
 			Route route = new Route();
 			routes.add(route);
 			route.name = fields[1].replace((char) 209, ',');
-			if (Integer.getInteger(fields[3], 0) > 0)
-				route.lineColor = bgr2rgb(Integer.getInteger(fields[3]));
+    		try
+    		{
+    			int color = Integer.parseInt(fields[3]);
+    			if (color != 0)
+    				route.lineColor = bgr2rgb(color);
+    		}
+    		catch (NumberFormatException e)
+    		{
+    		}
 			// W,Tsapelka,  58.0460242,  28.9465437,0
 		    while ((line = reader.readLine()) != null)
 			{
@@ -490,8 +491,15 @@ public class OziExplorerFiles
 						route.description = fields[3].replace((char) 209, ',');
 						route.show = true;
 						route.filepath = file.getCanonicalPath();
-						if (Integer.getInteger(fields[4], 0) > 0)
-							route.lineColor = bgr2rgb(Integer.getInteger(fields[4]));
+			    		try
+			    		{
+			    			int color = Integer.parseInt(fields[4]);
+			    			if (color != 0)
+			    				route.lineColor = bgr2rgb(color);
+			    		}
+			    		catch (NumberFormatException e)
+			    		{
+			    		}
 						routeNum = rtn;
 						wptNum = 0;
 					}
