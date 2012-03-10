@@ -294,7 +294,13 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 //						if (progress == 0)
 //							text.setTextAppearance(RouteDetails.this, resid);
 					}
-					double crs = progress == 0 ? navigationService.navBearing : mRoute.course(position - 1, position);
+					double crs;
+					if (progress == 0)
+						crs = navigationService.navBearing;
+					else if (navigationService.navDirection == NavigationService.DIRECTION_FORWARD)
+						crs = mRoute.course(position - 1, position);
+					else
+						crs = mRoute.course(position, position - 1);
 					String course = StringFormatter.bearingH(crs);
 					text = (TextView) v.findViewById(R.id.course);
 					if (text != null)
