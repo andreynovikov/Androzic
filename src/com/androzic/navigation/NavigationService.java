@@ -78,7 +78,6 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 	 */
 	public int navCurrentRoutePoint = -1;
 	private double navRouteDistance = -1;
-	private int navRouteETE = -1;
 
 	/**
 	 * Distance to active waypoint
@@ -275,7 +274,6 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		prevWaypoint = navRoute.getWaypoint(navCurrentRoutePoint - navDirection);
 		navProximity = navWaypoint.proximity > 0 ? navWaypoint.proximity : routeProximity;
 		navRouteDistance = -1;
-		navRouteETE = -1;
 		navCourse = Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
 		updateNavigationState(STATE_STARTED);
 		if (lastKnownLocation != null)
@@ -293,7 +291,6 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 			prevWaypoint = null;
 		navProximity = navWaypoint.proximity > 0 ? navWaypoint.proximity : routeProximity;
 		navRouteDistance = -1;
-		navRouteETE = -1;
 		navCourse = prevWaypoint == null ? 0.0 : Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
 		updateNavigationState(STATE_NEXTWPT);
 	}
@@ -317,7 +314,6 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		prevWaypoint = navRoute.getWaypoint(navCurrentRoutePoint - navDirection);
 		navProximity = navWaypoint.proximity > 0 ? navWaypoint.proximity : routeProximity;
 		navRouteDistance = -1;
-		navRouteETE = -1;
 		navCourse = Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
 		updateNavigationState(STATE_NEXTWPT);
 	}
@@ -333,7 +329,6 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 			prevWaypoint = null;
 		navProximity = navWaypoint.proximity > 0 ? navWaypoint.proximity : routeProximity;
 		navRouteDistance = -1;
-		navRouteETE = -1;
 		navCourse = prevWaypoint == null ? 0.0 : Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
 		updateNavigationState(STATE_NEXTWPT);
 	}
@@ -422,15 +417,17 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 
 	/**
 	 * Calculates route ETE.
+	 * @param distance route distance
 	 * @return route ETE
 	 */
-	public int navRouteETE()
+	public int navRouteETE(double distance)
 	{
-		if (navRouteETE < 0)
+		int eta = Integer.MAX_VALUE;
+		if (avvmg > 0)
 		{
-			navRouteETE = navRouteETETo(navRoute.length() - 1);
+			eta = (int) Math.round(distance / avvmg / 60);
 		}
-		return navRouteETE;
+		return eta;
 	}
 
 	public int navRouteETETo(int index)
@@ -439,12 +436,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		if (distance <= 0.0)
 			return 0;
 
-		int eta = Integer.MAX_VALUE;
-		if (avvmg > 0)
-		{
-			eta = (int) Math.round(distance / avvmg / 60);
-		}
-		return eta;
+		return navRouteETE(distance);
 	}
 	
 	private void calculateNavigationStatus(Location loc, float smoothspeed, float avgspeed)

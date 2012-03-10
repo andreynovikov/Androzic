@@ -1241,8 +1241,11 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				xtkUnit.setText(xtks[1]);
 			}
 
-			String rdist = StringFormatter.distanceH(navigationService.navRouteDistanceLeft() + distance, 1000);
-			extra = rdist + " | " + StringFormatter.timeH(navigationService.navRouteETE());
+			double navDistance = navigationService.navRouteDistanceLeft();
+			int eta = navigationService.navRouteETE(navDistance);
+			if (eta < Integer.MAX_VALUE)
+				eta += navigationService.navETE;
+			extra = StringFormatter.distanceH(navDistance + distance, 1000) + " | " + StringFormatter.timeH(eta);
 			routeExtra.setText(extra);
 		}
 	}
