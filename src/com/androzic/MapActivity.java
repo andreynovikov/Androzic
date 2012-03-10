@@ -452,12 +452,11 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	@Override
 	protected void onNewIntent(Intent intent)
 	{
-		super.onNewIntent(intent);
 		Log.e(TAG, "onNewIntent()");
 		if (intent.hasExtra("launch"))
 		{
 			Serializable object = intent.getExtras().getSerializable("launch");
-			if (Activity.class.isInstance(object))
+			if (Class.class.isInstance(object))
 			{
 				Intent launch = new Intent(this, (Class<?>) object);
 				launch.putExtras(intent);
