@@ -115,12 +115,14 @@
     	<item>Eric Harlow</item>
     	<item>Luke Hutchison</item>
     	<item>Gentleface</item>
-    	<item>Michael Rajek, Daniel Chvátal</item>
+    	<item>Michael Rajek, Daniel Chvátal, Petr Gregor</item>
     	<item>Romain Gouyet</item>
     	<item>Jouko Nurma</item>
     	<item>Georgi Nachev</item>
     	<item>Erik Pinter</item>
     	<item>Türker Türkücü</item>
+    	<item>Alexandre Verniol, Gianni Faletti</item>
+    	<item>Adolfo Gea, Francisco Sánchez</item>
     </string-array>
     <string-array name="panel_action_values">
         <item>zoomin</item>
