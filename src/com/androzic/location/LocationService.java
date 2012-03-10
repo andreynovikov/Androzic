@@ -520,7 +520,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
         	nmea = nmea.substring(0, len - 3);
         }
         String[] tokens = nmea.split(",");
-        String sentenceId = tokens[0].substring(3, 6);
+        String sentenceId = tokens[0].length() > 5 ? tokens[0].substring(3, 6) : "";
 
         try
         {

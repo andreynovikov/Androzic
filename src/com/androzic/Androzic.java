@@ -882,6 +882,9 @@ public class Androzic extends Application
 		
 	public boolean updateLocationInfo(boolean findbest)
 	{
+		if (maps == null)
+			return false;
+		
 		suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
 		boolean mapchanged = true;
 		
@@ -1202,7 +1205,7 @@ public class Androzic extends Application
 	
 	public void setOnlineMap(String provider)
 	{
-		if (onlineMaps == null)
+		if (onlineMaps == null || maps == null)
 			return;
 		for (TileProvider map : onlineMaps)
 		{

@@ -492,15 +492,34 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 		}
 		else if (getString(R.string.pref_tracking_mintime).equals(key))
 		{
-			minTime = Integer.parseInt(sharedPreferences.getString(key, "500"));
+			try
+			{
+				minTime = Integer.parseInt(sharedPreferences.getString(key, "500"));
+			}
+			catch (NumberFormatException e)
+			{
+			}
 		}
 		else if (getString(R.string.pref_tracking_mindistance).equals(key))
 		{
-			minDistance = Integer.parseInt(sharedPreferences.getString(key, "5"));
+			try
+			{
+				minDistance = Integer.parseInt(sharedPreferences.getString(key, "5"));
+			}
+			catch (NumberFormatException e)
+			{
+			}
 		}
 		else if (getString(R.string.pref_tracking_currentinterval).equals(key))
 		{
-			fileInterval = Integer.parseInt(sharedPreferences.getString(key, "0")) * 3600000;
+			try
+			{
+				fileInterval = Integer.parseInt(sharedPreferences.getString(key, "0")) * 3600000;
+			}
+			catch (NumberFormatException e)
+			{
+				fileInterval = 0;
+			}
 			closeFile();
 		}
 		else if (getString(R.string.pref_folder_track).equals(key))

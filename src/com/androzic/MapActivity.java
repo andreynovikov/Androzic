@@ -1475,7 +1475,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	{
 		if (editingRoute == null && editingTrack == null)
 		{
-			if (showDistance > 0)
+			if (showDistance > 0 && application.distanceOverlay != null)
 			{
 				if (showDistance == 2 && ! follow)
 				{
