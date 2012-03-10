@@ -64,6 +64,7 @@ public class RouteList extends ListActivity
 {
 	private static final int RESULT_START_ROUTE = 1;
 	private static final int RESULT_LOAD_ROUTE = 2;
+	private static final int RESULT_ROUTE_DETAILS = 3;
 
 	public static final int MODE_MANAGE = 1;
 	public static final int MODE_START = 2;
@@ -213,6 +214,12 @@ public class RouteList extends ListActivity
 						application.routeOverlays.add(newRoute);
 					}
 				}
+				break;
+			case RESULT_ROUTE_DETAILS:
+				if (resultCode == RESULT_OK)
+				{
+					finish();
+				}
 		}
 	}
 
@@ -227,7 +234,7 @@ public class RouteList extends ListActivity
 			switch (actionId)
 			{
 				case qaRouteDetails:
-					startActivity(new Intent(RouteList.this, RouteDetails.class).putExtra("index", position));
+					startActivityForResult(new Intent(RouteList.this, RouteDetails.class).putExtra("index", position), RESULT_ROUTE_DETAILS);
 					break;
 				case qaRouteNavigate:
 					startActivityForResult(new Intent(RouteList.this, RouteStart.class).putExtra("index", position), RESULT_START_ROUTE);
