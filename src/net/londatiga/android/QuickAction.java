@@ -234,7 +234,13 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 			onTop	= false;
 		}
 		
-		showArrow(((onTop) ? R.id.arrow_down : R.id.arrow_up), (int) (anchorRect.centerX() - rootWidth * (1 - multiplier)));
+		int xOffset = (int) (anchorRect.centerX() - rootWidth * (1 - multiplier));
+		
+		//FIXME Dirty hack :(
+		if (xOffset < 40)
+			xOffset = 40;
+		
+		showArrow(((onTop) ? R.id.arrow_down : R.id.arrow_up), xOffset);
 		
 		setAnimationStyle(screenWidth, anchorRect.centerX(), onTop);
 	
