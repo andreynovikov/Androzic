@@ -135,7 +135,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 
 		notification = new Notification();
 		notification.when = 0;
-		contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+		contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 		notification.icon = R.drawable.ic_stat_location;
 		notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_loc_short), getText(R.string.notif_loc_started), contentIntent);
 

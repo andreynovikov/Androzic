@@ -125,7 +125,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 			{
 				int index = extras.getInt("index");
 				activity.putExtra("launch", HSIActivity.class);
-				contentIntent = PendingIntent.getActivity(this, 0, activity, PendingIntent.FLAG_CANCEL_CURRENT);
+				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				navigateTo(index);
 			}
 			if (intent.getAction().equals(NAVIGATE_ROUTE))
@@ -136,7 +136,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 				activity.putExtra("launch", RouteDetails.class);
 				activity.putExtra("index", index);
 				activity.putExtra("nav", true);
-				contentIntent = PendingIntent.getActivity(this, 0, activity, PendingIntent.FLAG_CANCEL_CURRENT);
+				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				navigateTo(application.getRoute(index), dir);
 				if (start != -1)
 					setRouteWaypoint(start);

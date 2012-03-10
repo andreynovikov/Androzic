@@ -117,7 +117,7 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
 		notification = new Notification();
-	    contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+	    contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 	
 		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_LOCATING_STATUS));
 		Log.i(TAG, "Service started");
