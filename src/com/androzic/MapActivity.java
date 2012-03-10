@@ -1157,6 +1157,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			if (application.navigationOverlay == null)
 			{
 				application.navigationOverlay = new NavigationOverlay(this);
+				application.navigationOverlay.onMapChanged();
 			}
 		}
 		else if (application.navigationOverlay != null)
@@ -1204,7 +1205,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		if (navigationService.isNavigatingViaRoute())
 		{
 			boolean hasNext = navigationService.hasNextRouteWaypoint();
-			if (distance < navigationService.routeProximity * 3 && !animationSet)
+			if (distance < navigationService.navProximity * 3 && !animationSet)
 			{
 				AnimationSet animation = new AnimationSet(true);
 				animation.addAnimation(new AlphaAnimation(1.0f, 0.3f));

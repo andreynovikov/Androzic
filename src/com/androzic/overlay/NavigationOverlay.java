@@ -33,16 +33,16 @@ import com.androzic.MapActivity;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
+import com.androzic.map.Map;
 import com.androzic.navigation.NavigationService;
-import com.androzic.util.Geo;
 
 public class NavigationOverlay extends MapOverlay
 {
-	Paint paint;
+	private Paint paint;
 	
-	int proximity = 0;
-	int radius = 0;
-	boolean drawCircle = false;
+	private int proximity = 0;
+	private double mpp;
+	private boolean drawCircle = false;
 
     private NavigationService navigationService;
 
@@ -57,7 +57,7 @@ public class NavigationOverlay extends MapOverlay
         paint.setColor(context.getResources().getColor(R.color.navigationline));
 
         onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
-        calcRadius();
+    	mpp = 0;
         
         if (context instanceof MapActivity)
         {
@@ -67,28 +67,25 @@ public class NavigationOverlay extends MapOverlay
         enabled = true;
     }
 
+	@Override
 	public void setMapContext(final Activity activity)
 	{
 		super.setMapContext(activity);
         navigationService = ((MapActivity) context).navigationService;
 	}
 
-    private void calcRadius()
-    {
-		Androzic application = (Androzic) context.getApplication();
-		double[] loc = application.getLocation();
-		double[] prx = Geo.projection(loc[0], loc[1], proximity, 90);
-		int[] cxy = application.getXYbyLatLon(loc[0], loc[1]);
-		int[] pxy = application.getXYbyLatLon(prx[0], prx[1]);
-		radius = (int) Math.hypot((pxy[0]-cxy[0]), (pxy[1]-cxy[1]));    	
-    }
-    
 	@Override
-	public void onMapChanged()
+	public synchronized void onMapChanged()
 	{
-		calcRadius();
+		mpp = 0;
+    	Androzic application = Androzic.getApplication();
+    	Map map = application.getCurrentMap();
+    	if (map == null)
+    		return;
+    	
+    	mpp = map.mpp / map.getZoom();
 	}
-
+	
 	@Override
 	protected void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
 	{
@@ -113,8 +110,13 @@ public class NavigationOverlay extends MapOverlay
 	        {  
 		        for (Waypoint wpt : waypoints)
 		        {
-		            xy = application.getXYbyLatLon(wpt.latitude, wpt.longitude);
-		            c.drawCircle(xy[0] - cxy[0], xy[1] - cxy[1], radius, paint);
+		        	int radius = wpt.proximity > 0 ? wpt.proximity : proximity;
+		        	radius /= mpp;
+		        	if (radius > 0)
+		        	{
+		        		xy = application.getXYbyLatLon(wpt.latitude, wpt.longitude);
+		        		c.drawCircle(xy[0] - cxy[0], xy[1] - cxy[1], radius, paint);
+		        	}
 		        }
 	        }
         }

@@ -56,7 +56,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 	private Notification notification;
 	private PendingIntent contentIntent;
 	
-	public int routeProximity = 200;
+	private int routeProximity = 200;
 	private boolean useTraverse = true;
 
 	/**
@@ -83,6 +83,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 	/**
 	 * Distance to active waypoint
 	 */
+	public int navProximity = 0;
 	public double navDistance = 0.0;
 	public double navBearing = 0.0;
 	public long navTurn = 0;
@@ -215,6 +216,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		navDirection = 0;
 		navCurrentRoutePoint = -1;		
 
+		navProximity = routeProximity;
 		navDistance = 0.0;
 		navBearing = 0.0;
 		navTurn = 0;
@@ -246,6 +248,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		vmgav = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 		navWaypoint = waypoint;
+		navProximity = navWaypoint.proximity > 0 ? navWaypoint.proximity : routeProximity;
 		updateNavigationState(STATE_STARTED);
 		if (lastKnownLocation != null)
 			calculateNavigationStatus(lastKnownLocation, 0, 0);
@@ -270,6 +273,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 
 		navWaypoint = navRoute.getWaypoint(navCurrentRoutePoint);
 		prevWaypoint = navRoute.getWaypoint(navCurrentRoutePoint - navDirection);
+		navProximity = navWaypoint.proximity > 0 ? navWaypoint.proximity : routeProximity;
 		navRouteDistance = -1;
 		navRouteETE = -1;
 		navCourse = Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
@@ -287,6 +291,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 			prevWaypoint = navRoute.getWaypoint(prev);
 		else
 			prevWaypoint = null;
+		navProximity = navWaypoint.proximity > 0 ? navWaypoint.proximity : routeProximity;
 		navRouteDistance = -1;
 		navRouteETE = -1;
 		navCourse = prevWaypoint == null ? 0.0 : Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
@@ -310,6 +315,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		navCurrentRoutePoint += navDirection;
 		navWaypoint = navRoute.getWaypoint(navCurrentRoutePoint);
 		prevWaypoint = navRoute.getWaypoint(navCurrentRoutePoint - navDirection);
+		navProximity = navWaypoint.proximity > 0 ? navWaypoint.proximity : routeProximity;
 		navRouteDistance = -1;
 		navRouteETE = -1;
 		navCourse = Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
@@ -325,6 +331,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 			prevWaypoint = navRoute.getWaypoint(prev);
 		else
 			prevWaypoint = null;
+		navProximity = navWaypoint.proximity > 0 ? navWaypoint.proximity : routeProximity;
 		navRouteDistance = -1;
 		navRouteETE = -1;
 		navCourse = prevWaypoint == null ? 0.0 : Geo.bearing(prevWaypoint.latitude, prevWaypoint.longitude, navWaypoint.latitude, navWaypoint.longitude);
@@ -479,7 +486,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		if (navRoute != null)
 		{
 			boolean hasNext = hasNextRouteWaypoint();
-			if (distance < routeProximity)
+			if (distance < navProximity)
 			{
 				if (hasNext)
 				{

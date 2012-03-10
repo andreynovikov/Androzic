@@ -440,6 +440,20 @@ public class OziExplorerFiles
 				if (! "W".equals(fields[0]))
 					continue;
 				route.addWaypoint(fields[1].replace((char) 209, ','), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
+	        	// Format extension (probably not compatible with OziExplorer)
+	        	if (fields.length > 5)
+	        	{
+	        		try
+	        		{
+	        			int proximity = Integer.parseInt(fields[5]);
+	        			if (proximity > 0)
+	        				route.getWaypoint(route.length() - 1).proximity = proximity;
+	        		}
+	        		catch (NumberFormatException e)
+	        		{
+	        		}
+	        	}
+
 		    }
 			reader.close();
 			
@@ -568,6 +582,9 @@ public class OziExplorerFiles
 	        		writer.write("1");
 	        	else
 	        		writer.write("0");
+	        	// Format extension (probably not compatible with OziExplorer)
+	        	if (wpt.proximity > 0)
+	        		writer.write("," + String.valueOf(wpt.proximity));
 	        	writer.write("\n");
 	        }
         }
