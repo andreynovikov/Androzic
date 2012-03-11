@@ -227,9 +227,16 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 					Toast.makeText(this, getString(R.string.err_no_network_provider), Toast.LENGTH_LONG).show();
 				}
 			}
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-			locationManager.addNmeaListener(this);
-			Log.d(TAG, "Gps provider set");
+			try
+			{
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+				locationManager.addNmeaListener(this);
+				Log.d(TAG, "Gps provider set");
+			}
+			catch (IllegalArgumentException e)
+			{
+				Log.d(TAG, "Cannot set gps provider, likely no gps on device");
+			}
 		}
 	}
 
