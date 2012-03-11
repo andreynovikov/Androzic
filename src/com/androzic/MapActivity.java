@@ -57,12 +57,10 @@ import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.LightingColorFilter;
 import android.graphics.Rect;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -71,10 +69,6 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
-//TODO replace with ContactsContract
-import android.provider.Contacts;
-import android.provider.ContactsContract.PhoneLookup;
-import android.telephony.SmsMessage;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -126,7 +120,6 @@ import com.androzic.util.Astro;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
-import com.androzic.waypoint.CoordinatesReceived;
 import com.androzic.waypoint.WaypointFileList;
 import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
@@ -232,6 +225,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF555555);
 
 	protected boolean ready = false;
+	private boolean restarting = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -251,11 +245,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 
 		application = (Androzic) getApplication();
-		application.setMapActivity(this);
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		setRequestedOrientation(Integer.parseInt(settings.getString(getString(R.string.pref_orientation), "-1")));
-		settings.registerOnSharedPreferenceChangeListener(this);
 
 		final MapState mapState = (MapState) getLastNonConfigurationInstance();
 		if (mapState != null)
@@ -266,36 +255,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			editingTrack = mapState.editingTrack;
 			editingRoute = mapState.editingRoute;
 			routeEditingWaypoints = mapState.routeEditingWaypoints;
-
-/*			
-			for (Track track : application.getTracks())
-			{
-				TrackOverlay newTrack = new TrackOverlay(this, track);
-				application.fileTrackOverlays.add(newTrack);
-			}
-
-			for (Route route : application.getRoutes())
-			{
-				RouteOverlay newRoute = new RouteOverlay(this, route);
-				application.routeOverlays.add(newRoute);
-			}
-
-			if (mapState.currentTrack != null)
-			{
-				application.currentTrackOverlay = new CurrentTrackOverlay(this);
-				application.currentTrackOverlay.setTrack(mapState.currentTrack);
-			}
-			if (isSharing)
-			{
-				String session = settings.getString(getString(R.string.pref_sharing_session), "");
-				String user = settings.getString(getString(R.string.pref_sharing_user), "");
-
-				application.sharingOverlay = new SharingOverlay(this);
-				application.sharingOverlay.setIdentity(session, user);
-				application.sharingOverlay.setMapContext(this);
-			}
-			*/
-			application.setMapActivity(this);
 		}
 		else
 		{
@@ -303,12 +262,19 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			// check if called after crash
 			if (! application.mapsInited)
 			{
-				startActivity(new Intent(this, Splash.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+				restarting = true;
+				startActivity(new Intent(this, Splash.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
 				finish();
 				return;
 			}
 		}
-		
+
+		application.setMapActivity(this);
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		setRequestedOrientation(Integer.parseInt(settings.getString(getString(R.string.pref_orientation), "-1")));
+		settings.registerOnSharedPreferenceChangeListener(this);
+
 		panelActions = getResources().getStringArray(R.array.panel_action_values);
 
 		setContentView(R.layout.act_main);
@@ -439,6 +405,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
 
+		if (getIntent().getExtras() != null)
+			onNewIntent(getIntent());
+		
 		ready = true;
 	}
 
@@ -556,7 +525,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
 		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_LOCATING_STATUS));
 		registerReceiver(broadcastReceiver, new IntentFilter(TrackingService.BROADCAST_TRACKING_STATUS));
-		registerReceiver(smsReceiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
 
 		if (application.hasEnsureVisible())
 		{
@@ -582,7 +550,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		super.onPause();
 		Log.e(TAG,"onPause()");
 
-		unregisterReceiver(smsReceiver);
 		unregisterReceiver(broadcastReceiver);
 
 		if (wakeLock.isHeld())
@@ -650,7 +617,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 		wakeLock = null;
 
-		if (isFinishing())
+		if (isFinishing() && ! restarting)
 		{
 			// clear all overlays from map
 			updateOverlays(null, true);
@@ -660,6 +627,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 			application.clear();
 		}
+		
+		restarting = false;
 		
 		application = null;
 
@@ -2270,49 +2239,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	public void onStopTrackingTouch(SeekBar seekBar)
 	{
 	}
-
-	private BroadcastReceiver smsReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			Bundle bundle = intent.getExtras();
-			String sender = "";
-			String title = "";
-			double coords[] = null;
-			
-			if (bundle != null)
-			{
-				Object[] pdus = (Object[]) bundle.get("pdus");
-				for (int i = 0; i < pdus.length; i++)
-				{
-					SmsMessage msg = SmsMessage.createFromPdu((byte[]) pdus[i]);
-					String text = msg.getMessageBody().toString();
-					if (text.contains("@"))
-					{
-						int idx = text.indexOf("@");
-						title = text.substring(0, idx).trim();
-						text = text.substring(idx+1, text.length()).trim();
-					}
-					coords = CoordinateParser.parse(text);
-					if (! Double.isNaN(coords[0]) && ! Double.isNaN(coords[1]))
-					{
-						sender = msg.getOriginatingAddress();
-						Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(sender));
-						Cursor c = getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME}, null, null, null);
-						if (c.moveToFirst())
-						{
-							sender = c.getString(c.getColumnIndex(Contacts.Phones.DISPLAY_NAME));
-						}
-					}
-				}
-				if (coords != null && ! Double.isNaN(coords[0]) && ! Double.isNaN(coords[1]))
-				{
-					Location loc = application.getLocationAsLocation();
-					startActivity(new Intent(MapActivity.this, CoordinatesReceived.class).putExtra("title", title).putExtra("sender", sender).putExtra("lat", coords[0]).putExtra("lon", coords[1]).putExtra("clat", loc.getLatitude()).putExtra("clon", loc.getLongitude()));
-				}
-			}
-		}
-	};
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState)

@@ -51,8 +51,6 @@ public class CoordinatesReceived extends Activity implements OnClickListener
         String sender = extras.getString("sender");
         lat = extras.getDouble("lat");
         lon = extras.getDouble("lon");
-        double clat = extras.getDouble("clat");
-        double clon = extras.getDouble("clon");
         
         if (title != null && ! "".equals(title))
         {
@@ -61,14 +59,15 @@ public class CoordinatesReceived extends Activity implements OnClickListener
 		this.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_map);
 
 		Androzic application = (Androzic) getApplication();
+		double[] ll = application.getLocation();
 
         ((TextView) findViewById(R.id.message)).setText(getString(R.string.new_coordinates, sender));
 	
 		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", lat, lon);
 		((TextView) findViewById(R.id.coordinates)).setText(coords);
 		
-		double dist = Geo.distance(clat, clon, lat, lon);
-		double bearing = Geo.bearing(clat, clon, lat, lon);
+		double dist = Geo.distance(ll[0], ll[1], lat, lon);
+		double bearing = Geo.bearing(ll[0], ll[1], lat, lon);
 		bearing = application.fixDeclination(bearing);
 		String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.bearingH(bearing);
 		((TextView) findViewById(R.id.distance)).setText(distance);

@@ -31,9 +31,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,8 +46,8 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -56,7 +56,7 @@ import com.androzic.overlay.CurrentTrackOverlay;
 import com.androzic.util.OziExplorerFiles;
 
 public class Splash extends Activity implements OnClickListener
-{
+{	
 	private static final int MSG_FINISH = 1;
 	private static final int MSG_ERROR = 2;
 	private static final int MSG_STATUS = 3;
@@ -84,7 +84,7 @@ public class Splash extends Activity implements OnClickListener
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+		
 		application = (Androzic) getApplication();
 
 		PreferenceManager.setDefaultValues(this, R.xml.pref_behavior, true);
@@ -194,7 +194,7 @@ public class Splash extends Activity implements OnClickListener
 					no.setVisibility(View.VISIBLE);
 					break;
 				case MSG_FINISH:
-					startActivity(new Intent(Splash.this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+					startActivity(new Intent(Splash.this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
 					finish();
 					break;
 				case MSG_ERROR:
