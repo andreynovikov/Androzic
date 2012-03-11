@@ -24,11 +24,9 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.Paint.Align;
+import android.graphics.Typeface;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.androzic.Androzic;
 import com.androzic.MapView;
@@ -38,9 +36,13 @@ import com.androzic.util.StringFormatter;
 
 public class ScaleOverlay extends MapOverlay
 {
+	private static final int SCALE_MOVE_DELAY = 2 * 1000000000;
+
 	private Paint linePaint;
 	private Paint textPaint;
 	private double mpp;
+	private long lastScaleMove;
+	private int lastScalePos;
 
 	public ScaleOverlay(Activity activity)
 	{
@@ -59,6 +61,8 @@ public class ScaleOverlay extends MapOverlay
         textPaint.setTypeface(Typeface.SANS_SERIF);
         textPaint.setColor(context.getResources().getColor(R.color.scalebar));
     	mpp = 0;
+    	lastScaleMove = 0;
+    	lastScalePos = 1;
     	onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
 	}
 
@@ -123,19 +127,48 @@ public class ScaleOverlay extends MapOverlay
 		int cx = - mapView.lookAheadXY[0] - centerX;
 		int cy = - mapView.lookAheadXY[1] - centerY;
 		int cty = -10;
-		
+
+		int pos;
 		if (mapView.bearing >= 0 && mapView.bearing < 90)
+			pos = 1;
+		else if (mapView.bearing >= 90 && mapView.bearing < 180)
+			pos = 2;
+		else if (mapView.bearing >= 180 && mapView.bearing < 270)
+			pos = 3;
+		else
+			pos = 4;
+
+		if (pos != lastScalePos)
+		{
+			long now = System.nanoTime();
+			if (lastScaleMove == 0)
+			{
+				pos = lastScalePos;
+				lastScaleMove = now;
+			}
+			else if (now > lastScaleMove + SCALE_MOVE_DELAY)
+			{
+				lastScalePos = pos;
+				lastScaleMove = 0;
+			}
+			else
+			{
+				pos = lastScalePos;
+			}
+		}
+
+		if (pos == 1)
 		{
 			cx += 30;
 			cy += mapView.viewArea.bottom - 30;
 		}
-		else if (mapView.bearing >= 90 && mapView.bearing < 180)
+		else if (pos == 2)
 		{
 			cx += 30;
 			cy += mapView.viewArea.top + 10;
 			cty = 30;
 		}
-		else if (mapView.bearing >= 180 && mapView.bearing < 270)
+		else if (pos == 3)
 		{
 			cx += mapView.viewArea.right - x3 - 40;
 			cy += mapView.viewArea.top + 10;
