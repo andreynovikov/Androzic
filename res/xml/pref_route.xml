@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_route_title">
-	<com.androzic.ui.SeekbarPreference android:key="@string/pref_route_linewidth" android:title="@string/pref_route_linewidth_title" android:summary="@string/pref_route_linewidth_summary" androzic:defaultValue="@integer/def_route_linewidth" android:text=" pixels" androzic:min="1" androzic:max="6" />
-	<com.androzic.ui.SeekbarPreference android:key="@string/pref_route_pointwidth" android:title="@string/pref_route_pointwidth_title" android:summary="@string/pref_route_pointwidth_summary" androzic:defaultValue="@integer/def_route_pointwidth" android:text=" pixels" androzic:min="5" androzic:max="20" />
-    <CheckBoxPreference android:key="@string/pref_route_showname" android:title="@string/pref_route_showname_title" android:summary="@string/pref_route_showname_summary" android:defaultValue="true" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
+    android:title="@string/pref_route_title" >
+
+    <com.androzic.ui.SeekbarPreference
+        androzic:defaultValue="@integer/def_route_linewidth"
+        android:key="@string/pref_route_linewidth"
+        androzic:max="6"
+        androzic:min="1"
+        android:summary="@string/pref_route_linewidth_summary"
+        android:text=" pixels"
+        android:title="@string/pref_route_linewidth_title" />
+
+    <com.androzic.ui.SeekbarPreference
+        androzic:defaultValue="@integer/def_route_pointwidth"
+        android:key="@string/pref_route_pointwidth"
+        androzic:max="20"
+        androzic:min="5"
+        android:summary="@string/pref_route_pointwidth_summary"
+        android:text=" pixels"
+        android:title="@string/pref_route_pointwidth_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_route_showname"
+        android:summary="@string/pref_route_showname_summary"
+        android:title="@string/pref_route_showname_title" />
+
 </PreferenceScreen>
