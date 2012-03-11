@@ -17,6 +17,7 @@
   <string name="loadroute_name">Wczytaj trasę z pliku</string>
   <string name="saveroute_name">Zapisz trasę do pliku</string>
   <string name="routeproperties_name">Edytuj trasę</string>
+  <string name="routedetails_name">Route details</string>
   <string name="markericon_name">Select marker icon</string>
   <string name="pref_name">Androzic settings</string>
   <string name="hsi_name">HSI</string>
@@ -43,6 +44,7 @@
   <string name="msg_initializingview">Initializing view…</string>
   <string name="msg_cleaning">Cleaning…</string>
   <string name="msg_paid">Wersja dotowana</string>
+  <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
   <string name="err_nosdcard">Karta SD niedostępna</string>
   <string name="err_nofile">Nie ma takiego pliku</string>
   <string name="err_write">Unable to write file</string>
@@ -163,6 +165,7 @@
   <string name="menu_search">Wyszukiwanie</string>
   <string name="menu_dismiss">Odrzucić</string>
   <string name="menu_manage">Zarządzaj</string>
+  <string name="menu_details">Details</string>
   <string name="menu_visible">Zapewnij widoczne</string>
   <string name="menu_follow">Włącz podążanie</string>
   <string name="menu_location">Lokalizacja</string>

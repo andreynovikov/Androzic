@@ -17,6 +17,7 @@
   <string name="loadroute_name">Зареждане на маршрут</string>
   <string name="saveroute_name">Запис на маршрут</string>
   <string name="routeproperties_name">Редакция на маршрут</string>
+  <string name="routedetails_name">Route details</string>
   <string name="markericon_name">Изберете икона на маркера</string>
   <string name="pref_name">Androzic настройки</string>
   <string name="hsi_name">HSI</string>
@@ -43,6 +44,7 @@
   <string name="msg_initializingview">Инициализиране изгледа&#8230;</string>
   <string name="msg_cleaning">Почистване&#8230;</string>
   <string name="msg_paid">Версия за дарители</string>
+  <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
   <string name="err_nosdcard">Недостъпна SD-карта</string>
   <string name="err_nofile">Няма такъв файл</string>
   <string name="err_write">Не може да се запише файла</string>
@@ -104,7 +106,7 @@
   <string name="fine">висока</string>
   <string name="algorithm">Алгоритъм</string>
   <string name="alg_a">Круиз</string>
-  <string name="alg_b">Flounce</string>
+  <string name="alg_b">Хвърлям</string>
   <string name="update_almanac">Обновление на алманаха</string>
   <string name="easting">Към изток</string>
   <string name="northing">Към север</string>
@@ -146,7 +148,7 @@
   <string name="menu_startnavigation">Навигиране по маршрута</string>
   <string name="menu_nextnavpoint">Към следващата</string>
   <string name="menu_prevnavpoint">Към предишната</string>
-  <string name="menu_thisnavpoint">Navigate here</string>
+  <string name="menu_thisnavpoint">Навигирай тук</string>
   <string name="menu_routes">Маршрути</string>
   <string name="menu_newroute">Нов маршрут</string>
   <string name="menu_properties">Свойства</string>
@@ -163,6 +165,7 @@
   <string name="menu_search">Търсене</string>
   <string name="menu_dismiss">Отхвърляне</string>
   <string name="menu_manage">Управление</string>
+  <string name="menu_details">Details</string>
   <string name="menu_visible">Осигуряване на видимост</string>
   <string name="menu_follow">Разрешаване проследяването</string>
   <string name="menu_location">Местоположение</string>

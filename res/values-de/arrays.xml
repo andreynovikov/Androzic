@@ -76,14 +76,14 @@
     <item>Querformat</item>
   </string-array>
   <string-array name="cursorvector_names">
-    <item>None</item>
-    <item>Proximity distance</item>
-    <item>Time (minutes)</item>
+    <item>Keine</item>
+    <item>Angenäherte Entfernung</item>
+    <item>Zeit (Minuten)</item>
   </string-array>
   <string-array name="showdistance_names">
-    <item>No</item>
-    <item>Manually</item>
-    <item>Always</item>
+    <item>Nein</item>
+    <item>Manuell</item>
+    <item>Immer</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 Karten-Unterstützung</item>
@@ -98,21 +98,23 @@
     <item>Französische Lokalisation</item>
     <item>Finnische Lokalisation</item>
     <item>Bulgarische Lokalisation</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
+    <item>Deutsche Lokalisation</item>
+    <item>Türkische Lokalisation</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
   </string-array>
   <string-array name="panel_action_names">
-    <item>Zoom in</item>
-    <item>Zoom out</item>
-    <item>More scaled map</item>
-    <item>Less scaled map</item>
-    <item>Maps at cursor</item>
-    <item>Manage waypoints</item>
-    <item>Show information</item>
-    <item>Follow/unfollow</item>
-    <item>Obtain location</item>
-    <item>Write track</item>
-    <item>Real-time sharing</item>
-    <item>Show/hide status bar</item>
+    <item>Vergrößern</item>
+    <item>Verkleinern</item>
+    <item>Größere Karte</item>
+    <item>Kleinere Karte</item>
+    <item>Karten an der Cursorposition</item>
+    <item>Wegpunkte verwalten</item>
+    <item>Informationen anzeigen</item>
+    <item>Folgen/nicht mehr folgen</item>
+    <item>Standort ermitteln</item>
+    <item>Track schreiben</item>
+    <item>Echtzeit-Austausch</item>
+    <item>Statusleiste ein-/ausblenden</item>
   </string-array>
 </resources>

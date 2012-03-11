@@ -100,6 +100,8 @@
     <item>Болгарская локализация</item>
     <item>Немецкая локализация</item>
     <item>Турецкая локализация</item>
+    <item>Итальянская локализация</item>
+    <item>Испанская локализация</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Увеличить масштаб</item>

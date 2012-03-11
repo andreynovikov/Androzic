@@ -17,6 +17,7 @@
   <string name="loadroute_name">Загрузка маршрута из файла</string>
   <string name="saveroute_name">Сохранение маршрута в файл</string>
   <string name="routeproperties_name">Редактирование маршрута</string>
+  <string name="routedetails_name">Детали маршрута</string>
   <string name="markericon_name">Выберите иконку метки</string>
   <string name="pref_name">Настройки Androzic</string>
   <string name="hsi_name">ПНП</string>
@@ -43,6 +44,7 @@
   <string name="msg_initializingview">Инициализация экрана&#8230;</string>
   <string name="msg_cleaning">Очистка&#8230;</string>
   <string name="msg_paid">Платная версия</string>
+  <string name="msg_empty_route_list">Нет доступных маршрутов. Используйте меню для создания маршрута или загрузки его из файла.</string>
   <string name="err_nosdcard">SD-карта недоступна</string>
   <string name="err_nofile">Нет такого файла</string>
   <string name="err_write">Не удается записать файл</string>
@@ -164,6 +166,7 @@
   <string name="menu_search">Поиск</string>
   <string name="menu_dismiss">Отказаться</string>
   <string name="menu_manage">Список</string>
+  <string name="menu_details">Подробно</string>
   <string name="menu_visible">Обеспечить видимость</string>
   <string name="menu_follow">Включить слежение</string>
   <string name="menu_location">Положение</string>

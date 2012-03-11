@@ -17,6 +17,7 @@
   <string name="loadroute_name">Lataa reitti tiedostosta</string>
   <string name="saveroute_name">Talleta reitti tiedostoon</string>
   <string name="routeproperties_name">Editoi reittiä</string>
+  <string name="routedetails_name">Reitin yksityiskohdat</string>
   <string name="markericon_name">Valitse merkki kuvake</string>
   <string name="pref_name">Androzic asetukset</string>
   <string name="hsi_name">HSI</string>
@@ -43,6 +44,7 @@
   <string name="msg_initializingview">Alustaa näytön&#8230;</string>
   <string name="msg_cleaning">Pyyhkii&#8230;</string>
   <string name="msg_paid">Lahjaversio</string>
+  <string name="msg_empty_route_list">Reittejä ei ole käytettävissä. Valikon avulla voit luoda reitin tai ladata tiedoston.</string>
   <string name="err_nosdcard">SD korttia ei ole</string>
   <string name="err_nofile">Ei tiedostoa</string>
   <string name="err_write">Ei voi kirjoittaa tiedostoon</string>
@@ -144,7 +146,7 @@
   <string name="menu_startnavigation">Navigoi reitillä</string>
   <string name="menu_nextnavpoint">Siirry seuraavaan</string>
   <string name="menu_prevnavpoint">Mene edelliseen</string>
-  <string name="menu_thisnavpoint">Navigate here</string>
+  <string name="menu_thisnavpoint">Navigoi tästä</string>
   <string name="menu_routes">Reitit</string>
   <string name="menu_newroute">Uusi reitti</string>
   <string name="menu_properties">Ominaisuudet</string>
@@ -161,6 +163,7 @@
   <string name="menu_search">Haku</string>
   <string name="menu_dismiss">Poistu</string>
   <string name="menu_manage">Hallitse</string>
+  <string name="menu_details">Tiedot</string>
   <string name="menu_visible">Näytä</string>
   <string name="menu_follow">Salli seuranta</string>
   <string name="menu_location">Sijainti</string>

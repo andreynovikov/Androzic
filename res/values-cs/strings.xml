@@ -17,6 +17,7 @@
   <string name="loadroute_name">Nahraj routu ze souboru</string>
   <string name="saveroute_name">Ulož routu do souboru</string>
   <string name="routeproperties_name">Oprav routu</string>
+  <string name="routedetails_name">Detail cesty</string>
   <string name="markericon_name">Vyber ikonu značky</string>
   <string name="pref_name">Nastavení Androzic</string>
   <string name="hsi_name">HSI</string>
@@ -43,6 +44,7 @@
   <string name="msg_initializingview">﻿Inicializuji zobrazení&#8230;</string>
   <string name="msg_cleaning">Čištění&#8230;</string>
   <string name="msg_paid">Dárcovská verze</string>
+  <string name="msg_empty_route_list">Nejsou k dispozici žádné trasy. Použij menu k jejich vytvoření nebo načtení ze souboru.</string>
   <string name="err_nosdcard">Karta SD nepřístupná</string>
   <string name="err_nofile">Soubor nenalezen</string>
   <string name="err_write">Nelze zapsat soubor</string>
@@ -142,7 +144,7 @@
   <string name="menu_startnavigation">Naviguj po routě</string>
   <string name="menu_nextnavpoint">Přeskoč na další</string>
   <string name="menu_prevnavpoint">Jdi na předchozí</string>
-  <string name="menu_thisnavpoint">Navigate here</string>
+  <string name="menu_thisnavpoint">Naviguj sem</string>
   <string name="menu_routes">Routy</string>
   <string name="menu_newroute">Nová routa</string>
   <string name="menu_properties">Vlastnosti</string>
@@ -159,6 +161,7 @@
   <string name="menu_search">Hledat</string>
   <string name="menu_dismiss">Omítnout</string>
   <string name="menu_manage">Spravuj</string>
+  <string name="menu_details">Podrobnosti</string>
   <string name="menu_visible">Zobraz na mapě</string>
   <string name="menu_follow">Trasování ON</string>
   <string name="menu_location">Pozice</string>
@@ -217,7 +220,7 @@
   <string name="pref_mapbest_summary">Označ, aplikace nahraje automaticky nejpodrobnější mapu pro aktuální pozici</string>
   <string name="pref_mapbestinterval_title">Podrobná mapa - interval</string>
   <string name="pref_mapbestinterval_summary">Časový interval pro automatické nahrání nejpodrobnější mapy</string>
-  <string name="pref_mapfollowonloc_title">Follow on first location</string>
+  <string name="pref_mapfollowonloc_title">Sledovat po lokalizaci</string>
   <string name="pref_mapfollowonloc_summary">Povolit následování po získání pozice</string>
   <string name="pref_usecompass_title">Použij kompas</string>
   <string name="pref_usecompass_summary">Označ, pro natáčení nav. šipky s použitím kompasu mimo GPS signál nebo pokud není pohyb</string>

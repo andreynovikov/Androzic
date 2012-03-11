@@ -17,6 +17,7 @@
   <string name="loadroute_name">Cargar ruta desde archivo</string>
   <string name="saveroute_name">Grabar ruta a archivo</string>
   <string name="routeproperties_name">Editar ruta</string>
+  <string name="routedetails_name">Detalles de la ruta</string>
   <string name="markericon_name">Seleccione el icono del marcador</string>
   <string name="pref_name">Configuración de Androzic</string>
   <string name="hsi_name">HSI</string>
@@ -43,6 +44,7 @@
   <string name="msg_initializingview">Iniciando vista&#8230;</string>
   <string name="msg_cleaning">Limpiando&#8230;</string>
   <string name="msg_paid">Versión de donación</string>
+  <string name="msg_empty_route_list">No hay rutas disponibles. Utilice el menú para crear la ruta o cargar desde archivo.</string>
   <string name="err_nosdcard">Tarjeta SD no disponible</string>
   <string name="err_nofile">Archivo no valido</string>
   <string name="err_write">No se ha podido escribir el archivo</string>
@@ -146,7 +148,7 @@
   <string name="menu_startnavigation">Navegar via ruta</string>
   <string name="menu_nextnavpoint">Saltar al próximo</string>
   <string name="menu_prevnavpoint">Ir al anterior</string>
-  <string name="menu_thisnavpoint">Navigate here</string>
+  <string name="menu_thisnavpoint">Vaya aquí</string>
   <string name="menu_routes">Rutas</string>
   <string name="menu_newroute">Nueva ruta</string>
   <string name="menu_properties">Propiedades</string>
@@ -163,6 +165,7 @@
   <string name="menu_search">Búsqueda</string>
   <string name="menu_dismiss">Descartar</string>
   <string name="menu_manage">Gestionar</string>
+  <string name="menu_details">Detalles</string>
   <string name="menu_visible">Asegurar visivle</string>
   <string name="menu_follow">Activar seguimiento</string>
   <string name="menu_location">Posición</string>

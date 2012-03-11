@@ -76,14 +76,14 @@
     <item>Pozioma</item>
   </string-array>
   <string-array name="cursorvector_names">
-    <item>None</item>
+    <item>Brak</item>
     <item>Proximity distance</item>
-    <item>Time (minutes)</item>
+    <item>Czas (w minutach)</item>
   </string-array>
   <string-array name="showdistance_names">
-    <item>No</item>
-    <item>Manually</item>
-    <item>Always</item>
+    <item>Nie</item>
+    <item>Ręcznie</item>
+    <item>Zawsze</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Wsparcie map ozf2, ozfx3</item>
@@ -98,20 +98,22 @@
     <item>Tłumaczenie na francuski</item>
     <item>Tłumaczenie na fiński</item>
     <item>Tłumaczenie na Bułgarski</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
+    <item>Niemieckie tłumaczenie</item>
+    <item>Tureckie tłumaczenie</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
   </string-array>
   <string-array name="panel_action_names">
-    <item>Zoom in</item>
-    <item>Zoom out</item>
+    <item>Przybliż</item>
+    <item>Oddal</item>
     <item>More scaled map</item>
     <item>Less scaled map</item>
     <item>Maps at cursor</item>
-    <item>Manage waypoints</item>
-    <item>Show information</item>
+    <item>Zarządzaj punktami trasy</item>
+    <item>Pokaż informacje</item>
     <item>Follow/unfollow</item>
     <item>Obtain location</item>
-    <item>Write track</item>
+    <item>Zapisz trase</item>
     <item>Real-time sharing</item>
     <item>Show/hide status bar</item>
   </string-array>

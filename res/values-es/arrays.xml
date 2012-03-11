@@ -100,6 +100,8 @@
     <item>Traducción al búlgaro</item>
     <item>Traducción al alemán</item>
     <item>Traducción al turco</item>
+    <item>Traducción al Italiano</item>
+    <item>Traducción al Español</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Acercar</item>

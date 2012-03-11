@@ -76,14 +76,14 @@
     <item>Yatay</item>
   </string-array>
   <string-array name="cursorvector_names">
-    <item>None</item>
-    <item>Proximity distance</item>
-    <item>Time (minutes)</item>
+    <item>Hiçbiri</item>
+    <item>Yakınlık mesafesi</item>
+    <item>Süre (dakika)</item>
   </string-array>
   <string-array name="showdistance_names">
-    <item>No</item>
-    <item>Manually</item>
-    <item>Always</item>
+    <item>Hiçbir zaman</item>
+    <item>İsteğe göre</item>
+    <item>Her zaman</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 harita desteği</item>
@@ -98,21 +98,23 @@
     <item>Fransızca yerelleştirme</item>
     <item>Fince yerelleştirme</item>
     <item>Bulgarca yerelleştirme</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
+    <item>Almanca yerelleştirme</item>
+    <item>Türkçe yerelleştirme</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
   </string-array>
   <string-array name="panel_action_names">
-    <item>Zoom in</item>
-    <item>Zoom out</item>
-    <item>More scaled map</item>
-    <item>Less scaled map</item>
-    <item>Maps at cursor</item>
-    <item>Manage waypoints</item>
-    <item>Show information</item>
-    <item>Follow/unfollow</item>
-    <item>Obtain location</item>
-    <item>Write track</item>
-    <item>Real-time sharing</item>
-    <item>Show/hide status bar</item>
+    <item>Yakınlaştır</item>
+    <item>Uzaklaştır</item>
+    <item>Yüksek ölçekli harita</item>
+    <item>Düşük ölçekli harita</item>
+    <item>İmleç konumundaki haritalar</item>
+    <item>Yer imlerini yönet</item>
+    <item>Bilgileri göster</item>
+    <item>Otomatik Takip Et/Otomatik Takibi Bırak</item>
+    <item>Konumu belirle</item>
+    <item>Yer izini kaydet</item>
+    <item>Gerçek zamanlı konum paylaşımı</item>
+    <item>Durum çubuğunu göster/gizle</item>
   </string-array>
 </resources>

@@ -17,6 +17,7 @@
   <string name="loadroute_name">Dosyadan rota yükle</string>
   <string name="saveroute_name">Rotayı dosyaya kaydet</string>
   <string name="routeproperties_name">Rotayı düzenle</string>
+  <string name="routedetails_name">Route details</string>
   <string name="markericon_name">İşaretçi simgesini seçin</string>
   <string name="pref_name">Androzic ayarları</string>
   <string name="hsi_name">HSI</string>
@@ -43,6 +44,7 @@
   <string name="msg_initializingview">Görünüm başlatılıyor&#8230;</string>
   <string name="msg_cleaning">Temizliyor&#8230;</string>
   <string name="msg_paid">Bağış yapılmış sürüm</string>
+  <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
   <string name="err_nosdcard">SD kart kullanılamaz</string>
   <string name="err_nofile">Böyle bir dosya yok</string>
   <string name="err_write">Dosya yazılamıyor</string>
@@ -118,8 +120,8 @@
   <string name="icon">Simge</string>
   <string name="primary">Birincil</string>
   <string name="advanced">Gelişmiş</string>
-  <string name="hdop">HDOP</string>
-  <string name="vdop">VDOP</string>
+  <string name="hdop">Yatay sapma</string>
+  <string name="vdop">Dikey sapma</string>
   <string name="badmaps">Harita dizin-indeks hatası</string>
   <string name="nomaps">Hiç harita bulunamadı</string>
   <string name="nomaps_explained">Harita klasörü \'%s\' boştur. Dünya Haritası(207 kb) yüklensin mi?</string>
@@ -142,7 +144,7 @@
   <string name="menu_startnavigation">Rota seyrüseferi yap</string>
   <string name="menu_nextnavpoint">Sonraki</string>
   <string name="menu_prevnavpoint">Önceki</string>
-  <string name="menu_thisnavpoint">Navigate here</string>
+  <string name="menu_thisnavpoint">Buraya git</string>
   <string name="menu_routes">Rotalar</string>
   <string name="menu_newroute">Yeni rota</string>
   <string name="menu_properties">Özellikler</string>
@@ -159,6 +161,7 @@
   <string name="menu_search">Ara</string>
   <string name="menu_dismiss">Menüden çıkış</string>
   <string name="menu_manage">Yönet</string>
+  <string name="menu_details">Details</string>
   <string name="menu_visible">Haritada göster</string>
   <string name="menu_follow">İzlemeyi etkinleştir</string>
   <string name="menu_location">Konum</string>
