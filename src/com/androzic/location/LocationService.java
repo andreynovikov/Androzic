@@ -46,6 +46,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -75,6 +76,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 
 	private LocationManager locationManager = null;
 	private SensorManager sensorManager = null;
+	private Handler sensorHandler = new Handler();
 
 	private Notification notification;
 	private PendingIntent contentIntent;
@@ -654,7 +656,23 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	}
 
 	@Override
-	public void onSensorChanged(SensorEvent event)
+	public void onSensorChanged(final SensorEvent event)
+	{
+		if (!sensorHandler.hasMessages(1))
+		{
+			Message m = Message.obtain(sensorHandler, new Runnable() {
+				@Override
+				public void run()
+				{
+					calculateSensor(event);
+				}
+			});
+			m.what = 1;
+			sensorHandler.sendMessage(m);
+		}
+	}
+	
+	private void calculateSensor(SensorEvent event)
 	{
 		if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
 			return;
