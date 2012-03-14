@@ -85,7 +85,6 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -189,7 +188,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	private TextView mapZoom;
 	
 	protected SeekBar trackBar;
-	protected ProgressBar waitBar;
+	protected TextView waitBar;
 	protected MapView map;
 	protected QuickAction3D wptQuickAction;
 	protected QuickAction3D rteQuickAction;
@@ -300,7 +299,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		bearingUnit = (TextView) findViewById(R.id.bearingunit);
 		turnValue = (TextView) findViewById(R.id.turn);
 		trackBar = (SeekBar) findViewById(R.id.trackbar);
-		waitBar = (ProgressBar) findViewById(R.id.waitbar);
+		waitBar = (TextView) findViewById(R.id.waitbar);
 		map = (MapView) findViewById(R.id.mapview);
 
 		// set button actions
@@ -441,7 +440,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		super.onResume();
 		Log.e(TAG, "onResume()");
 
-		map.becomeNotReady();
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		Resources resources = getResources();
 
@@ -540,7 +538,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		updateMapViewArea();
 		map.updateMapInfo();
 		map.update();
-		application.notifyOverlays();
 		map.requestFocus();
 	}
 	
@@ -654,7 +651,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		bearingValue = null;
 		turnValue = null;
 		trackBar = null;
-		waitBar = null;
+//		waitBar = null;
 	}
 
 	private ServiceConnection navigationConnection = new ServiceConnection() {
@@ -817,7 +814,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			}
 
 			// update map
-			if (map.isReady() && lastLocationMillis - lastRenderTime >= renderInterval)
+			if (lastLocationMillis - lastRenderTime >= renderInterval)
 			{
 				lastRenderTime = lastLocationMillis;
 
@@ -1001,26 +998,40 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		//TODO strange situation, needs investigation
 		if (application != null)
 		{
-			String pos = StringFormatter.coordinates(application.coordinateFormat, " ", latlon[0], latlon[1]);
-			coordinates.setText(pos);
-			updateMapButtons();
+			final String pos = StringFormatter.coordinates(application.coordinateFormat, " ", latlon[0], latlon[1]);
+			this.runOnUiThread(new Runnable() {
+
+				@Override
+				public void run()
+				{
+					coordinates.setText(pos);
+					updateMapButtons();
+				}
+			});
 		}
 	}
 
 	protected final void updateFileInfo()
 	{
-		String title = application.getMapTitle();
-		if (title != null)
-		{
-			currentFile.setText(title);
-		}
-		else
-		{
-			currentFile.setText("-no map-");
-		}
+		final String title = application.getMapTitle();
+		this.runOnUiThread(new Runnable() {
 
-		updateMapButtons();
-		updateZoomInfo();
+			@Override
+			public void run()
+			{
+				if (title != null)
+				{
+					currentFile.setText(title);
+				}
+				else
+				{
+					currentFile.setText("-no map-");
+				}
+
+				updateMapButtons();
+				updateZoomInfo();
+			}
+		});
 	}
 
 	protected final void updateZoomInfo()
@@ -1407,7 +1418,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		map.setFocusableInTouchMode(false);
 		trackBar.requestFocus();
 		updateMapViewArea();
-		map.invalidate();
 	}
 
 	private void startEditRoute(Route route)
@@ -1437,7 +1447,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		if (showDistance > 0)
 			application.distanceOverlay.disable();
 		updateMapViewArea();
-		map.invalidate();
 	}
 	
 	public void setFollowing(boolean follow)
@@ -1463,10 +1472,18 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	public void zoomMap(final float factor)
 	{
 		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
 		executorThread.execute(new Runnable() {
 			public void run()
 			{
-				application.zoomBy(factor);
+				synchronized(map)
+				{
+					if (application.zoomBy(factor))
+					{
+						map.updateMapInfo();
+						map.update();
+					}
+				}
 				finishHandler.sendEmptyMessage(0);
 			}
 		});
@@ -1709,7 +1726,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				{
 					application.distanceOverlay.setAncor(application.getMapCenter());
 					application.distanceOverlay.enable();
-					map.invalidate();
 				}
 				return true;
 			case R.id.menuPreferences:
@@ -1907,19 +1923,20 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 					if (ro.getRoute().editing)
 						ro.onRoutePropertiesChanged();
 				}
-				map.invalidate();
 				break;
 			case RESULT_LOAD_MAP:
 				if (resultCode == RESULT_OK)
 				{
 					Bundle extras = data.getExtras();
 					final int id = extras.getInt("id");
-					application.loadMap(id);
-					map.becomeNotReady();
-					map.suspendBestMap();
-					setFollowing(false);
-					map.updateMapInfo();
-					map.update();
+					synchronized (map)
+					{
+						application.loadMap(id);
+						map.suspendBestMap();
+						setFollowing(false);
+						map.updateMapInfo();
+						map.update();
+					}
 				}
 				break;
 			case RESULT_LOAD_MAP_ATPOSITION:
@@ -1974,8 +1991,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		public void handleMessage(Message msg)
 		{
 			waitBar.setVisibility(View.INVISIBLE);
-			map.updateMapInfo();
-			map.update();
+			waitBar.setText("");
 		}
 	};
 
@@ -1988,10 +2004,18 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				if (application.getNextZoom() == 0.0)
 					break;
 				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
 				executorThread.execute(new Runnable() {
 					public void run()
 					{
-						application.zoomIn();
+						synchronized(map)
+						{
+							if (application.zoomIn())
+							{
+								map.updateMapInfo();
+								map.update();
+							}
+						}
 						finishHandler.sendEmptyMessage(0);
 					}
 				});
@@ -2000,22 +2024,36 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				if (application.getPrevZoom() == 0.0)
 					break;
 				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
 				executorThread.execute(new Runnable() {
 					public void run()
 					{
-						application.zoomOut();
+						synchronized(map)
+						{
+							if (application.zoomOut())
+							{
+								map.updateMapInfo();
+								map.update();
+							}
+						}
 						finishHandler.sendEmptyMessage(0);
 					}
 				});
 				break;
 			case R.id.nextmap:
 				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
 				executorThread.execute(new Runnable() {
 					public void run()
 					{
-						if (application.prevMap())
+						synchronized(map)
 						{
-							map.suspendBestMap();
+							if (application.prevMap())
+							{
+								map.suspendBestMap();
+								map.updateMapInfo();
+								map.update();
+							}
 						}
 						finishHandler.sendEmptyMessage(0);
 					}
@@ -2023,12 +2061,18 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				break;
 			case R.id.prevmap:
 				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
 				executorThread.execute(new Runnable() {
 					public void run()
 					{
-						if (application.nextMap())
+						synchronized(map)
 						{
-							map.suspendBestMap();
+							if (application.nextMap())
+							{
+								map.suspendBestMap();
+								map.updateMapInfo();
+								map.update();
+							}
 						}
 						finishHandler.sendEmptyMessage(0);
 					}
@@ -2110,7 +2154,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				}
 				isSharing = !isSharing;
 				updateMapButtons();
-				map.invalidate();
 				break;
 			case R.id.expand:
 				ImageButton expand = (ImageButton) findViewById(R.id.expand);
@@ -2131,7 +2174,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				int nb = editingTrack.getPoints().size() - 1;
 				trackBar.setMax(nb);
 				trackBar.setProgress(0);
-				map.invalidate();
 				break;
 			case R.id.cutafter:
 				editingTrack.cutAfter(trackBar.getProgress());
@@ -2139,23 +2181,19 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				trackBar.setMax(na);
 				trackBar.setProgress(0);
 				trackBar.setProgress(na);
-				map.invalidate();
 				break;
 			case R.id.addpoint:
 				double[] aloc = application.getMapCenter();
 				routeEditingWaypoints.push(editingRoute.addWaypoint("RWPT" + editingRoute.length(), aloc[0], aloc[1]));
-				map.invalidate();
 				break;
 			case R.id.insertpoint:
 				double[] iloc = application.getMapCenter();
 				routeEditingWaypoints.push(editingRoute.insertWaypoint("RWPT" + editingRoute.length(), iloc[0], iloc[1]));
-				map.invalidate();
 				break;
 			case R.id.removepoint:
 				if (!routeEditingWaypoints.empty())
 				{
 					editingRoute.removeWaypoint(routeEditingWaypoints.pop());
-					map.invalidate();
 				}
 				break;
 			case R.id.orderpoints:
@@ -2182,7 +2220,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 					application.distanceOverlay.enable();
 				}
 				updateMapViewArea();
-				map.invalidate();
 				map.requestFocus();
 				break;
 			case R.id.finishtrackedit:
@@ -2196,7 +2233,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				{
 					application.distanceOverlay.enable();
 				}
-				map.invalidate();
 				map.setFocusable(true);
 				map.setFocusableInTouchMode(true);
 				map.requestFocus();

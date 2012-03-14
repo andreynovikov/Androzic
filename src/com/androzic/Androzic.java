@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.app.Application;
 import android.content.Context;
@@ -260,39 +262,33 @@ public class Androzic extends Application
 		return overlays;
 	}
 	
+	private ExecutorService executorThread = Executors.newSingleThreadExecutor();
+
 	protected void notifyOverlays()
 	{
-		if (mapActivity != null)
-		{
-			final List<MapOverlay> overlays = getOverlays(ORDER_SHOW_PREFERENCE);
-			final boolean[] states = new boolean[overlays.size()];
-			int i = 0;
-	    	for (MapOverlay mo : overlays)
-	    	{
-	   			states[i] = mo.disable();
-	   			i++;
-	    	}
-			mapActivity.executorThread.execute(new Runnable() {
-				public void run()
-				{
-					int j = 0;
-			    	for (MapOverlay mo : overlays)
-			    	{
-			   			mo.onMapChanged();
-			   			if (states[j])
-			   			{
-			   				mo.enable();
-			   			}
-			   			j++;
-			    	}
-		   			if (mapActivity != null && mapActivity.map != null)
+		final List<MapOverlay> overlays = getOverlays(ORDER_SHOW_PREFERENCE);
+		final boolean[] states = new boolean[overlays.size()];
+		int i = 0;
+    	for (MapOverlay mo : overlays)
+    	{
+   			states[i] = mo.disable();
+   			i++;
+    	}
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				int j = 0;
+		    	for (MapOverlay mo : overlays)
+		    	{
+		   			mo.onMapChanged();
+		   			if (states[j])
 		   			{
-		   				mapActivity.map.onMapChanged();
-		   				mapActivity.map.postInvalidate();
+		   				mo.enable();
 		   			}
-				}
-			});
-		}
+		   			j++;
+		    	}
+			}
+		});
 	}
 	
 	public Zenith getZenith()
@@ -880,7 +876,7 @@ public class Androzic extends Application
 		return updateLocationInfo(findbest);
 	}
 		
-	public boolean updateLocationInfo(boolean findbest)
+	synchronized public boolean updateLocationInfo(boolean findbest)
 	{
 		if (maps == null)
 			return false;
@@ -913,7 +909,7 @@ public class Androzic extends Application
 		return mapchanged;
 	}
 	
-	public boolean scrollMap(int dx, int dy)
+	synchronized public boolean scrollMap(int dx, int dy)
 	{
 		if (currentMap != null)
 		{
@@ -933,7 +929,7 @@ public class Androzic extends Application
 		return false;
 	}
 
-	public int[] getXYbyLatLon(double lat, double lon)
+	synchronized public int[] getXYbyLatLon(double lat, double lon)
 	{
 		int[] xy = new int[] {0, 0};
 		if (currentMap != null)
@@ -943,7 +939,7 @@ public class Androzic extends Application
 		return xy;
 	}
 	
-	public double getZoom()
+	synchronized public double getZoom()
 	{
 		if (currentMap != null)
 			return currentMap.getZoom();
@@ -951,39 +947,35 @@ public class Androzic extends Application
 			return 0.0;
 	}
 	
-	public void zoomIn()
+	synchronized public boolean zoomIn()
 	{
 		if (currentMap != null)
 		{
-			synchronized (currentMap)
+			double zoom = currentMap.getNextZoom();
+			if (zoom > 0)
 			{
-				double zoom = currentMap.getNextZoom();
-				if (zoom > 0)
-				{
-					currentMap.setZoom(zoom);
-					notifyOverlays();
-				}
+				currentMap.setZoom(zoom);
+				return true;
 			}
 		}
+		return false;
 	}
 	
-	public void zoomOut()
+	synchronized public boolean zoomOut()
 	{
 		if (currentMap != null)
 		{
-			synchronized (currentMap)
+			double zoom = currentMap.getPrevZoom();
+			if (zoom > 0)
 			{
-				double zoom = currentMap.getPrevZoom();
-				if (zoom > 0)
-				{
-					currentMap.setZoom(zoom);
-					notifyOverlays();
-				}
+				currentMap.setZoom(zoom);
+				return true;
 			}
 		}
+		return false;
 	}
 	
-	public double getNextZoom()
+	synchronized public double getNextZoom()
 	{
 		if (currentMap != null)
 			return currentMap.getNextZoom();
@@ -991,7 +983,7 @@ public class Androzic extends Application
 			return 0.0;
 	}
 
-	public double getPrevZoom()
+	synchronized public double getPrevZoom()
 	{
 		if (currentMap != null)
 			return currentMap.getPrevZoom();
@@ -999,16 +991,14 @@ public class Androzic extends Application
 			return 0.0;
 	}
 
-	public void zoomBy(float factor)
+	synchronized public boolean zoomBy(float factor)
 	{
 		if (currentMap != null)
 		{
-			synchronized (currentMap)
-			{
-				currentMap.zoomBy(factor);
-			}
-			notifyOverlays();
+			currentMap.zoomBy(factor);
+			return true;
 		}
+		return false;
 	}
 
 	public List<TileProvider> getOnlineMaps()
@@ -1016,7 +1006,7 @@ public class Androzic extends Application
 		return onlineMaps;
 	}
 
-	public String getMapTitle()
+	synchronized public String getMapTitle()
 	{
 		if (currentMap != null)
 			return currentMap.title;
@@ -1024,7 +1014,7 @@ public class Androzic extends Application
 			return null;		
 	}
 	
-	public Map getCurrentMap()
+	synchronized public Map getCurrentMap()
 	{
 		return currentMap;
 	}
@@ -1039,7 +1029,7 @@ public class Androzic extends Application
 		return maps.getMaps(loc[0], loc[1]);
 	}
 	
-	public int getNextMap()
+	synchronized public int getNextMap()
 	{
 		if (currentMap != null)
 		{
@@ -1056,7 +1046,7 @@ public class Androzic extends Application
 		return 0;
 	}
 
-	public int getPrevMap()
+	synchronized public int getPrevMap()
 	{
 		if (currentMap != null)
 		{
@@ -1091,7 +1081,7 @@ public class Androzic extends Application
 			return false;
 	}
 
-	public boolean selectMap(int id)
+	synchronized public boolean selectMap(int id)
 	{
 		if (currentMap != null && currentMap.id == id)
 			return false;
@@ -1108,7 +1098,7 @@ public class Androzic extends Application
 		return setMap(newMap);
 	}
 	
-	public boolean loadMap(int id)
+	synchronized public boolean loadMap(int id)
 	{
 		Map newMap = null;
 		for (Map map : maps.getMaps())
@@ -1122,12 +1112,9 @@ public class Androzic extends Application
 		boolean newmap = setMap(newMap);
 		if (currentMap != null)
 		{
-			synchronized (currentMap)
-			{
-				int x = currentMap.getScaledWidth() / 2;
-				int y = currentMap.getScaledHeight() / 2;
-				currentMap.getLatLonByXY(x, y, mapCenter);
-			}
+			int x = currentMap.getScaledWidth() / 2;
+			int y = currentMap.getScaledHeight() / 2;
+			currentMap.getLatLonByXY(x, y, mapCenter);
 			suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
 		}
 		return newmap;
@@ -1167,7 +1154,7 @@ public class Androzic extends Application
 		}
 	}
 	
-	private boolean setMap(final Map newMap)
+	synchronized private boolean setMap(final Map newMap)
 	{
 		// TODO should override equals()?
 		if (newMap != null && ! newMap.equals(currentMap) && mapActivity != null)
@@ -1190,14 +1177,10 @@ public class Androzic extends Application
 			}
 			if (currentMap != null)
 			{
-				synchronized (currentMap)
-				{
-					currentMap.deactivate();
-				}
+				currentMap.deactivate();
 			}
 			currentMap = newMap;
 			initGrids();
-			notifyOverlays();
 			return true;
 		}
 		return false;
@@ -1222,16 +1205,13 @@ public class Androzic extends Application
 		}
 	}
 	
-	public void drawMap(double[] loc, int[] lookAhead, int width, int height, Canvas c)
+	synchronized public void drawMap(double[] loc, int[] lookAhead, int width, int height, Canvas c)
 	{
 		if (currentMap != null)
 		{
 			try
 			{
-				synchronized (currentMap)
-				{
-					currentMap.drawMap(loc, lookAhead, width, height, c);
-				}
+				currentMap.drawMap(loc, lookAhead, width, height, c);
 			}
 			catch (OutOfMemoryError err)
 			{

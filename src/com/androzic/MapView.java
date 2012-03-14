@@ -41,7 +41,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
 
@@ -49,7 +50,7 @@ import com.androzic.map.Map;
 import com.androzic.overlay.MapOverlay;
 import com.androzic.util.Geo;
 
-public class MapView extends View implements MultiTouchObjectCanvas<Object>
+public class MapView extends SurfaceView implements SurfaceHolder.Callback, MultiTouchObjectCanvas<Object>
 {
 	private static final String TAG = "MapView";
 
@@ -66,7 +67,6 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	private boolean hideOnDrag = true;
 	private boolean loadBestMap = true;
 	private int bestMapInterval = 5000;
-	private boolean ready = false;
 	/**
 	 * True when there is a valid location
 	 */
@@ -115,6 +115,8 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 
 	private Androzic application;
 
+	private DrawingThread drawingThread;
+	
 	private MultiTouchController<Object> multiTouchController;
 	private float pinch = 0;
 	private float scale = 1;
@@ -138,6 +140,8 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	public void initialize(Androzic application)
 	{
 		this.application = application;
+
+		getHolder().addCallback(this);
 
 		crossPaint = new Paint();
 		crossPaint.setAntiAlias(true);
@@ -171,7 +175,98 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas)
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
+	{
+		Log.e(TAG, "surfaceChanged("+width+","+height+")");
+		setLookAhead(lookAheadPst);
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder)
+	{
+        drawingThread = new DrawingThread(holder, this);
+        drawingThread.setRunning(true);
+        drawingThread.start();
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder)
+	{
+		boolean retry = true;
+		drawingThread.setRunning(false);
+		while (retry)
+		{
+			try
+			{
+				drawingThread.join();
+				retry = false;
+			}
+			catch (InterruptedException e)
+			{
+			}
+		}
+	}
+    
+	class DrawingThread extends Thread
+	{
+		private boolean runFlag = false;
+		private SurfaceHolder surfaceHolder;
+		private MapView mapView;
+		private long prevTime;
+
+		public DrawingThread(SurfaceHolder surfaceHolder, MapView mapView)
+		{
+			this.surfaceHolder = surfaceHolder;
+			this.mapView = mapView;
+			prevTime = System.currentTimeMillis();
+		}
+
+		public void setRunning(boolean run)
+		{
+			runFlag = run;
+		}
+
+		@Override
+		public void run()
+		{
+			Canvas canvas;
+			while (runFlag)
+			{
+				//limit the frame rate to maximum 60 frames per second (16 miliseconds)
+				long elapsedTime = System.currentTimeMillis() - prevTime;
+				if (elapsedTime < 16)
+				{
+					try
+					{
+						Thread.sleep(16 - elapsedTime);
+					}
+					catch (InterruptedException e)
+					{
+					}
+				}
+				prevTime = System.currentTimeMillis();
+				canvas = null;
+				try
+				{
+					canvas = surfaceHolder.lockCanvas();
+					synchronized (surfaceHolder)
+					{
+						if (canvas != null)
+							mapView.doDraw(canvas);
+					}
+				}
+				finally
+				{
+					if (canvas != null)
+					{
+						surfaceHolder.unlockCanvasAndPost(canvas);
+					}
+				}
+			}
+		}
+	}
+	
+	synchronized protected void doDraw(Canvas canvas)
 	{
 		boolean scaled = scale > 1.1 || scale < 0.9;
 		if (scaled)
@@ -194,7 +289,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		// canvas.translate(cx, cy);
 
 		// draw overlays
-		if (!scaled && ready && ((penOX == 0 && penOY == 0) || !hideOnDrag))
+		if (!scaled && ((penOX == 0 && penOY == 0) || !hideOnDrag))
 		{
 			// TODO Optimize getOverlays()
 			for (MapOverlay mo : application.getOverlays(Androzic.ORDER_DRAW_PREFERENCE))
@@ -202,7 +297,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		}
 
 		// draw cursor (it is always topmost)
-		if (!scaled && ready && currentLocation != null)
+		if (!scaled && currentLocation != null)
 		{
 			canvas.save();
 			canvas.translate(-mapCenterXY[0] + currentLocationXY[0], -mapCenterXY[1] + currentLocationXY[1]);
@@ -261,9 +356,8 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		calculateLookAhead();
 	}
 
-	public void setLocation(Location loc)
+	synchronized public void setLocation(Location loc)
 	{
-		ready = false;
 		bearing = loc.getBearing();
 		speed = loc.getSpeed();
 
@@ -299,7 +393,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		calculateVectorLength();
 	}
 
-	public void clearLocation()
+	synchronized public void clearLocation()
 	{
 		setFollowingThroughContext(false);
 		currentLocation = null;
@@ -308,9 +402,16 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		calculateVectorLength();
 	}
 
-	public void updateMapInfo()
+	synchronized public void updateMapInfo()
 	{
 		scale = 1;
+		Map map = application.getCurrentMap();
+		if (map == null)
+			mpp = 0;
+		else
+			mpp = map.mpp / map.getZoom();
+		calculateVectorLength();
+		application.notifyOverlays();
 		try
 		{
 			MapActivity androzic = (MapActivity) getContext();
@@ -321,7 +422,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		}
 	}
 
-	private void calculateLookAhead()
+	synchronized private void calculateLookAhead()
 	{
 		boolean recalculated = false;
 		if (lookAheadC != lookAheadS)
@@ -398,11 +499,10 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		{
 			lookAheadXY[0] = (int) Math.round(Math.sin(Math.toRadians(smoothB)) * -lookAheadS);
 			lookAheadXY[1] = (int) Math.round(Math.cos(Math.toRadians(smoothB)) * lookAheadS);
-			invalidate();
 		}
 	}
 
-	private void calculateVectorLength()
+	synchronized private void calculateVectorLength()
 	{
 		if (mpp == 0)
 		{
@@ -431,16 +531,6 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	public boolean isMoving()
 	{
 		return isMoving;
-	}
-
-	public void becomeNotReady()
-	{
-		ready = false;
-	}
-
-	public boolean isReady()
-	{
-		return ready;
 	}
 
 	public void setFollowing(boolean follow)
@@ -538,10 +628,9 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	/**
 	 * Set the amount of screen intended for looking ahead
 	 * 
-	 * @param ahead
-	 *            % of the smaller dimension of screen
+	 * @param ahead % of the smaller dimension of screen
 	 */
-	public void setLookAhead(final int ahead)
+	synchronized public void setLookAhead(final int ahead)
 	{
 		lookAheadPst = ahead;
 		final int w = getWidth();
@@ -550,14 +639,14 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		lookAhead = (int) (half * ahead * 0.01);
 	}
 
-	public void setCursorColor(final int color)
+	synchronized public void setCursorColor(final int color)
 	{
 		active = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
 		movingCursor.setColorFilter(isFixed ? active : null);
 		pointerPaint.setColor(color);
 	}
 
-	public void setCursorVector(final int type, final int multiplier)
+	synchronized public void setCursorVector(final int type, final int multiplier)
 	{
 		vectorType = type;
 		vectorMultiplier = multiplier;
@@ -568,16 +657,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		this.proximity = proximity;
 	}
 
-	public void onMapChanged()
-	{
-		Map map = application.getCurrentMap();
-		if (map == null)
-			mpp = 0;
-		else
-			mpp = map.mpp / map.getZoom();
-		calculateVectorLength();
-	}
-
+	/*
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh)
 	{
@@ -590,13 +670,15 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 			update();
 		}
 	}
+	*/
 
 	public void updateViewArea(Rect area)
 	{
+		Log.e(TAG, "updateViewArea()");
 		viewArea.set(area);
 	}
 
-	public void update()
+	synchronized public void update()
 	{
 		mapCenter = application.getMapCenter();
 		mapCenterXY = application.getXYbyLatLon(mapCenter[0], mapCenter[1]);
@@ -611,9 +693,6 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		finally
 		{
 		}
-
-		ready = true;
-		invalidate();
 	}
 
 	private final void onDragFinished(int deltaX, int deltaY)
@@ -624,8 +703,9 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		update();
 	}
 
+	//TODO make synchronization more preside
 	@Override
-	public boolean onTouchEvent(MotionEvent event)
+	synchronized public boolean onTouchEvent(MotionEvent event)
 	{
 		if (multiTouchController.onTouchEvent(event))
 		{
@@ -688,14 +768,13 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 				penOX = 0;
 				penOY = 0;
 				wasMultitouch = false;
-				invalidate();
 		}
 
 		return true;
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	synchronized public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		switch (keyCode)
 		{
@@ -752,7 +831,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	}
 
 	@Override
-	public boolean onTrackballEvent(MotionEvent event)
+	synchronized public boolean onTrackballEvent(MotionEvent event)
 	{
 		int action = event.getAction();
 		switch (action)
@@ -805,7 +884,6 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 			loadBestMap = bundle.getBoolean("loadBestMap");
 			bestMapInterval = bundle.getInt("bestMapInterval");
 
-			ready = bundle.getBoolean("ready");
 			isFixed = bundle.getBoolean("isFixed");
 			isMoving = bundle.getBoolean("isMoving");
 			lastBestMap = bundle.getLong("lastBestMap");
@@ -857,7 +935,6 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 		bundle.putBoolean("loadBestMap", loadBestMap);
 		bundle.putInt("bestMapInterval", bestMapInterval);
 
-		bundle.putBoolean("ready", ready);
 		bundle.putBoolean("isFixed", isFixed);
 		bundle.putBoolean("isMoving", isMoving);
 		bundle.putLong("lastBestMap", lastBestMap);
@@ -903,7 +980,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	}
 
 	@Override
-	public void selectObject(Object obj, PointInfo touchPoint)
+	synchronized public void selectObject(Object obj, PointInfo touchPoint)
 	{
 		if (obj == null)
 		{
@@ -921,7 +998,7 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 	}
 
 	@Override
-	public boolean setPositionAndScale(Object obj, PositionAndScale newObjPosAndScale, PointInfo touchPoint)
+	synchronized public boolean setPositionAndScale(Object obj, PositionAndScale newObjPosAndScale, PointInfo touchPoint)
 	{
 		if (touchPoint.isDown() && touchPoint.getNumTouchPoints() == 2)
 		{
@@ -938,7 +1015,6 @@ public class MapView extends View implements MultiTouchObjectCanvas<Object>
 			{
 				scale = (float) (1 / (Math.log10(1 / scale) + 1));
 			}
-			invalidate();
 		}
 		return true;
 	}
