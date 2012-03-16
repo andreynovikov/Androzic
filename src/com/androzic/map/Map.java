@@ -253,16 +253,6 @@ public class Map implements Serializable
 		return ozf.getZoom();
 	}
 
-	public double getNextZoom()
-	{
-		return ozf.getNextZoom();
-	}
-
-	public double getPrevZoom()
-	{
-		return ozf.getPrevZoom();
-	}
-	
 	public void zoomBy(double factor)
 	{
 		setZoom(scale * factor);

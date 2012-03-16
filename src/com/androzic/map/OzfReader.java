@@ -28,29 +28,10 @@ import android.util.Log;
 
 public class OzfReader
 {
-	static final double[] zoomLevelsSupported =
-	{
-		0.030,
-		0.060,
-		0.100,
-		0.250,
-		0.500,
-		0.750,
-		1.000,
-		1.250,
-		1.500,
-		1.750,
-		2.000,
-		2.500,
-		3.000,
-		4.000,
-		5.000
-	};
-
-	private int zoomCurrent;
 	private double	zoom;
 	private int		source;
 	private double	factor;
+	private byte	zoomKey;
 	private OzfFile ozf;
 	private TileRAMCache cache;
 
@@ -70,46 +51,10 @@ public class OzfReader
 		return zoom;
 	}
 	
-	public double getNextZoom()
-	{
-		if (zoomCurrent < zoomLevelsSupported.length - 1)
-		{
-	    	return zoomLevelsSupported[zoomCurrent+1];
-		}
-		else
-		{
-			return 0.0;
-		}
-	}
-
-	public double getPrevZoom()
-	{
-		if (zoomCurrent > 0)
-		{
-	    	return zoomLevelsSupported[zoomCurrent-1];
-		}
-		else
-		{
-			return 0.0;
-		}
-	}
-
 	protected double setZoom(double zoom)
 	{
-		double zoomDelta = Double.MAX_VALUE;
+		this.zoom = zoom;
 
-		for (int i = 0; i < zoomLevelsSupported.length; i++)
-		{
-			double delta = Math.abs(zoomLevelsSupported[i] - zoom);
-
-			if ( delta < zoomDelta)
-			{
-				zoomCurrent = i;
-				zoomDelta = delta;
-				this.zoom = zoomLevelsSupported[i];
-			}
-		}
-		
 		double b = ozf.height();
 		int k = 0;
 		double delta = Double.MAX_VALUE;
@@ -131,20 +76,18 @@ public class OzfReader
 				if (this.zoom > z)
 					continue;
 			
-			double d = z - this.zoom;
-			
-			d = d < 0 ? -d : d;
-
+			double d = Math.abs(z - this.zoom);
 			if (d < delta)
 			{
 				delta = d;
 				k = i;
-				ozf_zoom = zoom;
+				ozf_zoom = z;
 			}
 		}		
 		
 		source = k;
 		factor = this.zoom / ozf_zoom;
+		zoomKey = (byte) (this.zoom * 50);
 
 		Log.d("OZF", String.format("zoom: %f, selected source scale: %f (%d), factor: %f", this.zoom, ozf_zoom, source, factor));
 		
@@ -239,8 +182,8 @@ public class OzfReader
 		if (r < 0 || r > tiles_per_y() - 1)
 			return null;
 
-		long key = Tile.getKey(c, r, (byte) zoomCurrent);
-		Tile tile = new Tile(c, r, (byte) zoomCurrent);
+		long key = Tile.getKey(c, r, zoomKey);
+		Tile tile = new Tile(c, r, zoomKey);
 		Bitmap tileBitmap = null;
 		
 		if (cache != null && cache.containsKey(key))

@@ -94,6 +94,26 @@ import com.jhlabs.map.proj.ProjectionException;
 
 public class Androzic extends Application
 {
+	static final double[] zoomLevelsSupported =
+	{
+		// zoom must give integer if multiplied by 50 - it is used as a tile key
+		0.02,
+		0.06,
+		0.10,
+		0.25,
+		0.50,
+		0.75,
+		1.00,
+		1.25,
+		1.50,
+		1.75,
+		2.00,
+		2.50,
+		3.00,
+		4.00,
+		5.00
+	};
+
 	public static final int PATH_WAYPOINTS = 0x001;
 	public static final int PATH_TRACKS = 0x002;
 	public static final int PATH_ROUTES = 0x004;
@@ -951,7 +971,7 @@ public class Androzic extends Application
 	{
 		if (currentMap != null)
 		{
-			double zoom = currentMap.getNextZoom();
+			double zoom = getNextZoom();
 			if (zoom > 0)
 			{
 				currentMap.setZoom(zoom);
@@ -965,7 +985,7 @@ public class Androzic extends Application
 	{
 		if (currentMap != null)
 		{
-			double zoom = currentMap.getPrevZoom();
+			double zoom = getPrevZoom();
 			if (zoom > 0)
 			{
 				currentMap.setZoom(zoom);
@@ -978,17 +998,41 @@ public class Androzic extends Application
 	synchronized public double getNextZoom()
 	{
 		if (currentMap != null)
-			return currentMap.getNextZoom();
-		else
-			return 0.0;
+		{
+			double zoomCurrent = currentMap.getZoom();
+			double zoom = Double.NaN;
+			for (int i = 0; i < zoomLevelsSupported.length; i++)
+			{
+				if (zoomLevelsSupported[i] > zoomCurrent)
+				{
+					zoom = zoomLevelsSupported[i];
+					break;
+				}
+			}
+			if (! Double.isNaN(zoom))
+		    	return zoom;
+		}
+		return 0.0;
 	}
 
 	synchronized public double getPrevZoom()
 	{
 		if (currentMap != null)
-			return currentMap.getPrevZoom();
-		else
-			return 0.0;
+		{
+			double zoomCurrent = currentMap.getZoom();
+			double zoom = Double.NaN;
+			for (int i = zoomLevelsSupported.length - 1; i >= 0; i--)
+			{
+				if (zoomLevelsSupported[i] < zoomCurrent)
+				{
+					zoom = zoomLevelsSupported[i];
+					break;
+				}
+			}
+			if (! Double.isNaN(zoom))
+		    	return zoom;
+		}
+		return 0.0;
 	}
 
 	synchronized public boolean zoomBy(float factor)
