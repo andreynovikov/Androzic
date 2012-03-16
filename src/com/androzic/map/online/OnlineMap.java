@@ -184,6 +184,20 @@ public class OnlineMap extends Map
 	}
 	
 	@Override
+	public Bounds getBounds()
+	{
+		if (bounds == null)
+		{
+			bounds = new Bounds();
+			bounds.minLat = -85.047336;
+			bounds.maxLat = 85.051129;
+			bounds.minLon = -180;
+			bounds.maxLon = 180;
+		}
+		return bounds;
+	}
+
+	@Override
 	public boolean getLatLonByXY(int x, int y, double[] ll)
 	{
 		double dx = x * 1.0 / TILE_WIDTH;
