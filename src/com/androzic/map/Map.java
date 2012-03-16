@@ -27,7 +27,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
 
@@ -36,7 +38,7 @@ import com.jhlabs.map.proj.Projection;
 
 public class Map implements Serializable
 {
-	private static final long serialVersionUID = 4L;
+	private static final long serialVersionUID = 5L;
 	
 	public int id;
 	public String title;
@@ -60,7 +62,7 @@ public class Map implements Serializable
 	transient public Throwable loadError;
 	transient private OzfReader ozf;
 	transient protected TileRAMCache cache;
-	transient private Bounds bounds;
+	transient protected Bounds bounds;
 	
 	public Map(String filepath)
 	{
@@ -240,6 +242,12 @@ public class Map implements Serializable
 		return inside;
 	}
 	
+	public boolean containsArea(Bounds area)
+	{
+		Bounds b = getBounds();
+		return b.intersects(area);
+	}
+	
 	public double getZoom()
 	{
 		return ozf.getZoom();
@@ -286,13 +294,71 @@ public class Map implements Serializable
 	{
 		if (ozf == null)
 			return;
-		int[] xy = new int[2];
-		getXYByLatLon(loc[0], loc[1], xy);
-		xy[0] -= lookAhead[0];
-		xy[1] -= lookAhead[1];
+		int[] map_xy = new int[2];
+		getXYByLatLon(loc[0], loc[1], map_xy);
+		map_xy[0] -= lookAhead[0];
+		map_xy[1] -= lookAhead[1];
 		try
 		{
-			ozf.drawMap(xy, width, height, c);
+			int[] cr = ozf.map_xy_to_cr(map_xy);
+			int[] xy = ozf.map_xy_to_xy_on_tile(map_xy);
+			
+			int tile_w = ozf.tile_dx();
+			int tile_h = ozf.tile_dy();
+			
+			if (tile_w == 0 || tile_h == 0)
+			{
+				c.drawRGB(255, 0, 0);
+				return;
+			}
+
+			int tiles_per_x = width / tile_w;
+			int tiles_per_y = height / tile_h;
+
+			int c_min = cr[0] - tiles_per_x / 2 - 2;
+			int c_max = cr[0] + tiles_per_x / 2 + 2;
+			
+			int r_min = cr[1] - tiles_per_y / 2 - 2;
+			int r_max = cr[1] + tiles_per_y / 2 + 2;
+			
+			if (c_min < 0) c_min = 0;
+			if (r_min < 0) r_min = 0;
+			
+			if (c_max > ozf.tiles_per_x())
+				c_max = ozf.tiles_per_x();
+
+			if (r_max > ozf.tiles_per_y())
+				r_max = ozf.tiles_per_y();
+
+			int txb = width / 2 - xy[0] - (cr[0] - c_min) * tile_w;
+			int tyb = height / 2 - xy[1] - (cr[1] - r_min) * tile_h;
+
+			for (int i = r_min; i < r_max; i++)
+			{
+				for (int j = c_min; j < c_max; j++)
+				{
+					int tx = txb + (j - c_min) * tile_w;
+					int ty = tyb + (i - r_min) * tile_h;
+				
+					Bitmap tile = ozf.tile_get(j, i);
+
+					if (tile != null)
+					{
+						int tile_dx = ozf.tile_dx(j, i);
+						int tile_dy = ozf.tile_dy(j, i);
+						if (tile_dx < tile_w || tile_dy < tile_h)
+						{
+							Rect src = new Rect(0, 0, tile_dx, tile_dy);
+							Rect dst = new Rect(tx, ty, tx + src.right, ty + src.bottom);
+							c.drawBitmap(tile, src, dst, null);
+						}
+						else
+						{
+							c.drawBitmap(tile, tx, ty, null);
+						}
+					}
+				}
+			}
 		}
 		catch (OutOfMemoryError err)
 		{
@@ -569,12 +635,24 @@ public class Map implements Serializable
 		public int maxMPP = 0;
 	}
 	
-	public class Bounds
+	public static class Bounds
 	{
     	public double minLat = Double.MAX_VALUE;
     	public double maxLat = Double.MIN_VALUE;
     	public double minLon = Double.MAX_VALUE;
     	public double maxLon = Double.MIN_VALUE;
+
+    	public boolean intersects(Bounds area)
+    	{
+            return intersects(this, area);
+    	}
+
+    	public static boolean intersects(Bounds a, Bounds b)
+    	{
+    		//FIXME Should wrap 180 parallel
+            return a.minLon < b.maxLon && b.minLon < a.maxLon
+                    && a.minLat < b.maxLat && b.minLat < a.maxLat;
+    	}
 	}
 	
 	public void debug()
