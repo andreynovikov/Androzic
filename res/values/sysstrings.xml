@@ -22,6 +22,7 @@
     <string name="pref_maprenderinterval">maprenderinterval</string>
     <string name="pref_mapbest">mapbest</string>
     <string name="pref_mapbestinterval">mapbestint</string>
+    <string name="pref_mapadjacent">mapadjacent</string>
     <string name="pref_mapfollowonloc">mapfollowonloc</string>
 	<string name="pref_usecompass">usecompass</string>
 	<string name="pref_wakelock">wakelock</string>
@@ -29,6 +30,8 @@
     <string name="pref_mapdimvalue">mapdimvalue</string>
     <string name="pref_mapdiminterval">mapdimint</string>
     <string name="pref_maphideondrag">maphideondrag</string>
+    <string name="pref_mapcropborder">mapcropborder</string>
+    <string name="pref_mapdrawborder">mapdrawborder</string>
     <string name="pref_unfollowontap">unfollowontap</string>
     <string name="pref_orientation">orientation</string>
     <string name="pref_locale">locale</string>

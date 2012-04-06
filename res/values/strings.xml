@@ -234,7 +234,9 @@
     <string name="pref_mapbest_summary">Mark to let application try to load best map for current location</string>
     <string name="pref_mapbestinterval_title">Best map interval</string>
     <string name="pref_mapbestinterval_summary">Time period between best map lookups</string>
-	<string name="pref_mapfollowonloc_title">Follow on first location</string>
+    <string name="pref_mapadjacent_title">Adjacent maps</string>
+    <string name="pref_mapadjacent_summary">EXPERIMENTAL, can significantly degrade performance! Mark to display adjacent and better maps</string>
+    <string name="pref_mapfollowonloc_title">Follow on first location</string>
     <string name="pref_mapfollowonloc_summary">Mark to enable following on location acquisition</string>
 	<string name="pref_usecompass_title">Use compass</string>
 	<string name="pref_usecompass_summary">Mark to use compass instead of GPS to determine current track if not moving</string>
@@ -244,6 +246,10 @@
     <string name="pref_mapdim_summary">Mark to make screen automatically dim at night time</string>
     <string name="pref_mapdimvalue_title">Dim amount</string>
     <string name="pref_mapdimvalue_summary">Brightness amount to reduce</string>
+    <string name="pref_mapcropborder_title">Crop map margins</string>
+    <string name="pref_mapcropborder_summary">Mark to crop map along corner markers</string>
+    <string name="pref_mapdrawborder_title">Draw map border</string>
+    <string name="pref_mapdrawborder_summary">Mark to draw border along corner markers</string>
     <string name="pref_maphideondrag_title">Hide objects on drag</string>
     <string name="pref_maphideondrag_summary">Mark to hide map objects while dragging</string>
     <string name="pref_unfollowontap_title">Stop following on drag</string>

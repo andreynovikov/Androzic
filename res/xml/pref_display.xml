@@ -23,62 +23,76 @@
         android:key="@string/pref_showaccuracy"
         android:summary="@string/pref_showaccuracy_summary"
         android:title="@string/pref_showaccuracy_title" />
+
     <ListPreference
-       	android:defaultValue="@string/def_showdistance"
-		android:key="@string/pref_showdistance_int"
-        android:title="@string/pref_showdistance_title"
+        android:defaultValue="@string/def_showdistance"
         android:dialogTitle="@string/pref_showdistance_title"
         android:entries="@array/showdistance_names"
-        android:entryValues="@array/showdistance_values" />
-    <CheckBoxPreference
-        android:defaultValue="@bool/def_maphideondrag"
-        android:key="@string/pref_maphideondrag"
-        android:summary="@string/pref_maphideondrag_summary"
-        android:title="@string/pref_maphideondrag_title" />
+        android:entryValues="@array/showdistance_values"
+        android:key="@string/pref_showdistance_int"
+        android:title="@string/pref_showdistance_title" />
 
     <com.androzic.ui.SeekbarPreference
-        androzic:defaultValue="@integer/def_lookahead"
         android:key="@string/pref_lookahead"
-        androzic:max="90"
         android:summary="@string/pref_lookahead_summary"
         android:text=" %"
-        android:title="@string/pref_lookahead_title" />
+        android:title="@string/pref_lookahead_title"
+        androzic:defaultValue="@integer/def_lookahead"
+        androzic:max="90" />
 
     <com.androzic.ui.ImageMultiChoiceListPreference
         android:defaultValue="@string/def_panelactions"
         android:entries="@array/panel_action_names"
-        androzic:entryImages="@array/panel_action_images"
         android:entryValues="@array/panel_action_values"
         android:key="@string/pref_panelactions"
         android:summary="@string/pref_panelactions_summary"
-        android:title="@string/pref_panelactions_title" />
+        android:title="@string/pref_panelactions_title"
+        androzic:entryImages="@array/panel_action_images" />
+
+    <PreferenceCategory android:title="@string/pref_map_title" >
+        <CheckBoxPreference
+            android:defaultValue="@bool/def_mapcropborder"
+            android:key="@string/pref_mapcropborder"
+            android:summary="@string/pref_mapcropborder_summary"
+            android:title="@string/pref_mapcropborder_title" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/def_mapdrawborder"
+            android:key="@string/pref_mapdrawborder"
+            android:summary="@string/pref_mapdrawborder_summary"
+            android:title="@string/pref_mapdrawborder_title" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/def_maphideondrag"
+            android:key="@string/pref_maphideondrag"
+            android:summary="@string/pref_maphideondrag_summary"
+            android:title="@string/pref_maphideondrag_title" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_cursor_title" >
         <com.androzic.ui.ColorPreference
-			androzic:defaultColor="@color/cursor"
-			android:defaultValue="@color/cursor"
+            android:defaultValue="@color/cursor"
             android:dialogTitle="@string/pref_cursorcolor_title"
             android:key="@string/pref_cursorcolor"
             android:summary="@string/pref_cursorcolor_summary"
-            android:title="@string/pref_cursorcolor_title" />
+            android:title="@string/pref_cursorcolor_title"
+            androzic:defaultColor="@color/cursor" />
 
         <ListPreference
-        	android:defaultValue="@string/def_cursorvector"
-            android:key="@string/pref_cursorvector"
-            android:title="@string/pref_cursorvector_title"
-            android:summary="@string/pref_cursorvector_summary"
+            android:defaultValue="@string/def_cursorvector"
             android:dialogTitle="@string/pref_cursorvector_title"
             android:entries="@array/cursorvector_names"
-            android:entryValues="@array/cursorvector_values" />
+            android:entryValues="@array/cursorvector_values"
+            android:key="@string/pref_cursorvector"
+            android:summary="@string/pref_cursorvector_summary"
+            android:title="@string/pref_cursorvector_title" />
 
         <com.androzic.ui.SeekbarPreference
-	        androzic:defaultValue="@integer/def_cursorvectormlpr"
             android:key="@string/pref_cursorvectormlpr"
-            android:title="@string/pref_cursorvectormlpr_title"
             android:summary="@string/pref_cursorvectormlpr_summary"
-            androzic:min="1"
+            android:title="@string/pref_cursorvectormlpr_title"
+            androzic:defaultValue="@integer/def_cursorvectormlpr"
+            androzic:format="0"
             androzic:max="20"
-            androzic:format="0" />
+            androzic:min="1" />
     </PreferenceCategory>
 
 </PreferenceScreen>

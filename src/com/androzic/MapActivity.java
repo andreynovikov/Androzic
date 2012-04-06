@@ -395,6 +395,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 
 		// set map preferences
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdrawborder));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorcolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_grid_mapshow));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_grid_usershow));
@@ -2348,7 +2351,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
-		// TODO Auto-generated method stub
 		Resources resources = getResources();
 		// application preferences
 		if (getString(R.string.pref_folder_map).equals(key))
@@ -2406,6 +2408,18 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
 		{
 			application.setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
+		}
+		else if (getString(R.string.pref_mapadjacent).equals(key))
+		{
+			application.adjacentMaps = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapadjacent));
+		}
+		else if (getString(R.string.pref_mapcropborder).equals(key))
+		{
+			application.cropMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapcropborder));
+		}
+		else if (getString(R.string.pref_mapdrawborder).equals(key))
+		{
+			application.drawMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapdrawborder));
 		}
 		// activity preferences
 		else if (getString(R.string.pref_wakelock).equals(key))

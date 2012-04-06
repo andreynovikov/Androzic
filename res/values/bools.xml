@@ -6,7 +6,10 @@
 <bool name="def_showcompass">false</bool>
 <bool name="def_wakelock">true</bool>
 <bool name="def_mapbest">true</bool>
+<bool name="def_mapadjacent">false</bool>
 <bool name="def_mapdim">false</bool>
+<bool name="def_mapcropborder">true</bool>
+<bool name="def_mapdrawborder">false</bool>
 <bool name="def_maphideondrag">true</bool>
 <bool name="def_unfollowontap">true</bool>
 <bool name="def_mapfollowonloc">true</bool>
