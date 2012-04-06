@@ -31,7 +31,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/Native Builder.launch</value>
+					<value>&lt;project&gt;/.externalToolBuilders/Androzic NDK Builder.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
@@ -40,4 +40,11 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>include</name>
+			<type>2</type>
+			<location>C:/eclipse/android-ndk-r7/platforms/android-5/arch-arm/usr/include</location>
+		</link>
+	</linkedResources>
 </projectDescription>
