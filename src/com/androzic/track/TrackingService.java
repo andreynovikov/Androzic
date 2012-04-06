@@ -173,6 +173,8 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 		try
 		{
 			Androzic application = Androzic.getApplication();
+			if (application.trackPath == null)
+				return;
 			File dir = new File(application.trackPath);
 			if (! dir.exists())
 				dir.mkdirs();
