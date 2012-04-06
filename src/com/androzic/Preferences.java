@@ -265,7 +265,7 @@ public class Preferences extends PreferenceActivity
 	    	{
 				String[] entries = new String[providers.size()];
 				String[] entryValues = new String[providers.size()];
-				String current = getString(R.string.pref_onlinemap, getResources().getString(R.string.def_onlinemap));
+				String current = getPreferenceScreen().getSharedPreferences().getString(getString(R.string.pref_onlinemap), getResources().getString(R.string.def_onlinemap));
 				TileProvider curProvider = null;
 				int i = 0;
 				for (TileProvider provider : providers)
