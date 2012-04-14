@@ -73,7 +73,7 @@
     <string name="quit">Quit</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="save">Save</string>
     <string name="done">Done</string>
     <string name="navigate">Navigate</string>
@@ -257,6 +257,8 @@
     <string name="pref_orientation_title">Screen orientation</string>
     <string name="pref_locale_title">Language</string>
     <string name="pref_show_title">Display</string>
+    <string name="pref_scalebarcolor_title">Scale color</string>
+    <string name="pref_scalebarcolor_summary">Specify the color of map scale indicator</string>
 	<string name="pref_cursor_title">Moving cursor</string>
     <string name="pref_cursorcolor_title">Active cursor color</string>	
 	<string name="pref_cursorcolor_summary">Specify the color of cursor at valid current position</string>

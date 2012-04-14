@@ -211,5 +211,8 @@ public class ScaleOverlay extends MapOverlay
 	@Override
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
+		int color = settings.getInt(context.getString(R.string.pref_scalebarcolor), context.getResources().getColor(R.color.scalebar));
+		linePaint.setColor(color);
+		textPaint.setColor(color);
 	}
 }

@@ -65,8 +65,15 @@
             android:key="@string/pref_maphideondrag"
             android:summary="@string/pref_maphideondrag_summary"
             android:title="@string/pref_maphideondrag_title" />
-    </PreferenceCategory>
 
+        <com.androzic.ui.ColorPreference
+            android:defaultValue="@color/scalebar"
+            android:dialogTitle="@string/pref_scalebarcolor_title"
+            android:key="@string/pref_scalebarcolor"
+            android:summary="@string/pref_scalebarcolor_summary"
+            android:title="@string/pref_scalebarcolor_title"
+            androzic:defaultColor="@color/scalebar" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_cursor_title" >
         <com.androzic.ui.ColorPreference
             android:defaultValue="@color/cursor"
