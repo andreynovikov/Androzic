@@ -51,6 +51,11 @@ public class MockMap extends Map
 	public void deactivate()
 	{
 	}
+	
+	public boolean activated()
+	{
+		return true;
+	}
 
 	@Override
 	public boolean coversLatLon(double lat, double lon)
@@ -59,15 +64,16 @@ public class MockMap extends Map
 	}
 
 	@Override
-	public void drawMap(double[] loc, int[] lookAhead, int width, int height, Canvas c) throws OutOfMemoryError
+	public boolean drawMap(double[] loc, int[] lookAhead, int width, int height, boolean cropBorder, boolean drawBorder, Canvas c) throws OutOfMemoryError
 	{
+		return false;
 	}
 
 	@Override
 	public boolean getLatLonByXY(int x, int y, double[] ll)
 	{
-		ll[0] = 90 - (y * 1.0 / (50000 * scale) + lat);
-		ll[1] = x * 1.0 / (50000 * scale) + lon - 180;
+		ll[0] = 90 - (y * 1.0 / (50000 * zoom) + lat);
+		ll[1] = x * 1.0 / (50000 * zoom) + lon - 180;
 		return true;
 	}
 
@@ -76,39 +82,39 @@ public class MockMap extends Map
 	{
 		lat = 90 - lat;
 		lon = 180 + lon;
-		xy[1] = (int) ((lat - this.lat) * 50000 * scale);
-		xy[0] = (int) ((lon - this.lon) * 50000 * scale);
+		xy[1] = (int) ((lat - this.lat) * 50000 * zoom);
+		xy[0] = (int) ((lon - this.lon) * 50000 * zoom);
 		return true;
 	}
 
 	@Override
 	public double getNextZoom()
 	{
-		if (scale >= 10)
+		if (zoom >= 10)
 			return 0.0;
-		return scale + 0.1;
+		return zoom + 0.1;
 	}
 
 	@Override
 	public double getPrevZoom()
 	{
-		if (scale <= 0.001)
+		if (zoom <= 0.001)
 			return 0.0;
-		return scale - 0.1;
+		return zoom - 0.1;
 	}
 
 	@Override
 	public double getZoom()
 	{
-		return scale;
+		return zoom;
 	}
 
 	@Override
 	public void setZoom(double zoom)
 	{
-		scale = Math.floor(zoom * 1000) / 1000;
-		if (scale > 10) scale = 10;
-		if (scale < 0.001) scale = 0.001;
+		zoom = Math.floor(zoom * 1000) / 1000;
+		if (zoom > 10) zoom = 10;
+		if (zoom < 0.001) zoom = 0.001;
 	}
 
 	public static Map getMap(double lat, double lon)
@@ -121,9 +127,9 @@ public class MockMap extends Map
 		}
 		else if (currentMap.lat != ilat || currentMap.lon != ilon)
 		{
-			double s = currentMap.scale; 
+			double s = currentMap.zoom; 
 			currentMap = new MockMap(ilat, ilon);
-			currentMap.scale = s;
+			currentMap.zoom = s;
 		}
 		return currentMap;
 	}

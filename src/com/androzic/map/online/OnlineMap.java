@@ -24,15 +24,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.util.Log;
+import android.view.View;
+
 import com.androzic.map.Map;
 import com.androzic.map.Tile;
 import com.androzic.map.TileRAMCache;
 import com.jhlabs.map.Ellipsoid;
 import com.jhlabs.map.proj.ProjectionFactory;
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.view.View;
 
 public class OnlineMap extends Map
 {
@@ -44,10 +45,10 @@ public class OnlineMap extends Map
 	private TileController tileController;
 	private TileProvider tileProvider;
 	private boolean isActive = false;
-	private byte zoom;
+	private byte srcZoom;
 	private byte defZoom;
 	
-	public OnlineMap(TileProvider provider, byte zoom)
+	public OnlineMap(TileProvider provider, byte z)
 	{
 		super("http://...");
 		datum = "WGS84";
@@ -58,10 +59,10 @@ public class OnlineMap extends Map
 	    tileProvider = provider;
 	    tileController = new TileController();
 
-	    title = String.format("%s (%d)", tileProvider.name, zoom);
-		this.zoom = zoom;
-		this.defZoom = zoom;
-		scale = 1.0;
+	    title = String.format("%s (%d)", tileProvider.name, z);
+		srcZoom = z;
+		defZoom = z;
+		zoom = 1.0;
 	    /*
 	     * The distance represented by one pixel (S) is given by
 	     * S=C*cos(y)/2^(z+8) 
@@ -78,13 +79,14 @@ public class OnlineMap extends Map
 	     * ellipsoidal, there will be a slight error in this calculation. But it's very slight.
 	     * (0.3% maximum error) 
 	     */
-		mpp = projection.getEllipsoid().equatorRadius * Math.PI * 2 * Math.cos(0) / Math.pow(2.0, (this.zoom + 8));
+		mpp = projection.getEllipsoid().equatorRadius * Math.PI * 2 * Math.cos(0) / Math.pow(2.0, (srcZoom + 8));
 	}
 
 	@Override
 	public void activate(View view, int pixels) throws IOException, OutOfMemoryError
 	{
-		setZoom(zoom);
+		setZoom(savedZoom == 0 ? zoom : savedZoom);
+		savedZoom = 0;
 		int cacheSize = (int) (pixels / (TILE_WIDTH * TILE_HEIGHT) * 4);
 		cache = new TileRAMCache(cacheSize);
 		tileController.setView(view);
@@ -99,7 +101,15 @@ public class OnlineMap extends Map
 		isActive = false;
 		tileController.interrupt();
 		cache.destroy();
+		if (savedZoom != 0)
+			zoom = savedZoom;
+		savedZoom = 0;
 		cache = null;
+	}
+	
+	public boolean activated()
+	{
+		return isActive;
 	}
 	
 	public TileProvider getTileProvider()
@@ -111,12 +121,27 @@ public class OnlineMap extends Map
 	public boolean coversLatLon(double lat, double lon)
 	{
 		if (! isActive)
-			mpp = projection.getEllipsoid().equatorRadius * Math.PI * 2 * Math.cos(Math.toRadians(lat)) / Math.pow(2.0, (zoom + 8));
+			mpp = projection.getEllipsoid().equatorRadius * Math.PI * 2 * Math.cos(Math.toRadians(lat)) / Math.pow(2.0, (srcZoom + 8));
 		return lat < 85.051129 && lat > -85.047336;
 	}
 
 	@Override
-	public void drawMap(double[] loc, int[] lookAhead, int width, int height, Canvas c) throws OutOfMemoryError
+	public boolean coversScreen(int[] map_xy, int width, int height)
+	{
+		// TODO Should check North and South edges
+		return true;
+	}
+	
+	@Override
+	public boolean containsArea(Bounds area)
+	{
+		// FIXME disabled online maps in adjacent maps
+		return false;
+//		return area.minLat < 85.051129 && area.maxLat > -85.047336;
+	}
+	
+	@Override
+	public boolean drawMap(double[] loc, int[] lookAhead, int width, int height, boolean cropBorder, boolean drawBorder, Canvas c) throws OutOfMemoryError
 	{
 		int[] map_xy = new int[2];
 		getXYByLatLon(loc[0], loc[1], map_xy);
@@ -137,15 +162,29 @@ public class OnlineMap extends Map
 		int r_min = osm_y - tiles_per_y;
 		int r_max = osm_y + tiles_per_y + 1;
 		
-		if (c_min < 0) c_min = 0;
-		if (r_min < 0) r_min = 0;
+		boolean result = true;
 		
-		if (c_max > Math.pow(2.0, zoom))
-			c_max = (int) (Math.pow(2.0, zoom));
-
-		if (r_max > Math.pow(2.0, zoom))
-			r_max = (int) (Math.pow(2.0, zoom));
-
+		if (c_min < 0)
+		{
+			c_min = 0;
+			result = false;
+		}
+		if (r_min < 0)
+		{
+			r_min = 0;
+			result = false;
+		}
+		if (c_max > Math.pow(2.0, srcZoom))
+		{
+			c_max = (int) (Math.pow(2.0, srcZoom));
+			result = false;
+		}
+		if (r_max > Math.pow(2.0, srcZoom))
+		{
+			r_max = (int) (Math.pow(2.0, srcZoom));
+			result = false;
+		}
+		
 		int txb = width / 2 - x - (osm_x - c_min) * TILE_WIDTH;
 		int tyb = height / 2 - y - (osm_y - r_min) * TILE_HEIGHT;
 		
@@ -164,11 +203,12 @@ public class OnlineMap extends Map
 				}
 			}
 		}
+		return result;
 	}
 
 	public Bitmap getTile(int x, int y) throws OutOfMemoryError
 	{
-		Tile tile = tileController.getTile(x, y, (byte) zoom);
+		Tile tile = tileController.getTile(x, y, srcZoom);
 		return tile.bitmap;
 	}
 
@@ -203,7 +243,7 @@ public class OnlineMap extends Map
 		double dx = x * 1.0 / TILE_WIDTH;
 		double dy = y * 1.0 / TILE_HEIGHT;
 		
-		double n = Math.pow(2.0, zoom);
+		double n = Math.pow(2.0, srcZoom);
 		if (tileProvider.ellipsoid)
 		{
 			ll[0] = (y-TILE_HEIGHT*n/2)/-(TILE_HEIGHT*n/(2*Math.PI));
@@ -234,7 +274,7 @@ public class OnlineMap extends Map
 	@Override
 	public boolean getXYByLatLon(double lat, double lon, int[] xy)
 	{
-		double n = Math.pow(2.0, zoom);
+		double n = Math.pow(2.0, srcZoom);
 		
 		xy[0] = (int) Math.floor((lon + 180.0) / 360.0 * n * TILE_WIDTH);
 
@@ -252,7 +292,7 @@ public class OnlineMap extends Map
 
 	public boolean getOsmXYByLatLon(double lat, double lon, int[] xy)
 	{
-		double n = Math.pow(2.0, zoom);
+		double n = Math.pow(2.0, srcZoom);
 
 		xy[0] = (int) Math.floor((lon + 180) / 360 * n);
 		if (xy[0] == n)
@@ -274,57 +314,64 @@ public class OnlineMap extends Map
 	@Override
 	public double getNextZoom()
 	{
-		if (zoom >= tileProvider.maxZoom)
+		if (srcZoom >= tileProvider.maxZoom)
 			return 0.0;
-		return zoom + 1;
+		Log.e("ONLINE", "Next zoom: " + Math.pow(2, this.srcZoom + 1 - defZoom));
+		return Math.pow(2, this.srcZoom + 1 - defZoom);
 	}
 
 	@Override
 	public double getPrevZoom()
 	{
-		if (zoom <= tileProvider.minZoom)
+		if (srcZoom <= tileProvider.minZoom)
 			return 0.0;
-		return zoom - 1;
+		Log.e("ONLINE", "Prev zoom: " + Math.pow(2, this.srcZoom - 1 - defZoom));
+		return Math.pow(2, this.srcZoom - 1 - defZoom);
 	}
 
-	@Override
-	public void zoomBy(double factor)
-	{
-		setZoom(zoom + Math.log(factor)/Math.log(2));
-	}
-	
 	@Override
 	public double getZoom()
-	{
-		return scale;
-	}
-
-	public int getOsmZoom()
 	{
 		return zoom;
 	}
 
 	@Override
-	public void setZoom(double zoom)
+	public void setZoom(double z)
 	{
+//		setZoom(srcZoom + Math.log(factor)/Math.log(2));
+
+		int zDiff = (int) (Math.log(z) / Math.log(2));
+		Log.e("ONLINE", "Zoom: " + z + " diff: " + zDiff);
+
+		srcZoom = (byte) (defZoom + zDiff);
+		
+		if (srcZoom > tileProvider.maxZoom)
+		{
+			zDiff -= srcZoom - tileProvider.maxZoom;
+			srcZoom = tileProvider.maxZoom;
+		}
+		if (srcZoom < tileProvider.minZoom)
+		{
+			zDiff -= srcZoom - tileProvider.minZoom;
+			srcZoom = tileProvider.minZoom;
+		}
+
+		zoom = z;
+		Log.e("ONLINE", "z: " + srcZoom + " zoom: " + zoom + " diff: " + zDiff);
+		
+//		zoom = Math.pow(2, this.srcZoom - defZoom);
 		tileController.reset();
-		this.zoom = (byte) zoom;
-		if (this.zoom > tileProvider.maxZoom)
-			this.zoom = tileProvider.maxZoom;
-		if (this.zoom < tileProvider.minZoom)
-			this.zoom = tileProvider.minZoom;
-		scale = Math.pow(2, this.zoom - defZoom);
-	    title = String.format("%s (%d)", tileProvider.name, this.zoom);
+	    title = String.format("%s (%d)", tileProvider.name, srcZoom);
 	}
 
 	public int getScaledWidth()
 	{
-		return (int) (Math.pow(2.0, zoom) * TILE_WIDTH);
+		return (int) (Math.pow(2.0, srcZoom) * TILE_WIDTH * zoom);
 	}
 
 	public int getScaledHeight()
 	{
-		return (int) (Math.pow(2.0, zoom) * TILE_HEIGHT);
+		return (int) (Math.pow(2.0, srcZoom) * TILE_HEIGHT * zoom);
 	}
 
 	public List<String> info()

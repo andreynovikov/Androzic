@@ -99,6 +99,16 @@ public class OzfReader
 		OzfDecoder.close(ozf);
 	}
 
+	public double map_x_to_c(int map_x)
+	{
+		return map_x / (OzfDecoder.OZF_TILE_WIDTH * factor);
+	}
+
+	public double map_y_to_r(int map_y)
+	{
+		return map_y / (OzfDecoder.OZF_TILE_HEIGHT * factor);
+	}
+
 	public int[] map_xy_to_cr(int[] map_xy)
 	{
 		int[] cr = new int[2];
@@ -143,6 +153,8 @@ public class OzfReader
 		{
 			int w = OzfDecoder.scale_dx(ozf, source);
 			dx = w - (w / OzfDecoder.OZF_TILE_WIDTH) * OzfDecoder.OZF_TILE_WIDTH;
+			if (dx == 0)
+				dx = OzfDecoder.OZF_TILE_WIDTH;
 		}
 		
 		return (int) (dx * factor);
@@ -159,6 +171,8 @@ public class OzfReader
 		{
 			int h = OzfDecoder.scale_dy(ozf, source);
 			dy = h - (h / OzfDecoder.OZF_TILE_HEIGHT) * OzfDecoder.OZF_TILE_HEIGHT;
+			if (dy == 0)
+				dy = OzfDecoder.OZF_TILE_HEIGHT;
 		}
 		
 		return (int) (dy * factor);
@@ -189,6 +203,7 @@ public class OzfReader
 		if (cache != null && cache.containsKey(key))
 		{
 			tileBitmap = cache.get(key).bitmap;
+//			Log.i("OZF", "cache");
 		}
 		else
 		{
@@ -218,6 +233,7 @@ public class OzfReader
 				tile.bitmap = tileBitmap;
 				cache.put(tile);
 			}
+//			Log.i("OZF", "file");
 		}
 		
 		return tileBitmap;

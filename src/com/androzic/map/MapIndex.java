@@ -34,7 +34,7 @@ import com.androzic.util.MapFilenameFilter;
 
 public class MapIndex implements Serializable
 {
-	private static final long serialVersionUID = 4L;
+	private static final long serialVersionUID = 5L;
 	
 	private ArrayList<Map> maps;
 	private String mapsRoot;
@@ -94,6 +94,27 @@ public class MapIndex implements Serializable
 	public void removeMap(Map map)
 	{
 		maps.remove(map);
+	}
+
+	public List<Map> getCoveringMaps(Map refMap, Map.Bounds area, boolean covered, boolean bestmap)
+	{
+		List<Map> llmaps = new ArrayList<Map>();
+
+		for (Map map : maps)
+		{
+			if (map.mpp > 200 || map.equals(refMap))
+				continue;
+			double ratio = refMap.mpp / map.mpp;
+			if (((! covered && ratio > 0.2) || ratio > 1) && ((bestmap || ! covered) && ratio < 5) && map.containsArea(area))
+			{
+				llmaps.add(map);
+			}
+		}
+
+		Collections.sort(llmaps, comparator);
+		Collections.reverse(llmaps);
+
+		return llmaps;		
 	}
 
 	public List<Map> getMaps(double lat, double lon)

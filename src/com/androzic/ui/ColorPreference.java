@@ -37,8 +37,8 @@ import android.graphics.drawable.Drawable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.androzic.R;
 
@@ -103,7 +103,7 @@ public class ColorPreference extends DialogPreference
 		if (mView == null)
 			return;
 		ImageView iView = new ImageView(getContext());
-		LinearLayout widgetFrameView = ((LinearLayout) mView.findViewById(android.R.id.widget_frame));
+		ViewGroup widgetFrameView = (ViewGroup) mView.findViewById(android.R.id.widget_frame);
 		if (widgetFrameView == null)
 			return;
 		widgetFrameView.setVisibility(View.VISIBLE);

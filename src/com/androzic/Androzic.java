@@ -54,6 +54,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -94,26 +95,6 @@ import com.jhlabs.map.proj.ProjectionException;
 
 public class Androzic extends Application
 {
-	static final double[] zoomLevelsSupported =
-	{
-		// zoom must give integer if multiplied by 50 - it is used as a tile key
-		0.02,
-		0.06,
-		0.10,
-		0.25,
-		0.50,
-		0.75,
-		1.00,
-		1.25,
-		1.50,
-		1.75,
-		2.00,
-		2.50,
-		3.00,
-		4.00,
-		5.00
-	};
-
 	public static final int PATH_WAYPOINTS = 0x001;
 	public static final int PATH_TRACKS = 0x002;
 	public static final int PATH_ROUTES = 0x004;
@@ -130,7 +111,12 @@ public class Androzic extends Application
 	private OnlineMap onlineMap;
 	private MapIndex maps;
 	private List<Map> suitableMaps;
+	private List<Map> coveringMaps;
 	private Map currentMap;
+	private boolean coveredAll;
+	private boolean coveringBestMap;
+	private double[] coveringLoc = new double[] {0.0, 0.0};
+	private Rectangle coveringScreen = new Rectangle();
 	private double[] mapCenter = new double[] {0.0, 0.0};
 	private double[] location = new double[] {Double.NaN, Double.NaN};
 	private double[] shouldBeVisible = new double[] {Double.NaN, Double.NaN};
@@ -177,9 +163,14 @@ public class Androzic extends Application
 	
 	public boolean isPaid = false;
 
+	protected boolean adjacentMaps = false;
+	protected boolean cropMapBorder = true;
+	protected boolean drawMapBorder = false;
 	protected boolean mapGrid = false;
 	protected boolean userGrid = false;
 	protected int gridPrefer = 0;
+
+	private Handler mapsHandler = new Handler();
 
     private static Androzic myself;
 
@@ -896,7 +887,7 @@ public class Androzic extends Application
 		return updateLocationInfo(findbest);
 	}
 		
-	synchronized public boolean updateLocationInfo(boolean findbest)
+	public boolean updateLocationInfo(boolean findbest)
 	{
 		if (maps == null)
 			return false;
@@ -929,7 +920,7 @@ public class Androzic extends Application
 		return mapchanged;
 	}
 	
-	synchronized public boolean scrollMap(int dx, int dy)
+	public boolean scrollMap(int dx, int dy)
 	{
 		if (currentMap != null)
 		{
@@ -949,7 +940,7 @@ public class Androzic extends Application
 		return false;
 	}
 
-	synchronized public int[] getXYbyLatLon(double lat, double lon)
+	public int[] getXYbyLatLon(double lat, double lon)
 	{
 		int[] xy = new int[] {0, 0};
 		if (currentMap != null)
@@ -959,7 +950,7 @@ public class Androzic extends Application
 		return xy;
 	}
 	
-	synchronized public double getZoom()
+	public double getZoom()
 	{
 		if (currentMap != null)
 			return currentMap.getZoom();
@@ -967,7 +958,7 @@ public class Androzic extends Application
 			return 0.0;
 	}
 	
-	synchronized public boolean zoomIn()
+	public boolean zoomIn()
 	{
 		if (currentMap != null)
 		{
@@ -975,13 +966,14 @@ public class Androzic extends Application
 			if (zoom > 0)
 			{
 				currentMap.setZoom(zoom);
+				coveringMaps = null;
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	synchronized public boolean zoomOut()
+	public boolean zoomOut()
 	{
 		if (currentMap != null)
 		{
@@ -989,57 +981,35 @@ public class Androzic extends Application
 			if (zoom > 0)
 			{
 				currentMap.setZoom(zoom);
+				coveringMaps = null;
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	synchronized public double getNextZoom()
+	public double getNextZoom()
 	{
 		if (currentMap != null)
-		{
-			double zoomCurrent = currentMap.getZoom();
-			double zoom = Double.NaN;
-			for (int i = 0; i < zoomLevelsSupported.length; i++)
-			{
-				if (zoomLevelsSupported[i] > zoomCurrent)
-				{
-					zoom = zoomLevelsSupported[i];
-					break;
-				}
-			}
-			if (! Double.isNaN(zoom))
-		    	return zoom;
-		}
-		return 0.0;
+			return currentMap.getNextZoom();
+		else
+			return 0.0;
 	}
 
-	synchronized public double getPrevZoom()
+	public double getPrevZoom()
 	{
 		if (currentMap != null)
-		{
-			double zoomCurrent = currentMap.getZoom();
-			double zoom = Double.NaN;
-			for (int i = zoomLevelsSupported.length - 1; i >= 0; i--)
-			{
-				if (zoomLevelsSupported[i] < zoomCurrent)
-				{
-					zoom = zoomLevelsSupported[i];
-					break;
-				}
-			}
-			if (! Double.isNaN(zoom))
-		    	return zoom;
-		}
-		return 0.0;
+			return currentMap.getPrevZoom();
+		else
+			return 0.0;
 	}
 
-	synchronized public boolean zoomBy(float factor)
+	public boolean zoomBy(float factor)
 	{
 		if (currentMap != null)
 		{
 			currentMap.zoomBy(factor);
+			coveringMaps = null;
 			return true;
 		}
 		return false;
@@ -1050,7 +1020,7 @@ public class Androzic extends Application
 		return onlineMaps;
 	}
 
-	synchronized public String getMapTitle()
+	public String getMapTitle()
 	{
 		if (currentMap != null)
 			return currentMap.title;
@@ -1058,7 +1028,7 @@ public class Androzic extends Application
 			return null;		
 	}
 	
-	synchronized public Map getCurrentMap()
+	public Map getCurrentMap()
 	{
 		return currentMap;
 	}
@@ -1073,7 +1043,7 @@ public class Androzic extends Application
 		return maps.getMaps(loc[0], loc[1]);
 	}
 	
-	synchronized public int getNextMap()
+	public int getNextMap()
 	{
 		if (currentMap != null)
 		{
@@ -1090,7 +1060,7 @@ public class Androzic extends Application
 		return 0;
 	}
 
-	synchronized public int getPrevMap()
+	public int getPrevMap()
 	{
 		if (currentMap != null)
 		{
@@ -1125,7 +1095,7 @@ public class Androzic extends Application
 			return false;
 	}
 
-	synchronized public boolean selectMap(int id)
+	public boolean selectMap(int id)
 	{
 		if (currentMap != null && currentMap.id == id)
 			return false;
@@ -1142,7 +1112,7 @@ public class Androzic extends Application
 		return setMap(newMap);
 	}
 	
-	synchronized public boolean loadMap(int id)
+	public boolean loadMap(int id)
 	{
 		Map newMap = null;
 		for (Map map : maps.getMaps())
@@ -1160,6 +1130,7 @@ public class Androzic extends Application
 			int y = currentMap.getScaledHeight() / 2;
 			currentMap.getLatLonByXY(x, y, mapCenter);
 			suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
+			coveringMaps = null;
 		}
 		return newmap;
 	}
@@ -1223,6 +1194,7 @@ public class Androzic extends Application
 			{
 				currentMap.deactivate();
 			}
+			coveringMaps = null;
 			currentMap = newMap;
 			initGrids();
 			return true;
@@ -1249,13 +1221,116 @@ public class Androzic extends Application
 		}
 	}
 	
-	synchronized public void drawMap(double[] loc, int[] lookAhead, int width, int height, Canvas c)
+	/*
+	 * ���������:
+	 * Clip map to corners
+	 * Draw corners
+	 * Show adjacent maps
+	 * Adjacent maps diff factor
+	 */
+	
+	private void updateCoveringMaps()
 	{
-		if (currentMap != null)
+		if (!mapsHandler.hasMessages(1))
 		{
+			Message m = Message.obtain(mapsHandler, new Runnable() {
+				@Override
+				public void run()
+				{
+					Map.Bounds area = new Map.Bounds();
+					int[] xy = new int[2];
+					double[] ll = new double[2];
+					currentMap.getXYByLatLon(mapCenter[0], mapCenter[1], xy);
+					currentMap.getLatLonByXY(xy[0] + (int) coveringScreen.left, xy[1] + (int) coveringScreen.top, ll);
+					area.maxLat = ll[0];
+					area.minLon = ll[1];
+					currentMap.getLatLonByXY(xy[0] + (int) coveringScreen.right, xy[1] + (int) coveringScreen.bottom, ll);
+					area.minLat = ll[0];
+					area.maxLon = ll[1];
+					List<Map> cmr = new ArrayList<Map>();
+					if (coveringMaps != null)
+						cmr.addAll(coveringMaps);
+					List<Map> cma = maps.getCoveringMaps(currentMap, area, coveredAll, coveringBestMap);
+					for (Map map : cma)
+					{
+						try
+						{
+							if (! map.activated())
+								map.activate(mapActivity.map, screenSize);
+							double zoom = map.mpp / currentMap.mpp * currentMap.getZoom();
+							if (zoom != map.getZoom())
+								map.setTemporaryZoom(zoom);
+							cmr.remove(map);
+						}
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+					}
+					synchronized (Androzic.this)
+					{
+						for (Map map : cmr)
+						{
+							if (map != currentMap)
+								map.deactivate();
+						}
+						coveringMaps = cma;
+					}
+				}
+			});
+			m.what = 1;
+			mapsHandler.sendMessage(m);
+		}
+	}
+	
+	public void drawMap(double[] loc, int[] lookAhead, boolean bestmap, int width, int height, Canvas c)
+	{
+		Map cm = currentMap;
+		
+		if (cm != null)
+		{
+			if (adjacentMaps)
+			{
+				int l = -(width / 2 + lookAhead[0]);
+				int t = -(height / 2 + lookAhead[1]);
+				int r = l + width;
+				int b = t + height;
+				if (coveringMaps == null || loc[0] != coveringLoc[0] || loc[1] != coveringLoc[1] || coveringBestMap != bestmap || 
+					l != coveringScreen.left || t != coveringScreen.top || r != coveringScreen.right || b != coveringScreen.bottom)
+				{
+					coveringScreen.left = l;
+					coveringScreen.top = t;
+					coveringScreen.right = r;
+					coveringScreen.bottom = b;
+					coveringLoc[0] = loc[0];
+					coveringLoc[1] = loc[1];
+					coveringBestMap = bestmap;
+					updateCoveringMaps();
+				}
+			}
 			try
 			{
-				currentMap.drawMap(loc, lookAhead, width, height, c);
+				if (coveringMaps != null && ! coveringMaps.isEmpty())
+				{
+					boolean drawn = false;
+					for (Map map : coveringMaps)
+					{
+						if (! drawn && coveringBestMap && map.mpp < cm.mpp)
+						{
+							coveredAll = cm.drawMap(loc, lookAhead, width, height, cropMapBorder, drawMapBorder, c);
+							drawn = true;
+						}
+						map.drawMap(loc, lookAhead, width, height, cropMapBorder, drawMapBorder, c);
+					}
+					if (! drawn)
+					{
+						coveredAll = cm.drawMap(loc, lookAhead, width, height, cropMapBorder, drawMapBorder, c);
+					}
+				}
+				else
+				{
+					coveredAll = cm.drawMap(loc, lookAhead, width, height, cropMapBorder, drawMapBorder, c);
+				}
 			}
 			catch (OutOfMemoryError err)
 			{
@@ -1527,6 +1602,8 @@ public class Androzic extends Application
 			maps.addMap(onlineMap);
 		}
 		suitableMaps = maps.getMaps();
+		coveredAll = true;
+		coveringBestMap = true;
 		mapsInited = true;
 	}
 

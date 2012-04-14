@@ -23,11 +23,10 @@ package com.androzic.map.online;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
+import android.view.View;
+
 import com.androzic.map.Tile;
 import com.androzic.map.TileRAMCache;
-
-import android.util.Log;
-import android.view.View;
 
 public class TileController extends Thread
 {
@@ -134,7 +133,6 @@ public class TileController extends Thread
 			if (t.bitmap == null)
 			{
 				tileMap.put(key, t);
-				Log.e("OSM","Size: "+tileMap.size());
 				synchronized (pendingList)
 				{
 					pendingList.add(t);

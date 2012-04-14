@@ -29,6 +29,10 @@ import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
@@ -39,7 +43,27 @@ import com.jhlabs.map.proj.Projection;
 public class Map implements Serializable
 {
 	private static final long serialVersionUID = 5L;
-	
+
+	private static final double[] zoomLevelsSupported =
+	{
+		// zoom must give integer if multiplied by 50 - it is used as a tile key
+		0.02,
+		0.06,
+		0.10,
+		0.25,
+		0.50,
+		0.75,
+		1.00,
+		1.25,
+		1.50,
+		1.75,
+		2.00,
+		2.50,
+		3.00,
+		4.00,
+		5.00
+	};
+
 	public int id;
 	public String title;
 	public String mappath;
@@ -56,20 +80,24 @@ public class Map implements Serializable
 	protected Projection projection;
 	protected MapPoint[] cornerMarkers;
 	protected ArrayList<MapPoint> calibrationPoints = new ArrayList<MapPoint>();
-	protected double scale;
+	protected double zoom;
+	protected double savedZoom;
 	private LinearBinding binding = new LinearBinding();
 	protected int pixels;
+	transient private Path mapClipPath;
 	transient public Throwable loadError;
 	transient private OzfReader ozf;
 	transient protected TileRAMCache cache;
 	transient protected Bounds bounds;
+	transient private Paint borderPaint;
 	
 	public Map(String filepath)
 	{
 		mappath = filepath;
 		id = mappath.hashCode();
-		scale = 1.0;
+		zoom = 1.0;
 		scaleFactor = 1.0;
+		savedZoom = 0;
 		loadError = null;
 		cache = null;
 	}
@@ -92,15 +120,34 @@ public class Map implements Serializable
 		}
 		Log.d("OZI", "Image file found: " + image.getCanonicalPath());
 		ozf = new OzfReader(image);
-		setZoom(scale);
+		mapClipPath = new Path();
+		setZoom(savedZoom == 0 ? zoom : savedZoom);
+		savedZoom = 0;
+
+		borderPaint = new Paint();
+        borderPaint.setAntiAlias(true);
+        borderPaint.setStrokeWidth(3);
+        borderPaint.setColor(Color.RED);
+        borderPaint.setAlpha(128);
+        borderPaint.setStyle(Style.STROKE);
 	}
 	
-	public void deactivate()
+	synchronized public void deactivate()
 	{
 		ozf.close();
 		ozf = null;
 		cache.destroy();
 		cache = null;
+		mapClipPath = null;
+		if (savedZoom != 0)
+			zoom = savedZoom;
+		savedZoom = 0;
+		borderPaint = null;
+	}
+	
+	synchronized public boolean activated()
+	{
+		return ozf != null;
 	}
 	
 	public void addCalibrationPoint(MapPoint point)
@@ -146,7 +193,7 @@ public class Map implements Serializable
 		xy[0] = (int) Math.round(binding.Kx[0]*nn + binding.Kx[1]*ee + binding.Kx[2]);
 		xy[1] = (int) Math.round(binding.Ky[0]*nn + binding.Ky[1]*ee + binding.Ky[2]);
 
-		return (xy[0] >= 0 && xy[0] < width * scale && xy[1] >= 0 && xy[1] < height * scale);
+		return (xy[0] >= 0 && xy[0] < width * zoom && xy[1] >= 0 && xy[1] < height * zoom);
 	}
 
 	// never used
@@ -155,7 +202,7 @@ public class Map implements Serializable
 		xy[0] = (int) Math.round(binding.Kx[0]*n + binding.Kx[1]*e + binding.Kx[2]);
 		xy[1] = (int) Math.round(binding.Ky[0]*n + binding.Ky[1]*e + binding.Ky[2]);
 
-		return (xy[0] >= 0 && xy[0] < width * scale && xy[1] >= 0 && xy[1] < height * scale);
+		return (xy[0] >= 0 && xy[0] < width * zoom && xy[1] >= 0 && xy[1] < height * zoom);
 	}
 
 	// never used
@@ -164,7 +211,7 @@ public class Map implements Serializable
 		en[1] = (int) (binding.Klat[0]*x + binding.Klat[1]*y + binding.Klat[2]);
 		en[0] = (int) (binding.Klon[0]*x + binding.Klon[1]*y + binding.Klon[2]);
 
-		return (x >= 0 && x < width * scale && y >= 0 || y < height * scale);
+		return (x >= 0 && x < width * zoom && y >= 0 || y < height * zoom);
 	}
 
 	// never used
@@ -197,7 +244,7 @@ public class Map implements Serializable
 		ll[0] = dst.y;
 		ll[1] = dst.x;
 
-		return (x >= 0 && x < width * scale && y >= 0 || y < height * scale);
+		return (x >= 0 && x < width * zoom && y >= 0 || y < height * zoom);
 	}
 	
 	/**
@@ -215,8 +262,8 @@ public class Map implements Serializable
 		if (inside)
 		{
 			// rescale to original size
-			xy[0] = (int) (xy[0] / scale);
-			xy[1] = (int) (xy[1] / scale);
+			xy[0] = (int) (xy[0] / zoom);
+			xy[1] = (int) (xy[1] / zoom);
 			
 			//  Note that division by zero is avoided because the division is protected
 			//  by the "if" clause which surrounds it.
@@ -228,7 +275,7 @@ public class Map implements Serializable
 			{
 				if (cornerMarkers[i].y < xy[1] && cornerMarkers[j].y >= xy[1] || cornerMarkers[j].y < xy[1] && cornerMarkers[i].y >= xy[1])
 				{
-					if (cornerMarkers[i].x + (xy[1] - cornerMarkers[i].y) / (cornerMarkers[j].y - cornerMarkers[i].y) * (cornerMarkers[j].x - cornerMarkers[i].x) < xy[0])
+					if (cornerMarkers[i].x + (xy[1] - cornerMarkers[i].y) * 1. / (cornerMarkers[j].y - cornerMarkers[i].y) * (cornerMarkers[j].x - cornerMarkers[i].x) < xy[0])
 					{
 						odd++;
 					}
@@ -241,55 +288,159 @@ public class Map implements Serializable
 
 		return inside;
 	}
-	
+
+	public boolean coversScreen(int[] map_xy, int width, int height)
+	{
+		int w2 = width / 2;
+		int h2 = height / 2;
+		
+		int l = (int) ((map_xy[0] - w2) / zoom);
+		int t = (int) ((map_xy[1] - h2) / zoom);
+		int r = (int) ((map_xy[0] + w2) / zoom);
+		int b = (int) ((map_xy[1] + h2) / zoom);
+		
+		int j = cornerMarkers.length - 1;
+		int oddTL = 0;
+		int oddTR = 0;
+		int oddBL = 0;
+		int oddBR = 0;
+
+		for (int i=0; i < cornerMarkers.length; i++)
+		{
+			if (cornerMarkers[i].y < t && cornerMarkers[j].y >= t || cornerMarkers[j].y < t && cornerMarkers[i].y >= t)
+			{
+				int tx = (int) (cornerMarkers[i].x + (t - cornerMarkers[i].y) * 1. / (cornerMarkers[j].y - cornerMarkers[i].y) * (cornerMarkers[j].x - cornerMarkers[i].x));
+				if (tx < l)
+				{
+					oddTL++;
+				}
+				if (tx < r)
+				{
+					oddTR++;
+				}
+			}
+			if (cornerMarkers[i].y < b && cornerMarkers[j].y >= b || cornerMarkers[j].y < b && cornerMarkers[i].y >= b)
+			{
+				int bx = (int) (cornerMarkers[i].x + (b - cornerMarkers[i].y) * 1. / (cornerMarkers[j].y - cornerMarkers[i].y) * (cornerMarkers[j].x - cornerMarkers[i].x));
+				if (bx < l)
+				{
+					oddBL++;
+				}
+				if (bx < r)
+				{
+					oddBR++;
+				}
+			}
+			j=i;
+		}
+
+		return (oddTL % 2 == 1) && (oddTR % 2 == 1) && (oddBL % 2 == 1) && (oddBR % 2 == 1);
+	}
+
 	public boolean containsArea(Bounds area)
 	{
 		Bounds b = getBounds();
 		return b.intersects(area);
 	}
 	
-	public double getZoom()
+	public double getNextZoom()
+	{
+		double zoomCurrent = getZoom();
+		double zoom = Double.NaN;
+		for (int i = 0; i < zoomLevelsSupported.length; i++)
+		{
+			if (zoomLevelsSupported[i] > zoomCurrent)
+			{
+				zoom = zoomLevelsSupported[i];
+				break;
+			}
+		}
+		if (! Double.isNaN(zoom))
+	    	return zoom;
+		else
+			return 0.0;
+	}
+
+	public double getPrevZoom()
+	{
+		double zoomCurrent = getZoom();
+		double zoom = Double.NaN;
+		for (int i = zoomLevelsSupported.length - 1; i >= 0; i--)
+		{
+			if (zoomLevelsSupported[i] < zoomCurrent)
+			{
+				zoom = zoomLevelsSupported[i];
+				break;
+			}
+		}
+		if (! Double.isNaN(zoom))
+	    	return zoom;
+		else
+			return 0.0;
+	}
+
+	synchronized public double getZoom()
 	{
 		return ozf.getZoom();
 	}
 
 	public void zoomBy(double factor)
 	{
-		setZoom(scale * factor);
+		setZoom(zoom * factor);
 	}
 	
-	public void setZoom(double zoom)
+	synchronized public void setZoom(double z)
 	{
-		scale = ozf.setZoom(zoom);
+		Log.e("OZI", "setZoom: " + z);
+		zoom = ozf.setZoom(z);
 		if (cache != null)
 			cache.destroy();
-		int cacheSize = (int) (pixels / (ozf.tile_dx() * ozf.tile_dy()) * 3);
+		int cacheSize = (int) Math.ceil(pixels * 1. / (ozf.tile_dx() * ozf.tile_dy()) * 3);
 		Log.e("OZI", "Cache size: " + cacheSize);
 		cache = new TileRAMCache(cacheSize);
 		ozf.setCache(cache);
 		bind();
+		mapClipPath.rewind();
+		mapClipPath.setLastPoint((float) (cornerMarkers[0].x * zoom), (float) (cornerMarkers[0].y * zoom));
+		for (int i = 1; i < cornerMarkers.length; i++)
+			mapClipPath.lineTo((float) (cornerMarkers[i].x * zoom), (float) (cornerMarkers[i].y * zoom));
+		mapClipPath.close();		
 	}
 
+	public void setTemporaryZoom(double zoom)
+	{
+		savedZoom = zoom;
+		Log.e("OZI", "setTemporaryZoom: " + zoom);
+		setZoom(zoom);
+	}
+	
 	public int getScaledWidth()
 	{
-		return (int) (width * scale);
+		return (int) (width * zoom);
 	}
 
 	public int getScaledHeight()
 	{
-		return (int) (height * scale);
+		return (int) (height * zoom);
 	}
 
-	public void drawMap(double[] loc, int[] lookAhead, int width, int height, Canvas c) throws OutOfMemoryError
+	synchronized public boolean drawMap(double[] loc, int[] lookAhead, int width, int height, boolean cropBorder, boolean drawBorder, Canvas c) throws OutOfMemoryError
 	{
 		if (ozf == null)
-			return;
+			return false;
 		int[] map_xy = new int[2];
 		getXYByLatLon(loc[0], loc[1], map_xy);
 		map_xy[0] -= lookAhead[0];
 		map_xy[1] -= lookAhead[1];
 		try
 		{
+			Path clipPath = new Path();
+			if (cropBorder || drawBorder)
+				mapClipPath.offset(-map_xy[0] + width / 2, -map_xy[1] + height / 2, clipPath);			
+            c.save();
+			if (cropBorder)
+				c.clipPath(clipPath);
+			
 			int[] cr = ozf.map_xy_to_cr(map_xy);
 			int[] xy = ozf.map_xy_to_xy_on_tile(map_xy);
 			
@@ -298,28 +449,40 @@ public class Map implements Serializable
 			
 			if (tile_w == 0 || tile_h == 0)
 			{
+				c.restore();
 				c.drawRGB(255, 0, 0);
-				return;
+				return false;
 			}
 
-			int tiles_per_x = width / tile_w;
-			int tiles_per_y = height / tile_h;
-
-			int c_min = cr[0] - tiles_per_x / 2 - 2;
-			int c_max = cr[0] + tiles_per_x / 2 + 2;
+			int c_min = (int) Math.floor(ozf.map_x_to_c(map_xy[0] - width / 2));
+			int c_max = (int) Math.ceil(ozf.map_x_to_c(map_xy[0] + width / 2));
 			
-			int r_min = cr[1] - tiles_per_y / 2 - 2;
-			int r_max = cr[1] + tiles_per_y / 2 + 2;
+			int r_min = (int) Math.floor(ozf.map_y_to_r(map_xy[1] - height / 2));
+			int r_max = (int) Math.ceil(ozf.map_y_to_r(map_xy[1] + height / 2));
 			
-			if (c_min < 0) c_min = 0;
-			if (r_min < 0) r_min = 0;
+			boolean result = true;
 			
+			if (c_min < 0)
+			{
+				c_min = 0;
+				result = false;
+			}
+			if (r_min < 0)
+			{
+				r_min = 0;
+				result = false;
+			}
 			if (c_max > ozf.tiles_per_x())
+			{
 				c_max = ozf.tiles_per_x();
-
+				result = false;
+			}
 			if (r_max > ozf.tiles_per_y())
+			{
 				r_max = ozf.tiles_per_y();
-
+				result = false;
+			}
+			
 			int txb = width / 2 - xy[0] - (cr[0] - c_min) * tile_w;
 			int tyb = height / 2 - xy[1] - (cr[1] - r_min) * tile_h;
 
@@ -331,7 +494,7 @@ public class Map implements Serializable
 					int ty = tyb + (i - r_min) * tile_h;
 				
 					Bitmap tile = ozf.tile_get(j, i);
-
+					
 					if (tile != null)
 					{
 						int tile_dx = ozf.tile_dx(j, i);
@@ -349,6 +512,12 @@ public class Map implements Serializable
 					}
 				}
 			}
+			c.restore();
+			if (drawBorder)
+				c.drawPath(clipPath, borderPaint);
+			if (result)
+				result = coversScreen(map_xy, width, height);
+			return result;
 		}
 		catch (OutOfMemoryError err)
 		{
@@ -367,8 +536,8 @@ public class Map implements Serializable
 			points[i] = new MapPoint();
 			points[i].lat = mp.lat;
 			points[i].lon = mp.lon;
-			points[i].x = (int) (mp.x * scale);
-			points[i].y = (int) (mp.y * scale);
+			points[i].x = (int) (mp.x * zoom);
+			points[i].y = (int) (mp.y * zoom);
 	        Point2D.Double src = new Point2D.Double(points[i].lon, points[i].lat);
 	        Point2D.Double dst = new Point2D.Double();
 			projection.transform(src.x, src.y, dst);
@@ -640,8 +809,13 @@ public class Map implements Serializable
     	public static boolean intersects(Bounds a, Bounds b)
     	{
     		//FIXME Should wrap 180 parallel
-            return a.minLon < b.maxLon && b.minLon < a.maxLon
+    		return a.minLon < b.maxLon && b.minLon < a.maxLon
                     && a.minLat < b.maxLat && b.minLat < a.maxLat;
+    	}
+    	
+    	public String toString()
+    	{
+    		return "[" + maxLat + "," + minLon + "," + minLat + "," + maxLon + "]";
     	}
 	}
 	

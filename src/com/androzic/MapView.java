@@ -54,10 +54,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 {
 	private static final String TAG = "MapView";
 
-	private static final float MAX_ROTATION_SPEED = 15f;
-	private static final float INC_ROTATION_SPEED = 1f;
+	private static final float MAX_ROTATION_SPEED = 10f;
+	private static final float INC_ROTATION_SPEED = 0.5f;
 	private static final float MAX_SHIFT_SPEED = 20f;
-	private static final float INC_SHIFT_SPEED = 1.5f;
+	private static final float INC_SHIFT_SPEED = 1.f;
 	
 	private static final int GESTURE_THRESHOLD_DP = (int) (ViewConfiguration.get(Androzic.getApplication()).getScaledTouchSlop() * 1.5);
 
@@ -116,6 +116,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private Androzic application;
 
 	private DrawingThread drawingThread;
+	private Object lock = new Object();
 	
 	private MultiTouchController<Object> multiTouchController;
 	private float pinch = 0;
@@ -178,7 +179,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
 		Log.e(TAG, "surfaceChanged("+width+","+height+")");
-		setLookAhead(lookAheadPst);
+		synchronized (lock)
+		{
+			setLookAhead(lookAheadPst);
+		}
 	}
 
 	@Override
@@ -232,13 +236,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			Canvas canvas;
 			while (runFlag)
 			{
-				//limit the frame rate to maximum 60 frames per second (16 miliseconds)
+				//limit the frame rate to maximum 30 frames per second (32 miliseconds)
 				long elapsedTime = System.currentTimeMillis() - prevTime;
-				if (elapsedTime < 16)
+				if (elapsedTime < 32)
 				{
 					try
 					{
-						Thread.sleep(16 - elapsedTime);
+						Thread.sleep(32 - elapsedTime);
 					}
 					catch (InterruptedException e)
 					{
@@ -249,8 +253,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				try
 				{
 					canvas = surfaceHolder.lockCanvas();
-					synchronized (surfaceHolder)
+					synchronized (lock)
 					{
+						mapView.calculateLookAhead();
 						if (canvas != null)
 							mapView.doDraw(canvas);
 					}
@@ -266,7 +271,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 	}
 	
-	synchronized protected void doDraw(Canvas canvas)
+	protected void doDraw(Canvas canvas)
 	{
 		boolean scaled = scale > 1.1 || scale < 0.9;
 		if (scaled)
@@ -283,7 +288,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		int cx = getWidth() / 2;
 		int cy = getHeight() / 2;
 
-		application.drawMap(mapCenter, lookAheadXY, getWidth(), getHeight(), canvas);
+		application.drawMap(mapCenter, lookAheadXY, loadBestMap, getWidth(), getHeight(), canvas);
 
 		canvas.translate(lookAheadXY[0] + cx, lookAheadXY[1] + cy);
 		// canvas.translate(cx, cy);
@@ -335,7 +340,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 		}
 
-		if (!isFollowing)
+		if (!scaled && !isFollowing)
 		{
 			canvas.drawCircle(0, 0, 1, crossPaint);
 			canvas.drawCircle(0, 0, 40, crossPaint);
@@ -353,63 +358,71 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		{
 			lookAheadC = 0;
 		}
-		calculateLookAhead();
 	}
 
-	synchronized public void setLocation(Location loc)
+	public void setLocation(Location loc)
 	{
-		bearing = loc.getBearing();
-		speed = loc.getSpeed();
-
-		if (currentLocation == null)
+		synchronized (lock)
 		{
-			currentLocation = new double[2];
-		}
-		currentLocation[0] = loc.getLatitude();
-		currentLocation[1] = loc.getLongitude();
-		currentLocationXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
+			bearing = loc.getBearing();
+			speed = loc.getSpeed();
 
-		lookAheadB = Math.round(bearing / 10) * 10;
-
-		long lastLocationMillis = loc.getTime();
-
-		if (isFollowing)
-		{
-			boolean newMap = false;
-			if (bestMapEnabled && bestMapInterval > 0 && lastLocationMillis - lastBestMap >= bestMapInterval)
+			if (currentLocation == null)
 			{
-				newMap = application.setMapCenter(currentLocation[0], currentLocation[1], loadBestMap);
-				lastBestMap = lastLocationMillis;
+				currentLocation = new double[2];
 			}
-			else
+			currentLocation[0] = loc.getLatitude();
+			currentLocation[1] = loc.getLongitude();
+			currentLocationXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
+	
+			lookAheadB = Math.round(bearing / 10) * 10;
+	
+			long lastLocationMillis = loc.getTime();
+	
+			if (isFollowing)
 			{
-				newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false);
+				boolean newMap = false;
+				if (bestMapEnabled && bestMapInterval > 0 && lastLocationMillis - lastBestMap >= bestMapInterval)
+				{
+					newMap = application.setMapCenter(currentLocation[0], currentLocation[1], loadBestMap);
+					lastBestMap = lastLocationMillis;
+				}
+				else
+				{
+					newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false);
+					if (newMap)
+						loadBestMap = bestMapEnabled;
+				}
 				if (newMap)
-					loadBestMap = bestMapEnabled;
+					updateMapInfo();
 			}
-			if (newMap)
-				updateMapInfo();
 		}
 		calculateVectorLength();
 	}
 
-	synchronized public void clearLocation()
+	public void clearLocation()
 	{
 		setFollowingThroughContext(false);
-		currentLocation = null;
-		bearing = 0;
-		speed = 0;
+		synchronized (lock)
+		{
+			currentLocation = null;
+			bearing = 0;
+			speed = 0;
+		}
 		calculateVectorLength();
 	}
 
-	synchronized public void updateMapInfo()
+	public void updateMapInfo()
 	{
-		scale = 1;
-		Map map = application.getCurrentMap();
-		if (map == null)
-			mpp = 0;
-		else
-			mpp = map.mpp / map.getZoom();
+		synchronized (lock)
+		{
+			scale = 1;
+			Map map = application.getCurrentMap();
+			if (map == null)
+				mpp = 0;
+			else
+				mpp = map.mpp / map.getZoom();
+		}
 		calculateVectorLength();
 		application.notifyOverlays();
 		try
@@ -422,105 +435,111 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 	}
 
-	synchronized private void calculateLookAhead()
+	private void calculateLookAhead()
 	{
 		boolean recalculated = false;
-		if (lookAheadC != lookAheadS)
+		synchronized (lock)
 		{
-			recalculated = true;
-
-			float diff = lookAheadC - lookAheadS;
-			if (Math.abs(diff) > Math.abs(lookAheadSS) * (MAX_SHIFT_SPEED / INC_SHIFT_SPEED))
+			if (lookAheadC != lookAheadS)
 			{
-				lookAheadSS += Math.signum(diff) * INC_SHIFT_SPEED;
-				if (Math.abs(lookAheadSS) > MAX_SHIFT_SPEED)
+				recalculated = true;
+	
+				float diff = lookAheadC - lookAheadS;
+				if (Math.abs(diff) > Math.abs(lookAheadSS) * (MAX_SHIFT_SPEED / INC_SHIFT_SPEED))
 				{
-					lookAheadSS = Math.signum(lookAheadSS) * MAX_SHIFT_SPEED;
+					lookAheadSS += Math.signum(diff) * INC_SHIFT_SPEED;
+					if (Math.abs(lookAheadSS) > MAX_SHIFT_SPEED)
+					{
+						lookAheadSS = Math.signum(lookAheadSS) * MAX_SHIFT_SPEED;
+					}
+				}
+				else if (Math.signum(diff) != Math.signum(lookAheadSS))
+				{
+					lookAheadSS += Math.signum(diff) * INC_SHIFT_SPEED * 2;
+				}
+				else if (Math.abs(lookAheadSS) > INC_SHIFT_SPEED)
+				{
+					lookAheadSS -= Math.signum(diff) * INC_SHIFT_SPEED * 0.5;
+				}
+				if (Math.abs(diff) < INC_SHIFT_SPEED)
+				{
+					lookAheadS = lookAheadC;
+					lookAheadSS = 0;
+				}
+				else
+				{
+					lookAheadS += lookAheadSS;
 				}
 			}
-			else if (Math.signum(diff) != Math.signum(lookAheadSS))
+			if (lookAheadB != smoothB)
 			{
-				lookAheadSS += Math.signum(diff) * INC_SHIFT_SPEED * 2;
-			}
-			else if (Math.abs(lookAheadSS) > INC_SHIFT_SPEED)
-			{
-				lookAheadSS -= Math.signum(diff) * INC_SHIFT_SPEED * 0.5;
-			}
-			if (Math.abs(diff) < INC_SHIFT_SPEED)
-			{
-				lookAheadS = lookAheadC;
-				lookAheadSS = 0;
-			}
-			else
-			{
-				lookAheadS += lookAheadSS;
-			}
-		}
-		if (lookAheadB != smoothB)
-		{
-			recalculated = true;
-
-			float turn = lookAheadB - smoothB;
-			if (Math.abs(turn) > 180)
-			{
-				turn = turn - Math.signum(turn) * 360;
-			}
-			if (Math.abs(turn) > Math.abs(smoothBS) * (MAX_ROTATION_SPEED / INC_ROTATION_SPEED))
-			{
-				smoothBS += Math.signum(turn) * INC_ROTATION_SPEED;
-				if (Math.abs(smoothBS) > MAX_ROTATION_SPEED)
+				recalculated = true;
+	
+				float turn = lookAheadB - smoothB;
+				if (Math.abs(turn) > 180)
 				{
-					smoothBS = Math.signum(smoothBS) * MAX_ROTATION_SPEED;
+					turn = turn - Math.signum(turn) * 360;
+				}
+				if (Math.abs(turn) > Math.abs(smoothBS) * (MAX_ROTATION_SPEED / INC_ROTATION_SPEED))
+				{
+					smoothBS += Math.signum(turn) * INC_ROTATION_SPEED;
+					if (Math.abs(smoothBS) > MAX_ROTATION_SPEED)
+					{
+						smoothBS = Math.signum(smoothBS) * MAX_ROTATION_SPEED;
+					}
+				}
+				else if (Math.signum(turn) != Math.signum(smoothBS))
+				{
+					smoothBS += Math.signum(turn) * INC_ROTATION_SPEED * 2;
+				}
+				else if (Math.abs(smoothBS) > INC_ROTATION_SPEED)
+				{
+					smoothBS -= Math.signum(turn) * INC_ROTATION_SPEED * 0.5;
+				}
+				if (Math.abs(turn) < INC_ROTATION_SPEED)
+				{
+					smoothB = lookAheadB;
+					smoothBS = 0;
+				}
+				else
+				{
+					smoothB += smoothBS;
+					if (smoothB >= 360)
+						smoothB -= 360;
+					if (smoothB < 0)
+						smoothB = 360 - smoothB;
 				}
 			}
-			else if (Math.signum(turn) != Math.signum(smoothBS))
+			if (recalculated)
 			{
-				smoothBS += Math.signum(turn) * INC_ROTATION_SPEED * 2;
+				lookAheadXY[0] = (int) Math.round(Math.sin(Math.toRadians(smoothB)) * -lookAheadS);
+				lookAheadXY[1] = (int) Math.round(Math.cos(Math.toRadians(smoothB)) * lookAheadS);
 			}
-			else if (Math.abs(smoothBS) > INC_ROTATION_SPEED)
-			{
-				smoothBS -= Math.signum(turn) * INC_ROTATION_SPEED * 0.5;
-			}
-			if (Math.abs(turn) < INC_ROTATION_SPEED)
-			{
-				smoothB = lookAheadB;
-				smoothBS = 0;
-			}
-			else
-			{
-				smoothB += smoothBS;
-				if (smoothB >= 360)
-					smoothB -= 360;
-				if (smoothB < 0)
-					smoothB = 360 - smoothB;
-			}
-		}
-		if (recalculated)
-		{
-			lookAheadXY[0] = (int) Math.round(Math.sin(Math.toRadians(smoothB)) * -lookAheadS);
-			lookAheadXY[1] = (int) Math.round(Math.cos(Math.toRadians(smoothB)) * lookAheadS);
 		}
 	}
 
-	synchronized private void calculateVectorLength()
+	private void calculateVectorLength()
 	{
-		if (mpp == 0)
+		synchronized (lock)
 		{
-			vectorLength = 0;
-			return;
-		}
-		switch (vectorType)
-		{
-			case 0:
+			if (mpp == 0)
+			{
 				vectorLength = 0;
-				break;
-			case 1:
-				vectorLength = (int) (proximity / mpp);
-				break;
-			case 2:
-				vectorLength = (int) (speed * 60 / mpp);
+				return;
+			}
+			switch (vectorType)
+			{
+				case 0:
+					vectorLength = 0;
+					break;
+				case 1:
+					vectorLength = (int) (proximity / mpp);
+					break;
+				case 2:
+					vectorLength = (int) (speed * 60 / mpp);
+			}
+			vectorLength *= vectorMultiplier;
 		}
-		vectorLength *= vectorMultiplier;
 	}
 
 	public void setMoving(boolean moving)
@@ -540,19 +559,22 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 		if (isFollowing != follow)
 		{
-			if (follow)
+			synchronized (lock)
 			{
-				Toast.makeText(getContext(), R.string.following_enabled, Toast.LENGTH_SHORT).show();
-				boolean newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false);
-				if (newMap)
-					updateMapInfo();
+				if (follow)
+				{
+					Toast.makeText(getContext(), R.string.following_enabled, Toast.LENGTH_SHORT).show();
+					boolean newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false);
+					if (newMap)
+						updateMapInfo();
+				}
+				else
+				{
+					Toast.makeText(getContext(), R.string.following_disabled, Toast.LENGTH_SHORT).show();
+				}
+	
+				isFollowing = follow;
 			}
-			else
-			{
-				Toast.makeText(getContext(), R.string.following_disabled, Toast.LENGTH_SHORT).show();
-			}
-
-			isFollowing = follow;
 			update();
 		}
 	}
@@ -630,23 +652,26 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	 * 
 	 * @param ahead % of the smaller dimension of screen
 	 */
-	synchronized public void setLookAhead(final int ahead)
+	public void setLookAhead(final int ahead)
 	{
-		lookAheadPst = ahead;
-		final int w = getWidth();
-		final int h = getHeight();
-		final int half = w > h ? h / 2 : w / 2;
-		lookAhead = (int) (half * ahead * 0.01);
+		synchronized (lock)
+		{
+			lookAheadPst = ahead;
+			final int w = getWidth();
+			final int h = getHeight();
+			final int half = w > h ? h / 2 : w / 2;
+			lookAhead = (int) (half * ahead * 0.01);
+		}
 	}
 
-	synchronized public void setCursorColor(final int color)
+	public void setCursorColor(final int color)
 	{
 		active = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
 		movingCursor.setColorFilter(isFixed ? active : null);
 		pointerPaint.setColor(color);
 	}
 
-	synchronized public void setCursorVector(final int type, final int multiplier)
+	public void setCursorVector(final int type, final int multiplier)
 	{
 		vectorType = type;
 		vectorMultiplier = multiplier;
@@ -678,13 +703,15 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		viewArea.set(area);
 	}
 
-	synchronized public void update()
+	public void update()
 	{
-		mapCenter = application.getMapCenter();
-		mapCenterXY = application.getXYbyLatLon(mapCenter[0], mapCenter[1]);
-		if (currentLocation != null)
-			currentLocationXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
-
+		synchronized (lock)
+		{
+			mapCenter = application.getMapCenter();
+			mapCenterXY = application.getXYbyLatLon(mapCenter[0], mapCenter[1]);
+			if (currentLocation != null)
+				currentLocationXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
+		}
 		try
 		{
 			MapActivity activity = (MapActivity) getContext();
@@ -697,15 +724,17 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private final void onDragFinished(int deltaX, int deltaY)
 	{
-		boolean mapChanged = application.scrollMap(-deltaX, -deltaY);
-		if (mapChanged)
-			updateMapInfo();
-		update();
+		synchronized (lock)
+		{
+			boolean mapChanged = application.scrollMap(-deltaX, -deltaY);
+			if (mapChanged)
+				updateMapInfo();
+			update();
+		}
 	}
 
-	//TODO make synchronization more preside
 	@Override
-	synchronized public boolean onTouchEvent(MotionEvent event)
+	public boolean onTouchEvent(MotionEvent event)
 	{
 		if (multiTouchController.onTouchEvent(event))
 		{
@@ -748,20 +777,23 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				int dy = -(penOY - (int) event.getY());
 				if (!wasMultitouch && Math.abs(dx) < GESTURE_THRESHOLD_DP && Math.abs(dy) < GESTURE_THRESHOLD_DP)
 				{
-					int mapTapX = penOX + mapCenterXY[0] - getWidth() / 2;
-					int mapTapY = penOY + mapCenterXY[1] - getHeight() / 2;
-
-					if (isMoving && isFollowing && isFixed)
+					synchronized (lock)
 					{
-						mapTapX -= lookAheadXY[0];
-						mapTapY -= lookAheadXY[1];
+						int mapTapX = penOX + mapCenterXY[0] - getWidth() / 2;
+						int mapTapY = penOY + mapCenterXY[1] - getHeight() / 2;
+	
+						if (isMoving && isFollowing && isFixed)
+						{
+							mapTapX -= lookAheadXY[0];
+							mapTapY -= lookAheadXY[1];
+						}
+	
+						int dt = GESTURE_THRESHOLD_DP / 2;
+						Rect tap = new Rect(mapTapX - dt, mapTapY - dt, mapTapX + dt, mapTapY + dt);
+						for (MapOverlay mo : application.getOverlays(Androzic.ORDER_SHOW_PREFERENCE))
+							if (mo.onSingleTap(event, tap, this))
+								break;
 					}
-
-					int dt = GESTURE_THRESHOLD_DP / 2;
-					Rect tap = new Rect(mapTapX - dt, mapTapY - dt, mapTapX + dt, mapTapY + dt);
-					for (MapOverlay mo : application.getOverlays(Androzic.ORDER_SHOW_PREFERENCE))
-						if (mo.onSingleTap(event, tap, this))
-							break;
 				}
 				penX = 0;
 				penY = 0;
@@ -774,7 +806,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	}
 
 	@Override
-	synchronized public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		switch (keyCode)
 		{
@@ -831,7 +863,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	}
 
 	@Override
-	synchronized public boolean onTrackballEvent(MotionEvent event)
+	public boolean onTrackballEvent(MotionEvent event)
 	{
 		int action = event.getAction();
 		switch (action)
@@ -980,7 +1012,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	}
 
 	@Override
-	synchronized public void selectObject(Object obj, PointInfo touchPoint)
+	public void selectObject(Object obj, PointInfo touchPoint)
 	{
 		if (obj == null)
 		{
@@ -998,7 +1030,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	}
 
 	@Override
-	synchronized public boolean setPositionAndScale(Object obj, PositionAndScale newObjPosAndScale, PointInfo touchPoint)
+	public boolean setPositionAndScale(Object obj, PositionAndScale newObjPosAndScale, PointInfo touchPoint)
 	{
 		if (touchPoint.isDown() && touchPoint.getNumTouchPoints() == 2)
 		{
@@ -1006,14 +1038,17 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			{
 				pinch = touchPoint.getMultiTouchDiameterSq();
 			}
-			scale = touchPoint.getMultiTouchDiameterSq() / pinch;
-			if (scale > 1)
+			synchronized (lock)
 			{
-				scale = (float) (Math.log10(scale) + 1);
-			}
-			else
-			{
-				scale = (float) (1 / (Math.log10(1 / scale) + 1));
+				scale = touchPoint.getMultiTouchDiameterSq() / pinch;
+				if (scale > 1)
+				{
+					scale = (float) (Math.log10(scale) + 1);
+				}
+				else
+				{
+					scale = (float) (1 / (Math.log10(1 / scale) + 1));
+				}
 			}
 		}
 		return true;
