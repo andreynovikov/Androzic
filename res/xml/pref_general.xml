@@ -1,8 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:androzic="http://schemas.android.com/apk/res/com.androzic" android:title="@string/pref_advanced_title">
-    <CheckBoxPreference android:key="@string/pref_wakelock" android:title="@string/pref_wakelock_title" android:summary="@string/pref_wakelock_summary" android:defaultValue="@bool/def_wakelock" />
-    <CheckBoxPreference android:key="@string/pref_mapdim" android:title="@string/pref_mapdim_title" android:summary="@string/pref_mapdim_summary" android:defaultValue="@bool/def_mapdim" />
-	<com.androzic.ui.SeekbarPreference android:key="@string/pref_mapdimvalue" android:title="@string/pref_mapdimvalue_title" android:summary="@string/pref_mapdimvalue_summary" android:dependency="@string/pref_mapdim" androzic:defaultValue="@integer/def_mapdimvalue" android:text=" %" androzic:min="5" androzic:max="99" />
-	<ListPreference android:key="@string/pref_orientation" android:title="@string/pref_orientation_title" android:entries="@array/orientation_names" android:entryValues="@array/orientation_values" android:defaultValue="-1" android:dialogTitle="@string/pref_orientation_title" />
-	<ListPreference android:key="@string/pref_locale" android:title="@string/pref_locale_title" android:entries="@array/localization_names" android:entryValues="@array/localization_values" android:defaultValue="" android:dialogTitle="@string/pref_locale_title" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
+    android:title="@string/pref_advanced_title" >
+
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+        android:defaultValue="@bool/def_wakelock"
+        android:key="@string/pref_wakelock"
+        android:summary="@string/pref_wakelock_summary"
+        android:title="@string/pref_wakelock_title" />
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+        android:defaultValue="@bool/def_mapdim"
+        android:key="@string/pref_mapdim"
+        android:summary="@string/pref_mapdim_summary"
+        android:title="@string/pref_mapdim_title" />
+
+    <com.androzic.ui.SeekbarPreference
+        android:dependency="@string/pref_mapdim"
+        android:key="@string/pref_mapdimvalue"
+        android:summary="@string/pref_mapdimvalue_summary"
+        android:text=" %"
+        android:title="@string/pref_mapdimvalue_title"
+        androzic:defaultValue="@integer/def_mapdimvalue"
+        androzic:max="99"
+        androzic:min="5" />
+
+    <ListPreference
+        android:defaultValue="-1"
+        android:dialogTitle="@string/pref_orientation_title"
+        android:entries="@array/orientation_names"
+        android:entryValues="@array/orientation_values"
+        android:key="@string/pref_orientation"
+        android:title="@string/pref_orientation_title" />
+    <ListPreference
+        android:defaultValue=""
+        android:dialogTitle="@string/pref_locale_title"
+        android:entries="@array/localization_names"
+        android:entryValues="@array/localization_values"
+        android:key="@string/pref_locale"
+        android:title="@string/pref_locale_title" />
+
 </PreferenceScreen>

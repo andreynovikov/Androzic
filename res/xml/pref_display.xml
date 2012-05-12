@@ -3,22 +3,22 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_show_title" >
 
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showsatinfo"
         android:summary="@string/pref_showsatinfo_summary"
         android:title="@string/pref_showsatinfo_title" />
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showmapinfo"
         android:summary="@string/pref_showmapinfo_summary"
         android:title="@string/pref_showmapinfo_title" />
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showcurrenttrack"
         android:summary="@string/pref_showcurrenttrack_summary"
         android:title="@string/pref_showcurrenttrack_title" />
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showaccuracy"
         android:summary="@string/pref_showaccuracy_summary"
@@ -50,17 +50,17 @@
         androzic:entryImages="@array/panel_action_images" />
 
     <PreferenceCategory android:title="@string/pref_map_title" >
-        <CheckBoxPreference
+        <com.androzic.ui.preference.HelpfulCheckBoxPreference
             android:defaultValue="@bool/def_mapcropborder"
             android:key="@string/pref_mapcropborder"
             android:summary="@string/pref_mapcropborder_summary"
             android:title="@string/pref_mapcropborder_title" />
-        <CheckBoxPreference
+        <com.androzic.ui.preference.HelpfulCheckBoxPreference
             android:defaultValue="@bool/def_mapdrawborder"
             android:key="@string/pref_mapdrawborder"
             android:summary="@string/pref_mapdrawborder_summary"
             android:title="@string/pref_mapdrawborder_title" />
-        <CheckBoxPreference
+        <com.androzic.ui.preference.HelpfulCheckBoxPreference
             android:defaultValue="@bool/def_maphideondrag"
             android:key="@string/pref_maphideondrag"
             android:summary="@string/pref_maphideondrag_summary"

@@ -1,7 +1,7 @@
 package com.androzic.ui.preference;
 
 import android.content.Context;
-import android.preference.EditTextPreference;
+import android.preference.CheckBoxPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,13 +12,13 @@ import android.widget.LinearLayout;
 import com.androzic.R;
 import com.androzic.ui.QuickView;
 
-public class HelpfulEditTextPreference extends EditTextPreference
+public class HelpfulCheckBoxPreference extends CheckBoxPreference
 {
 	private OnClickListener helpClickListener;
 	private CharSequence summary;
 	private QuickView helpView;
 
-	public HelpfulEditTextPreference(Context context, AttributeSet attrs)
+	public HelpfulCheckBoxPreference(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 		summary = getSummary();

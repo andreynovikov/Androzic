@@ -13,17 +13,17 @@
         android:summary="@string/pref_navigation_proximity_summary"
         android:title="@string/pref_navigation_proximity_title" />
 
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_navigation_traverse"
         android:key="@string/pref_navigation_traverse"
         android:summary="@string/pref_navigation_traverse_summary"
         android:title="@string/pref_navigation_traverse_title" />
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_navigation_loadlast"
         android:key="@string/pref_navigation_loadlast"
         android:summary="@string/pref_navigation_loadlast_summary"
         android:title="@string/pref_navigation_loadlast_title" />
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_navigation_proximitycircle"
         android:key="@string/pref_navigation_proximitycircle"
         android:summary="@string/pref_navigation_proximitycircle_summary"

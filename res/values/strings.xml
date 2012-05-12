@@ -204,7 +204,6 @@
 	<string name="pref_usemapindex_title">Use map index</string>
 	<string name="pref_usemapindex_summary">Mark to use saved map index for faster application start</string>
 	<string name="pref_useonlinemap_title">Use online map</string>
-	<string name="pref_useonlinemap_summary">Mark to enable online maps</string>
 	<string name="pref_onlinemaps_title">Online map</string>
 	<string name="pref_onlinemap_title">Map provider</string>
 	<string name="pref_onlinemap_summary">Source of the online map</string>
@@ -253,7 +252,6 @@
     <string name="pref_maphideondrag_title">Hide objects on drag</string>
     <string name="pref_maphideondrag_summary">Mark to hide map objects while dragging</string>
     <string name="pref_unfollowontap_title">Stop following on drag</string>
-    <string name="pref_unfollowontap_summary">Mark to disable following on map dragging</string>
     <string name="pref_orientation_title">Screen orientation</string>
     <string name="pref_locale_title">Language</string>
     <string name="pref_show_title">Display</string>
@@ -290,13 +288,9 @@
 	<string name="pref_unitsunrise_title">Sunrise/Sunset</string>
 	<string name="pref_grid_title">Grids</string>
 	<string name="pref_grid_mapshow_title">Show map grids</string>
-	<string name="pref_grid_mapshow_summary">Mark to make map grids visible on map</string>
 	<string name="pref_grid_usershow_title">Show custom grid</string>
-	<string name="pref_grid_usershow_summary">Mark to make custom grid visible on all maps</string>
 	<string name="pref_grid_userscale_title">Custom grid interval</string>
-	<string name="pref_grid_userscale_summary">The value of custom grid interval</string>
 	<string name="pref_grid_userunit_title">Custom grid unit</string>
-	<string name="pref_grid_userunit_summary">The unit of custom grid interval</string>
 	<string name="pref_grid_usermpp_title">Custom grid limitation</string>
 	<string name="pref_grid_usermpp_summary">Maximum meters per pixel scale at which custom grid will be visible</string>
 	<string name="pref_grid_preference_title">Grid preference</string>

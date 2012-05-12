@@ -3,7 +3,7 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_map_title" >
 
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_usemapindex"
         android:key="@string/pref_usemapindex"
         android:summary="@string/pref_usemapindex_summary"
@@ -20,7 +20,7 @@
         androzic:min="2"
         androzic:multiplier="100" />
 
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_mapbest"
         android:key="@string/pref_mapbest"
         android:summary="@string/pref_mapbest_summary"
@@ -36,12 +36,12 @@
         androzic:max="30"
         androzic:min="3" />
 
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_mapadjacent"
         android:key="@string/pref_mapadjacent"
         android:summary="@string/pref_mapadjacent_summary"
         android:title="@string/pref_mapadjacent_title" />
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_mapfollowonloc"
         android:key="@string/pref_mapfollowonloc"
         android:summary="@string/pref_mapfollowonloc_summary"
@@ -49,14 +49,12 @@
     <CheckBoxPreference
         android:defaultValue="@bool/def_unfollowontap"
         android:key="@string/pref_unfollowontap"
-        android:summary="@string/pref_unfollowontap_summary"
         android:title="@string/pref_unfollowontap_title" />
 
     <PreferenceCategory android:title="@string/pref_onlinemaps_title" >
         <CheckBoxPreference
             android:defaultValue="@bool/def_useonlinemap"
             android:key="@string/pref_useonlinemap"
-            android:summary="@string/pref_useonlinemap_summary"
             android:title="@string/pref_useonlinemap_title" />
 
         <ListPreference
@@ -81,12 +79,10 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_grid_mapshow"
-            android:summary="@string/pref_grid_mapshow_summary"
             android:title="@string/pref_grid_mapshow_title" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_grid_usershow"
-            android:summary="@string/pref_grid_usershow_summary"
             android:title="@string/pref_grid_usershow_title" />
 
         <EditTextPreference

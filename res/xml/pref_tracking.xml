@@ -23,7 +23,7 @@
         android:summary="@string/pref_tracking_mindistance_summary"
         android:title="@string/pref_tracking_mindistance_title" />
 
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_tracking_currentload"
         android:key="@string/pref_tracking_currentload"
         android:summary="@string/pref_tracking_currentload_summary"

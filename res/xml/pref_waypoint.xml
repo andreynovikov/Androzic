@@ -3,7 +3,7 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_waypoint_title" >
 
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:key="@string/pref_waypoint_visible"
         android:defaultValue="@bool/def_waypoint_visible"
         android:title="@string/pref_waypoint_visible_title"
@@ -25,7 +25,7 @@
         android:key="@string/pref_waypoint_color"
         android:title="@string/pref_waypoint_color_title" />
 
-    <CheckBoxPreference
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_waypoint_showname"
         android:summary="@string/pref_waypoint_showname_summary"
