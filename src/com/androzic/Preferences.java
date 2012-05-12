@@ -34,6 +34,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -230,6 +231,14 @@ public class Preferences extends PreferenceActivity
 		        		Androzic application = (Androzic) getApplication();
 		        		summary = application.getRootPath() + "/" + summary.toString();
 		        	}
+		        	pref.setSummary(summary);
+		        }
+	        }
+	        else if (pref instanceof EditTextPreference)
+	        {
+		        CharSequence summary = ((EditTextPreference) pref).getText();
+		        if (summary != null)
+		        {
 		        	pref.setSummary(summary);
 		        }
 	        }
