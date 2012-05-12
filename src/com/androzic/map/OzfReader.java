@@ -200,12 +200,13 @@ public class OzfReader
 		Tile tile = new Tile(c, r, zoomKey);
 		Bitmap tileBitmap = null;
 		
-		if (cache != null && cache.containsKey(key))
+		if (cache != null)
 		{
-			tileBitmap = cache.get(key).bitmap;
-//			Log.i("OZF", "cache");
+			Tile t = cache.get(key);
+			if (t != null)
+				tileBitmap = t.bitmap;
 		}
-		else
+		if (tileBitmap == null)
 		{
 	        int w = OzfDecoder.OZF_TILE_WIDTH;
 	        int h = OzfDecoder.OZF_TILE_HEIGHT;
@@ -233,7 +234,6 @@ public class OzfReader
 				tile.bitmap = tileBitmap;
 				cache.put(tile);
 			}
-//			Log.i("OZF", "file");
 		}
 		
 		return tileBitmap;

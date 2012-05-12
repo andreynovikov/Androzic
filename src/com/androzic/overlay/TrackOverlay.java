@@ -132,10 +132,7 @@ public class TrackOverlay extends MapOverlay
 	        for (TrackPoint tp : trackPoints)
 	        {
 	        	int[] xy = null;
-	        	if (points.containsKey(tp))
-	        	{
-	        		xy = points.get(tp);
-	        	}
+        		xy = points.get(tp);
 	        	if (xy == null)
 	        	{
 	        		xy = application.getXYbyLatLon(tp.latitude,tp.longitude);
