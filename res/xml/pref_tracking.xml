@@ -3,7 +3,7 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_tracking_title" >
 
-    <EditTextPreference
+    <com.androzic.ui.preference.HelpfulEditTextPreference
         android:defaultValue="2000"
         android:inputType="number"
         android:key="@string/pref_tracking_mintime"
@@ -13,7 +13,7 @@
         android:summary="@string/pref_tracking_mintime_summary"
         android:title="@string/pref_tracking_mintime_title" />
     
-    <EditTextPreference
+    <com.androzic.ui.preference.HelpfulEditTextPreference
         android:defaultValue="3"
         android:inputType="number"
         android:key="@string/pref_tracking_mindistance"
@@ -29,7 +29,7 @@
         android:summary="@string/pref_tracking_currentload_summary"
         android:title="@string/pref_tracking_currentload_title" />
 
-    <EditTextPreference
+    <com.androzic.ui.preference.HelpfulEditTextPreference
         android:defaultValue="@string/def_tracking_currentlength"
         android:inputType="number"
         android:key="@string/pref_tracking_currentlength"

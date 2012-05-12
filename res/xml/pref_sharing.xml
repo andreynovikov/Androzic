@@ -3,14 +3,14 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_sharing_title" >
 
-    <EditTextPreference
+    <com.androzic.ui.preference.HelpfulEditTextPreference
         android:key="@string/pref_sharing_session"
         android:maxLength="60"
         android:singleLine="true"
         android:summary="@string/pref_sharing_session_summary"
         android:title="@string/pref_sharing_session_title" />
 
-    <EditTextPreference
+    <com.androzic.ui.preference.HelpfulEditTextPreference
         android:key="@string/pref_sharing_user"
         android:maxLength="60"
         android:singleLine="true"
