@@ -1334,8 +1334,15 @@ public class Androzic extends Application
 			}
 			catch (OutOfMemoryError err)
 			{
-	        	if (! memmsg)
-	        		Toast.makeText(this, R.string.err_nomemory, Toast.LENGTH_LONG).show();
+	        	if (! memmsg && mapActivity != null)
+	        		mapActivity.runOnUiThread(new Runnable() {
+
+						@Override
+						public void run()
+						{
+			        		Toast.makeText(Androzic.this, R.string.err_nomemory, Toast.LENGTH_LONG).show();
+						}
+					});
 	        	memmsg = true;
 	        	err.printStackTrace();
 			}
