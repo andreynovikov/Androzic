@@ -97,11 +97,11 @@
     <item>Localizzazione ceco</item>
     <item>Localizzazione francese</item>
     <item>Localizzazione finlandese</item>
-    <item>Localizzazione in Bulgaro</item>
+    <item>Traduzione in bulgaro</item>
     <item>Localizzazione in tedesco</item>
     <item>Localizzazione in turco</item>
-    <item>Italian localization</item>
-    <item>Spanish localization</item>
+    <item>Traduzione in italiano</item>
+    <item>Traduzione in spagnolo</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zoom avanti</item>

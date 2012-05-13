@@ -67,7 +67,7 @@
   <string name="quit">Zamknij</string>
   <string name="yes">Tak</string>
   <string name="no">Nie</string>
-  <string name="ok">Ok</string>
+  <string name="ok">OK</string>
   <string name="save">Zapisz</string>
   <string name="done">Zrobione</string>
   <string name="navigate">Nawiguj</string>
@@ -224,6 +224,8 @@
   <string name="pref_mapbest_summary">Zaznacz, aby pozwolić aplikacji próbować załadować najlepszą mapę na aktualnej lokalizacji</string>
   <string name="pref_mapbestinterval_title">Najlepszy przedział mapy</string>
   <string name="pref_mapbestinterval_summary">Okres pomiędzy wyszukiwaniami najlepszej mapy</string>
+  <string name="pref_mapadjacent_title">Adjacent maps</string>
+  <string name="pref_mapadjacent_summary">EXPERIMENTAL, can significantly degrade performance! Mark to display adjacent and better maps</string>
   <string name="pref_mapfollowonloc_title">Follow on first location</string>
   <string name="pref_mapfollowonloc_summary">Mark to enable following on location acquisition</string>
   <string name="pref_usecompass_title">Użyj kompasu</string>
@@ -234,6 +236,10 @@
   <string name="pref_mapdim_summary">Zaznacz, aby automatycznie przyciemniać ekran w nocy</string>
   <string name="pref_mapdimvalue_title">Poziom przygaszania</string>
   <string name="pref_mapdimvalue_summary">Jasność do zmniejszenia</string>
+  <string name="pref_mapcropborder_title">Crop map margins</string>
+  <string name="pref_mapcropborder_summary">Mark to crop map along corner markers</string>
+  <string name="pref_mapdrawborder_title">Draw map border</string>
+  <string name="pref_mapdrawborder_summary">Mark to draw border along corner markers</string>
   <string name="pref_maphideondrag_title">Ukrywaj obiekty podczas przeciągania</string>
   <string name="pref_maphideondrag_summary">Zaznacz aby ukrywać obiekty mapy podczas przeciągania</string>
   <string name="pref_unfollowontap_title">Zatrzymaj podążanie podczas przeciągania</string>
@@ -241,6 +247,8 @@
   <string name="pref_orientation_title">Układ ekranu</string>
   <string name="pref_locale_title">Język</string>
   <string name="pref_show_title">Display</string>
+  <string name="pref_scalebarcolor_title">Scale color</string>
+  <string name="pref_scalebarcolor_summary">Specify the color of map scale indicator</string>
   <string name="pref_cursor_title">Moving cursor</string>
   <string name="pref_cursorcolor_title">Kolor aktywnego kursora</string>
   <string name="pref_cursorcolor_summary">Określ kolor kursora na aktualnej pozycji</string>

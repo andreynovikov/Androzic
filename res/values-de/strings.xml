@@ -44,7 +44,7 @@
   <string name="msg_initializingview">Initialisiere Ansicht…</string>
   <string name="msg_cleaning">Säubere…</string>
   <string name="msg_paid">Spenden Version</string>
-  <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
+  <string name="msg_empty_route_list">Keine Routen verfügbar. Geh ins Menü, um Routen zu erstellen.</string>
   <string name="err_nosdcard">SD-Karte nicht verfügbar</string>
   <string name="err_nofile">Datei nicht gefunden</string>
   <string name="err_write">Kann Datei nicht schreiben</string>
@@ -67,7 +67,7 @@
   <string name="quit">Beenden</string>
   <string name="yes">Ja</string>
   <string name="no">Nein</string>
-  <string name="ok">Ok</string>
+  <string name="ok">OK</string>
   <string name="save">Speichern</string>
   <string name="done">Erledigt</string>
   <string name="navigate">Navigieren</string>
@@ -220,6 +220,8 @@
   <string name="pref_mapbest_summary">Markieren um die Anwendung automatisch die beste Karte für die aktuelle Position laden zu lassen</string>
   <string name="pref_mapbestinterval_title">Beste Karte Intervall</string>
   <string name="pref_mapbestinterval_summary">Zeitraum nach dem automatisch die beste Karte gesucht werden soll</string>
+  <string name="pref_mapadjacent_title">Angrenzende Karten</string>
+  <string name="pref_mapadjacent_summary">EXPERIMENTELL, kann die Leistung erheblich beeinträchtigen! Markieren, um angrenzende und bessere Karten anzuzeigen</string>
   <string name="pref_mapfollowonloc_title">Verfolgung nach erster Ortung</string>
   <string name="pref_mapfollowonloc_summary">Markieren, um Verfolgung nach Ortung zu aktivieren</string>
   <string name="pref_usecompass_title">Kompass verwenden</string>
@@ -230,6 +232,10 @@
   <string name="pref_mapdim_summary">Markieren um den Bildschirm nachts automatisch zu dimmen</string>
   <string name="pref_mapdimvalue_title">Wert zum automatischen Dimmen</string>
   <string name="pref_mapdimvalue_summary">Wert der Helligkeitsreduktion</string>
+  <string name="pref_mapcropborder_title">Karte zuschneiden</string>
+  <string name="pref_mapcropborder_summary">Markieren, um Karte entlang der Eckmarkierungen zuzuschneiden</string>
+  <string name="pref_mapdrawborder_title">Kartenrand zeichnen</string>
+  <string name="pref_mapdrawborder_summary">Markieren, um Kartenrahmen zu zeichnen</string>
   <string name="pref_maphideondrag_title">Objekte beim Draggen ausblenden</string>
   <string name="pref_maphideondrag_summary">Markieren um Kartenobjekte während des Draggens auszublenden</string>
   <string name="pref_unfollowontap_title">Autofollow beim Draggen stoppen</string>
@@ -237,6 +243,8 @@
   <string name="pref_orientation_title">Bildschirmausrichtung</string>
   <string name="pref_locale_title">Sprache</string>
   <string name="pref_show_title">Display</string>
+  <string name="pref_scalebarcolor_title">Skalafarbe</string>
+  <string name="pref_scalebarcolor_summary">Markieren, um die Farbe der Maßstabskala zu ändern</string>
   <string name="pref_cursor_title">Bewegen des Cursors</string>
   <string name="pref_cursorcolor_title">Farbe des aktiven Cursors </string>
   <string name="pref_cursorcolor_summary">Wählen Sie die Farbe des Cursors an der aktuellen Position</string>
@@ -290,7 +298,7 @@
   <string name="pref_tracking_currentlength_summary">Maximale Anzahl an Punkten im aktuellen Track-tail</string>
   <string name="pref_tracking_currentcolor_title">Aktuelle Farbe der Tracklinie</string>
   <string name="pref_waypoint_title">Wegpunkte</string>
-  <string name="pref_waypoint_visible_title">Ensure visible on create</string>
+  <string name="pref_waypoint_visible_title">Sichtbarkeit nach Erstellen einschalten</string>
   <string name="pref_waypoint_visible_summary">Markieren, um Karte auf neuem Wegpunkt zu zentrieren</string>
   <string name="pref_waypoint_width_title">Markergröße</string>
   <string name="pref_waypoint_width_summary">Die Größe der Wegpunkt-Marker in Pixeln</string>

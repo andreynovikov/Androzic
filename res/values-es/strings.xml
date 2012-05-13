@@ -67,7 +67,7 @@
   <string name="quit">Salir</string>
   <string name="yes">Si</string>
   <string name="no">No</string>
-  <string name="ok">Ok</string>
+  <string name="ok">OK</string>
   <string name="save">Grabar</string>
   <string name="done">Echo</string>
   <string name="navigate">Navegar</string>
@@ -224,6 +224,8 @@
   <string name="pref_mapbest_summary">Marcar para que la aplicacion trate de cargar el mejor mapa para la posicion actual</string>
   <string name="pref_mapbestinterval_title">Mejor intervalo de mapa</string>
   <string name="pref_mapbestinterval_summary">Perido de busqueda de mapas</string>
+  <string name="pref_mapadjacent_title">Adjacent maps</string>
+  <string name="pref_mapadjacent_summary">EXPERIMENTAL, can significantly degrade performance! Mark to display adjacent and better maps</string>
   <string name="pref_mapfollowonloc_title">Seguimiento a partir de la primera ubicación</string>
   <string name="pref_mapfollowonloc_summary">Marque esta opción para habilitar después de la adquisición de ubicación</string>
   <string name="pref_usecompass_title">Usar brujula</string>
@@ -234,6 +236,10 @@
   <string name="pref_mapdim_summary">Marcar para atenuacion automatica de pantalla por la noche</string>
   <string name="pref_mapdimvalue_title">Cantidad de atenuacion</string>
   <string name="pref_mapdimvalue_summary">Cantidad de brillo a reducir</string>
+  <string name="pref_mapcropborder_title">Crop map margins</string>
+  <string name="pref_mapcropborder_summary">Mark to crop map along corner markers</string>
+  <string name="pref_mapdrawborder_title">Draw map border</string>
+  <string name="pref_mapdrawborder_summary">Mark to draw border along corner markers</string>
   <string name="pref_maphideondrag_title">Ocultar obhetos al arrastrar</string>
   <string name="pref_maphideondrag_summary">Marcar para ocultar objetos al arrastrar el mapa</string>
   <string name="pref_unfollowontap_title">Parar seguimiento al arrastrar</string>
@@ -241,6 +247,8 @@
   <string name="pref_orientation_title">Orientacion de Pantalla</string>
   <string name="pref_locale_title">Idioma</string>
   <string name="pref_show_title">Pantalla</string>
+  <string name="pref_scalebarcolor_title">Scale color</string>
+  <string name="pref_scalebarcolor_summary">Specify the color of map scale indicator</string>
   <string name="pref_cursor_title">Cursor en movimiento</string>
   <string name="pref_cursorcolor_title">Color del cursor activo</string>
   <string name="pref_cursorcolor_summary">Especificar el color del cursor en la posicion valida actual</string>

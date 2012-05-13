@@ -67,7 +67,7 @@
   <string name="quit">Quitter</string>
   <string name="yes">Oui</string>
   <string name="no">Non</string>
-  <string name="ok">Ok</string>
+  <string name="ok">OK</string>
   <string name="save">Sauvegarder</string>
   <string name="done">OK</string>
   <string name="navigate">Naviguer</string>
@@ -220,6 +220,8 @@
   <string name="pref_mapbest_summary">Cocher pour laisser l\'application choisir une carte la plus détaillée pour la position courante</string>
   <string name="pref_mapbestinterval_title">Délai de recherche</string>
   <string name="pref_mapbestinterval_summary">Intervalle de temps pour la recherche de carte plus détaillées</string>
+  <string name="pref_mapadjacent_title">Cartes adjacentes</string>
+  <string name="pref_mapadjacent_summary">EXPÉRIMENTALE, peut dégrader considérablement les performances! Activer pour afficher les cartes adjacents et les cartes de meilleure qualité.</string>
   <string name="pref_mapfollowonloc_title">Suivre au premier emplacement</string>
   <string name="pref_mapfollowonloc_summary">﻿Marquer pour permettre le suivi lors de l\'acquisition de l\'emplacement</string>
   <string name="pref_usecompass_title">Utiliser le compas</string>
@@ -230,6 +232,10 @@
   <string name="pref_mapdim_summary">Cocher pour diminuer automatiquement l\'éclairage de l\'écran pendant la nuit</string>
   <string name="pref_mapdimvalue_title">Niveau d\'éclairage</string>
   <string name="pref_mapdimvalue_summary">Niveau de réduction de la luminosité</string>
+  <string name="pref_mapcropborder_title">Couper les marges de la carte</string>
+  <string name="pref_mapcropborder_summary">Activer pour couper la carte en dehors des marqueurs de coins</string>
+  <string name="pref_mapdrawborder_title">Tracer les bords de la carte</string>
+  <string name="pref_mapdrawborder_summary">Activer pour tracer une bordure le long des bords de la carte</string>
   <string name="pref_maphideondrag_title">Masquage des objets</string>
   <string name="pref_maphideondrag_summary">Cocher pour masquer les objets de la cartes pendant un glisser/déplacer</string>
   <string name="pref_unfollowontap_title">Arrét du suivi</string>
@@ -237,6 +243,8 @@
   <string name="pref_orientation_title">Orientation de l\'écran</string>
   <string name="pref_locale_title">Langue</string>
   <string name="pref_show_title">Afficher</string>
+  <string name="pref_scalebarcolor_title">Couleur de l\'échelle</string>
+  <string name="pref_scalebarcolor_summary">Spécifier la couleur de l\'affichage de l\'échelle de la carte</string>
   <string name="pref_cursor_title">Déplacer le curseur</string>
   <string name="pref_cursorcolor_title">Couleur actuelle du curseur</string>
   <string name="pref_cursorcolor_summary">Spécifier la couleur du curseur pour la position valide actuelle</string>

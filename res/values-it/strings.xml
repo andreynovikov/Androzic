@@ -17,7 +17,7 @@
   <string name="loadroute_name">Carica il percorso da file</string>
   <string name="saveroute_name">Salva il percorso su file</string>
   <string name="routeproperties_name">Modifica itinerario</string>
-  <string name="routedetails_name">Route details</string>
+  <string name="routedetails_name">Dettagli itinerario</string>
   <string name="markericon_name">Selezionare l\'icona del marcatore</string>
   <string name="pref_name">Impostazioni di Androzic</string>
   <string name="hsi_name">HSI</string>
@@ -44,7 +44,7 @@
   <string name="msg_initializingview">Initializing view&#8230;</string>
   <string name="msg_cleaning">Cleaning&#8230;</string>
   <string name="msg_paid">Versione per donatori</string>
-  <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
+  <string name="msg_empty_route_list">Nessun percorso disponibile. Utilizzare il menu per creare il percorso o caricarlo da file.</string>
   <string name="err_nosdcard">Scheda SD non disponibile</string>
   <string name="err_nofile">Nessun file</string>
   <string name="err_write">Impossibile scrivere il file</string>
@@ -67,7 +67,7 @@
   <string name="quit">Esci</string>
   <string name="yes">Sì</string>
   <string name="no">No</string>
-  <string name="ok">Ok</string>
+  <string name="ok">OK</string>
   <string name="save">Salvare</string>
   <string name="done">Fatto</string>
   <string name="navigate">Navigare</string>
@@ -161,7 +161,7 @@
   <string name="menu_search">Ricerca</string>
   <string name="menu_dismiss">Respingere</string>
   <string name="menu_manage">Gestire</string>
-  <string name="menu_details">Details</string>
+  <string name="menu_details">Dettagli</string>
   <string name="menu_visible">Garantire visibile</string>
   <string name="menu_follow">Abilita l\'inseguimento</string>
   <string name="menu_location">Posizione</string>
@@ -220,6 +220,8 @@
   <string name="pref_mapbest_summary">Seleziona per permettere all\'applicazione di caricare la migliore mappa disponibile per la posizione corrente</string>
   <string name="pref_mapbestinterval_title">Intervallo di mappa migliore</string>
   <string name="pref_mapbestinterval_summary">Periodo di tempo intercorrente tra le ricerche di mappa migliore</string>
+  <string name="pref_mapadjacent_title">Mappe adiacenti</string>
+  <string name="pref_mapadjacent_summary">SPERIMENTALE,le prestazioni potrebbero essere significativamente ridotte! Seleziona per visualizzare le mappe adiacenti e di migliore qualità</string>
   <string name="pref_mapfollowonloc_title">Seguire alla prima posizione</string>
   <string name="pref_mapfollowonloc_summary">Seleziona per consentire l\'inseguimento a seguito di acquisizione di posizione</string>
   <string name="pref_usecompass_title">Usa la bussola</string>
@@ -230,6 +232,10 @@
   <string name="pref_mapdim_summary">Seleziona per rendere schermo dim automaticamente in condizioni notturne</string>
   <string name="pref_mapdimvalue_title">Quantità dim</string>
   <string name="pref_mapdimvalue_summary">Riduzione luminosità</string>
+  <string name="pref_mapcropborder_title">Ritaglia i margini della mappa</string>
+  <string name="pref_mapcropborder_summary">Seleziona per ritagliare la mappa in corrispondenza dei marcatori d\'angolo</string>
+  <string name="pref_mapdrawborder_title">Disegna i bordi della mappa</string>
+  <string name="pref_mapdrawborder_summary">Seleziona per disegnare i bordi in corrispondenza dei marcatori d\'angolo</string>
   <string name="pref_maphideondrag_title">Nascondi oggetti in trascinamento</string>
   <string name="pref_maphideondrag_summary">Seleziona per nascondere gli oggetti della mappa durante il trascinamento</string>
   <string name="pref_unfollowontap_title">Non seguire più il trascinamento</string>
@@ -237,6 +243,8 @@
   <string name="pref_orientation_title">Orientamento dello schermo</string>
   <string name="pref_locale_title">Lingua</string>
   <string name="pref_show_title">Visualizzazione</string>
+  <string name="pref_scalebarcolor_title">Scala colore</string>
+  <string name="pref_scalebarcolor_summary">Specifica il colore dell\'indicatore di scala della mappa</string>
   <string name="pref_cursor_title">Cursore in  movimento</string>
   <string name="pref_cursorcolor_title">Colore del cursore attivo</string>
   <string name="pref_cursorcolor_summary">Specifica il colore del cursore nella posizione valida attuale</string>

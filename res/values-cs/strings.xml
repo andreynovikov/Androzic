@@ -67,7 +67,7 @@
   <string name="quit">Konec</string>
   <string name="yes">Ano</string>
   <string name="no">Ne</string>
-  <string name="ok">Ok</string>
+  <string name="ok">OK</string>
   <string name="save">Ulož</string>
   <string name="done">Hotovo</string>
   <string name="navigate">Naviguj</string>
@@ -220,6 +220,8 @@
   <string name="pref_mapbest_summary">Označ, aplikace nahraje automaticky nejpodrobnější mapu pro aktuální pozici</string>
   <string name="pref_mapbestinterval_title">Podrobná mapa - interval</string>
   <string name="pref_mapbestinterval_summary">Časový interval pro automatické nahrání nejpodrobnější mapy</string>
+  <string name="pref_mapadjacent_title">Sousední mapy</string>
+  <string name="pref_mapadjacent_summary">Experimentální, může výrazně snížit výkon! Zatrhni pro zobrazení přilehlých a lepších map</string>
   <string name="pref_mapfollowonloc_title">Sledovat po lokalizaci</string>
   <string name="pref_mapfollowonloc_summary">Povolit následování po získání pozice</string>
   <string name="pref_usecompass_title">Použij kompas</string>
@@ -230,6 +232,10 @@
   <string name="pref_mapdim_summary">Označ, obrazovka automaticky ztmavne v nočních hodinách</string>
   <string name="pref_mapdimvalue_title">Ztmavnutí</string>
   <string name="pref_mapdimvalue_summary">Síla ztmavnutí obrazovky</string>
+  <string name="pref_mapcropborder_title">Oříznout kraje map</string>
+  <string name="pref_mapcropborder_summary">Zatrhni pro ořezávání map podle rohových značek</string>
+  <string name="pref_mapdrawborder_title">Zobrazuj kraj mapy</string>
+  <string name="pref_mapdrawborder_summary">Zatrhni pro vykreslení okraje podle rohových značek</string>
   <string name="pref_maphideondrag_title">Skryj při přesunu</string>
   <string name="pref_maphideondrag_summary">Označ, mapové objekty při přesunu jsou skryty</string>
   <string name="pref_unfollowontap_title">Při přesunu netrasuj</string>
@@ -237,6 +243,8 @@
   <string name="pref_orientation_title">Orientace obrazovky</string>
   <string name="pref_locale_title">Jazyk</string>
   <string name="pref_show_title">Zobrazit</string>
+  <string name="pref_scalebarcolor_title">Stupnice barev</string>
+  <string name="pref_scalebarcolor_summary">Vyber barvu indikátoru zvětšení</string>
   <string name="pref_cursor_title">Pohyblivý kurzor</string>
   <string name="pref_cursorcolor_title">Barva aktivního kurzoru</string>
   <string name="pref_cursorcolor_summary">Vyber barvu kurzoru na správné aktuální pozici</string>

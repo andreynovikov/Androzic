@@ -67,7 +67,7 @@
   <string name="quit">Çıkış</string>
   <string name="yes">Evet</string>
   <string name="no">Hayır</string>
-  <string name="ok">Tamam</string>
+  <string name="ok">OK</string>
   <string name="save">Kaydet</string>
   <string name="done">Bitti</string>
   <string name="navigate">Seyrüsefer</string>
@@ -220,6 +220,8 @@
   <string name="pref_mapbest_summary">Mevcut konum için uygulamanın en iyi ölçekteki haritayı yüklemesi için işaretleyin</string>
   <string name="pref_mapbestinterval_title">En iyi haritayı arama sıklığı</string>
   <string name="pref_mapbestinterval_summary">En iyi ölçekli harita arama sıklığı</string>
+  <string name="pref_mapadjacent_title">Adjacent maps</string>
+  <string name="pref_mapadjacent_summary">EXPERIMENTAL, can significantly degrade performance! Mark to display adjacent and better maps</string>
   <string name="pref_mapfollowonloc_title">İlk konumda otomatik takip et</string>
   <string name="pref_mapfollowonloc_summary">Konum belirlendiğinde otomatik takibi başlatmak için işaretleyin</string>
   <string name="pref_usecompass_title">Pusulayı kullan</string>
@@ -230,6 +232,10 @@
   <string name="pref_mapdim_summary">Ekran parlaklığını gece olunca otomatik olarak azaltmak için işaretle</string>
   <string name="pref_mapdimvalue_title">Parlaklık azaltma miktarı</string>
   <string name="pref_mapdimvalue_summary">Azaltılacak parlaklık miktarı</string>
+  <string name="pref_mapcropborder_title">Crop map margins</string>
+  <string name="pref_mapcropborder_summary">Mark to crop map along corner markers</string>
+  <string name="pref_mapdrawborder_title">Draw map border</string>
+  <string name="pref_mapdrawborder_summary">Mark to draw border along corner markers</string>
   <string name="pref_maphideondrag_title">Sürüklemede nesneleri gizle</string>
   <string name="pref_maphideondrag_summary">Sürükleme esnasında harita nesnelerini gizlemek için işaretleyin</string>
   <string name="pref_unfollowontap_title">Sürüklemede otomatik takibi bırak</string>
@@ -237,6 +243,8 @@
   <string name="pref_orientation_title">Ekran yönü</string>
   <string name="pref_locale_title">Lisan</string>
   <string name="pref_show_title">Görünüm</string>
+  <string name="pref_scalebarcolor_title">Scale color</string>
+  <string name="pref_scalebarcolor_summary">Specify the color of map scale indicator</string>
   <string name="pref_cursor_title">Hareketli İmleç</string>
   <string name="pref_cursorcolor_title">Aktif imleç rengi</string>
   <string name="pref_cursorcolor_summary">Geçerli konumdaki imleç rengini belirleyin</string>

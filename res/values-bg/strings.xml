@@ -17,7 +17,7 @@
   <string name="loadroute_name">Зареждане на маршрут</string>
   <string name="saveroute_name">Запис на маршрут</string>
   <string name="routeproperties_name">Редакция на маршрут</string>
-  <string name="routedetails_name">Route details</string>
+  <string name="routedetails_name">Подробности за маршрута</string>
   <string name="markericon_name">Изберете икона на маркера</string>
   <string name="pref_name">Androzic настройки</string>
   <string name="hsi_name">HSI</string>
@@ -44,7 +44,7 @@
   <string name="msg_initializingview">Инициализиране изгледа&#8230;</string>
   <string name="msg_cleaning">Почистване&#8230;</string>
   <string name="msg_paid">Версия за дарители</string>
-  <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
+  <string name="msg_empty_route_list">Няма налични маршрути. Използвайте менюто за да създадете или заредите от файл.</string>
   <string name="err_nosdcard">Недостъпна SD-карта</string>
   <string name="err_nofile">Няма такъв файл</string>
   <string name="err_write">Не може да се запише файла</string>
@@ -165,7 +165,7 @@
   <string name="menu_search">Търсене</string>
   <string name="menu_dismiss">Отхвърляне</string>
   <string name="menu_manage">Управление</string>
-  <string name="menu_details">Details</string>
+  <string name="menu_details">Подробни данни</string>
   <string name="menu_visible">Осигуряване на видимост</string>
   <string name="menu_follow">Разрешаване проследяването</string>
   <string name="menu_location">Местоположение</string>
@@ -224,6 +224,8 @@
   <string name="pref_mapbest_summary">При маркиране програмата се опита да определи най-добрата карта за текущата позиция</string>
   <string name="pref_mapbestinterval_title">Интервал за търсене на карти</string>
   <string name="pref_mapbestinterval_summary">Време през което да се извършва проверка за най-добра карта</string>
+  <string name="pref_mapadjacent_title">Съседни карти</string>
+  <string name="pref_mapadjacent_summary">ЕКСПЕРИМЕНТАЛНО, може значително да намали производителността! Маркирай за показване на съседни и по-добри карти</string>
   <string name="pref_mapfollowonloc_title">Следване от началното местоположение</string>
   <string name="pref_mapfollowonloc_summary">Маркирай за да се разреши следване от първото придобито местоположение</string>
   <string name="pref_usecompass_title">Използване на компас</string>
@@ -234,6 +236,10 @@
   <string name="pref_mapdim_summary">Позволява автоматично затъмнение на екрана през нощта и изсветляване през деня</string>
   <string name="pref_mapdimvalue_title">Ниво на яркост</string>
   <string name="pref_mapdimvalue_summary">Ръчно настройване на яркостта</string>
+  <string name="pref_mapcropborder_title">Изрежи извънкартните полета</string>
+  <string name="pref_mapcropborder_summary">Маркирай за изрязване на картата по ъгловите маркери</string>
+  <string name="pref_mapdrawborder_title">Изчертай рамка на картата</string>
+  <string name="pref_mapdrawborder_summary">Маркирай за да се изчертае рамка по ъгловите маркери на картата</string>
   <string name="pref_maphideondrag_title">Скриване на обекти</string>
   <string name="pref_maphideondrag_summary">Скриване на обекти от картата при влачене</string>
   <string name="pref_unfollowontap_title">Скриване на следата при влачене</string>
@@ -241,6 +247,8 @@
   <string name="pref_orientation_title">Положение на екрана</string>
   <string name="pref_locale_title">Език</string>
   <string name="pref_show_title">Дисплей</string>
+  <string name="pref_scalebarcolor_title">Цветова скала</string>
+  <string name="pref_scalebarcolor_summary">Задайте цвят на скалата на картния индикатор</string>
   <string name="pref_cursor_title">Преместване на курсора</string>
   <string name="pref_cursorcolor_title">Цвят на кусурът</string>
   <string name="pref_cursorcolor_summary">Указване на цвят на кусура в активен режим</string>

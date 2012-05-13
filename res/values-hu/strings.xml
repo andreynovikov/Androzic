@@ -220,6 +220,8 @@
   <string name="pref_mapbest_summary">Jelöld be, ha a program próbálja a legjobb térképet betölteni az aktuális pozíción</string>
   <string name="pref_mapbestinterval_title">Legjobb térkép intervallum</string>
   <string name="pref_mapbestinterval_summary">Legjobb térképek közötti keresési idő</string>
+  <string name="pref_mapadjacent_title">Adjacent maps</string>
+  <string name="pref_mapadjacent_summary">EXPERIMENTAL, can significantly degrade performance! Mark to display adjacent and better maps</string>
   <string name="pref_mapfollowonloc_title">Follow on first location</string>
   <string name="pref_mapfollowonloc_summary">Mark to enable following on location acquisition</string>
   <string name="pref_usecompass_title">Használja az iránytűt</string>
@@ -230,6 +232,10 @@
   <string name="pref_mapdim_summary">Képernyő automatikusan sötétedik éjszaka</string>
   <string name="pref_mapdimvalue_title">Homályosodás értéke</string>
   <string name="pref_mapdimvalue_summary">Fényerő csökkentésének értéke</string>
+  <string name="pref_mapcropborder_title">Crop map margins</string>
+  <string name="pref_mapcropborder_summary">Mark to crop map along corner markers</string>
+  <string name="pref_mapdrawborder_title">Draw map border</string>
+  <string name="pref_mapdrawborder_summary">Mark to draw border along corner markers</string>
   <string name="pref_maphideondrag_title">Tárgyak elrejtése mozgatáskor</string>
   <string name="pref_maphideondrag_summary">Térkép objektumok elrejtése húzás közben</string>
   <string name="pref_unfollowontap_title">Állítsa le a követést mozgatáskor</string>
@@ -237,6 +243,8 @@
   <string name="pref_orientation_title">A képernyő tájolása</string>
   <string name="pref_locale_title">Nyelv</string>
   <string name="pref_show_title">Display</string>
+  <string name="pref_scalebarcolor_title">Scale color</string>
+  <string name="pref_scalebarcolor_summary">Specify the color of map scale indicator</string>
   <string name="pref_cursor_title">Moving cursor</string>
   <string name="pref_cursorcolor_title">Aktív kurzor színe</string>
   <string name="pref_cursorcolor_summary">Add meg a kurzor színét a valós aktuális pozícióban</string>

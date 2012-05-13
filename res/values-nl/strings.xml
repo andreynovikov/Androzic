@@ -44,7 +44,7 @@
   <string name="msg_initializingview">Activeren beeld</string>
   <string name="msg_cleaning">Opschonen</string>
   <string name="msg_paid">Donatie versie</string>
-  <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
+  <string name="msg_empty_route_list">Geen routes beschikbaar. Gebruik menu om de route te maken of te laden uit bestand.</string>
   <string name="err_nosdcard">SD-kaart niet beschikbaar</string>
   <string name="err_nofile">Onbekend bestand</string>
   <string name="err_write">Kan bestand niet schrijven</string>
@@ -67,7 +67,7 @@
   <string name="quit">Stoppen</string>
   <string name="yes">Ja</string>
   <string name="no">Nee</string>
-  <string name="ok">Goed</string>
+  <string name="ok">OK</string>
   <string name="save">Opslaan</string>
   <string name="done">Klaar</string>
   <string name="navigate">Navigeren</string>
@@ -220,6 +220,8 @@
   <string name="pref_mapbest_summary">Markeer om de beste kaart te laten laden voor de huidige locatie</string>
   <string name="pref_mapbestinterval_title">Beste kaart interval</string>
   <string name="pref_mapbestinterval_summary">Tijd tussen beste kaart zoekactie</string>
+  <string name="pref_mapadjacent_title">Aangrenzende kaarten</string>
+  <string name="pref_mapadjacent_summary">EXPERIMENTEEL, kan aanzienlijk traag zijn! Mark om weer te geven van aangrenzende en betere kaarten</string>
   <string name="pref_mapfollowonloc_title">Volgen van eerste locatie</string>
   <string name="pref_mapfollowonloc_summary">Markeer om verkregen locatie te kunnen volgen</string>
   <string name="pref_usecompass_title">Gebruik kompas</string>
@@ -230,6 +232,10 @@
   <string name="pref_mapdim_summary">Markeer om het scherm \'s nachts automatisch te dimmen</string>
   <string name="pref_mapdimvalue_title">Dim hoeveelheid</string>
   <string name="pref_mapdimvalue_summary">Reduceert helderheid hoeveelheid</string>
+  <string name="pref_mapcropborder_title">verklein kaart margin</string>
+  <string name="pref_mapcropborder_summary">Markeer om kaart te snijden samen met hoek markeringen</string>
+  <string name="pref_mapdrawborder_title">Teken map rand</string>
+  <string name="pref_mapdrawborder_summary">Markeer rand langs hoek markeringen</string>
   <string name="pref_maphideondrag_title">Verberg objecten bij slepen</string>
   <string name="pref_maphideondrag_summary">Markeer om kaartobjecten te verbergen bij slepen</string>
   <string name="pref_unfollowontap_title">Stop volgen bij slepen</string>
@@ -237,6 +243,8 @@
   <string name="pref_orientation_title">Schermoriëntatie</string>
   <string name="pref_locale_title">Taal</string>
   <string name="pref_show_title">Weergave</string>
+  <string name="pref_scalebarcolor_title">Schaal kleur</string>
+  <string name="pref_scalebarcolor_summary">De kleur van de kaart schaal indicator opgeven</string>
   <string name="pref_cursor_title">Bewegende cursor</string>
   <string name="pref_cursorcolor_title">Actieve cursor kleur</string>
   <string name="pref_cursorcolor_summary">Geef de kleur van de cursor op geldige huidige positie</string>
