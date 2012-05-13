@@ -3,13 +3,12 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_map_title" >
 
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_usemapindex"
         android:key="@string/pref_usemapindex"
-        android:summary="@string/pref_usemapindex_summary"
         android:title="@string/pref_usemapindex_title" />
 
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         android:key="@string/pref_maprenderinterval"
         android:summary="@string/pref_maprenderinterval_summary"
         android:text=" ms"
@@ -26,7 +25,7 @@
         android:summary="@string/pref_mapbest_summary"
         android:title="@string/pref_mapbest_title" />
 
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         android:dependency="@string/pref_mapbest"
         android:key="@string/pref_mapbestinterval"
         android:summary="@string/pref_mapbestinterval_summary"
@@ -41,10 +40,9 @@
         android:key="@string/pref_mapadjacent"
         android:summary="@string/pref_mapadjacent_summary"
         android:title="@string/pref_mapadjacent_title" />
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_mapfollowonloc"
         android:key="@string/pref_mapfollowonloc"
-        android:summary="@string/pref_mapfollowonloc_summary"
         android:title="@string/pref_mapfollowonloc_title" />
     <CheckBoxPreference
         android:defaultValue="@bool/def_unfollowontap"
@@ -65,7 +63,7 @@
             android:summary="@string/pref_onlinemap_summary"
             android:title="@string/pref_onlinemap_title" />
 
-        <com.androzic.ui.SeekbarPreference
+        <com.androzic.ui.preference.HelpfulSeekbarPreference
             android:dependency="@string/pref_useonlinemap"
             android:key="@string/pref_onlinemapscale"
             android:summary="@string/pref_onlinemapscale_summary"

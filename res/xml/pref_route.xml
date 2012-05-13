@@ -3,7 +3,7 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_route_title" >
 
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         androzic:defaultValue="@integer/def_route_linewidth"
         android:key="@string/pref_route_linewidth"
         androzic:max="6"
@@ -12,7 +12,7 @@
         android:text=" pixels"
         android:title="@string/pref_route_linewidth_title" />
 
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         androzic:defaultValue="@integer/def_route_pointwidth"
         android:key="@string/pref_route_pointwidth"
         androzic:max="20"

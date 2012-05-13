@@ -17,7 +17,6 @@
     <com.androzic.ui.SeekbarPreference
         android:dependency="@string/pref_mapdim"
         android:key="@string/pref_mapdimvalue"
-        android:summary="@string/pref_mapdimvalue_summary"
         android:text=" %"
         android:title="@string/pref_mapdimvalue_title"
         androzic:defaultValue="@integer/def_mapdimvalue"

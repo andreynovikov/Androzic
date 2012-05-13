@@ -29,7 +29,7 @@
         android:summary="@string/pref_navigation_proximitycircle_summary"
         android:title="@string/pref_navigation_proximitycircle_title" />
 
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         android:key="@string/pref_navigation_linewidth"
         android:summary="@string/pref_navigation_linewidth_summary"
         android:text=" pixels"

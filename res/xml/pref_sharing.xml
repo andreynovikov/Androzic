@@ -17,7 +17,7 @@
         android:summary="@string/pref_sharing_user_summary"
         android:title="@string/pref_sharing_user_title" />
 
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         androzic:defaultValue="@integer/def_sharing_updateinterval"
         androzic:format="0"
         android:key="@string/pref_sharing_updateinterval"
@@ -27,7 +27,7 @@
         android:text=" s"
         android:title="@string/pref_sharing_updateinterval_title" />
 
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         androzic:defaultValue="@integer/def_sharing_timeout"
         androzic:format="0"
         android:key="@string/pref_sharing_timeout"
@@ -37,7 +37,7 @@
         android:text=" min"
         android:title="@string/pref_sharing_timeout_title" />
     
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         androzic:defaultValue="@integer/def_sharing_tagwidth"
         android:key="@string/pref_sharing_tagwidth"
         androzic:max="20"

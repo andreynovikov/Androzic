@@ -14,7 +14,7 @@
         android:summary="@string/pref_loc_usenetwork_summary"
         android:title="@string/pref_loc_usenetwork_title" />
 
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         android:dependency="@string/pref_loc_usenetwork"
         android:key="@string/pref_loc_gpstimeout"
         android:summary="@string/pref_loc_gpstimeout_summary"

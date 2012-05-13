@@ -32,7 +32,7 @@
         android:key="@string/pref_showdistance_int"
         android:title="@string/pref_showdistance_title" />
 
-    <com.androzic.ui.SeekbarPreference
+    <com.androzic.ui.preference.HelpfulSeekbarPreference
         android:key="@string/pref_lookahead"
         android:summary="@string/pref_lookahead_summary"
         android:text=" %"
@@ -45,7 +45,6 @@
         android:entries="@array/panel_action_names"
         android:entryValues="@array/panel_action_values"
         android:key="@string/pref_panelactions"
-        android:summary="@string/pref_panelactions_summary"
         android:title="@string/pref_panelactions_title"
         androzic:entryImages="@array/panel_action_images" />
 
@@ -70,7 +69,6 @@
             android:defaultValue="@color/scalebar"
             android:dialogTitle="@string/pref_scalebarcolor_title"
             android:key="@string/pref_scalebarcolor"
-            android:summary="@string/pref_scalebarcolor_summary"
             android:title="@string/pref_scalebarcolor_title"
             androzic:defaultColor="@color/scalebar" />
     </PreferenceCategory>
@@ -79,7 +77,6 @@
             android:defaultValue="@color/cursor"
             android:dialogTitle="@string/pref_cursorcolor_title"
             android:key="@string/pref_cursorcolor"
-            android:summary="@string/pref_cursorcolor_summary"
             android:title="@string/pref_cursorcolor_title"
             androzic:defaultColor="@color/cursor" />
 
@@ -92,7 +89,7 @@
             android:summary="@string/pref_cursorvector_summary"
             android:title="@string/pref_cursorvector_title" />
 
-        <com.androzic.ui.SeekbarPreference
+        <com.androzic.ui.preference.HelpfulSeekbarPreference
             android:key="@string/pref_cursorvectormlpr"
             android:summary="@string/pref_cursorvectormlpr_summary"
             android:title="@string/pref_cursorvectormlpr_title"
