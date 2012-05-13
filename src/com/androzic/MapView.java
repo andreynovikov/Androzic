@@ -236,13 +236,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			Canvas canvas;
 			while (runFlag)
 			{
-				//limit the frame rate to maximum 30 frames per second (32 miliseconds)
+				//limit the frame rate to maximum 5 frames per second (200 miliseconds)
 				long elapsedTime = System.currentTimeMillis() - prevTime;
-				if (elapsedTime < 32)
+				if (elapsedTime < 200)
 				{
 					try
 					{
-						Thread.sleep(32 - elapsedTime);
+						Thread.sleep(200 - elapsedTime);
 					}
 					catch (InterruptedException e)
 					{
