@@ -86,6 +86,7 @@
         <item>pl</item>
         <item>nl</item>
         <item>tr</item>
+        <item>zh</item>
     </string-array>
     <string-array name="localization_names">
     	<item>Device default</item>
@@ -100,6 +101,7 @@
     	<item>Polski</item>
     	<item>Hollandsk</item>
     	<item>Türk</item>
+    	<item>中文 (简体)</item>
     </string-array>
     <string-array name="orientation_values">
         <item>-1</item>
