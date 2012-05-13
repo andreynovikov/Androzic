@@ -9,17 +9,17 @@ package com.androzic.ui;
 
 import java.text.DecimalFormat;
 
-import com.androzic.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.preference.DialogPreference;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.LinearLayout;
+
+import com.androzic.R;
 
 /**
  * SeekbarPreference class implements seekbar {@link android.preference.DialogPreference} edit.
@@ -73,6 +73,13 @@ public class SeekbarPreference extends DialogPreference implements SeekBar.OnSee
 	}
 
 	@Override
+	protected void onBindView(View view)
+	{
+		super.onBindView(view);
+		getValue();
+	}
+
+	@Override
 	protected View onCreateDialogView()
 	{
 		LinearLayout.LayoutParams params;
@@ -101,7 +108,7 @@ public class SeekbarPreference extends DialogPreference implements SeekBar.OnSee
 				LinearLayout.LayoutParams.FILL_PARENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT));
 
-		if (shouldPersist())
+		if (isPersistent())
 			mValue = getPersistedInt(mDefault);
 
 		mSeekBar.setMax(mMax - mMin);
@@ -123,10 +130,14 @@ public class SeekbarPreference extends DialogPreference implements SeekBar.OnSee
 	{
 		super.onSetInitialValue(restore, defaultValue);
 		if (restore)
-			mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
+			mValue = getPersistedInt(mValue);
 		else
 			mValue = (Integer) defaultValue;
-		mValue -= mMin;
+//		mValue -= mMin;
+		if (shouldPersist())
+		{
+			persistInt(mValue);
+		}
 	}
 
 	@Override
@@ -147,8 +158,7 @@ public class SeekbarPreference extends DialogPreference implements SeekBar.OnSee
 		mValue = value + mMin;
 		if (mValueText != null)
 		{
-			String t = format.format(mValue * mMultiplier);
-			mValueText.setText(mSuffix == null ? t : t.concat(mSuffix));
+			mValueText.setText(getText(mValue));
 		}
 	}
 
@@ -207,11 +217,32 @@ public class SeekbarPreference extends DialogPreference implements SeekBar.OnSee
 			mSeekBar.setProgress(progress);
 		if (mValueText != null)
 		{
-			String t = format.format(value * mMultiplier);
-			mValueText.setText(mSuffix == null ? t : t.concat(mSuffix));
+			mValueText.setText(getText(value));
 		}
 	}
 
+	public int getValue()
+	{
+		if (isPersistent())
+		{
+			mValue = getPersistedInt(mDefault);
+		}
+		return mValue;
+	}
+
+	public String getText()
+	{
+		return getText(getValue());
+	}
+	
+	private String getText(int value)
+	{
+		String t = format.format(value * mMultiplier);
+		if (mSuffix != null)
+			t = t.concat(mSuffix);
+		return t;
+	}
+	
 	/**
 	 * Returns fake progress for internal use
 	 * @return progress

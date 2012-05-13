@@ -226,6 +226,14 @@ public class PreferencesHC extends PreferenceActivity
 		        	pref.setSummary(summary);
 		        }
 	        }
+	        else if (pref instanceof SeekbarPreference)
+	        {
+		        CharSequence summary = ((SeekbarPreference) pref).getText();
+		        if (summary != null)
+		        {
+		        	pref.setSummary(summary);
+		        }
+	        }
 		}
 
 		private void initSummaries(PreferenceGroup preference)
