@@ -54,10 +54,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 {
 	private static final String TAG = "MapView";
 
-	private static final float MAX_ROTATION_SPEED = 10f;
+	private static final float MAX_ROTATION_SPEED = 20f;
 	private static final float INC_ROTATION_SPEED = 0.5f;
 	private static final float MAX_SHIFT_SPEED = 20f;
-	private static final float INC_SHIFT_SPEED = 1.f;
+	private static final float INC_SHIFT_SPEED = 2f;
 	
 	private static final int GESTURE_THRESHOLD_DP = (int) (ViewConfiguration.get(Androzic.getApplication()).getScaledTouchSlop() * 1.5);
 
@@ -67,6 +67,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private boolean hideOnDrag = true;
 	private boolean loadBestMap = true;
 	private int bestMapInterval = 5000;
+	private long drawPeriod = 200;
 	/**
 	 * True when there is a valid location
 	 */
@@ -238,11 +239,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			{
 				//limit the frame rate to maximum 5 frames per second (200 miliseconds)
 				long elapsedTime = System.currentTimeMillis() - prevTime;
-				if (elapsedTime < 200)
+				if (elapsedTime < drawPeriod)
 				{
 					try
 					{
-						Thread.sleep(200 - elapsedTime);
+						Thread.sleep(drawPeriod - elapsedTime);
 					}
 					catch (InterruptedException e)
 					{
@@ -255,7 +256,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 					canvas = surfaceHolder.lockCanvas();
 					synchronized (lock)
 					{
-						mapView.calculateLookAhead();
+						drawPeriod = mapView.calculateLookAhead() ? 50 : 200;
 						if (canvas != null)
 							mapView.doDraw(canvas);
 					}
@@ -435,7 +436,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 	}
 
-	private void calculateLookAhead()
+	private boolean calculateLookAhead()
 	{
 		boolean recalculated = false;
 		synchronized (lock)
@@ -516,6 +517,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				lookAheadXY[1] = (int) Math.round(Math.cos(Math.toRadians(smoothB)) * lookAheadS);
 			}
 		}
+		return recalculated;
 	}
 
 	private void calculateVectorLength()
