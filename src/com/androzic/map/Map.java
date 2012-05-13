@@ -134,7 +134,9 @@ public class Map implements Serializable
 	
 	synchronized public void deactivate()
 	{
-		ozf.close();
+		//TODO This shouldn't happen but happens
+		if (ozf != null)
+			ozf.close();
 		ozf = null;
 		cache.destroy();
 		cache = null;
