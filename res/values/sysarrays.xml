@@ -174,5 +174,8 @@
 		<item><![CDATA[Eniro Map (NO SE FI DK PL),eni,2,20,,http://map.eniro.com/geowebcache/service/tms1.0.0/map/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
 		<item><![CDATA[Eniro Aeral (NO SE DK),enia,2,19,,http://map.eniro.com/geowebcache/service/tms1.0.0/aerial/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
 		<item><![CDATA[Eniro Marine (NO SE),enim,5,16,,http://map.eniro.com/geowebcache/service/tms1.0.0/nautical/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+		<item><![CDATA[NLS Topo Map (FI),nlst,4,19,,http://tiles.kartat.kapsi.fi/peruskartta/{$z}/{$x}/{$y}.png]]></item>
+		<item><![CDATA[NLS Background,nlsb,4,19,,http://tiles.kartat.kapsi.fi/taustakartta/{$z}/{$x}/{$y}.png]]></item>
+		<item><![CDATA[NLS Aerial (FI),nlsa,13,19,,http://tiles.kartat.kapsi.fi/ortokuva/{$z}/{$x}/{$y}.png]]></item>
     </string-array>
 </resources>
