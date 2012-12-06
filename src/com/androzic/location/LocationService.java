@@ -97,6 +97,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 
 	private Location lastKnownLocation = null;
 	private boolean isContinous = false;
+	private boolean justStarted = true;
 	private float smoothSpeed = 0.0f;
 	private float avgSpeed = 0.0f;
 	private float azimuth = 0.0f;
@@ -241,6 +242,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 			lastLocationMillis = 0;
 			pause = 1;
 			isContinous = false;
+			justStarted = true;
 			smoothSpeed = 0.0f;
 			avgSpeed = 0.0f;
 			locationManager.addGpsStatusListener(this);
@@ -504,11 +506,16 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 				location.setAltitude(location.getAltitude() + nmeaGeoidHeight);
 			}
 
-			// filter speed outrages
-			double a = 2 * 9.8 * (lastLocationMillis - prevLocationMillis) / 1000;
-			if (Math.abs(lastKnownLocation.getSpeed() - prevSpeed) > a)
+			if (justStarted)
 			{
-				lastKnownLocation.setSpeed(prevSpeed);
+				justStarted = prevSpeed == 0;
+			}
+			else if (lastKnownLocation.getSpeed() > 0)
+			{
+				// filter speed outrages
+				double a = 2 * 9.8 * (lastLocationMillis - prevLocationMillis) / 1000;
+				if (Math.abs(lastKnownLocation.getSpeed() - prevSpeed) > a)
+					lastKnownLocation.setSpeed(prevSpeed);
 			}
 
 			// smooth speed
@@ -641,7 +648,8 @@ public class LocationService extends Service implements LocationListener, NmeaLi
             {
                 //String selectionMode = tokens[1]; // m=manual, a=auto 2d/3d
                 //String mode = tokens[2]; // 1=no fix, 2=2d, 3=3d
-                String pdop = tokens[15];
+                @SuppressWarnings("unused")
+				String pdop = tokens[15];
                 String hdop = tokens[16];
                 String vdop = tokens[17];
                 if (! "".equals(hdop))
