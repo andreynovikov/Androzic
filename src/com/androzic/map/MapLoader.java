@@ -91,7 +91,10 @@ public class MapLoader
 		    String[] fields;
 		    String line = reader.readLine();
 		    if (! line.startsWith("OziExplorer Map Data File"))
+		    {
+		    	reader.close();
 				throw new IllegalArgumentException("Bad map header: " + map.mappath);
+		    }
 		    line = reader.readLine();
 		    map.title = line;
 		    line = reader.readLine();
@@ -104,10 +107,13 @@ public class MapLoader
 		    fields = CSV.parseLine(line);
 		    if (fields[0].equals("MSF"))
 		    	map.scaleFactor = 1 / Double.parseDouble(fields[1]);
-		    reader.readLine(); // Reserved
+		    line = reader.readLine(); // Reserved
 		    while ((line = reader.readLine()) != null)
 			{
 				fields = CSV.parseLine(line);
+				if (fields.length == 0)
+					continue;
+				
 				if (fields[0].startsWith("Point") && fields.length == 17)
 				{
 					MapPoint point = parsePoint(map, fields);
@@ -143,6 +149,7 @@ public class MapLoader
 					}
 					catch (Exception e)
 					{
+				    	reader.close();
 						e.printStackTrace();
 						throw new IllegalArgumentException("Bad XY corner marker: " + map.mappath);
 					}
@@ -159,6 +166,7 @@ public class MapLoader
 					}
 					catch (Exception e)
 					{
+				    	reader.close();
 						e.printStackTrace();
 						throw new IllegalArgumentException("Bad LL corner marker: " + map.mappath);
 					}
@@ -172,7 +180,10 @@ public class MapLoader
 					map.prjName = fields[1];
 					String prj4spec = projections.get(map.prjName);
 					if (prj4spec == null)
+					{
+				    	reader.close();
 						throw new ProjectionException("Unimplemented projection: "+map.prjName);
+					}
 					map.projection = ProjectionFactory.fromPROJ4Specification(prj4spec.split(" "));
 				}
 				if ("Projection Setup".equals(fields[0]))
@@ -182,7 +193,10 @@ public class MapLoader
 			}
 			Datum datum = Datum.get(map.datum);
 			if (datum == null)
+			{
+		    	reader.close();
 				throw new IllegalArgumentException("Datum "+map.datum+" not found");
+			}
 			
 			if (! Datum.WGS_1984.equals(datum))
 				map.projection.setEllipsoid(datum.getEllipsoid());
