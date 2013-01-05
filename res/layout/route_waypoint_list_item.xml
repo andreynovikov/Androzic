@@ -20,7 +20,7 @@
             android:id="@+id/distance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="25"
+            android:layout_weight="20"
             android:gravity="right"
             android:singleLine="true" />
 
@@ -28,7 +28,7 @@
             android:id="@+id/course"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="25"
+            android:layout_weight="20"
             android:gravity="right"
             android:singleLine="true" />
 
@@ -36,7 +36,7 @@
             android:id="@+id/ete"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="25"
+            android:layout_weight="20"
             android:gravity="right"
             android:singleLine="true" />
 
@@ -44,7 +44,7 @@
             android:id="@+id/total_distance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="25"
+            android:layout_weight="20"
             android:gravity="right"
             android:singleLine="true"
             android:textStyle="bold" />
@@ -53,7 +53,7 @@
             android:id="@+id/eta"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="25"
+            android:layout_weight="20"
             android:gravity="right"
             android:singleLine="true"
             android:textStyle="bold" />
