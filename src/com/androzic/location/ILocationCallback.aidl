@@ -24,7 +24,7 @@ import android.location.Location;
 
 oneway interface ILocationCallback
 {
-	void onLocationChanged(in Location loc, boolean continous, float smoothspeed, float avgspeed);
+	void onLocationChanged(in Location loc, boolean continous, boolean geoid, float smoothspeed, float avgspeed);
 	void onSensorChanged(float azimuth, float pitch, float roll);
 	void onProviderChanged(String provider);
 	void onProviderDisabled(String provider);

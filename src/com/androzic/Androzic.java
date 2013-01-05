@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +46,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -61,6 +64,7 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
@@ -75,12 +79,12 @@ import com.androzic.overlay.AccuracyOverlay;
 import com.androzic.overlay.CurrentTrackOverlay;
 import com.androzic.overlay.DistanceOverlay;
 import com.androzic.overlay.LatLonGridOverlay;
+import com.androzic.overlay.MapObjectsOverlay;
 import com.androzic.overlay.MapOverlay;
 import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.OtherGridOverlay;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.overlay.ScaleOverlay;
-import com.androzic.overlay.SharingOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.overlay.WaypointsOverlay;
 import com.androzic.track.TrackingService;
@@ -122,11 +126,15 @@ public class Androzic extends Application
 	private double[] shouldBeVisible = new double[] {Double.NaN, Double.NaN};
 	private double magneticDeclination = 0;
 	
+	private AbstractMap<Long, MapObject> mapObjects = new HashMap<Long, MapObject>();
 	private List<Waypoint> waypoints = new ArrayList<Waypoint>();
 	private List<WaypointSet> waypointSets = new ArrayList<WaypointSet>();
 	private WaypointSet defWaypointSet;
 	private List<Track> tracks = new ArrayList<Track>();
 	private List<Route> routes = new ArrayList<Route>();
+
+	private AbstractMap<String, Intent> pluginPreferences = new HashMap<String, Intent>();
+	private AbstractMap<String, Intent> pluginViews = new HashMap<String, Intent>();
 	
 	public boolean hasCompass = false;
 	private boolean memmsg = false;
@@ -136,10 +144,10 @@ public class Androzic extends Application
 	public OtherGridOverlay grGridOverlay;
 	public CurrentTrackOverlay currentTrackOverlay;
 	public NavigationOverlay navigationOverlay;
+	public MapObjectsOverlay mapObjectsOverlay;
 	public WaypointsOverlay waypointsOverlay;
 	public DistanceOverlay distanceOverlay;
 	public AccuracyOverlay accuracyOverlay;
-	public SharingOverlay sharingOverlay;
 	public ScaleOverlay scaleOverlay;
 	public List<TrackOverlay> fileTrackOverlays = new ArrayList<TrackOverlay>();
 	public List<RouteOverlay> routeOverlays = new ArrayList<RouteOverlay>();
@@ -210,9 +218,9 @@ public class Androzic extends Application
 		{
 			accuracyOverlay.setMapContext(mapActivity);
 		}
-		if (sharingOverlay != null)
+		if (mapObjectsOverlay != null)
 		{
-			sharingOverlay.setMapContext(mapActivity);
+			mapObjectsOverlay.setMapContext(mapActivity);
 		}
 		if (scaleOverlay != null)
 		{
@@ -242,8 +250,8 @@ public class Androzic extends Application
 				overlays.add(waypointsOverlay);
 			if (scaleOverlay != null)
 				overlays.add(scaleOverlay);
-			if (sharingOverlay != null)
-				overlays.add(sharingOverlay);
+			if (mapObjectsOverlay != null)
+				overlays.add(mapObjectsOverlay);
 			if (distanceOverlay != null)
 				overlays.add(distanceOverlay);
 		}
@@ -263,8 +271,8 @@ public class Androzic extends Application
 			if (waypointsOverlay != null)
 				overlays.add(waypointsOverlay);
 			overlays.addAll(fileTrackOverlays);
-			if (sharingOverlay != null)
-				overlays.add(sharingOverlay);
+			if (mapObjectsOverlay != null)
+				overlays.add(mapObjectsOverlay);
 			if (grGridOverlay != null)
 				overlays.add(grGridOverlay);
 			if (llGridOverlay != null)
@@ -302,6 +310,16 @@ public class Androzic extends Application
 		});
 	}
 	
+	public java.util.Map<String, Intent> getPluginsPreferences()
+	{
+		return pluginPreferences;
+	}
+	
+	public java.util.Map<String, Intent> getPluginsViews()
+	{
+		return pluginViews;
+	}
+	
 	public Zenith getZenith()
 	{
 		switch (sunriseType)
@@ -317,6 +335,40 @@ public class Androzic extends Application
 			default:
 				return Zenith.OFFICIAL;
 		}
+	}
+
+	public long getNewUID()
+	{
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		long uid = preferences.getLong(getString(R.string.app_lastuid), 0);
+		uid++;
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putLong(getString(R.string.app_lastuid), uid);
+		editor.commit();
+		return uid;
+	}
+
+	public long addMapObject(MapObject mapObject)
+	{
+		mapObject._id = getNewUID();
+		mapObjects.put(mapObject._id, mapObject);
+		return mapObject._id;
+	}
+	
+	public boolean removeMapObject(long id)
+	{
+		MapObject mo = mapObjects.remove(id);
+		return mo != null;
+	}
+	
+	public MapObject getMapObject(long id)
+	{
+		return mapObjects.get(id);
+	}
+
+	public Iterable<MapObject> getMapObjects()
+	{
+		return mapObjects.values();
 	}
 
 	public int addWaypoint(final Waypoint newWaypoint)
@@ -477,7 +529,7 @@ public class Androzic extends Application
 		saveWaypoints(defWaypointSet);
 	}
 
-	public void ensureVisible(Waypoint waypoint)
+	public void ensureVisible(MapObject waypoint)
 	{
 		ensureVisible(waypoint.latitude, waypoint.longitude);
 	}
@@ -1351,6 +1403,9 @@ public class Androzic extends Application
 	
 	public void clear()
 	{
+		// send finalization broadcast
+		sendBroadcast(new Intent("com.androzic.plugins.action.FINALIZE"));
+
 		clearRoutes();
 		clearTracks();
 		clearWaypoints();
@@ -1640,6 +1695,7 @@ public class Androzic extends Application
 			    	iconX = Integer.parseInt(fields[0]);
 			    	iconY = Integer.parseInt(fields[1]);
 			    }
+			    reader.close();
 			}
 			catch (IOException e)
 			{
@@ -1708,6 +1764,35 @@ public class Androzic extends Application
 			catch (Exception ex)
 			{
 			}
+		}
+	}
+	
+	public void initializePlugins()
+	{
+		// send initialization broadcast
+		sendBroadcast(new Intent("com.androzic.plugins.action.INITIALIZE"));
+
+		PackageManager packageManager = getPackageManager();
+		List<ResolveInfo> plugins;
+		
+		// If the plugin needs data from the main application, create a ContentProvider to make the data available.
+
+		// enumerate plugins with preferences
+		plugins = packageManager.queryIntentActivities(new Intent("com.androzic.plugins.preferences"), 0);
+		for (ResolveInfo plugin : plugins)
+		{
+            Intent intent = new Intent();
+            intent.setClassName(plugin.activityInfo.packageName, plugin.activityInfo.name);
+			pluginPreferences.put(plugin.activityInfo.loadLabel(packageManager).toString(), intent);
+		}
+
+		// enumerate plugins with views
+		plugins = packageManager.queryIntentActivities(new Intent("com.androzic.plugins.view"), 0);
+		for (ResolveInfo plugin : plugins)
+		{
+            Intent intent = new Intent();
+            intent.setClassName(plugin.activityInfo.packageName, plugin.activityInfo.name);
+			pluginViews.put(plugin.activityInfo.loadLabel(packageManager).toString(), intent);
 		}
 	}
 

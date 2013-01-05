@@ -26,4 +26,5 @@ interface ILocationRemoteService
 {
     void registerCallback(ILocationCallback cb);
     void unregisterCallback(ILocationCallback cb);
+    boolean isLocating();
 }

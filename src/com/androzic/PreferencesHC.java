@@ -24,7 +24,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.backup.BackupManager;
 import android.content.Intent;
@@ -50,6 +52,7 @@ import com.androzic.map.online.TileProvider;
 import com.androzic.ui.SeekbarPreference;
 import com.androzic.util.DirFileFilter;
 
+@SuppressLint("NewApi")
 public class PreferencesHC extends PreferenceActivity
 {
     protected void onCreate(Bundle savedInstanceState)
@@ -96,11 +99,19 @@ public class PreferencesHC extends PreferenceActivity
 		{
 			super.onCreate(savedInstanceState);
 
-			int res = getActivity().getResources().getIdentifier(getArguments().getString("resource"), "xml", getActivity().getPackageName());
-
-			addPreferencesFromResource(res);
+			Bundle arguments = getArguments();
 			
-			if (getArguments().getBoolean("disable", false))
+			if (arguments == null)
+				return;
+			
+			String resource = arguments.getString("resource");
+			if (resource != null)
+			{
+				int res = getActivity().getResources().getIdentifier(resource, "xml", getActivity().getPackageName());
+				addPreferencesFromResource(res);
+			}
+			
+			if (arguments.getBoolean("disable", false))
 			{
 				PreferenceScreen screen = getPreferenceScreen();
 				for (int i = 0; i < screen.getPreferenceCount(); i++)
@@ -250,11 +261,31 @@ public class PreferencesHC extends PreferenceActivity
 	    	}
 	    }
 	}
-/*
-	public static class SharingPreferencesFragment extends PreferencesHC.PreferencesFragment
+
+	public static class PluginsPreferencesFragment extends PreferencesHC.PreferencesFragment
 	{
+		@Override
+		public void onCreate(Bundle savedInstanceState)
+		{
+			super.onCreate(savedInstanceState);
+
+			PreferenceScreen root = getPreferenceManager().createPreferenceScreen(getActivity());
+			root.setTitle(R.string.pref_plugins_title);
+			setPreferenceScreen(root);
+
+			Androzic application = (Androzic) getActivity().getApplication();
+			Map<String, Intent> plugins = application.getPluginsPreferences();
+
+			for (String plugin : plugins.keySet())
+			{
+				Preference preference = new Preference(getActivity());
+				preference.setTitle(plugin);
+				preference.setIntent(plugins.get(plugin));
+				root.addPreference(preference);
+			}
+		}
 	}
-*/
+
 	public static class OnlineMapPreferencesFragment extends PreferencesHC.PreferencesFragment
 	{
 	    @Override

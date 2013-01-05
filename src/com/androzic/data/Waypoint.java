@@ -22,15 +22,11 @@ package com.androzic.data;
 
 import java.util.Date;
 
-public class Waypoint
+public class Waypoint extends MapObject
 {
 	public String name = "";
 	public String description = "";
-	public double latitude = 0;
-	public double longitude = 0;
 	public boolean silent = false;
-	public int proximity = 0;
-	public int altitude = Integer.MIN_VALUE;
 	public String image = "";
 	public boolean drawImage = false;
 	public WaypointSet set = null;
@@ -40,19 +36,18 @@ public class Waypoint
 
 	public Waypoint()
 	{
+		super();
 	}
 
-	public Waypoint(double lat, double lon)
+	public Waypoint(double latitude, double longitude)
 	{
-		latitude = lat;
-		longitude = lon;
+		super(latitude, longitude);
 	}
 
 	public Waypoint(String aName, String aDescription, double lat, double lon)
 	{
+		super(lat, lon);
 		name = aName;
 		description = aDescription;
-		latitude = lat;
-		longitude = lon;
 	}
 }

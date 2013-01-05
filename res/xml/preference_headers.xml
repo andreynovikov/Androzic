@@ -28,8 +28,7 @@
 	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_navigation_title">
 		<extra android:name="resource" android:value="pref_navigation" />
 	</header>
-	<header android:id="@+id/pref_sharing" android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_sharing_title">
-		<extra android:name="resource" android:value="pref_sharing" />
+	<header android:id="@+id/pref_plugins" android:fragment="com.androzic.PreferencesHC$PluginsPreferencesFragment" android:title="@string/pref_plugins_title">
 	</header>
    	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_advanced_title">
 		<extra android:name="resource" android:value="pref_general" />

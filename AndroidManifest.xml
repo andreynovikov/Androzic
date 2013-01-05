@@ -20,8 +20,8 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    android:installLocation="auto"
     package="com.androzic"
+    android:installLocation="auto"
     android:versionCode="83"
     android:versionName="1.6" >
 
@@ -49,15 +49,43 @@
         android:name="android.hardware.screen.portrait"
         android:required="false" />
 
+    <permission
+        android:name="com.androzic.permission.RECEIVE_LOCATION"
+        android:description="@string/perm_location_description"
+        android:icon="@drawable/icon"
+        android:label="@string/perm_location_title"
+        android:protectionLevel="dangerous" />
+    <permission
+        android:name="com.androzic.permission.RECEIVE_TRACK"
+        android:description="@string/perm_tracking_description"
+        android:icon="@drawable/icon"
+        android:label="@string/perm_tracking_title"
+        android:protectionLevel="dangerous" />
+    <permission
+        android:name="com.androzic.permission.READ_PREFERENCES"
+        android:label="@string/perm_read_preferences_title"
+        android:protectionLevel="dangerous" />
+    <permission
+        android:name="com.androzic.permission.READ_MAP_DATA"
+        android:label="@string/perm_read_map_data_title"
+        android:protectionLevel="dangerous" />
+    <permission
+        android:name="com.androzic.permission.WRITE_MAP_DATA"
+        android:label="@string/perm_write_map_data_title"
+        android:protectionLevel="dangerous" />
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.androzic.permission.RECEIVE_LOCATION" />
+    <uses-permission android:name="com.androzic.permission.RECEIVE_TRACK" />
 
     <application
         android:name=".Androzic"
+        android:allowBackup="true"
         android:backupAgent="Backup"
         android:description="@string/homepage"
         android:icon="@drawable/icon"
@@ -120,6 +148,7 @@
         <activity
             android:name=".Preferences"
             android:label="@string/pref_name" />
+        <activity android:name=".Preferences$PluginsPreferences" />
         <activity android:name=".Preferences$InnerPreferences" />
         <activity android:name=".Preferences$OnlineMapPreferences" />
         <activity android:name=".Preferences$FolderPreferences" />
@@ -206,6 +235,9 @@
             <intent-filter>
                 <action android:name="com.androzic.COORDINATES_RECEIVED" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="com.androzic.CENTER_ON_COORDINATES" />
+            </intent-filter>
         </receiver>
         <receiver
             android:name=".LocationWidget"
@@ -221,12 +253,25 @@
         </receiver>
 
         <provider
-            android:name=".SuggestionProvider"
-            android:authorities="com.androzic.SuggestionProvider" />
+            android:name=".provider.PreferencesProvider"
+            android:authorities="com.androzic.PreferencesProvider"
+            android:readPermission="com.androzic.permission.READ_PREFERENCES"
+            android:exported="true" />
+        <provider
+            android:name=".provider.DataProvider"
+            android:authorities="com.androzic.DataProvider"
+            android:readPermission="com.androzic.permission.READ_MAP_DATA"
+            android:writePermission="com.androzic.permission.WRITE_MAP_DATA"
+            android:exported="true" />
+        <provider
+            android:name=".provider.SuggestionProvider"
+            android:authorities="com.androzic.SuggestionProvider"
+            android:exported="false" />
 
         <service
             android:name=".track.TrackingService"
-            android:icon="@drawable/icon" >
+            android:icon="@drawable/icon"
+            android:permission="com.androzic.permission.RECEIVE_TRACK" >
             <intent-filter>
                 <action android:name="com.androzic.tracking" />
                 <action android:name="com.androzic.track.ITrackingRemoteService" />
@@ -236,7 +281,15 @@
         </service>
         <service
             android:name=".location.LocationService"
-            android:icon="@drawable/icon" />
+            android:icon="@drawable/icon"
+            android:permission="com.androzic.permission.RECEIVE_LOCATION" >
+            <intent-filter>
+                <action android:name="com.androzic.location" />
+                <action android:name="com.androzic.location.ILocationRemoteService" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
         <service
             android:name=".WidgetService"
             android:icon="@drawable/widget_icon"

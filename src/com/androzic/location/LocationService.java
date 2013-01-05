@@ -47,6 +47,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteCallbackList;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -105,6 +107,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	private float VDOP = Float.NaN;
 
 	private final Binder binder = new LocalBinder();
+    private final RemoteCallbackList<ILocationCallback> remoteCallbacks = new RemoteCallbackList<ILocationCallback>();
 	private final Set<ILocationListener> callbacks = new HashSet<ILocationListener>();
 
 	@Override
@@ -183,10 +186,34 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 		Log.i(TAG, "Service stopped");
 	}
 
+    private final ILocationRemoteService.Stub remoteBinder = new ILocationRemoteService.Stub()
+    {
+        public void registerCallback(ILocationCallback cb)
+        {
+        	Log.i(TAG, "Register callback");
+            if (cb != null) remoteCallbacks.register(cb);
+        }
+        public void unregisterCallback(ILocationCallback cb)
+        {
+            if (cb != null) remoteCallbacks.unregister(cb);
+        }
+        public boolean isLocating()
+        {
+        	return locationsEnabled;
+        }
+    };
+
 	@Override
 	public IBinder onBind(Intent intent)
 	{
-		return binder;
+        if ("com.androzic.location".equals(intent.getAction()) || ILocationRemoteService.class.getName().equals(intent.getAction()))
+        {
+            return remoteBinder;
+        }
+        else
+        {
+        	return binder;
+        }
 	}
 
 	@Override
@@ -295,7 +322,21 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 				}
 			});
 		}
-		Log.d(TAG, "Location dispatched: " + callbacks.size());
+    	final int n = remoteCallbacks.beginBroadcast();
+        for (int i=0; i<n; i++)
+        {
+            final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+            try
+            {
+				callback.onLocationChanged(location, continous, geoid, smoothspeed, avgspeed);
+            } 
+            catch (RemoteException e)
+            {
+            	Log.e(TAG, "Location broadcast error", e);
+            }
+        }
+        remoteCallbacks.finishBroadcast();
+		Log.d(TAG, "Location dispatched: " + (callbacks.size() + n));
 	}
 
 	void updateLocation(final ILocationListener callback)
@@ -321,6 +362,20 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 				}
 			});
 		}
+    	final int n = remoteCallbacks.beginBroadcast();
+        for (int i=0; i<n; i++)
+        {
+            final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+            try
+            {
+				callback.onSensorChanged(a, p, r);
+            }
+            catch (RemoteException e)
+            {
+            	Log.e(TAG, "Sensor broadcast error", e);
+            }
+        }
+        remoteCallbacks.finishBroadcast();
 	}
 
 	void updateSensor(final ILocationListener callback)
@@ -344,7 +399,24 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 				}
 			});
 		}
-		Log.d(TAG, "Provider status dispatched: " + callbacks.size());
+    	final int n = remoteCallbacks.beginBroadcast();
+        for (int i=0; i<n; i++)
+        {
+            final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+            try
+            {
+				if (enabled)
+					callback.onProviderEnabled(provider);
+				else
+					callback.onProviderDisabled(provider);
+            } 
+            catch (RemoteException e)
+            {
+            	Log.e(TAG, "Provider broadcast error", e);
+            }
+        }
+        remoteCallbacks.finishBroadcast();
+		Log.d(TAG, "Provider status dispatched: " + (callbacks.size() + n));
 	}
 
 	void updateProvider(final ILocationListener callback)
@@ -370,7 +442,21 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 				}
 			});
 		}
-		Log.d(TAG, "GPS status dispatched: " + callbacks.size());
+    	final int n = remoteCallbacks.beginBroadcast();
+        for (int i=0; i<n; i++)
+        {
+            final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+            try
+            {
+				callback.onGpsStatusChanged(LocationManager.GPS_PROVIDER, status, fsats, tsats);
+            } 
+            catch (RemoteException e)
+            {
+            	Log.e(TAG, "Status broadcast error", e);
+            }
+        }
+        remoteCallbacks.finishBroadcast();
+		Log.d(TAG, "GPS status dispatched: " + (callbacks.size() + n));
 	}
 
 	@Override
@@ -533,7 +619,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 
         try
         {
-            if (sentenceId.equals("GGA"))
+            if (sentenceId.equals("GGA") && tokens.length > 11)
             {
                 //String time = tokens[1];
                 //String latitude = tokens[2];
@@ -551,14 +637,13 @@ public class LocationService extends Service implements LocationListener, NmeaLi
                 //String heightOfGeoidUnits = tokens[12];
                 //String timeSinceLastDgpsUpdate = tokens[13];
             }
-            else if (sentenceId.equals("GSA"))
+            else if (sentenceId.equals("GSA") && tokens.length > 17)
             {
                 //String selectionMode = tokens[1]; // m=manual, a=auto 2d/3d
                 //String mode = tokens[2]; // 1=no fix, 2=2d, 3=3d
                 String pdop = tokens[15];
                 String hdop = tokens[16];
                 String vdop = tokens[17];
-                Log.e(TAG, "PDOP: "+pdop+" HDOP: "+hdop+" VDOP: "+vdop);
                 if (! "".equals(hdop))
                 	HDOP = Float.parseFloat(hdop);
                 if (! "".equals(vdop))

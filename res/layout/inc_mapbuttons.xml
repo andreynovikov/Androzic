@@ -105,15 +105,6 @@
             android:src="@drawable/doc_edit" />
 
         <ImageButton
-            android:id="@+id/share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:paddingBottom="8dip"
-            android:paddingTop="8dip"
-            android:src="@drawable/users" />
-
-        <ImageButton
             android:id="@+id/expand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

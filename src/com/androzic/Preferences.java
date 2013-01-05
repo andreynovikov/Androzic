@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import android.app.AlertDialog;
 import android.app.backup.BackupManager;
@@ -58,8 +59,9 @@ public class Preferences extends PreferenceActivity
 
         addPreferencesFromResource(R.xml.preferences);
         
-        PreferenceScreen root = this.getPreferenceScreen();
-    	for (int i=root.getPreferenceCount()-1; i>=0; i--)
+        PreferenceScreen root = getPreferenceScreen();
+        
+        for (int i=root.getPreferenceCount()-1; i>=0; i--)
     	{
     		Preference pref = root.getPreference(i);
     		final String key = pref.getKey();
@@ -100,6 +102,10 @@ public class Preferences extends PreferenceActivity
 		else if ("pref_folder".equals(key))
 		{
 			activity = Preferences.FolderPreferences.class;
+		}
+		else if ("pref_plugins".equals(key))
+		{
+			activity = Preferences.PluginsPreferences.class;
 		}
 		else if ("pref_application".equals(key))
 		{
@@ -265,6 +271,33 @@ public class Preferences extends PreferenceActivity
 	            }
 	    	}
 	    }
+	}
+
+	/**
+	 * Preference lists Androzic plugins preferences.
+	 */
+	public static class PluginsPreferences extends PreferenceActivity
+	{
+		@Override
+		public void onCreate(Bundle savedInstanceState)
+		{
+			super.onCreate(savedInstanceState);
+
+			PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
+			root.setTitle(R.string.pref_plugins_title);
+			setPreferenceScreen(root);
+
+			Androzic application = (Androzic) getApplication();
+			Map<String, Intent> plugins = application.getPluginsPreferences();
+
+			for (String plugin : plugins.keySet())
+			{
+				Preference preference = new Preference(this);
+				preference.setTitle(plugin);
+				preference.setIntent(plugins.get(plugin));
+				root.addPreference(preference);
+			}
+		}
 	}
 
 	public static class OnlineMapPreferences extends Preferences.InnerPreferences

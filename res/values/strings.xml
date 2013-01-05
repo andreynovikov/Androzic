@@ -42,6 +42,7 @@
     <string name="msg_loadingmapfile">Loading world map data file&#8230;</string>
     <string name="msg_initializingmaps">Initializing maps&#8230;</string>
     <string name="msg_initializingdata">Initializing data&#8230;</string>
+    <string name="msg_initializingplugins">Initializing plugins&#8230;</string>
     <string name="msg_initializingview">Initializing view&#8230;</string>
     <string name="msg_cleaning">Cleaning&#8230;</string>
     <string name="msg_paid">Donated version</string>
@@ -200,6 +201,7 @@
     <string name="action_bar_sort_alpha">Alphabetically</string>
     <string name="action_bar_sort_distance">By distance</string>
     
+    <string name="pref_plugins_title">Plugins</string>
     <string name="pref_advanced_title">Advanced</string>
 	<string name="pref_usemapindex_title">Use map index</string>
 	<string name="pref_useonlinemap_title">Use online map</string>
@@ -325,18 +327,6 @@
 	<string name="pref_navigation_proximitycircle_summary">Mark to draw proximity circle around route waypoints during navigation</string>
 	<string name="pref_navigation_linewidth_title">Bearing line width</string>
 	<string name="pref_navigation_linewidth_summary">Width of a bearing line to current navigation waypoint</string>
-	<string name="pref_sharing_title">Location sharing</string>
-	<string name="pref_sharing_session_title">Session title</string>
-	<string name="pref_sharing_session_summary">Unique string identifying a session, it must be the same for all users in a group and must be secret to not let unwanted users join this group</string>
-	<string name="pref_sharing_user_title">User identifier</string>
-	<string name="pref_sharing_user_summary">Unique string identifying a user within a session group</string>
-	<string name="pref_sharing_updateinterval_title">Update interval</string>
-	<string name="pref_sharing_updateinterval_summary">Time interval in seconds at which location data is sent and received</string>
-	<string name="pref_sharing_timeout_title">Location timeout</string>
-	<string name="pref_sharing_timeout_summary">Time after which user will be displayed as lost</string>
-	<string name="pref_sharing_tagcolor_title">Tag color</string>	
-	<string name="pref_sharing_tagwidth_title">Tag size</string>	
-	<string name="pref_sharing_tagwidth_summary">The pixel size of tag marker</string>
 	<string name="pref_application_title">About and feedback</string>
 	<string name="pref_about_title">About Androzic</string>
 	<string name="pref_donate_title">Donate</string>
@@ -354,6 +344,14 @@
 	<string name="notif_nav_short">Navigating</string>
 	<string name="notif_nav_started">Androzic is navigating you</string>
 	<string name="notif_nav_to">Androzic is navigating to %s</string>
+	
+	<string name="perm_location_title">Get location</string>
+	<string name="perm_location_description">Access location provided by Androzic</string>
+	<string name="perm_tracking_title">Get track</string>
+	<string name="perm_tracking_description">Receive track provided by Androzic</string>
+	<string name="perm_read_preferences_title">Read Androzic user preferences</string>
+	<string name="perm_read_map_data_title">Get data from Androzic map</string>
+	<string name="perm_write_map_data_title">Add data to Androzic map</string>
 	
 	<string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,

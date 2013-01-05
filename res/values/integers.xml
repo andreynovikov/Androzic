@@ -12,9 +12,6 @@
 <integer name="def_route_linewidth">2</integer>
 <integer name="def_route_pointwidth">6</integer>
 <integer name="def_navigation_linewidth">5</integer>
-<integer name="def_sharing_updateinterval">60</integer>
-<integer name="def_sharing_timeout">10</integer>
-<integer name="def_sharing_tagwidth">8</integer>
 <integer name="def_onlinemapscale">14</integer>
 <integer name="def_cursorvectormlpr">10</integer>
 </resources>

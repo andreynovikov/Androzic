@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
@@ -75,6 +76,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -101,10 +103,10 @@ import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.AccuracyOverlay;
 import com.androzic.overlay.CurrentTrackOverlay;
 import com.androzic.overlay.DistanceOverlay;
+import com.androzic.overlay.MapObjectsOverlay;
 import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.overlay.ScaleOverlay;
-import com.androzic.overlay.SharingOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.overlay.WaypointsOverlay;
 import com.androzic.route.RouteDetails;
@@ -218,7 +220,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 	private boolean animationSet;
 	private boolean isFullscreen;
-	private boolean isSharing;
 	private String[] panelActions;
 	private List<String> activeActions;
 	LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF555555);
@@ -236,7 +237,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 		ready = false;
 		isFullscreen = false;
-		isSharing = false;
 
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 		{
@@ -244,6 +244,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 
 		application = (Androzic) getApplication();
+
+		//FIXME Should find a better place for this
+		application.mapObjectsOverlay = new MapObjectsOverlay(this);
 
 		final MapState mapState = (MapState) getLastNonConfigurationInstance();
 		if (mapState != null)
@@ -313,7 +316,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		findViewById(R.id.follow).setOnClickListener(this);
 		findViewById(R.id.locate).setOnClickListener(this);
 		findViewById(R.id.tracking).setOnClickListener(this);
-		findViewById(R.id.share).setOnClickListener(this);
 		findViewById(R.id.expand).setOnClickListener(this);
 		findViewById(R.id.finishedit).setOnClickListener(this);
 		findViewById(R.id.addpoint).setOnClickListener(this);
@@ -434,6 +436,11 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				launch.removeExtra("launch");
 				startActivity(launch);
 			}
+		}
+		else if (intent.hasExtra("lat") && intent.hasExtra("lon"))
+		{
+			Androzic application = (Androzic) getApplication();
+			application.ensureVisible(intent.getExtras().getDouble("lat"), intent.getExtras().getDouble("lon"));
 		}
 	}
 
@@ -983,9 +990,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 							boolean isTracking =  trackingService != null && trackingService.isTracking();
 							aib.setImageDrawable(getResources().getDrawable(isTracking ? R.drawable.doc_delete : R.drawable.doc_edit));
 							break;
-						case R.id.share:
-							aib.setImageDrawable(getResources().getDrawable(isSharing ? R.drawable.user : R.drawable.users));
-							break;
 					}
 				}
 				else
@@ -1270,7 +1274,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		boolean navEnabled = false;
 		boolean distEnabled = false;
 		boolean accEnabled = false;
-		boolean shareEnabled = false;
+		boolean moEnabled = false;
 		boolean scaleEnabled = false;
 
 		if (!justRemove)
@@ -1280,7 +1284,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			distEnabled = showDistance > 0;
 			accEnabled = showAccuracy;
 			navEnabled = navigationService != null && navigationService.isNavigating();
-			shareEnabled = isSharing;
+			moEnabled = true;
 			scaleEnabled = true;
 		}
 		if (ctEnabled && application.currentTrackOverlay == null)
@@ -1316,10 +1320,10 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			application.distanceOverlay.onBeforeDestroy();
 			application.distanceOverlay = null;
 		}
-		if (!shareEnabled && application.sharingOverlay != null)
+		if (!moEnabled && application.mapObjectsOverlay != null)
 		{
-			application.sharingOverlay.onBeforeDestroy();
-			application.sharingOverlay = null;
+			application.mapObjectsOverlay.onBeforeDestroy();
+			application.mapObjectsOverlay = null;
 		}
 		if (scaleEnabled && application.scaleOverlay == null)
 		{
@@ -1376,9 +1380,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			{
 				application.navigationOverlay.onPreferencesChanged(settings);
 			}
-			if (application.sharingOverlay != null)
+			if (application.mapObjectsOverlay != null)
 			{
-				application.sharingOverlay.onPreferencesChanged(settings);
+				application.mapObjectsOverlay.onPreferencesChanged(settings);
 			}
 			if (application.distanceOverlay != null)
 			{
@@ -1563,6 +1567,16 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.options_menu, menu);
+		
+		// add plugins
+		SubMenu views = menu.findItem(R.id.menuView).getSubMenu();
+		Map<String, Intent> plugins = application.getPluginsViews();
+		for (String plugin : plugins.keySet())
+		{
+			MenuItem item = views.add(plugin);
+			item.setIntent(plugins.get(plugin));
+		}
+		
 		return true;
 	}
 
@@ -2111,6 +2125,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				editor.commit();
 				break;
 			}
+			/*
 			case R.id.share:
 				if (isSharing)
 				{
@@ -2158,6 +2173,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				isSharing = !isSharing;
 				updateMapButtons();
 				break;
+				*/
 			case R.id.expand:
 				ImageButton expand = (ImageButton) findViewById(R.id.expand);
 				if (isFullscreen)
@@ -2289,7 +2305,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		lastMagnetic = savedInstanceState.getLong("lastMagnetic");
 		lastDim = savedInstanceState.getLong("lastDim");
 		wasDimmed = savedInstanceState.getBoolean("wasDimmed");
-		isSharing = savedInstanceState.getBoolean("isSharing");
 		lastGeoid = savedInstanceState.getBoolean("lastGeoid");
 		
 		waypointSelected = savedInstanceState.getInt("waypointSelected");
@@ -2315,7 +2330,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		outState.putLong("lastMagnetic", lastMagnetic);
 		outState.putLong("lastDim", lastDim);
 		outState.putBoolean("wasDimmed", wasDimmed);
-		outState.putBoolean("isSharing", isSharing);
 		outState.putBoolean("lastGeoid", lastGeoid);
 		
 		outState.putInt("waypointSelected", waypointSelected);

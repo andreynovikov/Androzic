@@ -9,7 +9,7 @@
 	<Preference android:key="pref_waypoint" android:title="@string/pref_waypoint_title" />
 	<Preference android:key="pref_route" android:title="@string/pref_route_title" />
 	<Preference android:key="pref_navigation" android:title="@string/pref_navigation_title" />
-	<Preference android:key="pref_sharing" android:title="@string/pref_sharing_title" />
+	<Preference android:key="pref_plugins" android:title="@string/pref_plugins_title" />
    	<Preference android:key="pref_general" android:title="@string/pref_advanced_title" />
    	<Preference android:key="pref_application" android:title="@string/pref_application_title" />
 </PreferenceScreen>

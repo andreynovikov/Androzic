@@ -97,7 +97,6 @@ public class Splash extends Activity implements OnClickListener
 		PreferenceManager.setDefaultValues(this, R.xml.pref_waypoint, true);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_route, true);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_navigation, true);
-		PreferenceManager.setDefaultValues(this, R.xml.pref_sharing, true);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, true);
 
 		setContentView(R.layout.act_splash);
@@ -111,7 +110,7 @@ public class Splash extends Activity implements OnClickListener
 		message = (TextView) findViewById(R.id.message);
 
 		message.setText(getString(R.string.msg_connectingtoserver));
-		progress.setMax(DOWNLOAD_SIZE + PROGRESS_STEP * 3);
+		progress.setMax(DOWNLOAD_SIZE + PROGRESS_STEP * 4);
 
 		yes = (Button) findViewById(R.id.yes);
 		yes.setOnClickListener(this);
@@ -454,6 +453,22 @@ public class Splash extends Activity implements OnClickListener
 
 			// initialize maps
 			application.initializeMaps();
+
+			total += PROGRESS_STEP;
+			msg = mHandler.obtainMessage(MSG_PROGRESS);
+			b = new Bundle();
+			b.putInt("total", total);
+			msg.setData(b);
+			mHandler.sendMessage(msg);			
+
+			msg = mHandler.obtainMessage(MSG_STATUS);
+			b = new Bundle();
+			b.putString("message", getString(R.string.msg_initializingplugins));
+			msg.setData(b);
+			mHandler.sendMessage(msg);
+
+			// initialize plugins
+			application.initializePlugins();
 
 			total += PROGRESS_STEP;
 			msg = mHandler.obtainMessage(MSG_PROGRESS);
