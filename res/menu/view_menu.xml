@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menuGPS"
           android:title="@string/menu_gps"
-          android:icon="@android:drawable/ic_menu_compass"/>
+          android:icon="@drawable/ic_menu_compass"/>
     <item android:id="@+id/menuPreferences"
           android:title="@string/menu_preferences"
-          android:icon="@android:drawable/ic_menu_preferences" />
+          android:icon="@drawable/ic_menu_preferences" />
 </menu>
