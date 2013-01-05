@@ -43,6 +43,10 @@ public class ActionsReceiver extends BroadcastReceiver
 			activity.putExtras(intent);
 			activity.putExtra("launch", CoordinatesReceived.class);
 		}
+		if (action.equals("com.androzic.CENTER_ON_COORDINATES"))
+		{
+			activity.putExtras(intent);
+		}
 		context.startActivity(activity);
 	}
 }
