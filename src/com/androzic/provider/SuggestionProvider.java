@@ -18,7 +18,7 @@
  * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.androzic;
+package com.androzic.provider;
 
 import android.content.SearchRecentSuggestionsProvider;
 
