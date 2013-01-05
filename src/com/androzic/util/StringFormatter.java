@@ -38,10 +38,15 @@ public class StringFormatter
 	
 	final static DecimalFormat timeFormat = new DecimalFormat("00");
 
-	public static double distanceFactor = 1000.0;
+	public static double distanceFactor = 1.0;
 	public static String distanceAbbr = "km";
 	public static double distanceShortFactor = 1.0;
 	public static String distanceShortAbbr = "m";
+	
+	//FIXME Should localize:
+	public static String secondAbbr = "sec";
+	public static String minuteAbbr = "min";
+	public static String hourAbbr = "h";
 	
 	public static final String distanceH(final double distance)
 	{
@@ -167,14 +172,30 @@ public class StringFormatter
 		String[] time = timeC(minutes);
 		return time[0] + " " + time[1];
 	}
-	
+
+	public static final String timeHP(int seconds, int timeout)
+	{
+		String[] time = timeCP(seconds, timeout);
+		return time[0] + " " + time[1];
+	}
+
+	/**
+	 * Formats time period in four ways:<br/>
+	 * "< 1 min" - for 1 minute<br/>
+	 * "12 min" - for period less than 1 hour<br/>
+	 * "1:53 min" - for period more than 1 hour<br/>
+	 * "> 24 h" - for period more than 1 day
+	 * 
+	 * @param minutes time in minutes
+	 * @return Time period
+	 */
 	public static final String[] timeC(int minutes)
 	{
 		int hour = 0;
 		int min = minutes;
 
 		if (min <= 1)
-			return new String[] {"< 1", "min"};
+			return new String[] {"< 1", minuteAbbr};
 		
 		if (min > 59)
 		{
@@ -182,9 +203,44 @@ public class StringFormatter
 			min = min - hour * 60;
 		}
 		if (hour > 23)
-			return new String[] {"> 24", "h"};
+			return new String[] {"> 24", hourAbbr};
 		
-		return new String[] {timeFormat.format(hour)+":"+timeFormat.format(min), "min"};
+		return new String[] {timeFormat.format(hour)+":"+timeFormat.format(min), minuteAbbr};
+	}
+
+	/**
+	 * Formats time period in three ways:<br/>
+	 * "12 sec" - for period less than 1 minute<br/>
+	 * "34 min" - for period more than 1 minute<br/>
+	 * "> 40 min" - for period more than timeout (where 40 is timeout)
+	 * 
+	 * @param seconds time period in seconds
+	 * @param timeout timeout in seconds 
+	 * @return Time period
+	 */
+	public static final String[] timeCP(int seconds, int timeout)
+	{
+		int sec = seconds;
+		int min = 0;
+		boolean t = sec > timeout;
+
+		System.err.print("CP " + seconds + " " + timeout);
+		if (sec <= 59)
+		{
+			if (t)
+				return new String[] {"> " + String.valueOf(timeout), secondAbbr};
+			else
+				return new String[] {String.valueOf(sec), secondAbbr};
+		}
+		min = (int) Math.floor(sec / 60);
+		sec = sec - min * 60;
+		if (t)
+		{
+			min = (int) Math.floor(timeout / 60);
+			return new String[] {"> " + String.valueOf(min), minuteAbbr};
+		}
+		else
+			return new String[] {String.valueOf(min), minuteAbbr};
 	}
 
 	public static final String timeR(int minutes)
