@@ -56,10 +56,13 @@ public class MapObjectsOverlay extends MapOverlay
 		while (mapObjects.hasNext())
 		{
 			MapObject mo = mapObjects.next();
-			int[] xy = application.getXYbyLatLon(mo.latitude, mo.longitude);
-			int dx = mo.bitmap.getWidth() / 2;
-			int dy = mo.bitmap.getHeight() / 2;
-			c.drawBitmap(mo.bitmap, xy[0] - dx - cxy[0], xy[1] - dy - cxy[1], null);
+			synchronized (mo)
+			{
+				int[] xy = application.getXYbyLatLon(mo.latitude, mo.longitude);
+				int dx = mo.bitmap.getWidth() / 2;
+				int dy = mo.bitmap.getHeight() / 2;
+				c.drawBitmap(mo.bitmap, xy[0] - dx - cxy[0], xy[1] - dy - cxy[1], null);
+			}
 		}
 	}
 

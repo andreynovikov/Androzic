@@ -119,11 +119,14 @@ public class DataProvider extends ContentProvider
 		if (mo == null)
 			return 0;
 
-		mo.latitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LATITUDE_COLUMN]);
-		mo.longitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LONGITUDE_COLUMN]);
-		byte[] bytes = values.getAsByteArray(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BITMAP_COLUMN]);
-		mo.bitmap.recycle();
-		mo.bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		synchronized (mo)
+		{
+			mo.latitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LATITUDE_COLUMN]);
+			mo.longitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LONGITUDE_COLUMN]);
+			byte[] bytes = values.getAsByteArray(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BITMAP_COLUMN]);
+			mo.bitmap.recycle();
+			mo.bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		}
 
 		getContext().getContentResolver().notifyChange(uri, null);
 		return 1;
