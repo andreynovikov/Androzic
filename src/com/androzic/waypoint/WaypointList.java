@@ -241,7 +241,8 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
 	                    	if (! "".equals(name))
 	                    	{
 	                    		WaypointSet set = new WaypointSet(name);
-	                    		Androzic.getApplication().addWaypointSet(set);
+	                    		Androzic application = Androzic.getApplication();
+	                    		application.addWaypointSet(set);
 	                    		adapter.notifyDataSetChanged();
 	                    		
 	                    	}
@@ -263,7 +264,8 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		Androzic.getApplication().saveWaypoints();
+		Androzic application = Androzic.getApplication();
+		application.saveWaypoints();
 	}
 	
 	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener(){

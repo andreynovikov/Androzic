@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="SeekbarPreference">
-        <attr name="min" format="integer" />
-        <attr name="max" format="integer" />
-        <attr name="defaultValue" format="integer" />
-        <attr name="multiplier" format="float" />
-        <attr name="format" format="string" />
-    </declare-styleable>
-    <declare-styleable name="ColorPreference">
-        <attr name="defaultColor" format="color" />
-    </declare-styleable>
-    <declare-styleable name="FolderPickerPreference">
-        <attr name="defaultFolder" format="string" />
-    </declare-styleable>
     <declare-styleable name="ImageMultiChoiceListPreference">
         <attr name="entryImages" format="reference" />
     </declare-styleable>

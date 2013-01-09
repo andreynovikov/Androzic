@@ -38,7 +38,6 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -97,7 +96,7 @@ import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
 import com.jhlabs.map.proj.ProjectionException;
 
-public class Androzic extends Application
+public class Androzic extends BaseApplication
 {
 	public static final int PATH_WAYPOINTS = 0x001;
 	public static final int PATH_TRACKS = 0x002;
@@ -180,13 +179,6 @@ public class Androzic extends Application
 
 	private Handler mapsHandler = new Handler();
 
-    private static Androzic myself;
-
-    public static Androzic getApplication()
-    {
-    	return myself;
-    }
-    
 	protected void setMapActivity(MapActivity activity)
 	{
 		mapActivity = activity;
@@ -1814,7 +1806,7 @@ public class Androzic extends Application
 		super.onCreate();
 		Log.e("ANDROZIC","Application onCreate()");
 
-		myself = this;
+		setInstance(this);
 		handler = new Handler();
 		
         String intentToCheck = "com.androzic.donate";

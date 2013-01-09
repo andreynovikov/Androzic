@@ -93,7 +93,8 @@ public class DataProvider extends ContentProvider
 		byte[] bytes = values.getAsByteArray(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BITMAP_COLUMN]);
 		mo.bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-		long id = Androzic.getApplication().addMapObject(mo);
+		Androzic application = Androzic.getApplication();
+		long id = application.addMapObject(mo);
 		Uri objectUri = ContentUris.withAppendedId(DataContract.MAPOBJECTS_URI, id);
 		getContext().getContentResolver().notifyChange(objectUri, null);
 		return objectUri;
@@ -115,7 +116,8 @@ public class DataProvider extends ContentProvider
 			throw new IllegalArgumentException("Values can not be null");
 		}
 		long id = ContentUris.parseId(uri);
-		MapObject mo = Androzic.getApplication().getMapObject(id);
+		Androzic application = Androzic.getApplication();
+		MapObject mo = application.getMapObject(id);
 		if (mo == null)
 			return 0;
 
