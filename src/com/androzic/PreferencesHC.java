@@ -39,11 +39,11 @@ import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -402,8 +402,8 @@ public class PreferencesHC extends PreferenceActivity
 	        	}
 	        });
 	    	
-	        Preference prefDonate = (Preference) findPreference(getString(R.string.pref_donate));
-	        prefDonate.setOnPreferenceClickListener(new OnPreferenceClickListener()
+	        Preference prefDonateGoogle = (Preference) findPreference(getString(R.string.pref_donategoogle));
+	        prefDonateGoogle.setOnPreferenceClickListener(new OnPreferenceClickListener()
 	        {
 	        	public boolean onPreferenceClick(Preference preference)
 	        	{
@@ -412,12 +412,32 @@ public class PreferencesHC extends PreferenceActivity
 	        		return true;
 	        	}
 	        });
+	        Preference prefDonatePaypal = (Preference) findPreference(getString(R.string.pref_donatepaypal));
+	        prefDonatePaypal.setOnPreferenceClickListener(new OnPreferenceClickListener()
+	        {
+	        	public boolean onPreferenceClick(Preference preference)
+	        	{
+	        		startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.paypaluri))));
+	        		return true;
+	        	}
+	        });
 
 	    	Androzic application = (Androzic) getActivity().getApplication();
 	        if (application.isPaid)
 	        {
-	        	ApplicationPreferencesFragment.this.getPreferenceScreen().removePreference(prefDonate);
-			}
+	        	ApplicationPreferencesFragment.this.getPreferenceScreen().removePreference(prefDonateGoogle);
+	        	ApplicationPreferencesFragment.this.getPreferenceScreen().removePreference(prefDonatePaypal);
+	        }
+	        
+	        Preference prefGooglePlus = (Preference) findPreference(getString(R.string.pref_googleplus));
+	        prefGooglePlus.setOnPreferenceClickListener(new OnPreferenceClickListener()
+	        {
+	        	public boolean onPreferenceClick(Preference preference)
+	        	{
+	        		startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.googleplusuri))));
+	        		return true;
+	        	}
+	        });
 
 			Preference prefFacebook = (Preference) findPreference(getString(R.string.pref_facebook));
 	        prefFacebook.setOnPreferenceClickListener(new OnPreferenceClickListener()

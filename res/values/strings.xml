@@ -329,9 +329,12 @@
 	<string name="pref_navigation_linewidth_summary">Width of a bearing line to current navigation waypoint</string>
 	<string name="pref_application_title">About and feedback</string>
 	<string name="pref_about_title">About Androzic</string>
-	<string name="pref_donate_title">Donate</string>
+	<string name="pref_donate_google_title">Donate via Google Play Store</string>
+	<string name="pref_donate_paypal_title">Donate via PayPal</string>
+	<string name="pref_donate_summary">You can also donate through PayPal via a button located on a support web site</string>
 	<string name="pref_faq_title">F.A.Q.</string>
 	<string name="pref_feature_title">Request a feature</string>
+	<string name="pref_googleplus_title">Join on Google+</string>
 	<string name="pref_facebook_title">Like on Facebook</string>
 	<string name="pref_twitter_title">Follow on Twitter</string>
 	<string name="pref_uri_summary">Press to follow a link to web site</string>

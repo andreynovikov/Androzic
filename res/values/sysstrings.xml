@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="paypaluri">https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=novikov@gmail.com&amp;lc=GB&amp;item_name=Androzic&amp;currency_code=USD&amp;bn=PP-DonationsBF:btn_donateCC_LG_global.gif:NonHosted</string>
+    <string name="googleplusuri">https://plus.google.com/communities/104267455273813373911</string>
     <string name="facebookuri">http://www.facebook.com/androzic</string>
     <string name="twitteruri">http://twitter.com/Androzic</string>
     <string name="faquri">http://code.google.com/p/androzic/wiki/FAQ</string>
@@ -88,9 +90,11 @@
 	<string name="pref_sharing_tagcolor">sharing_tagcolor</string>
 	<string name="pref_sharing_tagwidth">sharing_tagwidth</string>
 	<string name="pref_about">about</string>
-	<string name="pref_donate">donate</string>
+	<string name="pref_donategoogle">donategoogle</string>
+	<string name="pref_donatepaypal">donatepaypal</string>
 	<string name="pref_faq">faq</string>
 	<string name="pref_feature">feature</string>
+	<string name="pref_googleplus">googleplus</string>
 	<string name="pref_facebook">facebook</string>
 	<string name="pref_twitter">twitter</string>
 	<string name="pref_credits">credits</string>

@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.backup.BackupManager;
 import android.content.Intent;
@@ -33,6 +34,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.EditTextPreference;
@@ -158,7 +160,8 @@ public class Preferences extends PreferenceActivity
 	        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);    
 	    }
 
-	    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+	    @SuppressLint("NewApi")
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	    {
 	        if (key.equals(getString(R.string.pref_folder_root)))
 	        {
@@ -214,7 +217,8 @@ public class Preferences extends PreferenceActivity
 	        sendBroadcast(new Intent("onSharedPreferenceChanged").putExtra("key", key));
 	        try
 	        {
-	        	BackupManager.dataChanged("com.androzic");
+	        	if (Build.VERSION.SDK_INT > 7)
+	        		BackupManager.dataChanged("com.androzic");
 	        }
 	        catch (NoClassDefFoundError e)
 	        {
@@ -418,8 +422,8 @@ public class Preferences extends PreferenceActivity
 	        	}
 	        });
 
-	        Preference prefDonate = (Preference) findPreference(getString(R.string.pref_donate));
-	        prefDonate.setOnPreferenceClickListener(new OnPreferenceClickListener()
+	        Preference prefDonateGoogle = (Preference) findPreference(getString(R.string.pref_donategoogle));
+	        prefDonateGoogle.setOnPreferenceClickListener(new OnPreferenceClickListener()
 	        {
 	        	public boolean onPreferenceClick(Preference preference)
 	        	{
@@ -428,13 +432,33 @@ public class Preferences extends PreferenceActivity
 	        		return true;
 	        	}
 	        });
+	        Preference prefDonatePaypal = (Preference) findPreference(getString(R.string.pref_donatepaypal));
+	        prefDonatePaypal.setOnPreferenceClickListener(new OnPreferenceClickListener()
+	        {
+	        	public boolean onPreferenceClick(Preference preference)
+	        	{
+	        		startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.paypaluri))));
+	        		return true;
+	        	}
+	        });
 
 	    	Androzic application = (Androzic) getApplication();
 	        if (application.isPaid)
 	        {
-	        	ApplicationPreferences.this.getPreferenceScreen().removePreference(prefDonate);
+	        	ApplicationPreferences.this.getPreferenceScreen().removePreference(prefDonateGoogle);
+	        	ApplicationPreferences.this.getPreferenceScreen().removePreference(prefDonatePaypal);
 	        }
 	        
+	        Preference prefGooglePlus = (Preference) findPreference(getString(R.string.pref_googleplus));
+	        prefGooglePlus.setOnPreferenceClickListener(new OnPreferenceClickListener()
+	        {
+	        	public boolean onPreferenceClick(Preference preference)
+	        	{
+	        		startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.googleplusuri))));
+	        		return true;
+	        	}
+	        });
+
 	        Preference prefFacebook = (Preference) findPreference(getString(R.string.pref_facebook));
 	        prefFacebook.setOnPreferenceClickListener(new OnPreferenceClickListener()
 	        {
