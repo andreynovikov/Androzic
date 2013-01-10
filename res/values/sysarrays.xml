@@ -156,6 +156,7 @@
 		<item><![CDATA[CloudMade (Midnight Commander),cmmc,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/999/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
 		<item><![CDATA[MapQuest,mq,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/osm/{$z}/{$x}/{$y}.png,0,1,2,3]]></item>
 		<item><![CDATA[MapQuest Open Aerial,mqoa,0,11,,http://oatile{$s}.mqcdn.com/naip/{$z}/{$x}/{$y}.png]]></item>
+		<item><![CDATA[OpenSeaMap,osea,0,18,,http://tiles.openseamap.org/seamark/{$z}/{$x}/{$y}.png]]></item>
 		<item><![CDATA[Hike Bike Map,hnb,1,17,,http://toolserver.org/tiles/hikebike/{$z}/{$x}/{$y}.png]]></item>
 		<!-- 
 		<item><![CDATA[Hike Bike Map (Hills Underlay),hnbhu,1,17,,http://toolserver.org/~cmarqu/hill/{$z}/{$x}/{$y}.png]]></item>
