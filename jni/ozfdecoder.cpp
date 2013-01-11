@@ -69,7 +69,7 @@ void Resize_HQ_4ch(unsigned char* src, int w1, int h1, unsigned char* dest, int 
 
 jlong Java_com_androzic_map_OzfDecoder_openImageNative(JNIEnv* env, jclass clazz, jstring path)
 {
-    const char* filename_utf8 = env->GetStringUTFChars(path, false);
+    const char* filename_utf8 = env->GetStringUTFChars(path, JNI_FALSE);
 
 	__android_log_print(ANDROID_LOG_INFO, "OZF", "native open image: %s", filename_utf8);
 
