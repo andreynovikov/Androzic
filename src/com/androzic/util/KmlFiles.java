@@ -157,7 +157,6 @@ class KmlParser extends DefaultHandler
 	public void characters(char[] ch, int start, int length) throws SAXException
 	{
 		builder.append(ch, start, length);
-		super.characters(ch, start, length);
 	}
 
 	@Override
@@ -179,7 +178,6 @@ class KmlParser extends DefaultHandler
 		{
 			istrack = true;
 		}
-		super.startElement(uri, localName, qName, attributes);
 	}
 
 	@Override
@@ -231,11 +229,11 @@ class KmlParser extends DefaultHandler
 			}
 			if (istrack)
 			{
-				String[] lines = builder.toString().split("\n");
+				String[] points = builder.toString().split("[\\s\\n]");
 				boolean continous = false;
-				for (String line : lines)
+				for (String point : points)
 				{
-					String[] coords = line.split(",");
+					String[] coords = point.split(",");
 					if (coords.length == 3)
 					{
 						track.addTrackPoint(continous, Double.parseDouble(coords[1].trim()), Double.parseDouble(coords[0].trim()), Double.parseDouble(coords[2].trim()), 0.0, 0);
@@ -244,6 +242,5 @@ class KmlParser extends DefaultHandler
 				}
 			}
 		}
-		super.endElement(uri, localName, qName);
 	}
 }
