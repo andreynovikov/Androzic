@@ -822,6 +822,13 @@ public class Androzic extends BaseApplication
 		return routes.remove(delRoute);
 	}
 	
+	public void addRoutes(final Iterable<Route> newRoutes)
+	{
+		Iterator<Route> iterator = newRoutes.iterator();
+		while (iterator.hasNext())
+			routes.add(iterator.next());
+	}
+
 	public void clearRoutes()
 	{
 		for (Route route : routes)

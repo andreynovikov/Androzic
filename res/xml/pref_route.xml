@@ -3,6 +3,12 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_route_title" >
 
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+        android:defaultValue="@bool/def_route_preload"
+        android:key="@string/pref_route_preload"
+        android:summary="@string/pref_route_preload_summary"
+        android:title="@string/pref_route_preload_title" />
+    
     <com.androzic.ui.preference.HelpfulSeekbarPreference
         androzic:defaultValue="@integer/def_route_linewidth"
         android:key="@string/pref_route_linewidth"

@@ -310,6 +310,8 @@
 	<string name="pref_waypoint_showname_title">Show name</string>
 	<string name="pref_waypoint_showname_summary">Mark to show waypoint name beside a marker</string>
 	<string name="pref_route_title">Routes</string>
+	<string name="pref_route_preload_title">Preload routes</string>
+	<string name="pref_route_preload_summary">Mark to preload routes from files on application start</string>
 	<string name="pref_route_linewidth_title">Line width</string>
 	<string name="pref_route_linewidth_summary">Pixel width of the route line</string>
 	<string name="pref_route_pointwidth_title">Marker size</string>

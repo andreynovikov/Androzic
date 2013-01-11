@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -52,8 +53,13 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.androzic.data.Route;
 import com.androzic.overlay.CurrentTrackOverlay;
+import com.androzic.util.FileList;
+import com.androzic.util.GpxFiles;
+import com.androzic.util.KmlFiles;
 import com.androzic.util.OziExplorerFiles;
+import com.androzic.util.RouteFilenameFilter;
 
 public class Splash extends Activity implements OnClickListener
 {	
@@ -317,6 +323,36 @@ public class Splash extends Activity implements OnClickListener
 						{
 							e.printStackTrace();
 						}
+					}
+				}
+			}
+			// load routes
+			if (settings.getBoolean(getString(R.string.pref_route_preload), resources.getBoolean(R.bool.def_route_preload)))
+			{
+				List<File> files = FileList.getFileListing(new File(application.routePath), new RouteFilenameFilter());
+				for (File file : files)
+				{
+				    List<Route> routes = null;
+					try
+					{
+						String lc = file.getName().toLowerCase();
+						if (lc.endsWith(".rt2") || lc.endsWith(".rte"))
+						{
+							routes = OziExplorerFiles.loadRoutesFromFile(file);
+						}
+						else if (lc.endsWith(".kml"))
+						{
+							routes = KmlFiles.loadRoutesFromFile(file);
+						}
+						else if (lc.endsWith(".gpx"))
+						{
+							routes = GpxFiles.loadRoutesFromFile(file);
+						}
+						application.addRoutes(routes);
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
 					}
 				}
 			}
