@@ -80,7 +80,7 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom"
 		android:layout_weight="0"
-		style="@android:style/ButtonBar">
+		style="@style/ButtonBar">
 		<Button android:id="@+id/generate_button"
 			android:text="@string/generate"
 			android:layout_height="wrap_content"

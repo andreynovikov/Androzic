@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_weight="0"
-                style="@android:style/ButtonBar">
+                style="@style/ButtonBar">
     <Button android:id="@+id/done_button"
             android:text="@string/done"
             android:layout_height="wrap_content"
