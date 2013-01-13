@@ -390,12 +390,13 @@ public class Splash extends Activity implements OnClickListener
 				{
 					try
 					{
-						URL u = new URL("http://androzic.googlecode.com/files/world.ozfx3");
+						// URL u = new URL("http://androzic.googlecode.com/files/world.ozfx3");
+						URL u = new URL("https://docs.google.com/uc?export=download&id=0Bxnm5oGXU2cja2lQMzVvWFNpZjQ");
 						HttpURLConnection c = (HttpURLConnection) u.openConnection();
 						c.setRequestMethod("GET");
 						c.setDoOutput(true);
 						c.connect();
-						FileOutputStream f = new FileOutputStream(new File(application.getMapPath(), "world.ozfx3"));
+						FileOutputStream f = new FileOutputStream(new File(application.getMapPath(), "world.ozf2"));
 		
 						InputStream in = c.getInputStream();
 		
@@ -426,7 +427,8 @@ public class Splash extends Activity implements OnClickListener
 						msg.setData(b);
 						mHandler.sendMessage(msg);
 		
-						u = new URL("http://androzic.googlecode.com/files/world.map");
+						//u = new URL("http://androzic.googlecode.com/files/world.map");
+						u = new URL("https://docs.google.com/uc?export=download&id=0Bxnm5oGXU2cjWllteG4tSDBxekU");
 						c = (HttpURLConnection) u.openConnection();
 						c.setRequestMethod("GET");
 						c.setDoOutput(true);

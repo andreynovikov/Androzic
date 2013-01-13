@@ -132,7 +132,7 @@
 		    
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>
-    <string name="nomaps_explained">Map folder \'%s\' is empty. Download and install world map (207KB)?</string>
+    <string name="nomaps_explained">Map folder \'%s\' is empty. Download and install world map (250KB)?</string>
     <string name="upto">Up to %.0f meters</string>
     <string name="arrived">You have reached route destination</string>
     <string name="restart_needed">Application restart needed</string>
