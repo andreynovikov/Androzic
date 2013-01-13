@@ -86,6 +86,8 @@
         <item>pl</item>
         <item>nl</item>
         <item>tr</item>
+        <item>pt</item>
+        <item>sv</item>
         <item>zh</item>
     </string-array>
     <string-array name="localization_names">
@@ -101,6 +103,8 @@
     	<item>Polski</item>
     	<item>Hollandsk</item>
     	<item>Türk</item>
+    	<item>Português</item>
+    	<item>Svenska</item>
     	<item>中文 (简体)</item>
     </string-array>
     <string-array name="orientation_values">
@@ -125,6 +129,7 @@
     	<item>Türker Türkücü</item>
     	<item>Alexandre Verniol, Gianni Faletti</item>
     	<item>Adolfo Gea, Francisco Sánchez</item>
+    	<item>Christian Mobaeck</item>
     </string-array>
     <string-array name="panel_action_values">
         <item>zoomin</item>
@@ -137,7 +142,6 @@
         <item>follow</item>
         <item>locate</item>
         <item>tracking</item>
-        <item>share</item>
         <item>expand</item>
     </string-array>
 	<array name="panel_action_images">

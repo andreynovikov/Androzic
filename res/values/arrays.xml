@@ -101,6 +101,7 @@
     	<item>Turkish localization</item>
     	<item>Italian localization</item>
     	<item>Spanish localization</item>
+    	<item>Swedish localization</item>
     </string-array>
     <string-array name="panel_action_names">
         <item>Zoom in</item>
@@ -113,7 +114,6 @@
         <item>Follow/unfollow</item>
         <item>Obtain location</item>
         <item>Write track</item>
-        <item>Real-time sharing</item>
         <item>Show/hide status bar</item>
     </string-array>
 </resources>

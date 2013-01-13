@@ -108,13 +108,13 @@
     <item>Oddal</item>
     <item>More scaled map</item>
     <item>Less scaled map</item>
-    <item>Maps at cursor</item>
+    <item>Mapy pod kursorem</item>
     <item>Zarządzaj punktami trasy</item>
     <item>Pokaż informacje</item>
     <item>Follow/unfollow</item>
     <item>Obtain location</item>
     <item>Zapisz trase</item>
-    <item>Real-time sharing</item>
-    <item>Show/hide status bar</item>
+    <item>Udostępnianie lokalizacji w czasie rzeczywistym</item>
+    <item>Pokaż/ukryj pasek statusu</item>
   </string-array>
 </resources>

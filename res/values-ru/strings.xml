@@ -33,7 +33,7 @@
   <string name="homepage">Домашняя страница: http://androzic.com/</string>
   <string name="send_me_bugs">Если вы найдёте ошибку, которую хотите исправить, или у вас есть предложения по развитию, используйте трекер проблем на сайте приложения.</string>
   <string name="search_hint">Введите адрес или имя</string>
-  <string name="msg_wait">Пожалуйста, подождите…</string>
+  <string name="msg_wait">Пожалуйста, подождите&#8230;</string>
   <string name="msg_scansdcard">Сканирование SD-карты</string>
   <string name="msg_badtrackimplementation">Обратите внимание, что работа с длинными файловыми треками сказывается на производительности, проявляйте терпение.</string>
   <string name="msg_connectingtoserver">Подключение к серверу#8230;</string>
@@ -41,6 +41,7 @@
   <string name="msg_loadingmapfile">Загрузка файла карты&#8230;</string>
   <string name="msg_initializingmaps">Инициализация карт&#8230;</string>
   <string name="msg_initializingdata">Инициализация данных&#8230;</string>
+  <string name="msg_initializingplugins">Инициализация плагинов&#8230;</string>
   <string name="msg_initializingview">Инициализация экрана&#8230;</string>
   <string name="msg_cleaning">Очистка&#8230;</string>
   <string name="msg_paid">Платная версия</string>
@@ -191,11 +192,10 @@
   <string name="menu_newwaypointset">Новый набор</string>
   <string name="action_bar_sort_alpha">По алфавиту</string>
   <string name="action_bar_sort_distance">По расстоянию</string>
+  <string name="pref_plugins_title">Плагины</string>
   <string name="pref_advanced_title">Дополнительно</string>
   <string name="pref_usemapindex_title">Использовать индекс карт</string>
-  <string name="pref_usemapindex_summary">Отметьте, чтобы использовать сохранённый индекс карт для более быстрого старта приложения</string>
   <string name="pref_useonlinemap_title">Использовать онлайн-карту</string>
-  <string name="pref_useonlinemap_summary">Отметьте, чтобы включить онлайн-карту</string>
   <string name="pref_onlinemaps_title">Онлайн-карта</string>
   <string name="pref_onlinemap_title">Провайдер карты</string>
   <string name="pref_onlinemap_summary">Источник онлайн-карты</string>
@@ -207,7 +207,7 @@
   <string name="pref_loc_gpstimeout_title">Устаревание GPS</string>
   <string name="pref_loc_gpstimeout_summary">Укажите время в секундах, после которого начнётся определение местоположения с помощью сетей</string>
   <string name="pref_loc_store_title">Запоминать последнее местоположение</string>
-  <string name="pref_loc_store_summary">Отметьте, чтобы приложение запускалось в последнем известном местоположении</string>
+  <string name="pref_loc_store_summary">Отметьте, чтобы после запуска отображалось последнее запомненное местоположение</string>
   <string name="pref_folder_title">Файлы</string>
   <string name="pref_folder_prefix_title">Папка приложения</string>
   <string name="pref_folder_prefix_caution">Данная настройка предназначена только для продвинутых пользователей. Изменяйте её с осторожностью: некорректные значения могут привести к невозможности запуска приложения.</string>
@@ -228,7 +228,6 @@
   <string name="pref_mapadjacent_title">Прилегающие карты</string>
   <string name="pref_mapadjacent_summary">ЭКСПЕРИМЕНТАЛЬНАЯ ФУНКЦИЯ, может значительно ухудшить производительность! Отметьте для отображения смежных и более подробных карт</string>
   <string name="pref_mapfollowonloc_title">Автоматическое слежение</string>
-  <string name="pref_mapfollowonloc_summary">Отметьте, чтобы автоматически включать слежение при получении первого местоположения</string>
   <string name="pref_usecompass_title">Использовать компас</string>
   <string name="pref_usecompass_summary">Отметьте, чтобы при нулевой скорости текущее направление определялось по компасу, а не по GPS</string>
   <string name="pref_wakelock_title">Блокировка отключения экрана</string>
@@ -236,7 +235,6 @@
   <string name="pref_mapdim_title">Автояркость экрана</string>
   <string name="pref_mapdim_summary">Отметьте, чтобы включить автоматическое приглушение яркости экрана в ночное время</string>
   <string name="pref_mapdimvalue_title">Уровень автояркости</string>
-  <string name="pref_mapdimvalue_summary">На сколько уменьшить яркость экрана</string>
   <string name="pref_mapcropborder_title">Отсекать поля карты</string>
   <string name="pref_mapcropborder_summary">Отметьте, чтобы края карты обрезались по угловым маркерам</string>
   <string name="pref_mapdrawborder_title">Отображать границу карты</string>
@@ -244,15 +242,12 @@
   <string name="pref_maphideondrag_title">Прятать объекты</string>
   <string name="pref_maphideondrag_summary">Отметьте, чтобы прятать объекты на карте при перетаскивании</string>
   <string name="pref_unfollowontap_title">Выключать слежение при перетаскивании</string>
-  <string name="pref_unfollowontap_summary">Отметьте, чтобы разрешить выключение слежения при перетаскивании карты</string>
   <string name="pref_orientation_title">Положение экрана</string>
   <string name="pref_locale_title">Язык</string>
   <string name="pref_show_title">Внешний вид</string>
   <string name="pref_scalebarcolor_title">Цвет шкалы масштаба</string>
-  <string name="pref_scalebarcolor_summary">Укажите цвет индикатора масштаба карты</string>
   <string name="pref_cursor_title">Активный курсор</string>
-  <string name="pref_cursorcolor_title">Цвет курсора</string>
-  <string name="pref_cursorcolor_summary">Укажите цвет курсора в режиме действительной текущей позиции</string>
+  <string name="pref_cursorcolor_title">Активный цвет</string>
   <string name="pref_cursorvector_title">Тип векторной линии</string>
   <string name="pref_cursorvector_summary">Выберите базу для вычисления длины векторной линии</string>
   <string name="pref_cursorvectormlpr_title">Множитель векторной линии</string>
@@ -266,10 +261,7 @@
   <string name="pref_showaccuracy_summary">Отметьте для отображения окружности точности вокруг курсора местоположения</string>
   <string name="pref_showcurrenttrack_title">Текущий трек</string>
   <string name="pref_showcurrenttrack_summary">Отметьте для отображения текущего трека на карте</string>
-  <string name="pref_showwaypoints_title">Показывать точки</string>
-  <string name="pref_showwaypoints_summary">Отметьте для отображения точек на карте</string>
   <string name="pref_panelactions_title">Действия выдвижной панели</string>
-  <string name="pref_panelactions_summary">Выберите действия, которые будут доступны в сдвижной панели</string>
   <string name="pref_lookahead_title">Просмотр вперёд</string>
   <string name="pref_lookahead_summary">Процент части экрана, используемый для просмотра вперёд</string>
   <string name="pref_unit_title">Единицы измерения</string>
@@ -281,13 +273,9 @@
   <string name="pref_unitsunrise_title">Восход/закат</string>
   <string name="pref_grid_title">Сетки</string>
   <string name="pref_grid_mapshow_title">Показывать сетки карты</string>
-  <string name="pref_grid_mapshow_summary">Отметьте для отображения на карте сеток карты</string>
   <string name="pref_grid_usershow_title">Показывать пользовательскую сетку</string>
-  <string name="pref_grid_usershow_summary">Отметьте для отображения на всех картах пользовательской сетки</string>
   <string name="pref_grid_userscale_title">Интервал сетки</string>
-  <string name="pref_grid_userscale_summary">Значение интервала пользовательской сетки</string>
   <string name="pref_grid_userunit_title">Единица интервала</string>
-  <string name="pref_grid_userunit_summary">Единица интервала пользовательской сетки</string>
   <string name="pref_grid_usermpp_title">Ограничение сетки</string>
   <string name="pref_grid_usermpp_summary">Максимальное значение метров в пикселе, при котором будет отображаться пользовательская сетка</string>
   <string name="pref_grid_preference_title">Предпочтение сетки</string>
@@ -313,6 +301,8 @@
   <string name="pref_waypoint_showname_title">Показывать имя</string>
   <string name="pref_waypoint_showname_summary">Отметьте для отображения имени точки рядом с маркером</string>
   <string name="pref_route_title">Маршруты</string>
+  <string name="pref_route_preload_title">Загружать маршруты</string>
+  <string name="pref_route_preload_summary">Отметьте, чтобы загружать маршруты из файлов при запуске приложения</string>
   <string name="pref_route_linewidth_title">Ширина линии</string>
   <string name="pref_route_linewidth_summary">Пиксельная ширина линии маршрута</string>
   <string name="pref_route_pointwidth_title">Размер маркера</string>
@@ -330,23 +320,14 @@
   <string name="pref_navigation_proximitycircle_summary">Отметьте, чтобы показывать кружность близости точки маршрута во время навигации</string>
   <string name="pref_navigation_linewidth_title">Толщина линии пеленга</string>
   <string name="pref_navigation_linewidth_summary">Толщина линии, ведущей к текущей навигационной точке</string>
-  <string name="pref_sharing_title">Обмен местоположением</string>
-  <string name="pref_sharing_session_title">Имя сессии</string>
-  <string name="pref_sharing_session_summary">Уникальная строка, идентифицирующая сессию, должена быть одинаковой для всех пользователей группы и должна быть тайной, чтобы не допустить присоединение нежелательных пользователей к этой группе</string>
-  <string name="pref_sharing_user_title">Идентификатор пользователя</string>
-  <string name="pref_sharing_user_summary">Уникальная строка, идентифицирующая пользователя внутри сессии группы</string>
-  <string name="pref_sharing_updateinterval_title">Интервал обновления</string>
-  <string name="pref_sharing_updateinterval_summary">Временной интервал в секундах, после которого отправляются и принимаются данные о местоположении</string>
-  <string name="pref_sharing_timeout_title">Тайм-аут местоположения</string>
-  <string name="pref_sharing_timeout_summary">Время, после которого пользователь будет отображаться как пропавший</string>
-  <string name="pref_sharing_tagcolor_title">Цвет метки</string>
-  <string name="pref_sharing_tagwidth_title">Размер метки</string>
-  <string name="pref_sharing_tagwidth_summary">Размер метки в пикселях</string>
   <string name="pref_application_title">Информация</string>
   <string name="pref_about_title">О программе Androzic</string>
-  <string name="pref_donate_title">Пожертвовать</string>
+  <string name="pref_donate_google_title">Пожертвовать через Google Play Store</string>
+  <string name="pref_donate_paypal_title">Пожертвовать через PayPal</string>
+  <string name="pref_donate_summary">You can also donate through PayPal via a button located on a support web site</string>
   <string name="pref_faq_title">Часто задаваемые вопросы</string>
   <string name="pref_feature_title">Запрос функции</string>
+  <string name="pref_googleplus_title">Присоединиться на Google+</string>
   <string name="pref_facebook_title">Рекомендовать на Facebook</string>
   <string name="pref_twitter_title">Программа в Twitter</string>
   <string name="pref_uri_summary">Нажмите, чтобы перейти на веб-сайт</string>
@@ -358,6 +339,13 @@
   <string name="notif_nav_short">Навигация</string>
   <string name="notif_nav_started">Androzic ведёт вас к цели</string>
   <string name="notif_nav_to">Androzic ведёт вас в точку %s</string>
+  <string name="perm_location_title">Получать местоположение</string>
+  <string name="perm_location_description">Доступ к местоположению, предоставляемому Androzic</string>
+  <string name="perm_tracking_title">Получать трек</string>
+  <string name="perm_tracking_description">Доступ к треку, предоставляемому Androzic</string>
+  <string name="perm_read_preferences_title">Доступ к пользовательским настройкам Androzic</string>
+  <string name="perm_read_map_data_title">Получать данные Androzic карты</string>
+  <string name="perm_write_map_data_title">Добавлять данные на карту Androzic</string>
   <string name="app_eula">This program is distributed under the terms of
 the GNU General Public License as published by the Free Software Foundation,
 either version 3 of the License./n/n
