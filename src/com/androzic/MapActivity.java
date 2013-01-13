@@ -379,9 +379,18 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				int rt = -1;
 				if (mapState == null)
 				{
-					File rtf = new File(navRoute);
-					Route route = OziExplorerFiles.loadRoutesFromFile(rtf).get(0);
-					rt = application.addRoute(route);
+					Route route = application.getRouteByFile(navRoute);
+					if (route != null)
+					{
+						rt = application.getRouteIndex(route);						
+					}
+					else
+					{
+						File rtf = new File(navRoute);
+						//FIXME It's bad - it can be not a first route in a file
+						route = OziExplorerFiles.loadRoutesFromFile(rtf).get(0);
+						rt = application.addRoute(route);
+					}
 					RouteOverlay newRoute = new RouteOverlay(this, route);
 					application.routeOverlays.add(newRoute);
 				}

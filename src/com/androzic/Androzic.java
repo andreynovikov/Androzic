@@ -843,6 +843,16 @@ public class Androzic extends BaseApplication
 		return routes.get(index);
 	}
 	
+	public Route getRouteByFile(String filepath)
+	{
+		for (Route route : routes)
+		{
+			if (filepath.equals(route.filepath))
+				return route;
+		}
+		return null;
+	}
+
 	public int getRouteIndex(final Route route)
 	{
 		return routes.indexOf(route);
