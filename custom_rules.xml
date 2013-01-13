@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Androzic" default="help">
+    <fail
+            message="ndk.dir is missing. Make sure to add it to local.properties or to inject it through the ANDROID_HOME environment variable."
+            unless="ndk.dir"
+    />
+    
+    <target name="-pre-build">
+        <exec executable="${ndk.dir}/ndk-build.cmd" failonerror="true"/>
+    </target>
+
+    <target name="clean" depends="android_rules.clean">
+        <exec executable="${ndk.dir}/ndk-build.cmd" failonerror="true">
+            <arg value="clean"/>
+        </exec>
+    </target>
+</project>
