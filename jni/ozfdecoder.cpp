@@ -18,7 +18,6 @@
  * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include <jni.h>
 #include <android/log.h>
 #include <stdint.h>
