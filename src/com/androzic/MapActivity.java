@@ -1144,11 +1144,11 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 		if (isNavigatingViaRoute)
 		{
-			routeName.setText("› " + navigationService.navRoute.name);
+			routeName.setText("â€º " + navigationService.navRoute.name);
 		}
 		if (isNavigating)
 		{
-			waypointName.setText("» " + navigationService.navWaypoint.name);
+			waypointName.setText("Â» " + navigationService.navWaypoint.name);
 			if (application.navigationOverlay == null)
 			{
 				application.navigationOverlay = new NavigationOverlay(this);

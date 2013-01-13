@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -298,6 +299,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	}
 
 	private OnClickListener iconOnClickListener = new OnClickListener() {
+		@SuppressLint("NewApi")
 		public void onClick(View v)
 		{
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)

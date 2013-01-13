@@ -27,6 +27,7 @@ import java.util.Comparator;
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
 import android.content.Context;
@@ -204,11 +205,13 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
 		return true;
 	}
 
-    public void onSort(MenuItem item)
+    @SuppressLint("NewApi")
+	public void onSort(MenuItem item)
     {
         mSortMode = item.getItemId();
         adapter.sort(mSortMode == R.id.action_sort_alpha ? 0 : 1);
-        invalidateOptionsMenu();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			invalidateOptionsMenu();
     }
 
 	@Override

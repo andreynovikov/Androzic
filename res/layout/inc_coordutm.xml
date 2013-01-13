@@ -74,10 +74,14 @@
         android:id="@+id/utm_hemi"
         android:layout_weight="2">
         <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/n"
             android:id="@+id/utm_hemi_n"
             />
         <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/s"
             android:id="@+id/utm_hemi_s" />
     </RadioGroup>

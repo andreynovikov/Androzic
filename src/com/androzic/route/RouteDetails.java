@@ -82,7 +82,7 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 		Androzic application = (Androzic) getApplication();
 		route = application.getRoute(index);
 		
-		setTitle(navigation ? "› " + route.name : route.name);
+		setTitle(navigation ? "â€º " + route.name : route.name);
 
 		adapter = new WaypointListAdapter(this, route);
 		setListAdapter(adapter);
@@ -343,7 +343,7 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 					if (progress == 0)
 					{
 						text = (TextView) v.findViewById(R.id.name);
-						text.setText("» " + text.getText());
+						text.setText("Â» " + text.getText());
 					}
 				}
 				else

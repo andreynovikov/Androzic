@@ -222,7 +222,7 @@ public class Information extends Activity
 						sunsetValue.setText(Astro.getLocalTimeAsString(sunset));
 					}
 					double declination = application.getDeclination();
-					declinationValue.setText(String.format("%+.1f°", declination));
+					declinationValue.setText(String.format("%+.1fÂ°", declination));
 				}
 			});
 		}
