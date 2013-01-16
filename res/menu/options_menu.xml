@@ -125,7 +125,7 @@
                 android:title="@string/menu_share"/>
             <item
                 android:id="@+id/menuCopyLocation"
-                android:icon="@drawable/ic_menu_edit"
+                android:icon="@drawable/ic_menu_copy"
                 android:title="@string/menu_copy"/>
             <item
                 android:id="@+id/menuPasteLocation"
@@ -133,11 +133,6 @@
                 android:title="@string/menu_paste"/>
         </menu>
     </item>
-    <item
-        android:id="@+id/menuGPS"
-        android:icon="@drawable/ic_menu_compass"
-        android:orderInCategory="1"
-        android:title="@string/menu_gps"/>
     <item
         android:id="@+id/menuSetAnchor"
         android:icon="@drawable/ic_menu_goto"

@@ -1624,9 +1624,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			case R.id.menuSearch:
                 onSearchRequested();
                 return true;
-			case R.id.menuGPS:
-				startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-				return true;
 			case R.id.menuAddWaypoint:
 			{
 				double[] loc = application.getMapCenter();
