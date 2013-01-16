@@ -600,10 +600,5 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		public void onProviderEnabled(String provider)
 		{
 		}
-
-		@Override
-		public void onSensorChanged(float azimuth, float pitch, float roll)
-		{
-		}
 	};
 }

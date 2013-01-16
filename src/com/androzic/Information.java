@@ -247,11 +247,6 @@ public class Information extends Activity
 			// TODO Auto-generated method stub
 
 		}
-
-		@Override
-		public void onSensorChanged(final float azimuth, final float pitch, final float roll)
-		{
-		}
 	};
 
 	private OnClickListener updateOnClickListener = new OnClickListener() {

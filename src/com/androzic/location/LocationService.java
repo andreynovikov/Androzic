@@ -1,21 +1,21 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
- *
+ * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * 
  * This file is part of Androzic application.
- *
+ * 
  * Androzic is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ * 
  * Androzic is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ * 
  * You should have received a copy of the GNU General Public License
- * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.androzic.location;
@@ -31,10 +31,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.GpsStatus.NmeaListener;
@@ -46,7 +42,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.os.SystemClock;
@@ -57,11 +52,11 @@ import android.widget.Toast;
 import com.androzic.MapActivity;
 import com.androzic.R;
 
-public class LocationService extends Service implements LocationListener, NmeaListener, GpsStatus.Listener, SensorEventListener, OnSharedPreferenceChangeListener
+public class LocationService extends Service implements LocationListener, NmeaListener, GpsStatus.Listener, OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "Location";
 	private static final int NOTIFICATION_ID = 24161;
-	
+
 	public static final String ENABLE_LOCATIONS = "enableLocations";
 	public static final String DISABLE_LOCATIONS = "disableLocations";
 
@@ -72,13 +67,10 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	public static final int GPS_OK = 3;
 
 	private boolean locationsEnabled = false;
-	private boolean useCompass = false;
 	private boolean useNetwork = true;
 	private int gpsLocationTimeout = 120000;
 
 	private LocationManager locationManager = null;
-	private SensorManager sensorManager = null;
-	private Handler sensorHandler = new Handler();
 
 	private Notification notification;
 	private PendingIntent contentIntent;
@@ -88,8 +80,6 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	private float[] speed = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	private float[] speedav = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	private float[] speedavex = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	private float[] magneticValues;
-	private float[] accelerometerValues;
 
 	private long lastLocationMillis = 0;
 	private long tics = 0;
@@ -100,15 +90,12 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	private boolean justStarted = true;
 	private float smoothSpeed = 0.0f;
 	private float avgSpeed = 0.0f;
-	private float azimuth = 0.0f;
-	private float pitch = 0.0f;
-	private float roll = 0.0f;
 	private float nmeaGeoidHeight = Float.NaN;
 	private float HDOP = Float.NaN;
 	private float VDOP = Float.NaN;
 
 	private final Binder binder = new LocalBinder();
-    private final RemoteCallbackList<ILocationCallback> remoteCallbacks = new RemoteCallbackList<ILocationCallback>();
+	private final RemoteCallbackList<ILocationCallback> remoteCallbacks = new RemoteCallbackList<ILocationCallback>();
 	private final Set<ILocationListener> callbacks = new HashSet<ILocationListener>();
 
 	@Override
@@ -123,21 +110,6 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_usenetwork));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_gpstimeout));
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-		
-		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		if (sensorManager != null)
-		{
-			Log.e(TAG, "Sensor manager");
-
-			Sensor acc = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-			Sensor mag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-			if (acc != null && mag != null)
-			{
-				sensorManager.registerListener(this, acc, SensorManager.SENSOR_DELAY_NORMAL);
-				sensorManager.registerListener(this, mag, SensorManager.SENSOR_DELAY_NORMAL);
-				Log.d(TAG, "Sensor listener set");
-			}
-		}
 
 		notification = new Notification();
 		notification.when = 0;
@@ -153,7 +125,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	{
 		if (intent != null && intent.getAction() != null)
 		{
-			if (intent.getAction().equals(ENABLE_LOCATIONS) && ! locationsEnabled)
+			if (intent.getAction().equals(ENABLE_LOCATIONS) && !locationsEnabled)
 			{
 				locationsEnabled = true;
 				connect();
@@ -176,54 +148,49 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	@Override
 	public void onDestroy()
 	{
-		if (sensorManager != null)
-		{
-			sensorManager.unregisterListener(this);
-			sensorManager = null;
-		}
 		disconnect();
+		
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 		super.onDestroy();
 		Log.i(TAG, "Service stopped");
 	}
 
-    private final ILocationRemoteService.Stub remoteBinder = new ILocationRemoteService.Stub()
-    {
-        public void registerCallback(ILocationCallback cb)
-        {
-        	Log.i(TAG, "Register callback");
-            if (cb != null) remoteCallbacks.register(cb);
-        }
-        public void unregisterCallback(ILocationCallback cb)
-        {
-            if (cb != null) remoteCallbacks.unregister(cb);
-        }
-        public boolean isLocating()
-        {
-        	return locationsEnabled;
-        }
-    };
+	private final ILocationRemoteService.Stub remoteBinder = new ILocationRemoteService.Stub() {
+		public void registerCallback(ILocationCallback cb)
+		{
+			Log.i(TAG, "Register callback");
+			if (cb != null)
+				remoteCallbacks.register(cb);
+		}
+
+		public void unregisterCallback(ILocationCallback cb)
+		{
+			if (cb != null)
+				remoteCallbacks.unregister(cb);
+		}
+
+		public boolean isLocating()
+		{
+			return locationsEnabled;
+		}
+	};
 
 	@Override
 	public IBinder onBind(Intent intent)
 	{
-        if ("com.androzic.location".equals(intent.getAction()) || ILocationRemoteService.class.getName().equals(intent.getAction()))
-        {
-            return remoteBinder;
-        }
-        else
-        {
-        	return binder;
-        }
+		if ("com.androzic.location".equals(intent.getAction()) || ILocationRemoteService.class.getName().equals(intent.getAction()))
+		{
+			return remoteBinder;
+		}
+		else
+		{
+			return binder;
+		}
 	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
-		if (getString(R.string.pref_usecompass).equals(key))
-		{
-			useCompass = sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_usecompass));
-		}
 		if (getString(R.string.pref_loc_usenetwork).equals(key))
 		{
 			useNetwork = sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_loc_usenetwork));
@@ -284,32 +251,33 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 
 	private void setNotification(int status)
 	{/*
-		if (status != gpsStatus)
-		{
-		    switch (status)
-		    {
-		    	case LocationService.GPS_OK:
-		    		notification.icon = R.drawable.status_icon_ok;
-		    	    notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_ok), contentIntent);
-		    		break;
-		    	case LocationService.GPS_SEARCHING:
-		    		notification.icon = R.drawable.status_icon_searching;
-		    	    notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_searching), contentIntent);
-		    		break;
-		    	case LocationService.GPS_OFF:
-		    		notification.icon = R.drawable.status_icon_off;
-		    	    notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_off), contentIntent);
-		    }
-		    notificationManager.notify(ANDROZIC_NOTIFICATION_ID, notification);
-		    gpsStatus = status;
-		}*/
+	 * if (status != gpsStatus)
+	 * {
+	 * switch (status)
+	 * {
+	 * case LocationService.GPS_OK:
+	 * notification.icon = R.drawable.status_icon_ok;
+	 * notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_ok), contentIntent);
+	 * break;
+	 * case LocationService.GPS_SEARCHING:
+	 * notification.icon = R.drawable.status_icon_searching;
+	 * notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_searching), contentIntent);
+	 * break;
+	 * case LocationService.GPS_OFF:
+	 * notification.icon = R.drawable.status_icon_off;
+	 * notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_off), contentIntent);
+	 * }
+	 * notificationManager.notify(ANDROZIC_NOTIFICATION_ID, notification);
+	 * gpsStatus = status;
+	 * }
+	 */
 	}
 
 	void updateLocation()
 	{
 		final Location location = lastKnownLocation;
 		final boolean continous = isContinous;
-		final boolean geoid = ! Float.isNaN(nmeaGeoidHeight);
+		final boolean geoid = !Float.isNaN(nmeaGeoidHeight);
 		final float smoothspeed = smoothSpeed;
 		final float avgspeed = avgSpeed;
 
@@ -324,20 +292,20 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 				}
 			});
 		}
-    	final int n = remoteCallbacks.beginBroadcast();
-        for (int i=0; i<n; i++)
-        {
-            final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
-            try
-            {
+		final int n = remoteCallbacks.beginBroadcast();
+		for (int i = 0; i < n; i++)
+		{
+			final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+			try
+			{
 				callback.onLocationChanged(location, continous, geoid, smoothspeed, avgspeed);
-            } 
-            catch (RemoteException e)
-            {
-            	Log.e(TAG, "Location broadcast error", e);
-            }
-        }
-        remoteCallbacks.finishBroadcast();
+			}
+			catch (RemoteException e)
+			{
+				Log.e(TAG, "Location broadcast error", e);
+			}
+		}
+		remoteCallbacks.finishBroadcast();
 		Log.d(TAG, "Location dispatched: " + (callbacks.size() + n));
 	}
 
@@ -345,44 +313,6 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	{
 		if (!"unknown".equals(lastKnownLocation.getProvider()))
 			callback.onLocationChanged(lastKnownLocation, isContinous, !Float.isNaN(nmeaGeoidHeight), smoothSpeed, avgSpeed);
-	}
-
-	void updateSensor()
-	{
-		final float a = azimuth;
-		final float p = pitch;
-		final float r = roll;
-
-		final Handler handler = new Handler();
-		for (final ILocationListener callback : callbacks)
-		{
-			handler.post(new Runnable() {
-				@Override
-				public void run()
-				{
-					callback.onSensorChanged(a, p, r);
-				}
-			});
-		}
-    	final int n = remoteCallbacks.beginBroadcast();
-        for (int i=0; i<n; i++)
-        {
-            final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
-            try
-            {
-				callback.onSensorChanged(a, p, r);
-            }
-            catch (RemoteException e)
-            {
-            	Log.e(TAG, "Sensor broadcast error", e);
-            }
-        }
-        remoteCallbacks.finishBroadcast();
-	}
-
-	void updateSensor(final ILocationListener callback)
-	{
-		callback.onSensorChanged(azimuth, pitch, roll);
 	}
 
 	void updateProvider(final String provider, final boolean enabled)
@@ -401,23 +331,23 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 				}
 			});
 		}
-    	final int n = remoteCallbacks.beginBroadcast();
-        for (int i=0; i<n; i++)
-        {
-            final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
-            try
-            {
+		final int n = remoteCallbacks.beginBroadcast();
+		for (int i = 0; i < n; i++)
+		{
+			final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+			try
+			{
 				if (enabled)
 					callback.onProviderEnabled(provider);
 				else
 					callback.onProviderDisabled(provider);
-            } 
-            catch (RemoteException e)
-            {
-            	Log.e(TAG, "Provider broadcast error", e);
-            }
-        }
-        remoteCallbacks.finishBroadcast();
+			}
+			catch (RemoteException e)
+			{
+				Log.e(TAG, "Provider broadcast error", e);
+			}
+		}
+		remoteCallbacks.finishBroadcast();
 		Log.d(TAG, "Provider status dispatched: " + (callbacks.size() + n));
 	}
 
@@ -432,7 +362,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	void updateGpsStatus(final int status, final int fsats, final int tsats)
 	{
 		gpsStatus = status;
-	    setNotification(status);
+		setNotification(status);
 		final Handler handler = new Handler();
 		for (final ILocationListener callback : callbacks)
 		{
@@ -444,20 +374,20 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 				}
 			});
 		}
-    	final int n = remoteCallbacks.beginBroadcast();
-        for (int i=0; i<n; i++)
-        {
-            final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
-            try
-            {
+		final int n = remoteCallbacks.beginBroadcast();
+		for (int i = 0; i < n; i++)
+		{
+			final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+			try
+			{
 				callback.onGpsStatusChanged(LocationManager.GPS_PROVIDER, status, fsats, tsats);
-            } 
-            catch (RemoteException e)
-            {
-            	Log.e(TAG, "Status broadcast error", e);
-            }
-        }
-        remoteCallbacks.finishBroadcast();
+			}
+			catch (RemoteException e)
+			{
+				Log.e(TAG, "Status broadcast error", e);
+			}
+		}
+		remoteCallbacks.finishBroadcast();
 		Log.d(TAG, "GPS status dispatched: " + (callbacks.size() + n));
 	}
 
@@ -501,7 +431,7 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 			lastLocationMillis = time;
 			sendUpdate = true;
 
-			if (! Float.isNaN(nmeaGeoidHeight))
+			if (!Float.isNaN(nmeaGeoidHeight))
 			{
 				location.setAltitude(location.getAltitude() + nmeaGeoidHeight);
 			}
@@ -592,11 +522,6 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 		 * lastKnownLocation.setLongitude(29.451150);
 		 */
 
-		if (useCompass && lastKnownLocation.getSpeed() == 0)
-		{
-			location.setBearing(azimuth);
-		}
-
 		if (sendUpdate)
 			updateLocation();
 
@@ -606,65 +531,65 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 	@Override
 	public void onNmeaReceived(long timestamp, String nmea)
 	{
-        if (nmea.indexOf('\n') == 0)
-        	return;
-        if (nmea.indexOf('\n') > 0)
-        {
-        	nmea = nmea.substring(0, nmea.indexOf('\n') - 1);
-        }
-        int len = nmea.length();
-        if (len < 9)
-        {
-            return;
-        }
-        if (nmea.charAt(len - 3) == '*')
-        {
-        	nmea = nmea.substring(0, len - 3);
-        }
-        String[] tokens = nmea.split(",");
-        String sentenceId = tokens[0].length() > 5 ? tokens[0].substring(3, 6) : "";
+		if (nmea.indexOf('\n') == 0)
+			return;
+		if (nmea.indexOf('\n') > 0)
+		{
+			nmea = nmea.substring(0, nmea.indexOf('\n') - 1);
+		}
+		int len = nmea.length();
+		if (len < 9)
+		{
+			return;
+		}
+		if (nmea.charAt(len - 3) == '*')
+		{
+			nmea = nmea.substring(0, len - 3);
+		}
+		String[] tokens = nmea.split(",");
+		String sentenceId = tokens[0].length() > 5 ? tokens[0].substring(3, 6) : "";
 
-        try
-        {
-            if (sentenceId.equals("GGA") && tokens.length > 11)
-            {
-                //String time = tokens[1];
-                //String latitude = tokens[2];
-                //String latitudeHemi = tokens[3];
-                //String longitude = tokens[4];
-                //String longitudeHemi = tokens[5];
-                //String fixQuality = tokens[6];
-                //String numSatellites = tokens[7];
-                //String horizontalDilutionOfPrecision = tokens[8];
-                //String altitude = tokens[9];
-                //String altitudeUnits = tokens[10];
-                String heightOfGeoid = tokens[11];
-                if (! "".equals(heightOfGeoid))
-                	nmeaGeoidHeight = Float.parseFloat(heightOfGeoid);
-                //String heightOfGeoidUnits = tokens[12];
-                //String timeSinceLastDgpsUpdate = tokens[13];
-            }
-            else if (sentenceId.equals("GSA") && tokens.length > 17)
-            {
-                //String selectionMode = tokens[1]; // m=manual, a=auto 2d/3d
-                //String mode = tokens[2]; // 1=no fix, 2=2d, 3=3d
-                @SuppressWarnings("unused")
-				String pdop = tokens[15];
-                String hdop = tokens[16];
-                String vdop = tokens[17];
-                if (! "".equals(hdop))
-                	HDOP = Float.parseFloat(hdop);
-                if (! "".equals(vdop))
-                	VDOP = Float.parseFloat(vdop);                
+		try
+		{
+			if (sentenceId.equals("GGA") && tokens.length > 11)
+			{
+				// String time = tokens[1];
+				// String latitude = tokens[2];
+				// String latitudeHemi = tokens[3];
+				// String longitude = tokens[4];
+				// String longitudeHemi = tokens[5];
+				// String fixQuality = tokens[6];
+				// String numSatellites = tokens[7];
+				// String horizontalDilutionOfPrecision = tokens[8];
+				// String altitude = tokens[9];
+				// String altitudeUnits = tokens[10];
+				String heightOfGeoid = tokens[11];
+				if (!"".equals(heightOfGeoid))
+					nmeaGeoidHeight = Float.parseFloat(heightOfGeoid);
+				// String heightOfGeoidUnits = tokens[12];
+				// String timeSinceLastDgpsUpdate = tokens[13];
 			}
-        }
-        catch (NumberFormatException e)
-        {
-            Log.e(TAG, "NFE", e);
-        }
-        catch (ArrayIndexOutOfBoundsException e)
-        {
-            Log.e(TAG, "AIOOBE", e);
+			else if (sentenceId.equals("GSA") && tokens.length > 17)
+			{
+				// String selectionMode = tokens[1]; // m=manual, a=auto 2d/3d
+				// String mode = tokens[2]; // 1=no fix, 2=2d, 3=3d
+				@SuppressWarnings("unused")
+				String pdop = tokens[15];
+				String hdop = tokens[16];
+				String vdop = tokens[17];
+				if (!"".equals(hdop))
+					HDOP = Float.parseFloat(hdop);
+				if (!"".equals(vdop))
+					VDOP = Float.parseFloat(vdop);
+			}
+		}
+		catch (NumberFormatException e)
+		{
+			Log.e(TAG, "NFE", e);
+		}
+		catch (ArrayIndexOutOfBoundsException e)
+		{
+			Log.e(TAG, "AIOOBE", e);
 		}
 	}
 
@@ -743,74 +668,6 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 		}
 	}
 
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy)
-	{
-	}
-
-	@Override
-	public void onSensorChanged(final SensorEvent event)
-	{
-		if (!sensorHandler.hasMessages(1))
-		{
-			Message m = Message.obtain(sensorHandler, new Runnable() {
-				@Override
-				public void run()
-				{
-					calculateSensor(event);
-				}
-			});
-			m.what = 1;
-			sensorHandler.sendMessage(m);
-		}
-	}
-	
-	private void calculateSensor(SensorEvent event)
-	{
-		if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
-			return;
-
-		switch (event.sensor.getType())
-		{
-			case Sensor.TYPE_MAGNETIC_FIELD:
-				magneticValues = event.values.clone();
-				break;
-			case Sensor.TYPE_ACCELEROMETER:
-				accelerometerValues = event.values.clone();
-				break;
-		}
-
-		if (magneticValues != null && accelerometerValues != null)
-		{
-			float R[] = new float[16];
-			float I[] = new float[16];
-			boolean success = SensorManager.getRotationMatrix(R, I, accelerometerValues, magneticValues);
-			if (success)
-			{
-				float[] orientation = new float[3];
-				SensorManager.getOrientation(R, orientation);
-
-				orientation[0] = (float) Math.toDegrees(orientation[0]);
-				orientation[1] = (float) Math.toDegrees(orientation[1]);
-				orientation[2] = (float) Math.toDegrees(orientation[2]);
-				/*
-				 * if (orientation[0] >= 360) orientation[0] -= 360; if
-				 * (orientation[0] < 0) orientation[0] = 360 - orientation[0];
-				 * if (orientation[1] >= 360) orientation[1] -= 360; if
-				 * (orientation[1] < 0) orientation[1] = 360 - orientation[1];
-				 * if (orientation[2] >= 360) orientation[2] -= 360; if
-				 * (orientation[2] < 0) orientation[2] = 360 - orientation[2];
-				 */
-
-				azimuth = orientation[0];
-				pitch = orientation[1];
-				roll = orientation[2];
-
-				updateSensor();
-			}
-		}
-	}
-
 	public class LocalBinder extends Binder implements ILocationService
 	{
 		@Override
@@ -818,7 +675,6 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 		{
 			updateProvider(callback);
 			updateLocation(callback);
-			updateSensor(callback);
 			callbacks.add(callback);
 		}
 

@@ -921,11 +921,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				});
 			}
 		}
-
-		@Override
-		public void onSensorChanged(final float azimuth, final float pitch, final float roll)
-		{
-		}
 	};
 
 	private void updateMapViewArea()
@@ -1694,9 +1689,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			}
 			case R.id.menuHSI:
 				startActivity(new Intent(this, HSIActivity.class));
-				return true;
-			case R.id.menuCompass:
-				startActivity(new Intent(this, CompassActivity.class));
 				return true;
 			case R.id.menuInformation:
 				startActivity(new Intent(this, Information.class));

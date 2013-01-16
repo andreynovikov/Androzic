@@ -478,11 +478,6 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 		public void onProviderEnabled(String provider)
 		{
 		}
-
-		@Override
-		public void onSensorChanged(float azimuth, float pitch, float roll)
-		{
-		}
 	};
 
 	@Override

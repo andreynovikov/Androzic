@@ -46,6 +46,7 @@ import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
 import com.androzic.navigation.NavigationService;
+import com.androzic.ui.view.HSIView;
 import com.androzic.util.StringFormatter;
 
 public class HSIActivity extends Activity
@@ -347,11 +348,6 @@ public class HSIActivity extends Activity
 
 		@Override
 		public void onProviderEnabled(String provider)
-		{
-		}
-
-		@Override
-		public void onSensorChanged(final float azimuth, final float pitch, final float roll)
 		{
 		}
 	};

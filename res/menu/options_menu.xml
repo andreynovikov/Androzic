@@ -11,7 +11,7 @@
         android:id="@+id/menuWaypoints"
         android:icon="@drawable/ic_menu_myplaces"
         android:orderInCategory="0"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_waypoints">
         <menu>
             <item
@@ -24,6 +24,7 @@
                 android:title="@string/menu_project"/>
             <item
                 android:id="@+id/menuManageWaypoints"
+                android:icon="@drawable/ic_menu_list"
                 android:title="@string/menu_manage"/>
             <item
                 android:id="@+id/menuLoadWaypoints"
@@ -35,7 +36,7 @@
         android:id="@+id/menuMaps"
         android:icon="@drawable/ic_menu_mapmode"
         android:orderInCategory="0"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_maps">
         <menu>
             <item
@@ -53,7 +54,7 @@
         android:id="@+id/menuNavigation"
         android:icon="@drawable/ic_menu_directions"
         android:orderInCategory="0"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_navigation">
         <menu>
             <item
@@ -80,17 +81,15 @@
         android:id="@+id/menuView"
         android:icon="@drawable/ic_menu_view"
         android:orderInCategory="0"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_view">
         <menu>
             <item
                 android:id="@+id/menuHSI"
                 android:title="@string/menu_hsi"/>
             <item
-                android:id="@+id/menuCompass"
-                android:title="@string/menu_compass"/>
-            <item
                 android:id="@+id/menuInformation"
+                android:icon="@drawable/ic_menu_info_details"
                 android:title="@string/menu_information"/>
         </menu>
     </item>
@@ -102,12 +101,15 @@
         <menu>
             <item
                 android:id="@+id/menuManageTracks"
+                android:icon="@drawable/ic_menu_list"
                 android:title="@string/menu_manage"/>
             <item
                 android:id="@+id/menuLoadTrack"
+                android:icon="@drawable/ic_menu_archive"
                 android:title="@string/menu_load"/>
             <item
                 android:id="@+id/menuClearTrackTail"
+                android:icon="@drawable/ic_menu_delete"
                 android:title="@string/menu_cleartail"/>
         </menu>
     </item>

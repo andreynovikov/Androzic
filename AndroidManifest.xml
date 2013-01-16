@@ -45,9 +45,6 @@
     <uses-feature
         android:name="android.hardware.location.network"
         android:required="false" />
-    <uses-feature
-        android:name="android.hardware.screen.portrait"
-        android:required="false" />
 
     <permission
         android:name="com.androzic.permission.RECEIVE_LOCATION"
@@ -134,10 +131,6 @@
         <activity
             android:name=".HSIActivity"
             android:label="@string/hsi_name" />
-        <activity
-            android:name=".CompassActivity"
-            android:label="@string/compass_name"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".Information"
             android:label="@string/information_name"
