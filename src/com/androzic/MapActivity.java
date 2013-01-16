@@ -60,6 +60,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.LightingColorFilter;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -72,6 +73,7 @@ import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -1579,11 +1581,13 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		
 		// add plugins
 		SubMenu views = menu.findItem(R.id.menuView).getSubMenu();
-		Map<String, Intent> plugins = application.getPluginsViews();
+		Map<String, Pair<Drawable, Intent>> plugins = application.getPluginsViews();
 		for (String plugin : plugins.keySet())
 		{
 			MenuItem item = views.add(plugin);
-			item.setIntent(plugins.get(plugin));
+			item.setIntent(plugins.get(plugin).second);
+			if (plugins.get(plugin).first != null)
+				item.setIcon(plugins.get(plugin).first);
 		}
 		
 		return true;

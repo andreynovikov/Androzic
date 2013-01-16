@@ -47,6 +47,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -60,6 +61,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -133,7 +135,7 @@ public class Androzic extends BaseApplication
 	private List<Route> routes = new ArrayList<Route>();
 
 	private AbstractMap<String, Intent> pluginPreferences = new HashMap<String, Intent>();
-	private AbstractMap<String, Intent> pluginViews = new HashMap<String, Intent>();
+	private AbstractMap<String, Pair<Drawable, Intent>> pluginViews = new HashMap<String, Pair<Drawable, Intent>>();
 	
 	public boolean hasCompass = false;
 	private boolean memmsg = false;
@@ -307,7 +309,7 @@ public class Androzic extends BaseApplication
 		return pluginPreferences;
 	}
 	
-	public java.util.Map<String, Intent> getPluginsViews()
+	public java.util.Map<String, Pair<Drawable, Intent>> getPluginsViews()
 	{
 		return pluginViews;
 	}
@@ -1778,13 +1780,18 @@ public class Androzic extends BaseApplication
 	
 	public void initializePlugins()
 	{
-		// send initialization broadcast
-		sendBroadcast(new Intent("com.androzic.plugins.action.INITIALIZE"));
-
 		PackageManager packageManager = getPackageManager();
 		List<ResolveInfo> plugins;
+		Intent initializationIntent = new Intent("com.androzic.plugins.action.INITIALIZE");
+
+		// enumerate initializable plugins
+		plugins = packageManager.queryBroadcastReceivers(initializationIntent, 0);
+		for (ResolveInfo plugin : plugins)
+		{
+		}
 		
-		// If the plugin needs data from the main application, create a ContentProvider to make the data available.
+		// send initialization broadcast
+		sendBroadcast(initializationIntent);
 
 		// enumerate plugins with preferences
 		plugins = packageManager.queryIntentActivities(new Intent("com.androzic.plugins.preferences"), 0);
@@ -1799,9 +1806,30 @@ public class Androzic extends BaseApplication
 		plugins = packageManager.queryIntentActivities(new Intent("com.androzic.plugins.view"), 0);
 		for (ResolveInfo plugin : plugins)
 		{
-            Intent intent = new Intent();
+			// get menu icon
+			Drawable icon = null;
+			try
+			{
+				Resources resources = packageManager.getResourcesForApplication(plugin.activityInfo.applicationInfo);
+				int id = resources.getIdentifier("ic_menu_view", "drawable", plugin.activityInfo.packageName);
+				Log.e("Androzic", "Plugin: " + plugin.activityInfo.packageName + " " + id);
+				if (id != 0)
+					icon = resources.getDrawable(id);
+				Log.e("Androzic", "ic_menu_view: " + icon.getIntrinsicWidth() + "x" + icon.getIntrinsicHeight());
+			}
+			catch (Resources.NotFoundException e)
+			{
+				e.printStackTrace();
+			}
+			catch (PackageManager.NameNotFoundException e)
+			{
+				e.printStackTrace();
+			}			
+
+			Intent intent = new Intent();
             intent.setClassName(plugin.activityInfo.packageName, plugin.activityInfo.name);
-			pluginViews.put(plugin.activityInfo.loadLabel(packageManager).toString(), intent);
+            Pair<Drawable, Intent> pair = new Pair<Drawable, Intent>(icon, intent);
+			pluginViews.put(plugin.activityInfo.loadLabel(packageManager).toString(), pair);
 		}
 	}
 
