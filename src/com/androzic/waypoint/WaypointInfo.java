@@ -21,19 +21,28 @@
 package com.androzic.waypoint;
 
 import java.io.File;
+import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.Resources.Theme;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Base64;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -48,7 +57,8 @@ public class WaypointInfo extends Activity implements OnClickListener
 	private Waypoint waypoint;
 	int index;
 	
-    @Override
+    @SuppressLint("NewApi")
+	@Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -92,8 +102,48 @@ public class WaypointInfo extends Activity implements OnClickListener
 		}
 		else
 		{
-			description.setBackgroundColor(Color.LTGRAY);
-			description.loadData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+waypoint.description, "text/html", "UTF-8");
+			String descriptionHtml;
+			try
+			{
+				TypedValue tv = new TypedValue();
+				Theme theme = getTheme();
+				Resources resources = getResources();
+				theme.resolveAttribute(android.R.attr.textColorSecondary, tv, true);
+				int secondaryColor = resources.getColor(tv.resourceId);
+				String css = String.format("<style type=\"text/css\">html,body{margin:0;background:transparent} *{color:#%06X}</style>\n", (secondaryColor & 0x00FFFFFF));
+				descriptionHtml = css + waypoint.description;
+				description.setWebViewClient(new WebViewClient()
+				{
+				    @Override
+				    public void onPageFinished(WebView view, String url)
+				    {
+				    	view.setBackgroundColor(Color.TRANSPARENT);
+				        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+				        	view.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+				    }
+				});
+				description.setBackgroundColor(Color.TRANSPARENT);
+		        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		        	description.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+			}
+			catch (Resources.NotFoundException e)
+			{
+				description.setBackgroundColor(Color.LTGRAY);
+				descriptionHtml = waypoint.description;
+			}
+			
+			WebSettings settings = description.getSettings();
+			settings.setDefaultTextEncodingName("utf-8");
+			
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+			{
+				String base64 = Base64.encodeToString(descriptionHtml.getBytes(), Base64.DEFAULT);
+				description.loadData(base64, "text/html; charset=utf-8", "base64");
+			}
+			else
+			{
+				description.loadData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" + descriptionHtml, "text/html; chartset=UTF-8", null);
+			}
 		}
 
 		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
@@ -101,7 +151,7 @@ public class WaypointInfo extends Activity implements OnClickListener
 		
 		if (waypoint.altitude != Integer.MIN_VALUE)
 		{
-			String altitude = String.format("%d %s", waypoint.altitude, getResources().getStringArray(R.array.distance_abbrs_short)[2]);
+			String altitude = String.format(Locale.getDefault(), "%d %s", waypoint.altitude, getResources().getStringArray(R.array.distance_abbrs_short)[2]);
 			((TextView) findViewById(R.id.altitude)).setText(altitude);
 		}
 		

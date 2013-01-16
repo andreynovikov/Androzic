@@ -10,6 +10,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:orientation="vertical"
+        android:paddingTop="6dip"
         android:paddingLeft="10dip"
         android:paddingRight="10dip" >
 
@@ -43,7 +44,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="6dip" >
+            android:paddingBottom="12dip" >
 
             <TextView
                 android:id="@+id/date"
