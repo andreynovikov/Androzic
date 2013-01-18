@@ -858,6 +858,15 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 							map.setMoving(false);
 							updateGPSStatus();
 						}
+						// Mock provider hack
+						if (!map.isFixed() && continous && LocationManager.GPS_PROVIDER.equals(location.getProvider()))
+						{
+							satInfo.setText(R.string.sat_start);
+							satInfo.setTextColor(getResources().getColor(R.color.gpsworking));
+							map.setMoving(true);
+							map.setFixed(true);
+							updateGPSStatus();
+						}
 
 						updateMovingInfo(location, geoid);
 
