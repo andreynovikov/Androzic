@@ -94,7 +94,7 @@ public class TrackSave extends Activity
     				throw new FileNotFoundException(getString(R.string.err_nosdcard));
     			
     			Androzic application = (Androzic) getApplication();
-    			File dir = new File(application.trackPath);
+    			File dir = new File(application.dataPath);
     			if (! dir.exists())
     				dir.mkdirs();
     			File file = new File(dir, fname);

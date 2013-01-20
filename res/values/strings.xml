@@ -20,7 +20,6 @@
     <string name="markericon_name">Select marker icon</string>
     <string name="pref_name">Androzic settings</string>
     <string name="hsi_name">HSI</string>
-    <string name="compass_name">Compass</string>
     <string name="information_name">Information</string>
     <string name="mapinformation_name">Map information</string>
     <string name="coordinates_name">New coordinates</string>
@@ -47,6 +46,7 @@
     <string name="msg_cleaning">Cleaning&#8230;</string>
     <string name="msg_paid">Donated version</string>
     <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
+    <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: &#8216;%s&#8217;.</string>
 
     <string name="err_nosdcard">SD card unavailable</string>
     <string name="err_nofile">No such file</string>
@@ -75,6 +75,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
+    <string name="gotit">Got it</string>
     <string name="save">Save</string>
     <string name="done">Done</string>
     <string name="navigate">Navigate</string>
@@ -219,14 +220,10 @@
     <string name="pref_loc_store_summary">Mark to start application at the last location</string>
     <string name="pref_folder_title">Folders</string>
     <string name="pref_folder_prefix_title">Application folder</string>
-    <string name="pref_folder_prefix_caution">This option is for advanced users only. Use it with caution: if not set properly application can fail to start.</string>
     <string name="pref_folder_map_title">Maps folder</string>
-    <string name="pref_folder_waypoint_title">Waypoints folder</string>
-    <string name="pref_folder_track_title">Tracks folder</string>
-    <string name="pref_folder_route_title">Routes folder</string>
+    <string name="pref_folder_data_title">Data folder</string>
     <string name="pref_folder_icon_title">Icons folder</string>
-    <string name="pref_folder_lookup_title">Search in all folders</string>
-    <string name="pref_folder_lookup_summary">Mark to search for waypoints, tracks and routes at the entire external storage</string>
+    <string name="pref_folder_prefix_caution">This option is for advanced users only. Use it with caution: if not set properly application can fail to start.</string>
     <string name="pref_map_title">Map</string>
     <string name="pref_maprenderinterval_title">Update interval</string>
     <string name="pref_maprenderinterval_summary">Minimum time period between map updates</string>

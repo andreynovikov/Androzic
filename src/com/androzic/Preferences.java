@@ -20,9 +20,6 @@
 
 package com.androzic;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -36,21 +33,19 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.androzic.map.online.TileProvider;
 import com.androzic.ui.SeekbarPreference;
-import com.androzic.util.DirFileFilter;
 
 public class Preferences extends PreferenceActivity
 {
@@ -100,10 +95,6 @@ public class Preferences extends PreferenceActivity
 		if ("pref_behavior".equals(key))
 		{
 			activity = Preferences.OnlineMapPreferences.class;
-		}
-		else if ("pref_folder".equals(key))
-		{
-			activity = Preferences.FolderPreferences.class;
 		}
 		else if ("pref_plugins".equals(key))
 		{
@@ -163,17 +154,6 @@ public class Preferences extends PreferenceActivity
 	    @SuppressLint("NewApi")
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	    {
-	        if (key.equals(getString(R.string.pref_folder_root)))
-	        {
-	    		Androzic application = (Androzic) getApplication();
-	    		String root = sharedPreferences.getString(key, Environment.getExternalStorageDirectory() + File.separator + getString(R.string.def_folder_prefix));
-	        	application.setRootPath(root);
-	           	setPrefSummary(findPreference(getString(R.string.pref_folder_map)));
-	           	setPrefSummary(findPreference(getString(R.string.pref_folder_waypoint)));
-	           	setPrefSummary(findPreference(getString(R.string.pref_folder_track)));
-	           	setPrefSummary(findPreference(getString(R.string.pref_folder_route)));
-	        }
-
 	        Preference pref = findPreference(key);
 	       	setPrefSummary(pref);
 	        
@@ -212,6 +192,8 @@ public class Preferences extends PreferenceActivity
 	       	if (key.equals(getString(R.string.pref_locale)))
 	        {
 				new AlertDialog.Builder(this).setTitle(R.string.restart_needed).setIcon(android.R.drawable.ic_dialog_alert).setMessage(getString(R.string.restart_needed_explained)).setCancelable(false).setPositiveButton(R.string.ok, null).show();
+				// TODO Kill application
+				//android.os.Process.killProcess(android.os.Process.myPid());
 	        }
 	        // TODO change intent name
 	        sendBroadcast(new Intent("onSharedPreferenceChanged").putExtra("key", key));
@@ -233,14 +215,6 @@ public class Preferences extends PreferenceActivity
 		        CharSequence summary = ((ListPreference) pref).getEntry();
 		        if (summary != null)
 		        {
-		        	if (pref.getKey().equals(getString(R.string.pref_folder_map)) ||
-	        			pref.getKey().equals(getString(R.string.pref_folder_waypoint)) ||
-	        			pref.getKey().equals(getString(R.string.pref_folder_track)) ||
-	        			pref.getKey().equals(getString(R.string.pref_folder_route)))
-		        	{
-		        		Androzic application = (Androzic) getApplication();
-		        		summary = application.getRootPath() + "/" + summary.toString();
-		        	}
 		        	pref.setSummary(summary);
 		        }
 	        }
@@ -339,53 +313,6 @@ public class Preferences extends PreferenceActivity
 					mapzoom.setMax(curProvider.maxZoom);
 				}
 			}
-			super.onResume();
-	    }
-	}
-	
-	public static class FolderPreferences extends Preferences.InnerPreferences
-	{
-	    @Override
-		public void onResume()
-	    {
-	    	Androzic application = (Androzic) getApplication();
-			
-	        // initialize folders
-	        String defmap = getString(R.string.def_folder_map);
-	        String defwpt = getString(R.string.def_folder_waypoint);
-	        String deftrk = getString(R.string.def_folder_track);
-	        String defrte = getString(R.string.def_folder_route);
-	        File root = new File(application.getRootPath());
-			DirFileFilter dirFilter = new DirFileFilter();
-			File[] dirs = root.listFiles(dirFilter);
-			List<String> dirnames = new ArrayList<String>();
-			if (dirs != null)
-				for (File dir : dirs)
-					dirnames.add(dir.getName());
-			if (! dirnames.contains(defmap))
-				dirnames.add(defmap);
-			if (! dirnames.contains(defwpt))
-				dirnames.add(defwpt);
-			if (! dirnames.contains(deftrk))
-				dirnames.add(deftrk);
-			if (! dirnames.contains(defrte))
-				dirnames.add(defrte);
-			String[] entries = new String[dirnames.size()];
-			dirnames.toArray(entries);
-			Arrays.sort(entries, String.CASE_INSENSITIVE_ORDER);
-			ListPreference maps = (ListPreference) findPreference(getString(R.string.pref_folder_map));
-			maps.setEntries(entries);
-			maps.setEntryValues(entries);
-			ListPreference waypoints = (ListPreference) findPreference(getString(R.string.pref_folder_waypoint));
-			waypoints.setEntries(entries);
-			waypoints.setEntryValues(entries);
-			ListPreference tracks = (ListPreference) findPreference(getString(R.string.pref_folder_track));
-			tracks.setEntries(entries);
-			tracks.setEntryValues(entries);
-			ListPreference routes = (ListPreference) findPreference(getString(R.string.pref_folder_route));
-			routes.setEntries(entries);
-			routes.setEntryValues(entries);
-
 			super.onResume();
 	    }
 	}

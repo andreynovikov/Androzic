@@ -58,9 +58,7 @@ public class MapState
 	double navDistance = -1;
 	
 	Locale locale = null;
-	String waypointPath;
-	String trackPath;
-	String routePath;
+	String dataPath;
 	String rootPath;
 	String mapPath;
 	String iconPath;

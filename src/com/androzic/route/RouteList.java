@@ -336,7 +336,7 @@ public class RouteList extends ListActivity
 			text = (TextView) v.findViewById(R.id.filename);
 			if (text != null && route.filepath != null)
 			{
-				String filepath = route.filepath.startsWith(application.routePath) ? route.filepath.substring(application.routePath.length() + 1, route.filepath.length()): route.filepath;
+				String filepath = route.filepath.startsWith(application.dataPath) ? route.filepath.substring(application.dataPath.length() + 1, route.filepath.length()): route.filepath;
 				text.setText(filepath);
 			}
 			ImageView icon = (ImageView) v.findViewById(R.id.icon);

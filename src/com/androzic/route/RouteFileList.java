@@ -52,7 +52,7 @@ public class RouteFileList extends FileListActivity
 	protected String getPath()
 	{
 		Androzic application = (Androzic) RouteFileList.this.getApplication();
-		return application.routePath;
+		return application.dataPath;
 	}
 
 	@Override

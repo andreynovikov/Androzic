@@ -33,11 +33,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -80,9 +78,7 @@ public abstract class FileListActivity extends ListActivity
 		{ 
 			public void run() 
 			{
-				SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(FileListActivity.this);
-				boolean lookup = settings.getBoolean(getString(R.string.pref_folder_lookup), getResources().getBoolean(R.bool.def_folder_lookup));
-				File root = lookup ? Environment.getExternalStorageDirectory() : new File(getPath());
+				File root = new File(getPath());
 				files = FileList.getFileListing(root, getFilenameFilter());
 /*
 				Collections.sort(files, new Comparator()

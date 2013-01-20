@@ -64,7 +64,7 @@ public class TrackFileList extends FileListActivity
 	protected String getPath()
 	{
 		Androzic application = (Androzic) getApplication();
-		return application.trackPath;
+		return application.dataPath;
 	}
 
 	@Override

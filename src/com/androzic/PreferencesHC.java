@@ -21,8 +21,6 @@
 package com.androzic;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +48,6 @@ import android.widget.TextView;
 
 import com.androzic.map.online.TileProvider;
 import com.androzic.ui.SeekbarPreference;
-import com.androzic.util.DirFileFilter;
 
 @SuppressLint("NewApi")
 public class PreferencesHC extends PreferenceActivity
@@ -155,10 +152,6 @@ public class PreferencesHC extends PreferenceActivity
 	    		Androzic application = (Androzic) getActivity().getApplication();
 	    		String root = sharedPreferences.getString(key, Environment.getExternalStorageDirectory() + File.separator + getString(R.string.def_folder_prefix));
 	        	application.setRootPath(root);
-	           	setPrefSummary(findPreference(getString(R.string.pref_folder_map)));
-	           	setPrefSummary(findPreference(getString(R.string.pref_folder_waypoint)));
-	           	setPrefSummary(findPreference(getString(R.string.pref_folder_track)));
-	           	setPrefSummary(findPreference(getString(R.string.pref_folder_route)));
 	        }
 
 	        Preference pref = findPreference(key);
@@ -218,14 +211,6 @@ public class PreferencesHC extends PreferenceActivity
 		        CharSequence summary = ((ListPreference) pref).getEntry();
 		        if (summary != null)
 		        {
-		        	if (pref.getKey().equals(getString(R.string.pref_folder_map)) ||
-	        			pref.getKey().equals(getString(R.string.pref_folder_waypoint)) ||
-	        			pref.getKey().equals(getString(R.string.pref_folder_track)) ||
-	        			pref.getKey().equals(getString(R.string.pref_folder_route)))
-		        	{
-		        		Androzic application = (Androzic) getActivity().getApplication();
-		        		summary = application.getRootPath() + "/" + summary.toString();
-		        	}
 		        	pref.setSummary(summary);
 		        }
 	        }
@@ -318,53 +303,6 @@ public class PreferencesHC extends PreferenceActivity
 				mapzoom.setMin(curProvider.minZoom);
 				mapzoom.setMax(curProvider.maxZoom);
 			}
-
-			super.onResume();
-	    }
-	}
-
-	public static class FolderPreferencesFragment extends PreferencesHC.PreferencesFragment
-	{
-	    @Override
-		public void onResume()
-	    {
-	    	Androzic application = (Androzic) getActivity().getApplication();
-			
-	        // initialize folders
-	        String defmap = getString(R.string.def_folder_map);
-	        String defwpt = getString(R.string.def_folder_waypoint);
-	        String deftrk = getString(R.string.def_folder_track);
-	        String defrte = getString(R.string.def_folder_route);
-	        File root = new File(application.getRootPath());
-			DirFileFilter dirFilter = new DirFileFilter();
-			File[] dirs = root.listFiles(dirFilter);
-			List<String> dirnames = new ArrayList<String>();
-			if (dirs != null)
-				for (File dir : dirs)
-					dirnames.add(dir.getName());
-			if (! dirnames.contains(defmap))
-				dirnames.add(defmap);
-			if (! dirnames.contains(defwpt))
-				dirnames.add(defwpt);
-			if (! dirnames.contains(deftrk))
-				dirnames.add(deftrk);
-			if (! dirnames.contains(defrte))
-				dirnames.add(defrte);
-			String[] entries = new String[dirnames.size()];
-			dirnames.toArray(entries);
-			Arrays.sort(entries, String.CASE_INSENSITIVE_ORDER);
-			ListPreference maps = (ListPreference) findPreference(getString(R.string.pref_folder_map));
-			maps.setEntries(entries);
-			maps.setEntryValues(entries);
-			ListPreference waypoints = (ListPreference) findPreference(getString(R.string.pref_folder_waypoint));
-			waypoints.setEntries(entries);
-			waypoints.setEntryValues(entries);
-			ListPreference tracks = (ListPreference) findPreference(getString(R.string.pref_folder_track));
-			tracks.setEntries(entries);
-			tracks.setEntryValues(entries);
-			ListPreference routes = (ListPreference) findPreference(getString(R.string.pref_folder_route));
-			routes.setEntries(entries);
-			routes.setEntryValues(entries);
 
 			super.onResume();
 	    }

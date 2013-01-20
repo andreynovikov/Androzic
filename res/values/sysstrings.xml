@@ -15,12 +15,11 @@
     <string name="pref_loc_gpstimeout">loc_gpstimeout</string>
     <string name="pref_loc_store">loc_store</string>
     <string name="pref_folder_root">folderroot</string>
-    <string name="pref_folder_map">foldermap</string>
+    <string name="pref_folder_map">foldermapnew</string>
+    <string name="pref_folder_map_old">foldermap</string>
     <string name="pref_folder_waypoint">folderwaypoint</string>
-    <string name="pref_folder_track">foldertrack</string>
-    <string name="pref_folder_route">folderroute</string>
+    <string name="pref_folder_data">folderdata</string>
     <string name="pref_folder_icon">foldericon</string>
-    <string name="pref_folder_lookup">folderlookup</string>
     <string name="pref_maprenderinterval">maprenderinterval</string>
     <string name="pref_mapbest">mapbest</string>
     <string name="pref_mapbestinterval">mapbestint</string>
@@ -84,12 +83,6 @@
 	<string name="pref_navigation_loadlast">navigation_loadlast</string>
 	<string name="pref_navigation_proximitycircle">navigation_proximitycircle</string>
 	<string name="pref_navigation_linewidth">navigation_linewidth_int</string>
-	<string name="pref_sharing_session">sharing_session</string>
-	<string name="pref_sharing_user">sharing_user</string>
-	<string name="pref_sharing_updateinterval">sharing_updateinterval</string>
-	<string name="pref_sharing_timeout">sharing_timeout</string>
-	<string name="pref_sharing_tagcolor">sharing_tagcolor</string>
-	<string name="pref_sharing_tagwidth">sharing_tagwidth</string>
 	<string name="pref_about">about</string>
 	<string name="pref_donategoogle">donategoogle</string>
 	<string name="pref_donatepaypal">donatepaypal</string>
@@ -106,14 +99,12 @@
 	<string name="def_tracking_currentlength">1000</string>
 	<string name="def_grid_userscale">200</string>
 	<string name="def_grid_usermpp">20</string>
-	<string name="def_folder_map">maps</string>
-	<string name="def_folder_track">tracks</string>
-	<string name="def_folder_waypoint">waypoints</string>
-	<string name="def_folder_route">routes</string>
-	<string name="def_folder_icon">icons</string>
+	<string name="def_folder_map">Androzic/maps</string>
+	<string name="def_folder_icon">Androzic/icons</string>
+	<string name="def_folder_data">Androzic/data</string>
 	<string name="def_folder_prefix">Androzic</string>
 	<string name="def_onlinemap">osm</string>
-	<string name="def_panelactions">zoomin,zoomout,nextmap,prevmap,locate,tracking,info,follow,share</string>
+	<string name="def_panelactions">zoomin,zoomout,nextmap,prevmap,locate,tracking,info,follow</string>
 		
 	<string name="app_eulaaccepted">app_eulaaccepted</string>
 	<string name="app_lastuid">app_lastuid</string>

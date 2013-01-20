@@ -33,6 +33,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.SharedPreferences.Editor;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -68,6 +69,7 @@ public class Splash extends Activity implements OnClickListener
 	private static final int MSG_STATUS = 3;
 	private static final int MSG_PROGRESS = 4;
 	private static final int MSG_ASK = 5;
+	private static final int MSG_SAY = 6;
 
 	private static final int RES_YES = 1;
 	private static final int RES_NO = 2;
@@ -77,8 +79,10 @@ public class Splash extends Activity implements OnClickListener
 
 	private int result;
 	private boolean wait;
+	protected String savedMessage;
 	private ProgressBar progress;
 	private TextView message;
+	private Button gotit;
 	private Button yes;
 	private Button no;
 	private Button quit;
@@ -122,6 +126,8 @@ public class Splash extends Activity implements OnClickListener
 		yes.setOnClickListener(this);
 		no = (Button) findViewById(R.id.no);
 		no.setOnClickListener(this);
+		gotit = (Button) findViewById(R.id.gotit);
+		gotit.setOnClickListener(this);
 		quit = (Button) findViewById(R.id.quit);
 		quit.setOnClickListener(this);
 	
@@ -193,10 +199,19 @@ public class Splash extends Activity implements OnClickListener
 					progress.setProgress(total);
 					break;
 				case MSG_ASK:
+					progress.setVisibility(View.GONE);
+					savedMessage = message.getText().toString();
 					message.setText(msg.getData().getString("message"));
 					result = 0;
 					yes.setVisibility(View.VISIBLE);
 					no.setVisibility(View.VISIBLE);
+					break;
+				case MSG_SAY:
+					progress.setVisibility(View.GONE);
+					savedMessage = message.getText().toString();
+					message.setText(msg.getData().getString("message"));
+					result = 0;
+					gotit.setVisibility(View.VISIBLE);
 					break;
 				case MSG_FINISH:
 					startActivity(new Intent(Splash.this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
@@ -270,25 +285,68 @@ public class Splash extends Activity implements OnClickListener
 					return;
 				}
 			}
-
-			File mapdir = new File(root, settings.getString(getString(R.string.pref_folder_map), resources.getString(R.string.def_folder_map)));
+			
+			// check maps folder existence
+			File mapdir = new File(settings.getString(getString(R.string.pref_folder_map), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_map)));
+			String oldmap = settings.getString(getString(R.string.pref_folder_map_old), null);
+			if (oldmap != null)
+			{
+				File oldmapdir = new File(root, oldmap);
+				if (! oldmapdir.equals(mapdir))
+				{
+					mapdir = oldmapdir;
+					Editor editor = settings.edit();
+					editor.putString(getString(R.string.pref_folder_map), mapdir.getAbsolutePath());
+					editor.commit();
+				}
+			}
 			if (!mapdir.exists())
 			{
 				mapdir.mkdirs();
 			}
 
+			// check data folder existence
+			File datadir = new File(settings.getString(getString(R.string.pref_folder_data), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_data)));
+			if (!datadir.exists())
+			{
+				// check if there was an old data structure
+				String wptdir = settings.getString(getString(R.string.pref_folder_waypoint), null);
+				System.err.println("wpt: " + wptdir);
+				if (wptdir != null)
+				{
+					wait = true;
+					msg = mHandler.obtainMessage(MSG_SAY);
+					b = new Bundle();
+					b.putString("message", getString(R.string.msg_newdatafolder, datadir.getAbsolutePath()));
+					msg.setData(b);
+					mHandler.sendMessage(msg);
+					
+					while (wait)
+					{
+						try
+						{
+							sleep(100);
+						}
+						catch (InterruptedException e)
+						{
+							e.printStackTrace();
+						}
+					}
+				}
+				datadir.mkdirs();
+			}
+
 			// initialize paths
 			application.setRootPath(root.getAbsolutePath());
-			application.setMapPath(mapdir.getName());
-			application.setDataPath(Androzic.PATH_WAYPOINTS, settings.getString(getString(R.string.pref_folder_waypoint), resources.getString(R.string.def_folder_waypoint)));
-			application.setDataPath(Androzic.PATH_TRACKS, settings.getString(getString(R.string.pref_folder_track), resources.getString(R.string.def_folder_track)));
-			application.setDataPath(Androzic.PATH_ROUTES, settings.getString(getString(R.string.pref_folder_route), resources.getString(R.string.def_folder_route)));
-			application.setDataPath(Androzic.PATH_ICONS, settings.getString(getString(R.string.pref_folder_icon), resources.getString(R.string.def_folder_icon)));
+			application.setMapPath(mapdir.getAbsolutePath());
+			application.setDataPath(Androzic.PATH_DATA, datadir.getAbsolutePath());
+			application.setDataPath(Androzic.PATH_ICONS, settings.getString(getString(R.string.pref_folder_icon), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_icon)));
 			
 			// initialize data
 			application.installData();
+
 			// read default waypoints
-			File wptFile = new File(application.waypointPath, "myWaypoints.wpt");
+			File wptFile = new File(application.dataPath, "myWaypoints.wpt");
 			if (wptFile.exists() && wptFile.canRead())
 			{
 				try
@@ -308,7 +366,7 @@ public class Splash extends Activity implements OnClickListener
 				{
 					String name = settings.getString(getString(R.string.trk_current), "myTrack.plt");
 
-					File trkFile = new File(application.trackPath, name);
+					File trkFile = new File(application.dataPath, name);
 					if (trkFile.exists() && trkFile.canRead())
 					{
 						try
@@ -329,7 +387,7 @@ public class Splash extends Activity implements OnClickListener
 			// load routes
 			if (settings.getBoolean(getString(R.string.pref_route_preload), resources.getBoolean(R.bool.def_route_preload)))
 			{
-				List<File> files = FileList.getFileListing(new File(application.routePath), new RouteFilenameFilter());
+				List<File> files = FileList.getFileListing(new File(application.dataPath), new RouteFilenameFilter());
 				for (File file : files)
 				{
 				    List<Route> routes = null;
@@ -550,8 +608,11 @@ public class Splash extends Activity implements OnClickListener
 				finish();
 				break;
 		}
+		gotit.setVisibility(View.GONE);
 		yes.setVisibility(View.GONE);
 		no.setVisibility(View.GONE);
+		progress.setVisibility(View.VISIBLE);
+		message.setText(savedMessage);
 		wait = false;
 	}
 }

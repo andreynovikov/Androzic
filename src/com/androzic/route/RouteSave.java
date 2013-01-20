@@ -85,7 +85,7 @@ public class RouteSave extends Activity
     		try
     		{
     			Androzic application = (Androzic) getApplication();
-    			File dir = new File(application.routePath);
+    			File dir = new File(application.dataPath);
     			if (! dir.exists())
     				dir.mkdirs();
     			File file = new File(dir, fname);

@@ -4,7 +4,7 @@
    	<header android:fragment="com.androzic.PreferencesHC$OnlineMapPreferencesFragment" android:title="@string/pref_map_title">
 		<extra android:name="resource" android:value="pref_behavior" />
 	</header>
-   	<header android:fragment="com.androzic.PreferencesHC$FolderPreferencesFragment" android:title="@string/pref_folder_title">
+   	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_folder_title">
 		<extra android:name="resource" android:value="pref_folder" />
 	</header>
    	<header android:fragment="com.androzic.PreferencesHC$PreferencesFragment" android:title="@string/pref_loc_title">

@@ -2386,17 +2386,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				map.update();
 			}
 		}
-		else if (getString(R.string.pref_folder_waypoint).equals(key))
+		else if (getString(R.string.pref_folder_data).equals(key))
 		{
-			application.setDataPath(Androzic.PATH_WAYPOINTS, sharedPreferences.getString(key, resources.getString(R.string.def_folder_waypoint)));
-		}
-		else if (getString(R.string.pref_folder_track).equals(key))
-		{
-			application.setDataPath(Androzic.PATH_TRACKS, sharedPreferences.getString(key, resources.getString(R.string.def_folder_track)));
-		}
-		else if (getString(R.string.pref_folder_route).equals(key))
-		{
-			application.setDataPath(Androzic.PATH_ROUTES, sharedPreferences.getString(key, resources.getString(R.string.def_folder_route)));
+			application.setDataPath(Androzic.PATH_DATA, sharedPreferences.getString(key, resources.getString(R.string.def_folder_data)));
 		}
 		else if (getString(R.string.pref_folder_icon).equals(key))
 		{

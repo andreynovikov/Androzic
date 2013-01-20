@@ -53,7 +53,7 @@ public class WaypointFileList extends FileListActivity
 	protected String getPath()
 	{
 		Androzic application = (Androzic) getApplication();
-		return application.waypointPath;
+		return application.dataPath;
 	}
 
 	@Override

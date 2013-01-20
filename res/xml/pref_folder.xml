@@ -3,33 +3,18 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_folder_title" >
 
-    <ListPreference
+    <com.androzic.ui.FolderPickerPreference
         android:defaultValue="@string/def_folder_map"
-        android:dialogTitle="@string/pref_folder_map_title"
         android:key="@string/pref_folder_map"
         android:title="@string/pref_folder_map_title" />
-    <ListPreference
-        android:defaultValue="@string/def_folder_waypoint"
-        android:dialogTitle="@string/pref_folder_waypoint_title"
-        android:key="@string/pref_folder_waypoint"
-        android:title="@string/pref_folder_waypoint_title" />
-    <ListPreference
-        android:defaultValue="@string/def_folder_track"
-        android:dialogTitle="@string/pref_folder_track_title"
-        android:key="@string/pref_folder_track"
-        android:title="@string/pref_folder_track_title" />
-    <ListPreference
-        android:defaultValue="@string/def_folder_route"
-        android:dialogTitle="@string/pref_folder_route_title"
-        android:key="@string/pref_folder_route"
-        android:title="@string/pref_folder_route_title" />
-
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
-        android:defaultValue="@bool/def_folder_lookup"
-        android:key="@string/pref_folder_lookup"
-        android:summary="@string/pref_folder_lookup_summary"
-        android:title="@string/pref_folder_lookup_title" />
-
+    <com.androzic.ui.FolderPickerPreference
+        android:defaultValue="@string/def_folder_data"
+        android:key="@string/pref_folder_data"
+        android:title="@string/pref_folder_data_title" />
+    <com.androzic.ui.FolderPickerPreference
+        android:defaultValue="@string/def_folder_icon"
+        android:key="@string/pref_folder_icon"
+        android:title="@string/pref_folder_icon_title" />
     <com.androzic.ui.FolderPickerPreference
         android:defaultValue="@string/def_folder_prefix"
         android:dialogMessage="@string/pref_folder_prefix_caution"

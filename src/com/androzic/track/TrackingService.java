@@ -173,9 +173,9 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 		try
 		{
 			Androzic application = Androzic.getApplication();
-			if (application.trackPath == null)
+			if (application.dataPath == null)
 				return;
-			File dir = new File(application.trackPath);
+			File dir = new File(application.dataPath);
 			if (! dir.exists())
 				dir.mkdirs();
 			String addon = "";
@@ -519,7 +519,7 @@ public class TrackingService extends Service implements OnSharedPreferenceChange
 			}
 			closeFile();
 		}
-		else if (getString(R.string.pref_folder_track).equals(key))
+		else if (getString(R.string.pref_folder_data).equals(key))
 		{
 			closeFile();
 		}

@@ -100,9 +100,7 @@ import com.jhlabs.map.proj.ProjectionException;
 
 public class Androzic extends BaseApplication
 {
-	public static final int PATH_WAYPOINTS = 0x001;
-	public static final int PATH_TRACKS = 0x002;
-	public static final int PATH_ROUTES = 0x004;
+	public static final int PATH_DATA = 0x001;
 	public static final int PATH_ICONS = 0x008;
 	
 	public static final int ORDER_SHOW_PREFERENCE = 0;
@@ -156,9 +154,7 @@ public class Androzic extends BaseApplication
 	private Locale locale = null;
 	private Handler handler = null;
 
-	public String waypointPath;
-	public String trackPath;
-	public String routePath;
+	public String dataPath;
 	private String rootPath;
 	private String mapPath;
 	public String iconPath;
@@ -493,7 +489,7 @@ public class Androzic extends BaseApplication
 		try
 		{
 			if (set.path == null)
-				set.path = waypointPath + File.separator + FileUtils.sanitizeFilename(set.name) + ".wpt";
+				set.path = dataPath + File.separator + FileUtils.sanitizeFilename(set.name) + ".wpt";
 			File file = new File(set.path);
 			File dir = file.getParentFile();
 			if (! dir.exists())
@@ -1467,9 +1463,7 @@ public class Androzic extends BaseApplication
 		hasCompass = mapState.hasCompass;
 
 		locale = mapState.locale;
-		waypointPath = mapState.waypointPath;
-		trackPath = mapState.trackPath;
-		routePath = mapState.routePath;
+		dataPath = mapState.dataPath;
 		iconPath = mapState.iconPath;
 		rootPath = mapState.rootPath;
 		mapPath = mapState.mapPath;
@@ -1493,9 +1487,7 @@ public class Androzic extends BaseApplication
 		mapState.hasCompass = hasCompass;
 		
 		mapState.locale = locale;
-		mapState.waypointPath = waypointPath;
-		mapState.trackPath = trackPath;
-		mapState.routePath = routePath;
+		mapState.dataPath = dataPath;
 		mapState.iconPath = iconPath;
 		mapState.rootPath = rootPath;
 		mapState.mapPath = mapPath;
@@ -1521,19 +1513,15 @@ public class Androzic extends BaseApplication
 
 	public void setDataPath(int pathtype, String path)
 	{
-		if ((pathtype & PATH_WAYPOINTS) > 0)
-			waypointPath = rootPath + "/" + path;
-		if ((pathtype & PATH_TRACKS) > 0)
-			trackPath = rootPath + "/" + path;
-		if ((pathtype & PATH_ROUTES) > 0)
-			routePath = rootPath + "/" + path;
+		if ((pathtype & PATH_DATA) > 0)
+			dataPath = path;
 		if ((pathtype & PATH_ICONS) > 0)
-			iconPath = rootPath + "/" + path;
+			iconPath = path;
 	}
 
 	public boolean setMapPath(String path)
 	{
-		String newPath = rootPath + "/" + path;
+		String newPath = path;
 		if (mapPath == null || ! mapPath.equals(newPath))
 		{
 			mapPath = newPath;
@@ -1690,7 +1678,7 @@ public class Androzic extends BaseApplication
 
 	void installData()
 	{
-		defWaypointSet = new WaypointSet(waypointPath + File.separator + "myWaypoints.wpt", "myWaypoints");
+		defWaypointSet = new WaypointSet(dataPath + File.separator + "myWaypoints.wpt", "myWaypoints");
 		waypointSets.add(defWaypointSet);
 		
 		File icons = new File(iconPath, "icons.dat");
@@ -1812,10 +1800,8 @@ public class Androzic extends BaseApplication
 			{
 				Resources resources = packageManager.getResourcesForApplication(plugin.activityInfo.applicationInfo);
 				int id = resources.getIdentifier("ic_menu_view", "drawable", plugin.activityInfo.packageName);
-				Log.e("Androzic", "Plugin: " + plugin.activityInfo.packageName + " " + id);
 				if (id != 0)
 					icon = resources.getDrawable(id);
-				Log.e("Androzic", "ic_menu_view: " + icon.getIntrinsicWidth() + "x" + icon.getIntrinsicHeight());
 			}
 			catch (Resources.NotFoundException e)
 			{
