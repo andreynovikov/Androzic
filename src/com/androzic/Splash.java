@@ -297,6 +297,7 @@ public class Splash extends Activity implements OnClickListener
 					mapdir = oldmapdir;
 					Editor editor = settings.edit();
 					editor.putString(getString(R.string.pref_folder_map), mapdir.getAbsolutePath());
+					editor.putString(getString(R.string.pref_folder_map_old), null);
 					editor.commit();
 				}
 			}
