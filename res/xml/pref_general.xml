@@ -9,6 +9,11 @@
         android:summary="@string/pref_wakelock_summary"
         android:title="@string/pref_wakelock_title" />
     <com.androzic.ui.preference.HelpfulCheckBoxPreference
+        android:defaultValue="@bool/def_hideactionbar"
+        android:key="@string/pref_hideactionbar"
+        android:summary="@string/pref_hideactionbar_summary"
+        android:title="@string/pref_hideactionbar_title" />
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_mapdim"
         android:key="@string/pref_mapdim"
         android:summary="@string/pref_mapdim_summary"

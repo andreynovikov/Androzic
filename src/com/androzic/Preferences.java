@@ -129,13 +129,11 @@ public class Preferences extends PreferenceActivity
 	    {
 	        super.onResume();
 	        
-			Androzic application = (Androzic) getApplication();
-			
 			// initialize compass
-	        Preference pref = findPreference(getString(R.string.pref_usecompass));
+	        Preference pref = findPreference(getString(R.string.pref_hideactionbar));
 	        if (pref != null)
 	        {
-	        	pref.setEnabled(application.hasCompass);
+	        	getPreferenceScreen().removePreference(pref);
 	        }
 
 			// initialize list summaries

@@ -238,7 +238,9 @@
 	<string name="pref_usecompass_summary">Mark to use compass instead of GPS to determine current track if not moving</string>
 	<string name="pref_wakelock_title">Keep screen on</string>
 	<string name="pref_wakelock_summary">Mark to keep the device&#8217;s screen turned on and bright when map is displayed</string>
-    <string name="pref_mapdim_title">Screen auto dim</string>
+	<string name="pref_hideactionbar_title">Hide action bar</string>
+	<string name="pref_hideactionbar_summary">Mark to hide application action bar when map is displayed. Takes affect only after application restart.</string>
+	<string name="pref_mapdim_title">Screen auto dim</string>
     <string name="pref_mapdim_summary">Mark to make screen automatically dim at night time</string>
     <string name="pref_mapdimvalue_title">Dim amount</string>
     <string name="pref_mapcropborder_title">Crop map margins</string>

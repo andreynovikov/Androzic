@@ -239,11 +239,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		ready = false;
 		isFullscreen = false;
 
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-		{
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-		}
-
 		application = (Androzic) getApplication();
 
 		//FIXME Should find a better place for this
@@ -277,6 +272,16 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		setRequestedOrientation(Integer.parseInt(settings.getString(getString(R.string.pref_orientation), "-1")));
 		settings.registerOnSharedPreferenceChangeListener(this);
+		Resources resources = getResources();
+		
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+		{
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+		}
+		else if (settings.getBoolean(getString(R.string.pref_hideactionbar), resources.getBoolean(R.bool.def_hideactionbar)))
+		{
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+		}
 
 		panelActions = getResources().getStringArray(R.array.panel_action_values);
 
@@ -331,8 +336,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		panel.setOnPanelListener(this);
 		panel.setInterpolator(new ExpoInterpolator(Type.OUT));
 
-		Resources resources = getResources();
-		
 		wptQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
 		wptQuickAction.addActionItem(new ActionItem(qaAddWaypointToRoute, getString(R.string.menu_addtoroute), resources.getDrawable(R.drawable.ic_menu_add)));
 		wptQuickAction.setOnActionItemClickListener(waypointActionItemClickListener);
