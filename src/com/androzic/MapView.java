@@ -289,6 +289,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		int cx = getWidth() / 2;
 		int cy = getHeight() / 2;
 
+		//canvas.rotate(-bearing, lookAheadXY[0] + cx, lookAheadXY[1] + cy);
 		application.drawMap(mapCenter, lookAheadXY, loadBestMap, getWidth(), getHeight(), canvas);
 
 		canvas.translate(lookAheadXY[0] + cx, lookAheadXY[1] + cy);
@@ -728,6 +729,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	{
 		synchronized (lock)
 		{
+			//double rad = Math.toRadians(-bearing);
+			//int dX = (int) (deltaX * Math.cos(rad) + deltaY * Math.sin(rad));
+			//int dY = (int) (deltaX * Math.sin(-rad) + deltaY * Math.cos(rad));
 			boolean mapChanged = application.scrollMap(-deltaX, -deltaY);
 			if (mapChanged)
 				updateMapInfo();
