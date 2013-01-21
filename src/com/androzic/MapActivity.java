@@ -44,6 +44,7 @@ import org.miscwidgets.interpolator.ExpoInterpolator;
 import org.miscwidgets.widget.Panel;
 import org.miscwidgets.widget.Panel.OnPanelListener;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -68,8 +69,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.util.Log;
@@ -163,8 +162,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	protected boolean showAccuracy;
 	protected boolean followOnLocation;
 
-	protected WakeLock wakeLock;
-
 	private TextView coordinates;
 	private TextView satInfo;
 
@@ -222,6 +219,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 	private boolean animationSet;
 	private boolean isFullscreen;
+	private boolean keepScreenOn;
 	private String[] panelActions;
 	private List<String> activeActions;
 	LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF555555);
@@ -230,6 +228,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	private boolean restarting = false;
 
 	/** Called when the activity is first created. */
+	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -417,9 +416,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		onSharedPreferenceChanged(settings, getString(R.string.pref_grid_preference));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_panelactions));
 
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
-
 		if (getIntent().getExtras() != null)
 			onNewIntent(getIntent());
 		
@@ -535,6 +531,10 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 
 		onSharedPreferenceChanged(settings, getString(R.string.pref_wakelock));
+		if (keepScreenOn)
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		else
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
 		bindService(new Intent(this, TrackingService.class), trackingConnection, BIND_AUTO_CREATE);
@@ -570,11 +570,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 		unregisterReceiver(broadcastReceiver);
 
-		if (wakeLock.isHeld())
-		{
-			wakeLock.release();
-		}
-		
 		// save active route
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		editor.putString(getString(R.string.nav_route), "");
@@ -632,8 +627,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		ready = false;
 
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
-
-		wakeLock = null;
 
 		if (isFinishing() && ! restarting)
 		{
@@ -2441,14 +2434,14 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		// activity preferences
 		else if (getString(R.string.pref_wakelock).equals(key))
 		{
-			boolean lock = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_wakelock));
-			if (lock && !wakeLock.isHeld())
+			keepScreenOn = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_wakelock));
+			Window wnd = getWindow();
+			if (wnd != null)
 			{
-				wakeLock.acquire();
-			}
-			else if (!lock && wakeLock.isHeld())
-			{
-				wakeLock.release();
+				if (keepScreenOn)
+					wnd.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+				else
+					wnd.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			}
 		}
 		// map preferences

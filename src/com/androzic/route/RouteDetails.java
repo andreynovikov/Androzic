@@ -33,13 +33,12 @@ import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -62,7 +61,6 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 	private static final int qaWaypointNavigate = 2;
 	private static final int qaWaypointProperties = 3;
 
-	private WakeLock wakeLock;
 	private NavigationService navigationService;
 	private WaypointListAdapter adapter;
     private QuickAction quickAction;
@@ -101,9 +99,6 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 		quickAction.setOnActionItemClickListener(actionItemClickListener);
 		
 		getListView().setOnItemClickListener(this);
-		
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
 	}
 
 	@Override
@@ -115,9 +110,7 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 			bindService(new Intent(this, NavigationService.class), navigationConnection, BIND_AUTO_CREATE);
 			boolean lock = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_wakelock), getResources().getBoolean(R.bool.def_wakelock));
 			if (lock)
-			{
-				wakeLock.acquire();
-			}
+				getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
 	}
 
@@ -129,10 +122,6 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 		{
 			unregisterReceiver(navigationReceiver);
 			unbindService(navigationConnection);
-		}
-		if (wakeLock.isHeld())
-		{
-			wakeLock.release();
 		}
 	}
 

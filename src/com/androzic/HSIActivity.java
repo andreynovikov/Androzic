@@ -32,14 +32,13 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.androzic.location.ILocationListener;
@@ -51,7 +50,6 @@ import com.androzic.util.StringFormatter;
 
 public class HSIActivity extends Activity
 {
-	private WakeLock wakeLock;
 	private ILocationService locationService = null;
     private NavigationService navigationService;
     private HSIView hsiView;
@@ -108,9 +106,6 @@ public class HSIActivity extends Activity
 		bearingUnit = (TextView) findViewById(R.id.bearingunit);
 		eteValue = (TextView) findViewById(R.id.ete);
 		eteUnit = (TextView) findViewById(R.id.eteunit);
-
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
     }
 
     
@@ -148,9 +143,7 @@ public class HSIActivity extends Activity
 		
 		boolean lock = settings.getBoolean(getString(R.string.pref_wakelock), resources.getBoolean(R.bool.def_wakelock));
 		if (lock)
-		{
-			wakeLock.acquire();
-		}
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 
 	@Override
@@ -165,10 +158,6 @@ public class HSIActivity extends Activity
 		}
     	unregisterReceiver(navigationReceiver);
 		unbindService(navigationConnection);
-		if (wakeLock.isHeld())
-		{
-			wakeLock.release();
-		}
 	}
 
 	@Override
