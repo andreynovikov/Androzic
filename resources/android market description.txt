@@ -1,4 +1,4 @@
-<b>Navigation client that uses OziExplorer maps</b> (ozf2, ozfx3). Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some afford, see FAQ for details. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required). 
+<b>Navigation client that uses OziExplorer maps</b> (ozf2, ozfx3). Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required). 
 
 <b>Application features:</b>
 • support for ozf2, ozfx3 maps
