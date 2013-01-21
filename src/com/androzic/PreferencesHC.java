@@ -123,15 +123,6 @@ public class PreferencesHC extends PreferenceActivity
 	    {
 	        super.onResume();
 	        
-			Androzic application = (Androzic) getActivity().getApplication();
-			
-			// initialize compass
-	        Preference pref = findPreference(getString(R.string.pref_usecompass));
-	        if (pref != null)
-	        {
-	        	pref.setEnabled(application.hasCompass);
-	        }
-
 			// initialize list summaries
 	        initSummaries(getPreferenceScreen());
 	        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);

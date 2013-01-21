@@ -52,8 +52,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.GeomagneticField;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Environment;
 import android.os.Handler;
@@ -135,7 +133,6 @@ public class Androzic extends BaseApplication
 	private AbstractMap<String, Intent> pluginPreferences = new HashMap<String, Intent>();
 	private AbstractMap<String, Pair<Drawable, Intent>> pluginViews = new HashMap<String, Pair<Drawable, Intent>>();
 	
-	public boolean hasCompass = false;
 	private boolean memmsg = false;
 	
 	// FIXME Put overlays in separate class
@@ -1460,8 +1457,6 @@ public class Androzic extends BaseApplication
 			route.removed = false;
 		}
 		
-		hasCompass = mapState.hasCompass;
-
 		locale = mapState.locale;
 		dataPath = mapState.dataPath;
 		iconPath = mapState.iconPath;
@@ -1484,8 +1479,6 @@ public class Androzic extends BaseApplication
 		mapState.tracks.addAll(tracks);
 		mapState.routes.addAll(routes);
 
-		mapState.hasCompass = hasCompass;
-		
 		mapState.locale = locale;
 		mapState.dataPath = dataPath;
 		mapState.iconPath = iconPath;
@@ -1867,17 +1860,7 @@ public class Androzic extends BaseApplication
 		{
 			screenSize = 320 * 480;
 		}
-		
-		SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		if (sensorManager != null)
-		{
-			if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null && sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null)
-			{
-				hasCompass = true;
-			}
-		}
-		sensorManager = null;
-		
+
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		Configuration config = getBaseContext().getResources().getConfiguration();
 
