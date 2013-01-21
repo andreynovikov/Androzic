@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <Button
+    <ImageButton
         android:id="@+id/navigate_button"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:contentDescription="@string/menu_navigate"
-        android:drawableLeft="@drawable/ic_menu_directions"
-        android:drawablePadding="0dip"
-        android:paddingLeft="24dip"
-        android:paddingRight="24dip" />
+        android:src="@drawable/ic_menu_directions"
+        android:paddingLeft="12dip"
+        android:paddingRight="12dip" />
 
-    <Button
+    <ImageButton
         android:id="@+id/edit_button"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:contentDescription="@string/menu_edit"
-        android:drawableLeft="@drawable/ic_menu_edit"
-        android:drawablePadding="0dip"
-        android:paddingLeft="24dip"
-        android:paddingRight="24dip" />
+        android:src="@drawable/ic_menu_edit" />
 
-    <Button
+    <ImageButton
         android:id="@+id/share_button"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:contentDescription="@string/menu_share"
-        android:drawableLeft="@drawable/ic_menu_share"
-        android:drawablePadding="0dip"
-        android:paddingLeft="24dip"
-        android:paddingRight="24dip" />
+        android:src="@drawable/ic_menu_share" />
+
+    <ImageButton
+        android:id="@+id/remove_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="@string/menu_remove"
+        android:src="@drawable/ic_menu_delete" />
 
 </merge>

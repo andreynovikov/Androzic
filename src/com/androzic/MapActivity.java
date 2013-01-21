@@ -96,6 +96,7 @@ import android.widget.Toast;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
+import com.androzic.data.WaypointSet;
 import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
@@ -228,7 +229,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	private boolean restarting = false;
 
 	/** Called when the activity is first created. */
-	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -1820,7 +1820,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				if (resultCode == RESULT_OK)
 				{
 					Bundle extras = data.getExtras();
-					int index = extras.getInt("index");
+					final int index = extras.getInt("index");
 					int action = extras.getInt("action");
 					switch (action)
 					{
@@ -1839,14 +1839,20 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 							i.putExtra(Intent.EXTRA_TEXT, waypoint.name + " @ " + coords);
 							startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
 							break;
-						/*	
 						case R.id.remove_button:
-							WaypointSet wptset = application.getWaypoint(index).set;
-							application.removeWaypoint(index);
-							application.saveWaypoints(wptset);
-							map.invalidate();
+							new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.removeWaypointQuestion).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int which)
+								{
+									WaypointSet wptset = application.getWaypoint(index).set;
+									application.removeWaypoint(index);
+									application.saveWaypoints(wptset);
+									map.invalidate();
+								}
+
+							}).setNegativeButton(R.string.no, null).show();
 							break;
-						*/
 					}
 				}
 				break;

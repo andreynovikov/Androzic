@@ -69,7 +69,7 @@
     <string name="following_disabled">Following disabled</string>
  
     <string name="quitQuestion">Do you want to quit?</string>
-    <string name="sessionQuestion">Sharing session and user must be set. Open location sharing setings?</string>
+    <string name="removeWaypointQuestion">Remove waypoint?</string>
 
     <string name="quit">Quit</string>
     <string name="yes">Yes</string>

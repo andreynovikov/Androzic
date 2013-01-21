@@ -43,7 +43,7 @@ import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.androzic.Androzic;
@@ -166,9 +166,10 @@ public class WaypointInfo extends Activity implements OnClickListener
 		else
 			((TextView) findViewById(R.id.date)).setVisibility(View.GONE);
 			
-	    ((Button) findViewById(R.id.navigate_button)).setOnClickListener(this);
-	    ((Button) findViewById(R.id.edit_button)).setOnClickListener(this);
-	    ((Button) findViewById(R.id.share_button)).setOnClickListener(this);
+	    ((ImageButton) findViewById(R.id.navigate_button)).setOnClickListener(this);
+	    ((ImageButton) findViewById(R.id.edit_button)).setOnClickListener(this);
+	    ((ImageButton) findViewById(R.id.share_button)).setOnClickListener(this);
+	    ((ImageButton) findViewById(R.id.remove_button)).setOnClickListener(this);
     }
 
 	@Override
