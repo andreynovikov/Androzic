@@ -59,7 +59,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private static final float MAX_SHIFT_SPEED = 20f;
 	private static final float INC_SHIFT_SPEED = 2f;
 	
-	private static final int GESTURE_THRESHOLD_DP = (int) (ViewConfiguration.get(Androzic.getApplication()).getScaledTouchSlop() * 1.5);
+	private static final int GESTURE_THRESHOLD_DP = (int) (ViewConfiguration.get(Androzic.getApplication()).getScaledTouchSlop() * 3);
 
 	private int vectorType = 1;
 	private int vectorMultiplier = 10;
