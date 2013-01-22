@@ -70,6 +70,7 @@ public class TrackFileList extends FileListActivity
 	@Override
 	protected void loadFile(File file)
 	{
+		Androzic application = (Androzic) getApplication();
 		List<Track> tracks = null;
 		try
 		{
@@ -77,7 +78,7 @@ public class TrackFileList extends FileListActivity
 			if (lc.endsWith(".plt"))
 			{
 				tracks = new ArrayList<Track>();
-			    tracks.add(OziExplorerFiles.loadTrackFromFile(file));
+			    tracks.add(OziExplorerFiles.loadTrackFromFile(file, application.charset));
 			}
 			else if (lc.endsWith(".kml"))
 			{
@@ -89,7 +90,6 @@ public class TrackFileList extends FileListActivity
 			}
 			if (tracks.size() > 0)
 			{
-				Androzic application = (Androzic) getApplication();
 				int[] index = new int[tracks.size()];
 				int i = 0;
 				for (Track track: tracks)

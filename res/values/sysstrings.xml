@@ -34,6 +34,7 @@
     <string name="pref_mapcropborder">mapcropborder</string>
     <string name="pref_mapdrawborder">mapdrawborder</string>
     <string name="pref_unfollowontap">unfollowontap</string>
+    <string name="pref_charset">charset</string>
     <string name="pref_orientation">orientation</string>
     <string name="pref_locale">locale</string>
     <string name="pref_scalebarcolor">scalecolor</string>

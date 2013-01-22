@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2013  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -22,8 +22,9 @@ package com.androzic.map;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Hashtable;
 
 import android.util.Log;
@@ -35,9 +36,9 @@ import com.jhlabs.map.Datum;
 import com.jhlabs.map.Ellipsoid;
 import com.jhlabs.map.GeodeticPosition;
 import com.jhlabs.map.proj.ConicProjection;
-import com.jhlabs.map.proj.UniversalTransverseMercatorProjection;
 import com.jhlabs.map.proj.ProjectionException;
 import com.jhlabs.map.proj.ProjectionFactory;
+import com.jhlabs.map.proj.UniversalTransverseMercatorProjection;
 
 public class MapLoader
 {
@@ -76,14 +77,14 @@ public class MapLoader
 												Ellipsoid.HAYFORD
 	                                        };
 
-	public static Map load(File file) throws IOException
+	public static Map load(File file, String charset) throws IOException
 	{
 		if (projections == null)
 		{
             initialize();
         }
 		
-	    BufferedReader reader = new BufferedReader(new FileReader(file));
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
 	    
 	    Map map = new Map(file.getCanonicalPath());
 	    try

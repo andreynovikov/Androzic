@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="speed_values">
         <item>0</item>
         <item>1</item>
@@ -13,10 +14,10 @@
         <item>1</item>
     </string-array>
     <string-array name="distance_values">
-	    <item>0</item>
-	    <item>1</item>
-	    <item>2</item>
-	    <item>3</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
     <string-array name="distance_factors">
         <item>1</item>
@@ -31,8 +32,8 @@
         <item>0.54</item>
     </string-array>
     <string-array name="elevation_values">
-	    <item>0</item>
-	    <item>1</item>
+        <item>0</item>
+        <item>1</item>
     </string-array>
     <string-array name="elevation_factors">
         <item>1</item>
@@ -54,14 +55,14 @@
         <item>0</item>
         <item>1</item>
     </string-array>
-	<string-array name="interval_values">
-		<item>0</item>
-		<item>24</item>
-		<item>168</item>
+    <string-array name="interval_values">
+        <item>0</item>
+        <item>24</item>
+        <item>168</item>
     </string-array>
-	<string-array name="grid_values">
-		<item>0</item>
-		<item>1</item>
+    <string-array name="grid_values">
+        <item>0</item>
+        <item>1</item>
     </string-array>
     <string-array name="cursorvector_values">
         <item>0</item>
@@ -91,45 +92,79 @@
         <item>zh</item>
     </string-array>
     <string-array name="localization_names">
-    	<item>Device default</item>
-    	<item>English</item>
-    	<item>Русский</item>
-    	<item>Čeština</item>
-    	<item>Français</item>
-    	<item>Suomi</item>
-    	<item>Español</item>
-    	<item>Italiano</item>
-    	<item>Български</item>
-    	<item>Polski</item>
-    	<item>Hollandsk</item>
-    	<item>Türk</item>
-    	<item>Português</item>
-    	<item>Svenska</item>
-    	<item>中文 (简体)</item>
+        <item>Device default</item>
+        <item>English</item>
+        <item>Русский</item>
+        <item>Čeština</item>
+        <item>Français</item>
+        <item>Suomi</item>
+        <item>Español</item>
+        <item>Italiano</item>
+        <item>Български</item>
+        <item>Polski</item>
+        <item>Hollandsk</item>
+        <item>Türk</item>
+        <item>Português</item>
+        <item>Svenska</item>
+        <item>中文 (简体)</item>
     </string-array>
     <string-array name="orientation_values">
         <item>-1</item>
         <item>1</item>
         <item>0</item>
     </string-array>
+    <string-array name="charset_values">
+        <item>UTF-8</item>
+        <item>windows-1250</item>
+        <item>windows-1251</item>
+        <item>windows-1252</item>
+        <item>windows-1253</item>
+        <item>windows-1254</item>
+        <item>windows-1255</item>
+        <item>windows-1256</item>
+        <item>windows-1257</item>
+        <item>windows-1258</item>
+        <item>TIS-620</item>
+        <item>Shift_JIS</item>
+        <item>GBK</item>
+        <item>EUC-KR</item>
+        <item>Big5</item>
+    </string-array>
+    <string-array name="charset_names">
+        <item>Android default (UTF-8)</item>
+        <item>Latin, CEE (CP1250)</item>
+        <item>Cyrillic (CP1251)</item>
+        <item>Latin, Western (CP1252)</item>
+        <item>Greek (CP1253)</item>
+        <item>Turkish (CP1254)</item>
+        <item>Hebrew (CP1255)</item>
+        <item>Arabic (CP1256)</item>
+        <item>Latin, Baltic (CP1257)</item>
+        <item>Vietnamese (CP1258)</item>
+        <item>Thai (CP874)</item>
+        <item>Japanise (CP932)</item>
+        <item>Chinese simplified (CP936)</item>
+        <item>Korean (CP949)</item>
+        <item>Chinese traditional (CP950)</item>
+    </string-array>
     <string-array name="credit_names">
-    	<item>Daniil Smelov</item>
-    	<item>Dave Brasgalla</item>
-    	<item>Christopher McCurdy</item>
-    	<item>Matthew Wiggins</item>
-    	<item>Mike Reedell</item>
-    	<item>Eric Harlow</item>
-    	<item>Luke Hutchison</item>
-    	<item>Gentleface</item>
-    	<item>Michael Rajek, Daniel Chvátal, Petr Gregor</item>
-    	<item>Romain Gouyet</item>
-    	<item>Jouko Nurma</item>
-    	<item>Georgi Nachev</item>
-    	<item>Erik Pinter</item>
-    	<item>Türker Türkücü</item>
-    	<item>Alexandre Verniol, Gianni Faletti</item>
-    	<item>Adolfo Gea, Francisco Sánchez</item>
-    	<item>Christian Mobaeck</item>
+        <item>Daniil Smelov</item>
+        <item>Dave Brasgalla</item>
+        <item>Christopher McCurdy</item>
+        <item>Matthew Wiggins</item>
+        <item>Mike Reedell</item>
+        <item>Eric Harlow</item>
+        <item>Luke Hutchison</item>
+        <item>Gentleface</item>
+        <item>Michael Rajek, Daniel Chvátal, Petr Gregor</item>
+        <item>Romain Gouyet</item>
+        <item>Jouko Nurma</item>
+        <item>Georgi Nachev</item>
+        <item>Erik Pinter</item>
+        <item>Türker Türkücü</item>
+        <item>Alexandre Verniol, Gianni Faletti</item>
+        <item>Adolfo Gea, Francisco Sánchez</item>
+        <item>Christian Mobaeck</item>
     </string-array>
     <string-array name="panel_action_values">
         <item>zoomin</item>
@@ -144,43 +179,44 @@
         <item>tracking</item>
         <item>expand</item>
     </string-array>
-	<array name="panel_action_images">
-		<item>@drawable/arrow_left</item>
-		<item>@drawable/arrow_right</item>
-		<item>@drawable/expand</item>
-	</array>    
+
+    <array name="panel_action_images">
+        <item>@drawable/arrow_left</item>
+        <item>@drawable/arrow_right</item>
+        <item>@drawable/expand</item>
+    </array>
+
     <string-array name="online_maps">
-		<item><![CDATA[OpenStreetMap Mapnik,osm,0,18,,http://{$s}.tile.openstreetmap.org/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-		<item><![CDATA[OpenStreetMap Tiles@Home,osmth,0,17,,http://{$s}.tah.openstreetmap.org/Tiles/tile/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-		<item><![CDATA[OpenCycleMap,ocm,0,16,,http://{$s}.tile.opencyclemap.org/cycle/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-		<item><![CDATA[OpenCycleMap Transport,ocmt,0,18,,http://{$s}.tile2.opencyclemap.org/transport/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-		<item><![CDATA[CloudMade (Original),cmo,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/1/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-		<item><![CDATA[CloudMade (Fine Line),cmfl,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/2/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-		<item><![CDATA[CloudMade (Tourist),cmt,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/7/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-		<item><![CDATA[CloudMade (Midnight Commander),cmmc,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/999/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-		<item><![CDATA[MapQuest,mq,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/osm/{$z}/{$x}/{$y}.png,0,1,2,3]]></item>
-		<item><![CDATA[MapQuest Open Aerial,mqoa,0,11,,http://oatile{$s}.mqcdn.com/naip/{$z}/{$x}/{$y}.png]]></item>
-		<item><![CDATA[OpenSeaMap,osea,0,18,,http://tiles.openseamap.org/seamark/{$z}/{$x}/{$y}.png]]></item>
-		<item><![CDATA[Hike Bike Map,hnb,1,17,,http://toolserver.org/tiles/hikebike/{$z}/{$x}/{$y}.png]]></item>
-		<!-- 
-		<item><![CDATA[Hike Bike Map (Hills Underlay),hnbhu,1,17,,http://toolserver.org/~cmarqu/hill/{$z}/{$x}/{$y}.png]]></item>
-		-->
-		<item><![CDATA[MTB Map (CZ),mtbcz,7,16,,http://tchor.fi.muni.cz:8080/mtbmap_tiles/{$z}/{$x}/{$y}.png]]></item>
-		<item><![CDATA[Migurski\'s Terrain (US),migter,4,18,,http://tile.stamen.com/terrain-background/{$z}/{$x}/{$y}.jpg]]></item>
-		<item><![CDATA[Chartbundle US Sectional Charts,cbsec,4,13,,http://wms.chartbundle.com/tms/1.0.0/sec/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-		<item><![CDATA[Chartbundle US Terminal Area Charts,cbtac,4,14,,http://wms.chartbundle.com/tms/1.0.0/tac/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-		<item><![CDATA[Chartbundle US World Aeronautical Charts,cbwac,4,12,,http://wms.chartbundle.com/tms/1.0.0/wac/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-		<item><![CDATA[Chartbundle US Enroute Low Charts,cbenrl,4,13,,http://wms.chartbundle.com/tms/1.0.0/enrl/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-		<item><![CDATA[Chartbundle US Enroute High Charts,cbenrh,4,12,,http://wms.chartbundle.com/tms/1.0.0/enrh/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-		<item><![CDATA[Chartbundle US Area Charts,cbenra,4,13,,http://wms.chartbundle.com/tms/1.0.0/enra/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-		<item><![CDATA[Charts VFR (US),aeromaps,5,12,,http://www.aeromaps.us/Z{$z}/{$y}/{$x}.png]]></item>
-		<item><![CDATA[Statkart Topographic (NO),notopo,5,17,,http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={$z}&x={$x}&y={$y}]]></item>
-		<item><![CDATA[Statkart Marine (NO),nomar,3,14,,http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=sjo_hovedkart2&zoom={$z}&x={$x}&y={$y}]]></item>
-		<item><![CDATA[Eniro Map (NO SE FI DK PL),eni,2,20,,http://map.eniro.com/geowebcache/service/tms1.0.0/map/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-		<item><![CDATA[Eniro Aeral (NO SE DK),enia,2,19,,http://map.eniro.com/geowebcache/service/tms1.0.0/aerial/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-		<item><![CDATA[Eniro Marine (NO SE),enim,5,16,,http://map.eniro.com/geowebcache/service/tms1.0.0/nautical/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-		<item><![CDATA[NLS Topo Map (FI),nlst,4,19,,http://tiles.kartat.kapsi.fi/peruskartta/{$z}/{$x}/{$y}.png]]></item>
-		<item><![CDATA[NLS Background,nlsb,4,19,,http://tiles.kartat.kapsi.fi/taustakartta/{$z}/{$x}/{$y}.png]]></item>
-		<item><![CDATA[NLS Aerial (FI),nlsa,13,19,,http://tiles.kartat.kapsi.fi/ortokuva/{$z}/{$x}/{$y}.png]]></item>
+        <item><![CDATA[OpenStreetMap Mapnik,osm,0,18,,http://{$s}.tile.openstreetmap.org/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[OpenStreetMap Tiles@Home,osmth,0,17,,http://{$s}.tah.openstreetmap.org/Tiles/tile/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[OpenCycleMap,ocm,0,16,,http://{$s}.tile.opencyclemap.org/cycle/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[OpenCycleMap Transport,ocmt,0,18,,http://{$s}.tile2.opencyclemap.org/transport/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[CloudMade (Original),cmo,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/1/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[CloudMade (Fine Line),cmfl,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/2/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[CloudMade (Tourist),cmt,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/7/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[CloudMade (Midnight Commander),cmmc,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/999/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[MapQuest,mq,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/osm/{$z}/{$x}/{$y}.png,0,1,2,3]]></item>
+        <item><![CDATA[MapQuest Open Aerial,mqoa,0,11,,http://oatile{$s}.mqcdn.com/naip/{$z}/{$x}/{$y}.png]]></item>
+        <item><![CDATA[OpenSeaMap,osea,0,18,,http://tiles.openseamap.org/seamark/{$z}/{$x}/{$y}.png]]></item>
+        <item><![CDATA[Hike Bike Map,hnb,1,17,,http://toolserver.org/tiles/hikebike/{$z}/{$x}/{$y}.png]]></item>
+        <!-- <item><![CDATA[Hike Bike Map (Hills Underlay),hnbhu,1,17,,http://toolserver.org/~cmarqu/hill/{$z}/{$x}/{$y}.png]]></item> -->
+        <item><![CDATA[MTB Map (CZ),mtbcz,7,16,,http://tchor.fi.muni.cz:8080/mtbmap_tiles/{$z}/{$x}/{$y}.png]]></item>
+        <item><![CDATA[Migurski\'s Terrain (US),migter,4,18,,http://tile.stamen.com/terrain-background/{$z}/{$x}/{$y}.jpg]]></item>
+        <item><![CDATA[Chartbundle US Sectional Charts,cbsec,4,13,,http://wms.chartbundle.com/tms/1.0.0/sec/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+        <item><![CDATA[Chartbundle US Terminal Area Charts,cbtac,4,14,,http://wms.chartbundle.com/tms/1.0.0/tac/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+        <item><![CDATA[Chartbundle US World Aeronautical Charts,cbwac,4,12,,http://wms.chartbundle.com/tms/1.0.0/wac/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+        <item><![CDATA[Chartbundle US Enroute Low Charts,cbenrl,4,13,,http://wms.chartbundle.com/tms/1.0.0/enrl/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+        <item><![CDATA[Chartbundle US Enroute High Charts,cbenrh,4,12,,http://wms.chartbundle.com/tms/1.0.0/enrh/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+        <item><![CDATA[Chartbundle US Area Charts,cbenra,4,13,,http://wms.chartbundle.com/tms/1.0.0/enra/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+        <item><![CDATA[Charts VFR (US),aeromaps,5,12,,http://www.aeromaps.us/Z{$z}/{$y}/{$x}.png]]></item>
+        <item><![CDATA[Statkart Topographic (NO),notopo,5,17,,http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={$z}&x={$x}&y={$y}]]></item>
+        <item><![CDATA[Statkart Marine (NO),nomar,3,14,,http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=sjo_hovedkart2&zoom={$z}&x={$x}&y={$y}]]></item>
+        <item><![CDATA[Eniro Map (NO SE FI DK PL),eni,2,20,,http://map.eniro.com/geowebcache/service/tms1.0.0/map/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+        <item><![CDATA[Eniro Aeral (NO SE DK),enia,2,19,,http://map.eniro.com/geowebcache/service/tms1.0.0/aerial/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+        <item><![CDATA[Eniro Marine (NO SE),enim,5,16,,http://map.eniro.com/geowebcache/service/tms1.0.0/nautical/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
+        <item><![CDATA[NLS Topo Map (FI),nlst,4,19,,http://tiles.kartat.kapsi.fi/peruskartta/{$z}/{$x}/{$y}.png]]></item>
+        <item><![CDATA[NLS Background,nlsb,4,19,,http://tiles.kartat.kapsi.fi/taustakartta/{$z}/{$x}/{$y}.png]]></item>
+        <item><![CDATA[NLS Aerial (FI),nlsa,13,19,,http://tiles.kartat.kapsi.fi/ortokuva/{$z}/{$x}/{$y}.png]]></item>
     </string-array>
+
 </resources>

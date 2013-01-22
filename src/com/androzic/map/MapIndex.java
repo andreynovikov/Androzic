@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2013  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -41,7 +41,7 @@ public class MapIndex implements Serializable
 	private int hashCode;
 	private Comparator<Map> comparator = new MapComparator();
 	
-	public MapIndex(String path)
+	public MapIndex(String path, String charset)
 	{
 		maps = new ArrayList<Map>();
 		mapsRoot = path;
@@ -51,7 +51,7 @@ public class MapIndex implements Serializable
 		{
 			try
 			{
-				maps.add(MapLoader.load(file));
+				maps.add(MapLoader.load(file, charset));
 			}
 			catch (IOException e)
 			{

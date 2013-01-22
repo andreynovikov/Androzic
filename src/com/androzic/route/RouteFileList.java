@@ -58,13 +58,14 @@ public class RouteFileList extends FileListActivity
 	@Override
 	protected void loadFile(File file)
 	{
+		Androzic application = (Androzic) getApplication();
 	    List<Route> routes = null;
 		try
 		{
 			String lc = file.getName().toLowerCase();
 			if (lc.endsWith(".rt2") || lc.endsWith(".rte"))
 			{
-				routes = OziExplorerFiles.loadRoutesFromFile(file);
+				routes = OziExplorerFiles.loadRoutesFromFile(file, application.charset);
 			}
 			else if (lc.endsWith(".kml"))
 			{
@@ -76,7 +77,6 @@ public class RouteFileList extends FileListActivity
 			}
 			if (routes.size() > 0)
 			{
-				Androzic application = (Androzic) getApplication();
 				int[] index = new int[routes.size()];
 				int i = 0;
 				for (Route route: routes)

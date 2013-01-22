@@ -23,9 +23,12 @@ package com.androzic.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -34,8 +37,8 @@ import java.util.Locale;
 
 import com.androzic.data.Route;
 import com.androzic.data.Track;
-import com.androzic.data.Waypoint;
 import com.androzic.data.Track.TrackPoint;
+import com.androzic.data.Waypoint;
 import com.androzic.map.MapLoader;
 import com.jhlabs.map.Datum;
 import com.jhlabs.map.Ellipsoid;
@@ -57,11 +60,11 @@ public class OziExplorerFiles
 	 * @return <code>List</code> of <code>Waypoint</code>s
 	 * @throws IOException 
 	 */
-	public static List<Waypoint> loadWaypointsFromFile(final File file) throws IOException
+	public static List<Waypoint> loadWaypointsFromFile(final File file, final String charset) throws IOException
 	{
 		List<Waypoint> waypoints = new ArrayList<Waypoint>();
 
-	    BufferedReader reader = new BufferedReader(new FileReader(file));
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
 	    
 	    String line = null;
 
@@ -171,9 +174,9 @@ public class OziExplorerFiles
 	 * @param waypoints <code>List</code> of <code>Waypoint</code>s to save
 	 * @throws IOException
 	 */
-	public static void saveWaypointsToFile(final File file, final List<Waypoint> waypoints) throws IOException
+	public static void saveWaypointsToFile(final File file, final String charset, final List<Waypoint> waypoints) throws IOException
 	{
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
+	    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), charset));
 
 		writer.write("OziExplorer Waypoint File Version 1.1\n" +
 				  "WGS 84\n" +
@@ -243,9 +246,9 @@ public class OziExplorerFiles
 	 * @throws IOException on file read error
 	 * @throws IllegalArgumentException if file format is not plt
 	 */
-	public static Track loadTrackFromFile(final File file) throws IllegalArgumentException, IOException
+	public static Track loadTrackFromFile(final File file, final String charset) throws IllegalArgumentException, IOException
 	{
-		return loadTrackFromFile(file, 0);
+		return loadTrackFromFile(file, charset, 0);
 	}
 	
 	/**
@@ -257,7 +260,7 @@ public class OziExplorerFiles
 	 * @throws IOException on file read error
 	 * @throws IllegalArgumentException if file format is not plt
 	 */
-	public static Track loadTrackFromFile(final File file, final long lines) throws IllegalArgumentException, IOException
+	public static Track loadTrackFromFile(final File file, final String charset, final long lines) throws IllegalArgumentException, IOException
 	{
 		Track track = new Track();
 		
@@ -267,39 +270,60 @@ public class OziExplorerFiles
 			skip = file.length() - 35 * lines; // 35 - average line length in conventional track file
 		}
 
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
 
 	    String line = null;
 
 	    // OziExplorer Track Point File Version 2.0
 	    if ((line = reader.readLine()) == null)
+	    {
+	    	reader.close();
 	    	throw new IllegalArgumentException("Bad track file");
+	    }
 	    skip -= line.length();
 	    // WGS 84
 	    if ((line = reader.readLine()) == null)
+	    {
+	    	reader.close();
 	    	throw new IllegalArgumentException("Bad track file");
+	    }
 	    skip -= line.length();
 	    // Altitude is in Feet
 	    if ((line = reader.readLine()) == null)
+	    {
+	    	reader.close();
 	    	throw new IllegalArgumentException("Bad track file");
+	    }
 	    skip -= line.length();
 	    // Reserved 3
 	    if ((line = reader.readLine()) == null)
+	    {
+	    	reader.close();
 	    	throw new IllegalArgumentException("Bad track file");
+	    }
 	    skip -= line.length();
 	    // 0,2,255,OziCE Track Log File,1
 	    if ((line = reader.readLine()) == null)
+	    {
+	    	reader.close();
 	    	throw new IllegalArgumentException("Bad track file");
+	    }
 	    skip -= line.length();
 		String[] fields = CSV.parseLine(line);
 	    if (fields.length < 4)
+	    {
+	    	reader.close();
 	    	throw new IllegalArgumentException("Bad track file");
+	    }
 		track.width=Integer.parseInt(fields[1]);
 		track.color=bgr2rgb(Integer.parseInt(fields[2]));
 		track.name=fields[3];
 	    // 0
 	    if ((line = reader.readLine()) == null)
+	    {
+	    	reader.close();
 	    	throw new IllegalArgumentException("Bad track file");
+	    }
 	    skip -= line.length();
 	    skip -= 12; // new line characters
 		
@@ -335,10 +359,11 @@ public class OziExplorerFiles
 	 * @param track <code>Track</code> object containing the list of track points to save
 	 * @throws IOException
 	 */
-	public static void saveTrackToFile(final File file, final Track track) throws IOException
+	public static void saveTrackToFile(final File file, final String charset, final Track track) throws IOException
 	{
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
-		writer.write("OziExplorer Track Point File Version 2.1\n" +
+	    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), charset));
+
+	    writer.write("OziExplorer Track Point File Version 2.1\n" +
 				"WGS 84\n" +
 				"Altitude is in Feet\n" +
 				"Reserved 3\n");
@@ -397,11 +422,11 @@ public class OziExplorerFiles
 	 * @throws IOException on file read error
 	 * @throws IllegalArgumentException if file format is not rt2 or rte
 	 */
-	public static List<Route> loadRoutesFromFile(File file) throws IOException, IllegalArgumentException
+	public static List<Route> loadRoutesFromFile(final File file, final String charset) throws IOException, IllegalArgumentException
 	{
 		List<Route> routes = new ArrayList<Route>();
 		
-	    BufferedReader reader = new BufferedReader(new FileReader(file));
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
 	    
 	    String line = reader.readLine();
 		String[] fields = CSV.parseLine(line);
@@ -415,12 +440,18 @@ public class OziExplorerFiles
 		    line = reader.readLine();
 			fields = CSV.parseLine(line);
 			if (! "H2".equals(fields[0]))
+			{
+				reader.close();
 				throw new IllegalArgumentException("Bad rt2 header");
+			}
 			// H3,My route,,0
 		    line = reader.readLine();
 			fields = CSV.parseLine(line);
 			if (! "H3".equals(fields[0]))
+			{
+				reader.close();
 				throw new IllegalArgumentException("Bad rt2 header");
+			}
 			Route route = new Route();
 			routes.add(route);
 			route.name = fields[1].replace((char) 209, ',');
@@ -519,6 +550,7 @@ public class OziExplorerFiles
 					}
 					else
 					{
+						reader.close();
 						throw new IllegalArgumentException("Bad route file");
 					}
 				}
@@ -526,11 +558,13 @@ public class OziExplorerFiles
 				{
 					if (rtn != routeNum)
 					{
+						reader.close();
 						throw new IllegalArgumentException("Bad route file");
 					}
 					int wpn = Integer.valueOf(fields[2]);
 					if (wpn != wptNum + 1)
 					{
+						reader.close();
 						throw new IllegalArgumentException("Bad route file");
 					}
 					wptNum++;
@@ -543,15 +577,17 @@ public class OziExplorerFiles
 		}
 		else
 		{
+			reader.close();
 			throw new IllegalArgumentException("Bad route file");
 		}
 
 		return routes;
 	}
 
-	public static void saveRouteToFile(File file, Route route) throws IOException
+	public static void saveRouteToFile(final File file, final String charset, final Route route) throws IOException
 	{
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
+	    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), charset));
+		
 		writer.write("H1,OziExplorer CE Route2 File Version 1.0\n" +
 				"H2,WGS 84\n");
 

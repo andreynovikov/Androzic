@@ -59,6 +59,7 @@ public class WaypointFileList extends FileListActivity
 	@Override
 	protected void loadFile(File file)
 	{
+		Androzic application = (Androzic) getApplication();
 		List<Waypoint> waypoints = null;
 
 		try
@@ -67,7 +68,7 @@ public class WaypointFileList extends FileListActivity
 			String lc = file.getName().toLowerCase();
 			if (lc.endsWith(".wpt"))
 			{
-				waypoints = OziExplorerFiles.loadWaypointsFromFile(file);
+				waypoints = OziExplorerFiles.loadWaypointsFromFile(file, application.charset);
 			}
 			else if (lc.endsWith(".kml"))
 			{
@@ -85,7 +86,6 @@ public class WaypointFileList extends FileListActivity
 				{
 					waypoint.set = wptset;
 				}
-				Androzic application = (Androzic) getApplication();
 				int count = application.addWaypoints(waypoints, wptset);
 				setResult(Activity.RESULT_OK, new Intent().putExtra("count", count));
 			}

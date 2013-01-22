@@ -162,6 +162,24 @@ public class PreferencesHC extends PreferenceActivity
 					} 
 				}).start(); 
 	        }
+	        else if (key.equals(getString(R.string.pref_charset)))
+	        {
+				final ProgressDialog pd = new ProgressDialog(getActivity());
+				pd.setIndeterminate(true);
+				pd.setMessage(getString(R.string.msg_initializingmaps));
+				pd.show();
+
+				new Thread(new Runnable() 
+				{ 
+					public void run() 
+					{
+						Androzic application = (Androzic) getActivity().getApplication();
+						application.charset = sharedPreferences.getString(key, "UTF-8");
+						application.resetMaps();
+						pd.dismiss();
+					} 
+				}).start(); 
+	        }
 
 	        Preference pref = findPreference(key);
 	       	setPrefSummary(pref);

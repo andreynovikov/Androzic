@@ -362,7 +362,7 @@ public class Splash extends Activity implements OnClickListener
 			{
 				try
 				{
-					application.addWaypoints(OziExplorerFiles.loadWaypointsFromFile(wptFile));
+					application.addWaypoints(OziExplorerFiles.loadWaypointsFromFile(wptFile, application.charset));
 				}
 				catch (IOException e)
 				{
@@ -382,7 +382,7 @@ public class Splash extends Activity implements OnClickListener
 					{
 						try
 						{
-							application.currentTrackOverlay.setTrack(OziExplorerFiles.loadTrackFromFile(trkFile, Integer.parseInt(settings.getString(getString(R.string.pref_tracking_currentlength), getString(R.string.def_tracking_currentlength)))));
+							application.currentTrackOverlay.setTrack(OziExplorerFiles.loadTrackFromFile(trkFile, application.charset, Integer.parseInt(settings.getString(getString(R.string.pref_tracking_currentlength), getString(R.string.def_tracking_currentlength)))));
 						}
 						catch (IllegalArgumentException e)
 						{
@@ -407,7 +407,7 @@ public class Splash extends Activity implements OnClickListener
 						String lc = file.getName().toLowerCase();
 						if (lc.endsWith(".rt2") || lc.endsWith(".rte"))
 						{
-							routes = OziExplorerFiles.loadRoutesFromFile(file);
+							routes = OziExplorerFiles.loadRoutesFromFile(file, application.charset);
 						}
 						else if (lc.endsWith(".kml"))
 						{

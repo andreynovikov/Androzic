@@ -248,6 +248,8 @@
     <string name="pref_maphideondrag_title">Hide objects on drag</string>
     <string name="pref_maphideondrag_summary">Mark to hide map objects while dragging</string>
     <string name="pref_unfollowontap_title">Stop following on drag</string>
+    <string name="pref_charset_title">Text file encoding</string>
+    <string name="pref_charset_summary">The character set for map and data text files. Caution: you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
     <string name="pref_orientation_title">Screen orientation</string>
     <string name="pref_locale_title">Language</string>
     <string name="pref_show_title">Display</string>

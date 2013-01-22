@@ -28,6 +28,14 @@
         androzic:max="99"
         androzic:min="5" />
 
+    <com.androzic.ui.preference.HelpfulListPreference
+        android:defaultValue="UTF-8"
+        android:dialogTitle="@string/pref_charset_title"
+        android:entries="@array/charset_names"
+        android:entryValues="@array/charset_values"
+        android:key="@string/pref_charset"
+        android:summary="@string/pref_charset_summary"
+        android:title="@string/pref_charset_title" />
     <ListPreference
         android:defaultValue="-1"
         android:dialogTitle="@string/pref_orientation_title"

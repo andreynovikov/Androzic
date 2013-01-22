@@ -150,6 +150,7 @@ public class Androzic extends BaseApplication
 	
 	private Locale locale = null;
 	private Handler handler = null;
+	public String charset;
 
 	public String dataPath;
 	private String rootPath;
@@ -494,7 +495,7 @@ public class Androzic extends BaseApplication
 			if (! file.exists())
 				file.createNewFile();
 			if (file.canWrite())
-				OziExplorerFiles.saveWaypointsToFile(file, getWaypoints(set));
+				OziExplorerFiles.saveWaypointsToFile(file, charset, getWaypoints(set));
 		}
 		catch (Exception e)
 		{
@@ -1566,7 +1567,7 @@ public class Androzic extends BaseApplication
 		}
 		if (maps == null)
 		{
-			maps = new MapIndex(mapPath);
+			maps = new MapIndex(mapPath, charset);
 			StringBuilder sb = new StringBuilder();
 			for (Map mp : maps.getMaps())
 			{
@@ -1867,6 +1868,7 @@ public class Androzic extends BaseApplication
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		Configuration config = getBaseContext().getResources().getConfiguration();
 
+		charset = settings.getString(getString(R.string.pref_charset), "UTF-8");
 		String lang = settings.getString(getString(R.string.pref_locale), "");
 		if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang))
 		{

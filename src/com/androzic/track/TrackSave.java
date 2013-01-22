@@ -104,7 +104,7 @@ public class TrackSave extends Activity
     			}
     			if (file.canWrite())
     			{
-    				OziExplorerFiles.saveTrackToFile(file, track);
+    				OziExplorerFiles.saveTrackToFile(file, application.charset, track);
     				track.filepath = file.getAbsolutePath();
     			}
         		finish();
