@@ -106,7 +106,6 @@ public class LocationService extends Service implements LocationListener, NmeaLi
 		lastKnownLocation = new Location("unknown");
 
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_usecompass));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_usenetwork));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_gpstimeout));
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
