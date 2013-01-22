@@ -1235,7 +1235,7 @@ public class Androzic extends BaseApplication
 			{
 				newMap.activate(mapActivity.map, screenSize);
 			}
-			catch (final Exception e)
+			catch (final Throwable e)
 			{
 				e.printStackTrace();
 				handler.post(new Runnable() {
