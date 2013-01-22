@@ -20,11 +20,13 @@
 
 package com.androzic;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +35,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -129,7 +132,7 @@ public class Preferences extends PreferenceActivity
 	    {
 	        super.onResume();
 	        
-			// initialize compass
+			// hide ICS preferences
 	        Preference pref = findPreference(getString(R.string.pref_hideactionbar));
 	        if (pref != null)
 	        {
@@ -150,8 +153,32 @@ public class Preferences extends PreferenceActivity
 	    }
 
 	    @SuppressLint("NewApi")
-		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+		public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key)
 	    {
+	        if (key.equals(getString(R.string.pref_folder_root)))
+	        {
+	    		Androzic application = (Androzic) getApplication();
+	    		String root = sharedPreferences.getString(key, Environment.getExternalStorageDirectory() + File.separator + getString(R.string.def_folder_prefix));
+	        	application.setRootPath(root);
+	        }
+	        else if (key.equals(getString(R.string.pref_folder_map)))
+	        {
+				final ProgressDialog pd = new ProgressDialog(this);
+				pd.setIndeterminate(true);
+				pd.setMessage(getString(R.string.msg_initializingmaps));
+				pd.show();
+
+				new Thread(new Runnable() 
+				{ 
+					public void run() 
+					{
+						Androzic application = (Androzic) getApplication();
+						application.setMapPath(sharedPreferences.getString(key, getResources().getString(R.string.def_folder_map)));
+						pd.dismiss();
+					} 
+				}).start(); 
+	        }
+
 	        Preference pref = findPreference(key);
 	       	setPrefSummary(pref);
 	        

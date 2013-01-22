@@ -2380,15 +2380,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	{
 		Resources resources = getResources();
 		// application preferences
-		if (getString(R.string.pref_folder_map).equals(key))
-		{
-			if (application.setMapPath(sharedPreferences.getString(getString(R.string.pref_folder_map), resources.getString(R.string.def_folder_map))))
-			{
-				map.updateMapInfo();
-				map.update();
-			}
-		}
-		else if (getString(R.string.pref_folder_data).equals(key))
+		if (getString(R.string.pref_folder_data).equals(key))
 		{
 			application.setDataPath(Androzic.PATH_DATA, sharedPreferences.getString(key, resources.getString(R.string.def_folder_data)));
 		}
