@@ -234,8 +234,6 @@
     <string name="pref_mapadjacent_title">Adjacent maps</string>
     <string name="pref_mapadjacent_summary">Mark to display adjacent and better maps (EXPERIMENTAL, can significantly degrade performance!)</string>
     <string name="pref_mapfollowonloc_title">Follow on first location</string>
-	<string name="pref_usecompass_title">Use compass</string>
-	<string name="pref_usecompass_summary">Mark to use compass instead of GPS to determine current track if not moving</string>
 	<string name="pref_wakelock_title">Keep screen on</string>
 	<string name="pref_wakelock_summary">Mark to keep the device&#8217;s screen turned on and bright when map is displayed</string>
 	<string name="pref_hideactionbar_title">Hide action bar</string>
