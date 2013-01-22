@@ -1307,8 +1307,10 @@ public class Androzic extends BaseApplication
 					if (coveringMaps != null)
 						cmr.addAll(coveringMaps);
 					List<Map> cma = maps.getCoveringMaps(currentMap, area, coveredAll, coveringBestMap);
-					for (Map map : cma)
+					Iterator<Map> icma = cma.iterator();
+					while (icma.hasNext())
 					{
+						Map map = icma.next();
 						try
 						{
 							if (! map.activated())
@@ -1318,8 +1320,9 @@ public class Androzic extends BaseApplication
 								map.setTemporaryZoom(zoom);
 							cmr.remove(map);
 						}
-						catch (IOException e)
+						catch (Exception e)
 						{
+							cma.remove(map);
 							e.printStackTrace();
 						}
 					}
