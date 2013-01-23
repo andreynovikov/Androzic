@@ -102,6 +102,7 @@
     <item>Turecká lokalizace</item>
     <item>Italský překlad</item>
     <item>Španělský překlad</item>
+    <item>Swedish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Přiblížit</item>
@@ -114,7 +115,6 @@
     <item>﻿Sledovat/nesledovat</item>
     <item>Získej umístění</item>
     <item>Zapisovat stopu</item>
-    <item>Sdílení v reálném čase</item>
-    <item>Zobrazi/skrýt stavový řádek</item>
+    <item>Show/hide status bar</item>
   </string-array>
 </resources>

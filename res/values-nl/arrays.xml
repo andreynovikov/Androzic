@@ -102,6 +102,7 @@
     <item>Turkse lokalisatie</item>
     <item>Italiaanse lokalisatie</item>
     <item>Spaanse lokalisatie</item>
+    <item>Zweedse lokalisatie</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Inzoomen</item>
@@ -114,7 +115,6 @@
     <item>Volgen / stop volgen</item>
     <item>Locatie verkrijgen</item>
     <item>Track schrijven</item>
-    <item>Real-time delen</item>
     <item>Toon/Verberg statusbalk</item>
   </string-array>
 </resources>

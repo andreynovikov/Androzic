@@ -102,6 +102,7 @@
     <item>Turkisk lokalisering</item>
     <item>Italiensk lokalisering</item>
     <item>Spansk lokalisering</item>
+    <item>Swedish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zooma in</item>
@@ -114,7 +115,6 @@
     <item>Följ/Sluta följa</item>
     <item>Erhålla plats</item>
     <item>Skriv spår</item>
-    <item>Dela realtid</item>
-    <item>Visa/dölj statusfält</item>
+    <item>Show/hide status bar</item>
   </string-array>
 </resources>

@@ -77,7 +77,7 @@
   </string-array>
   <string-array name="cursorvector_names">
     <item>Brak</item>
-    <item>Proximity distance</item>
+    <item>Przybliżona odległość</item>
     <item>Czas (w minutach)</item>
   </string-array>
   <string-array name="showdistance_names">
@@ -100,21 +100,21 @@
     <item>Tłumaczenie na Bułgarski</item>
     <item>Niemieckie tłumaczenie</item>
     <item>Tureckie tłumaczenie</item>
-    <item>Italian localization</item>
-    <item>Spanish localization</item>
+    <item>Tłumaczenie na włoski</item>
+    <item>Tłumaczenie na hiszpański</item>
+    <item>Swedish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Przybliż</item>
     <item>Oddal</item>
-    <item>More scaled map</item>
-    <item>Less scaled map</item>
+    <item>Bardziej przeskalowana mapa</item>
+    <item>Mniej przeskalowana mapa</item>
     <item>Mapy pod kursorem</item>
     <item>Zarządzaj punktami trasy</item>
     <item>Pokaż informacje</item>
-    <item>Follow/unfollow</item>
-    <item>Obtain location</item>
+    <item>Śledź/przestań śledzić</item>
+    <item>Uzyskaj lokalizację</item>
     <item>Zapisz trase</item>
-    <item>Udostępnianie lokalizacji w czasie rzeczywistym</item>
-    <item>Pokaż/ukryj pasek statusu</item>
+    <item>Show/hide status bar</item>
   </string-array>
 </resources>

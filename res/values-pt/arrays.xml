@@ -102,6 +102,7 @@
     <item>Localização turca</item>
     <item>Localização italiana</item>
     <item>Localização espanhola</item>
+    <item>Swedish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Aumentar o zoom</item>
@@ -114,7 +115,6 @@
     <item>Seguir/não seguir</item>
     <item>Obter localização</item>
     <item>Escrever pista</item>
-    <item>partilha em tempo real</item>
-    <item>Mostrar/ocultar barra de status</item>
+    <item>Show/hide status bar</item>
   </string-array>
 </resources>

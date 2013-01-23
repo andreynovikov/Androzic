@@ -102,6 +102,7 @@
     <item>Localisation turque</item>
     <item>Traduction italienne</item>
     <item>Traduction espagnole</item>
+    <item>Swedish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zoom avant</item>
@@ -114,7 +115,6 @@
     <item>Suivre / Ne plus suivre</item>
     <item>Obtenir la position</item>
     <item>Écrire la trace</item>
-    <item>Partage en temps réel</item>
-    <item>Afficher/masquer barre d\'état</item>
+    <item>Show/hide status bar</item>
   </string-array>
 </resources>

@@ -102,6 +102,7 @@
     <item>Turkki, käännös</item>
     <item>Italia, käännös</item>
     <item>Espanja, käännös</item>
+    <item>Ruotsin lokalisointi</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Lähennä</item>
@@ -114,7 +115,6 @@
     <item>Seuraa / lopeta seuranta</item>
     <item>Hae sijainti</item>
     <item>kirjoita polku</item>
-    <item>Reaaliaikainen jako</item>
     <item>Näytä / piilota tilarivi</item>
   </string-array>
 </resources>

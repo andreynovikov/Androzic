@@ -102,6 +102,7 @@
     <item>Турска локализация</item>
     <item>Италианска локализация</item>
     <item>Испанска локализация</item>
+    <item>Swedish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Приближи</item>
@@ -114,7 +115,6 @@
     <item>Следвай/Не следвай</item>
     <item>Получаване на местоположение</item>
     <item>Запис на маршрута</item>
-    <item>Споделяне в реално време</item>
-    <item>Показване/скриване лентата на състоянието</item>
+    <item>Show/hide status bar</item>
   </string-array>
 </resources>

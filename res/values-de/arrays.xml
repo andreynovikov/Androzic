@@ -102,6 +102,7 @@
     <item>Türkische Lokalisation</item>
     <item>Italienische Lokalisierung</item>
     <item>Spanische Lokalisierung</item>
+    <item>Swedish localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Vergrößern</item>
@@ -114,7 +115,6 @@
     <item>Folgen/nicht mehr folgen</item>
     <item>Standort ermitteln</item>
     <item>Track schreiben</item>
-    <item>Echtzeit-Austausch</item>
-    <item>Statusleiste ein-/ausblenden</item>
+    <item>Show/hide status bar</item>
   </string-array>
 </resources>

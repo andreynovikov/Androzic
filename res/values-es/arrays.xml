@@ -102,6 +102,7 @@
     <item>Traducción al turco</item>
     <item>Traducción al Italiano</item>
     <item>Traducción al Español</item>
+    <item>Traducción al sueco</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Acercar</item>
@@ -114,7 +115,6 @@
     <item>Seguir/Abandonar</item>
     <item>Obtener la ubicación</item>
     <item>Registrar el track</item>
-    <item>Compartir en tiempo real</item>
-    <item>Mostrar / Ocultar barra de estado</item>
+    <item>Mostrar/ocultar barra de estado</item>
   </string-array>
 </resources>
