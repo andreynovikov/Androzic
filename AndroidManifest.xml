@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
    Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
-   Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+   Copyright (C) 2010-2013  Andrey Novikov <http://andreynovikov.info/>
   
    This file is part of Androzic application.
   
@@ -22,8 +22,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.androzic"
     android:installLocation="auto"
-    android:versionCode="84"
-    android:versionName="1.7" >
+    android:versionCode="85"
+    android:versionName="1.7.1" >
 
     <supports-screens
         android:anyDensity="true"
