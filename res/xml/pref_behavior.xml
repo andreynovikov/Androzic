@@ -91,7 +91,6 @@
             android:maxLength="5"
             android:numeric="integer"
             android:singleLine="true"
-            android:summary="@string/pref_grid_userscale_summary"
             android:title="@string/pref_grid_userscale_title" />
 
         <ListPreference

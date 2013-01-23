@@ -112,7 +112,6 @@ public class Splash extends Activity implements OnClickListener
 		PreferenceManager.setDefaultValues(this, R.xml.pref_location, true);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_display, true);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_unit, true);
-		PreferenceManager.setDefaultValues(this, R.xml.pref_grid, true);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_tracking, true);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_waypoint, true);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_route, true);
