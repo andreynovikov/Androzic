@@ -20,9 +20,12 @@
 
 package com.androzic;
 
+import android.annotation.TargetApi;
 import android.app.backup.BackupAgentHelper;
 import android.app.backup.SharedPreferencesBackupHelper;
+import android.os.Build;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Backup extends BackupAgentHelper
 {
 	// The name of the SharedPreferences file
