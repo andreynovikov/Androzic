@@ -1,27 +1,28 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
- *
+ * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * 
  * This file is part of Androzic application.
- *
+ * 
  * Androzic is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ * 
  * Androzic is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ * 
  * You should have received a copy of the GNU General Public License
- * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.androzic;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -132,7 +133,7 @@ import com.androzic.waypoint.WaypointProperties;
 public class MapActivity extends Activity implements OnClickListener, OnSharedPreferenceChangeListener, OnSeekBarChangeListener, OnPanelListener
 {
 	private static final String TAG = "MapActivity";
-	
+
 	private static final int RESULT_LOAD_TRACK = 0x100;
 	private static final int RESULT_MANAGE_WAYPOINTS = 0x200;
 	private static final int RESULT_LOAD_WAYPOINTS = 0x300;
@@ -145,7 +146,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	private static final int RESULT_LOAD_MAP_ATPOSITION = 0x120;
 	private static final int RESULT_SHOW_WAYPOINT = 0x130;
 	private static final int RESULT_SAVE_WAYPOINTS = 0x140;
-	
+
 	private static final int qaAddWaypointToRoute = 1;
 	private static final int qaNavigateToWaypoint = 2;
 
@@ -191,7 +192,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 	private TextView currentFile;
 	private TextView mapZoom;
-	
+
 	protected SeekBar trackBar;
 	protected TextView waitBar;
 	protected MapView map;
@@ -201,6 +202,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	protected Androzic application;
 
 	protected ExecutorService executorThread = Executors.newSingleThreadExecutor();
+	private FinishHandler finishHandler;
 
 	protected Route editingRoute = null;
 	protected Track editingTrack = null;
@@ -237,24 +239,25 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
-		Log.e(TAG,"onCreate()");
+
+		Log.e(TAG, "onCreate()");
 
 		ready = false;
 		isFullscreen = false;
 
 		backToast = Toast.makeText(this, R.string.backQuit, Toast.LENGTH_SHORT);
+		finishHandler = new FinishHandler(this);
 		
 		application = (Androzic) getApplication();
 
-		//FIXME Should find a better place for this
+		// FIXME Should find a better place for this
 		application.mapObjectsOverlay = new MapObjectsOverlay(this);
 
 		final MapState mapState = (MapState) getLastNonConfigurationInstance();
 		if (mapState != null)
 		{
-			Log.e(TAG,"has MapState");
-//			application.initialize(mapState);
+			Log.e(TAG, "has MapState");
+			// application.initialize(mapState);
 
 			editingTrack = mapState.editingTrack;
 			editingRoute = mapState.editingRoute;
@@ -262,9 +265,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 		else
 		{
-			Log.e(TAG,"no MapState");
+			Log.e(TAG, "no MapState");
 			// check if called after crash
-			if (! application.mapsInited)
+			if (!application.mapsInited)
 			{
 				restarting = true;
 				startActivity(new Intent(this, Splash.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
@@ -279,7 +282,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		setRequestedOrientation(Integer.parseInt(settings.getString(getString(R.string.pref_orientation), "-1")));
 		settings.registerOnSharedPreferenceChangeListener(this);
 		Resources resources = getResources();
-		
+
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 		{
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -349,7 +352,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		rteQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
 		rteQuickAction.addActionItem(new ActionItem(qaNavigateToWaypoint, getString(R.string.menu_thisnavpoint), resources.getDrawable(R.drawable.ic_menu_goto)));
 		rteQuickAction.setOnActionItemClickListener(routeActionItemClickListener);
-		
+
 		trackBar.setOnSeekBarChangeListener(this);
 
 		map.initialize(application);
@@ -362,16 +365,16 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				int index = -1;
 				if (mapState == null)
 				{
-//					float lat = settings.getFloat(getString(R.string.nav_wpt_lat), 0);
-//					float lon = settings.getFloat(getString(R.string.nav_wpt_lon), 0);
-//					index = application.addWaypoint(new Waypoint(navWpt, "", lat, lon));
+					// float lat = settings.getFloat(getString(R.string.nav_wpt_lat), 0);
+					// float lon = settings.getFloat(getString(R.string.nav_wpt_lon), 0);
+					// index = application.addWaypoint(new Waypoint(navWpt, "", lat, lon));
 				}
 				else
 				{
 					index = settings.getInt(getString(R.string.nav_wpt_idx), -1);
 					startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", index));
 				}
-//				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", index));
+				// startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", index));
 			}
 			catch (Exception e)
 			{
@@ -379,8 +382,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 
 		String navRoute = settings.getString(getString(R.string.nav_route), "");
-		if (!"".equals(navRoute)
-				&& (mapState != null || settings.getBoolean(getString(R.string.pref_navigation_loadlast), getResources().getBoolean(R.bool.def_navigation_loadlast))))
+		if (!"".equals(navRoute) && (mapState != null || settings.getBoolean(getString(R.string.pref_navigation_loadlast), getResources().getBoolean(R.bool.def_navigation_loadlast))))
 		{
 			int ndir = settings.getInt(getString(R.string.nav_route_dir), 0);
 			int nwpt = settings.getInt(getString(R.string.nav_route_wpt), -1);
@@ -392,12 +394,12 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 					Route route = application.getRouteByFile(navRoute);
 					if (route != null)
 					{
-						rt = application.getRouteIndex(route);						
+						rt = application.getRouteIndex(route);
 					}
 					else
 					{
 						File rtf = new File(navRoute);
-						//FIXME It's bad - it can be not a first route in a file
+						// FIXME It's bad - it can be not a first route in a file
 						route = OziExplorerFiles.loadRoutesFromFile(rtf, application.charset).get(0);
 						rt = application.addRoute(route);
 					}
@@ -429,7 +431,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 		if (getIntent().getExtras() != null)
 			onNewIntent(getIntent());
-		
+
 		ready = true;
 	}
 
@@ -505,9 +507,10 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		map.setLookAhead(settings.getInt(getString(R.string.pref_lookahead), resources.getInteger(R.integer.def_lookahead)));
 		map.setBestMapEnabled(settings.getBoolean(getString(R.string.pref_mapbest), resources.getBoolean(R.bool.def_mapbest)));
 		map.setBestMapInterval(settings.getInt(getString(R.string.pref_mapbestinterval), resources.getInteger(R.integer.def_mapbestinterval)) * 1000);
-		map.setCursorVector(Integer.parseInt(settings.getString(getString(R.string.pref_cursorvector), getString(R.string.def_cursorvector))), settings.getInt(getString(R.string.pref_cursorvectormlpr), resources.getInteger(R.integer.def_cursorvectormlpr)));
+		map.setCursorVector(Integer.parseInt(settings.getString(getString(R.string.pref_cursorvector), getString(R.string.def_cursorvector))),
+				settings.getInt(getString(R.string.pref_cursorvectormlpr), resources.getInteger(R.integer.def_cursorvectormlpr)));
 		map.setProximity(Integer.parseInt(settings.getString(getString(R.string.pref_navigation_proximity), getString(R.string.def_navigation_proximity))));
-		
+
 		// prepare views
 		customizeLayout(settings);
 		findViewById(R.id.editroute).setVisibility(editingRoute != null ? View.VISIBLE : View.GONE);
@@ -526,7 +529,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			panel.setOpen(true, false);
 		}
 
-		//TODO move into application
+		// TODO move into application
 		if (lastKnownLocation != null)
 		{
 			if (lastKnownLocation.getProvider().equals(LocationManager.GPS_PROVIDER))
@@ -572,12 +575,12 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		map.update();
 		map.requestFocus();
 	}
-	
+
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
-		Log.e(TAG,"onPause()");
+		Log.e(TAG, "onPause()");
 
 		unregisterReceiver(broadcastReceiver);
 
@@ -608,7 +611,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			}
 		}
 		editor.commit();
-		
+
 		if (navigationService != null)
 		{
 			unbindService(navigationConnection);
@@ -627,19 +630,19 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	protected void onStop()
 	{
 		super.onStop();
-		Log.e(TAG,"onStop()");		
+		Log.e(TAG, "onStop()");
 	}
 
 	@Override
 	protected void onDestroy()
 	{
 		super.onDestroy();
-		Log.e(TAG,"onDestroy()");
+		Log.e(TAG, "onDestroy()");
 		ready = false;
 
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 
-		if (isFinishing() && ! restarting)
+		if (isFinishing() && !restarting)
 		{
 			// clear all overlays from map
 			updateOverlays(null, true);
@@ -649,13 +652,13 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 			application.clear();
 		}
-		
+
 		restarting = false;
-		
+
 		application = null;
 
 		map = null;
-		
+
 		coordinates = null;
 		satInfo = null;
 		currentFile = null;
@@ -676,7 +679,6 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		bearingValue = null;
 		turnValue = null;
 		trackBar = null;
-//		waitBar = null;
 	}
 
 	private ServiceConnection navigationConnection = new ServiceConnection() {
@@ -742,7 +744,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			else if (action.equals(LocationService.BROADCAST_LOCATING_STATUS))
 			{
 				updateMapButtons();
-				if (locationService != null && ! locationService.isLocating())
+				if (locationService != null && !locationService.isLocating())
 					map.clearLocation();
 			}
 		}
@@ -828,7 +830,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				return;
 
 			Log.d(TAG, "Location arrived");
-			
+
 			final long lastLocationMillis = location.getTime();
 
 			boolean magnetic = false;
@@ -846,14 +848,14 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				application.setLocation(location, magnetic);
 				map.setLocation(location);
 				final boolean enableFollowing = followOnLocation && lastKnownLocation == null;
-				
+
 				lastKnownLocation = location;
 
 				if (application.accuracyOverlay != null && location.hasAccuracy())
 				{
 					application.accuracyOverlay.setAccuracy(location.getAccuracy());
 				}
-				
+
 				runOnUiThread(new Runnable() {
 					public void run()
 					{
@@ -939,33 +941,32 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	private void updateMapViewArea()
 	{
 		final ViewTreeObserver vto = map.getViewTreeObserver();
-		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
-		{
-		    public void onGlobalLayout()
-		    {
+		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+			public void onGlobalLayout()
+			{
 				Rect area = new Rect();
 				map.getLocalVisibleRect(area);
-		    	View v = findViewById(R.id.topbar);
-		    	if (v != null)
-		    		area.top = v.getBottom();
-		    	v = findViewById(R.id.bottombar);
-		    	if (v != null)
-		    		area.bottom = v.getTop();
-		    	v = findViewById(R.id.rightbar);
-		    	if (v != null)
-		    		area.right = v.getLeft();
-				if (! area.isEmpty())
+				View v = findViewById(R.id.topbar);
+				if (v != null)
+					area.top = v.getBottom();
+				v = findViewById(R.id.bottombar);
+				if (v != null)
+					area.bottom = v.getTop();
+				v = findViewById(R.id.rightbar);
+				if (v != null)
+					area.right = v.getLeft();
+				if (!area.isEmpty())
 					map.updateViewArea(area);
-		    	if (vto.isAlive())
-		    	{
-		    		vto.removeGlobalOnLayoutListener(this);
-		    	}
-		    	else
-		    	{
-		    		final ViewTreeObserver vto1 = map.getViewTreeObserver();
-		    		vto1.removeGlobalOnLayoutListener(this);
-		    	}
-		    }
+				if (vto.isAlive())
+				{
+					vto.removeGlobalOnLayoutListener(this);
+				}
+				else
+				{
+					final ViewTreeObserver vto1 = map.getViewTreeObserver();
+					vto1.removeGlobalOnLayoutListener(this);
+				}
+			}
 		});
 	}
 
@@ -974,7 +975,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		if (map != null)
 			map.postInvalidate();
 	}
-	
+
 	private final void updateMapButtons()
 	{
 		ViewGroup container = (ViewGroup) findViewById(R.id.button_container);
@@ -987,7 +988,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			{
 				if (activeActions.contains(action))
 				{
- 					aib.setVisibility(View.VISIBLE);
+					aib.setVisibility(View.VISIBLE);
 					switch (id)
 					{
 						case R.id.nextmap:
@@ -999,14 +1000,14 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 							aib.setColorFilter(aib.isEnabled() ? null : disable);
 							break;
 						case R.id.follow:
-							aib.setImageDrawable(getResources().getDrawable(map.isFollowing()? R.drawable.cursor_drag_arrow : R.drawable.target));
+							aib.setImageDrawable(getResources().getDrawable(map.isFollowing() ? R.drawable.cursor_drag_arrow : R.drawable.target));
 							break;
 						case R.id.locate:
 							boolean isLocating = locationService != null && locationService.isLocating();
 							aib.setImageDrawable(getResources().getDrawable(isLocating ? R.drawable.pin_map_no : R.drawable.pin_map));
 							break;
 						case R.id.tracking:
-							boolean isTracking =  trackingService != null && trackingService.isTracking();
+							boolean isTracking = trackingService != null && trackingService.isTracking();
 							aib.setImageDrawable(getResources().getDrawable(isTracking ? R.drawable.doc_delete : R.drawable.doc_edit));
 							break;
 					}
@@ -1021,7 +1022,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 	protected final void updateCoordinates(final double latlon[])
 	{
-		//TODO strange situation, needs investigation
+		// TODO strange situation, needs investigation
 		if (application != null)
 		{
 			final String pos = StringFormatter.coordinates(application.coordinateFormat, " ", latlon[0], latlon[1]);
@@ -1170,7 +1171,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			application.navigationOverlay.onBeforeDestroy();
 			application.navigationOverlay = null;
 		}
-		
+
 		updateMapViewArea();
 		map.update();
 	}
@@ -1264,7 +1265,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		speedValue.setText(String.valueOf(Math.round(s)));
 		trackValue.setText(String.valueOf(Math.round(track)));
 		elevationValue.setText(String.valueOf(Math.round(e)));
-		//TODO set separate color
+		// TODO set separate color
 		if (geoid != lastGeoid)
 		{
 			int color = geoid ? 0xffffffff : getResources().getColor(R.color.gpsenabled);
@@ -1282,7 +1283,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 
 		findViewById(R.id.satinfo).setVisibility(slVisible ? View.VISIBLE : View.GONE);
 		findViewById(R.id.mapinfo).setVisibility(mlVisible ? View.VISIBLE : View.GONE);
-		
+
 		updateMapViewArea();
 	}
 
@@ -1348,7 +1349,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		{
 			application.scaleOverlay = new ScaleOverlay(this);
 		}
-		else if (! scaleEnabled && application.scaleOverlay != null)
+		else if (!scaleEnabled && application.scaleOverlay != null)
 		{
 			application.scaleOverlay.onBeforeDestroy();
 			application.scaleOverlay = null;
@@ -1474,14 +1475,14 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			application.distanceOverlay.disable();
 		updateMapViewArea();
 	}
-	
+
 	public void setFollowing(boolean follow)
 	{
 		if (editingRoute == null && editingTrack == null)
 		{
 			if (showDistance > 0 && application.distanceOverlay != null)
 			{
-				if (showDistance == 2 && ! follow)
+				if (showDistance == 2 && !follow)
 				{
 					application.distanceOverlay.setAncor(application.getLocation());
 					application.distanceOverlay.enable();
@@ -1502,7 +1503,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		executorThread.execute(new Runnable() {
 			public void run()
 			{
-				synchronized(map)
+				synchronized (map)
 				{
 					if (application.zoomBy(factor))
 					{
@@ -1568,12 +1569,12 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	{
 		if (editingRoute != null && editingRoute == application.getRoute(route))
 		{
-			startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index).putExtra("ROUTE", route+1), RESULT_EDIT_ROUTE);
+			startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index).putExtra("ROUTE", route + 1), RESULT_EDIT_ROUTE);
 			return true;
 		}
 		else if (navigationService != null && navigationService.navRoute == application.getRoute(route))
 		{
-//			routeSelected = route;
+			// routeSelected = route;
 			waypointSelected = index;
 			rteQuickAction.show(map, x, y);
 			return true;
@@ -1586,7 +1587,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.options_menu, menu);
-		
+
 		// add plugins
 		SubMenu views = menu.findItem(R.id.menuView).getSubMenu();
 		Map<String, Pair<Drawable, Intent>> plugins = application.getPluginsViews();
@@ -1597,7 +1598,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			if (plugins.get(plugin).first != null)
 				item.setIcon(plugins.get(plugin).first);
 		}
-		
+
 		return true;
 	}
 
@@ -1624,7 +1625,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		menu.findItem(R.id.menuNextNavPoint).setEnabled(navigationService != null && navigationService.hasNextRouteWaypoint());
 		menu.findItem(R.id.menuPrevNavPoint).setEnabled(navigationService != null && navigationService.hasPrevRouteWaypoint());
 		menu.findItem(R.id.menuStopNavigation).setEnabled(nvw);
-		menu.findItem(R.id.menuSetAnchor).setVisible(showDistance > 0 && ! map.isFollowing());
+		menu.findItem(R.id.menuSetAnchor).setVisible(showDistance > 0 && !map.isFollowing());
 
 		return true;
 	}
@@ -1635,13 +1636,13 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		switch (item.getItemId())
 		{
 			case R.id.menuSearch:
-                onSearchRequested();
-                return true;
+				onSearchRequested();
+				return true;
 			case R.id.menuAddWaypoint:
 			{
 				double[] loc = application.getMapCenter();
 				Waypoint waypoint = new Waypoint("", "", loc[0], loc[1]);
-        		waypoint.date = Calendar.getInstance().getTime();
+				waypoint.date = Calendar.getInstance().getTime();
 				int wpt = application.addWaypoint(waypoint);
 				waypoint.name = "WPT" + wpt;
 				application.saveDefaultWaypoints();
@@ -1738,7 +1739,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 					try
 					{
 						double c[] = CoordinateParser.parse(q);
-						if (! Double.isNaN(c[0]) && ! Double.isNaN(c[1]))
+						if (!Double.isNaN(c[0]) && !Double.isNaN(c[1]))
 						{
 							boolean mapChanged = application.setMapCenter(c[0], c[1], false);
 							if (mapChanged)
@@ -1774,33 +1775,33 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		return false;
 	}
 
-	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener(){
+	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener() {
 		@Override
 		public void onItemClick(QuickAction3D source, int pos, int actionId)
 		{
 			Waypoint wpt = application.getWaypoint(waypointSelected);
-	
-	    	switch (actionId)
-	    	{
-	    		case qaAddWaypointToRoute:
+
+			switch (actionId)
+			{
+				case qaAddWaypointToRoute:
 					routeEditingWaypoints.push(editingRoute.addWaypoint(wpt.name, wpt.latitude, wpt.longitude));
 					map.invalidate();
 					break;
-	    	}
+			}
 			waypointSelected = -1;
 		}
 	};
 
-	private OnActionItemClickListener routeActionItemClickListener = new OnActionItemClickListener(){
+	private OnActionItemClickListener routeActionItemClickListener = new OnActionItemClickListener() {
 		@Override
 		public void onItemClick(QuickAction3D source, int pos, int actionId)
 		{
-	    	switch (actionId)
-	    	{
-	    		case qaNavigateToWaypoint:
+			switch (actionId)
+			{
+				case qaNavigateToWaypoint:
 					navigationService.setRouteWaypoint(waypointSelected);
 					break;
-	    	}
+			}
 			waypointSelected = -1;
 		}
 	};
@@ -1843,7 +1844,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 							break;
 						case R.id.share_button:
 							Waypoint waypoint = application.getWaypoint(index);
-							Intent i=new Intent(android.content.Intent.ACTION_SEND);
+							Intent i = new Intent(android.content.Intent.ACTION_SEND);
 							i.setType("text/plain");
 							i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
 							String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
@@ -1851,18 +1852,19 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 							startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
 							break;
 						case R.id.remove_button:
-							new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.removeWaypointQuestion).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+							new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.removeWaypointQuestion)
+									.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
-								@Override
-								public void onClick(DialogInterface dialog, int which)
-								{
-									WaypointSet wptset = application.getWaypoint(index).set;
-									application.removeWaypoint(index);
-									application.saveWaypoints(wptset);
-									map.invalidate();
-								}
+										@Override
+										public void onClick(DialogInterface dialog, int which)
+										{
+											WaypointSet wptset = application.getWaypoint(index).set;
+											application.removeWaypoint(index);
+											application.saveWaypoints(wptset);
+											map.invalidate();
+										}
 
-							}).setNegativeButton(R.string.no, null).show();
+									}).setNegativeButton(R.string.no, null).show();
 							break;
 					}
 				}
@@ -1892,7 +1894,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				{
 					application.waypointsOverlay.clear();
 					application.saveWaypoints();
-					if (data != null && data.hasExtra("index") && PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_waypoint_visible), getResources().getBoolean(R.bool.def_waypoint_visible)))
+					if (data != null && data.hasExtra("index")
+							&& PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_waypoint_visible), getResources().getBoolean(R.bool.def_waypoint_visible)))
 						application.ensureVisible(application.getWaypoint(data.getIntExtra("index", -1)));
 				}
 				break;
@@ -1998,7 +2001,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	}
 
 	final Handler backHandler = new Handler();
-	
+
 	@Override
 	public void onBackPressed()
 	{
@@ -2026,28 +2029,20 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				return;
 			case 1:
 				// Ask the user if they want to quit
-				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.quitQuestion).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {	
+				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.quitQuestion).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
 						// TODO change context everywhere?
 						stopService(new Intent(MapActivity.this, NavigationService.class));
 						MapActivity.this.finish();
-					}	
+					}
 				}).setNegativeButton(R.string.no, null).show();
 				return;
 			default:
-				super.onBackPressed();				
+				super.onBackPressed();
 		}
 	}
-
-	final Handler finishHandler = new Handler() {
-		public void handleMessage(Message msg)
-		{
-			waitBar.setVisibility(View.INVISIBLE);
-			waitBar.setText("");
-		}
-	};
 
 	@Override
 	public void onClick(View v)
@@ -2062,7 +2057,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				executorThread.execute(new Runnable() {
 					public void run()
 					{
-						synchronized(map)
+						synchronized (map)
 						{
 							if (application.zoomIn())
 							{
@@ -2082,7 +2077,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				executorThread.execute(new Runnable() {
 					public void run()
 					{
-						synchronized(map)
+						synchronized (map)
 						{
 							if (application.zoomOut())
 							{
@@ -2100,7 +2095,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				executorThread.execute(new Runnable() {
 					public void run()
 					{
-						synchronized(map)
+						synchronized (map)
 						{
 							if (application.prevMap())
 							{
@@ -2119,7 +2114,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				executorThread.execute(new Runnable() {
 					public void run()
 					{
-						synchronized(map)
+						synchronized (map)
 						{
 							if (application.nextMap())
 							{
@@ -2147,70 +2142,21 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			case R.id.locate:
 			{
 				boolean isLocating = locationService != null && locationService.isLocating();
-				application.enableLocating(! isLocating);
+				application.enableLocating(!isLocating);
 				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-				editor.putBoolean(getString(R.string.lc_locate), ! isLocating);
+				editor.putBoolean(getString(R.string.lc_locate), !isLocating);
 				editor.commit();
 				break;
 			}
 			case R.id.tracking:
 			{
 				boolean isTracking = trackingService != null && trackingService.isTracking();
-				application.enableTracking(! isTracking);
+				application.enableTracking(!isTracking);
 				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-				editor.putBoolean(getString(R.string.lc_track), ! isTracking);
+				editor.putBoolean(getString(R.string.lc_track), !isTracking);
 				editor.commit();
 				break;
 			}
-			/*
-			case R.id.share:
-				if (isSharing)
-				{
-					if (application.sharingOverlay != null)
-					{
-						application.sharingOverlay.onBeforeDestroy();
-					}
-					application.sharingOverlay = null;
-				}
-				else
-				{
-					SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-					String session = settings.getString(getString(R.string.pref_sharing_session), "");
-					String user = settings.getString(getString(R.string.pref_sharing_user), "");
-
-					if (session.length() == 0 || user.length() == 0)
-					{
-						new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.err_notconfigured).setMessage(R.string.sessionQuestion).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog, int which)
-							{
-								if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-								{
-									startActivity(new Intent(MapActivity.this, Preferences.class).putExtra("pref", "pref_sharing"));
-								}
-								else
-								{
-									startActivity(new Intent(MapActivity.this, PreferencesHC.class).putExtra("pref", R.id.pref_sharing));
-								}								
-							}
-
-						}).setNegativeButton(R.string.no, null).show();
-
-						break;
-					}
-					else
-					{
-						application.sharingOverlay = new SharingOverlay(this);
-						application.sharingOverlay.setIdentity(session, user);
-						application.sharingOverlay.setMapContext(this);
-					}
-				}
-				isSharing = !isSharing;
-				updateMapButtons();
-				break;
-				*/
 			case R.id.expand:
 				ImageButton expand = (ImageButton) findViewById(R.id.expand);
 				if (isFullscreen)
@@ -2336,39 +2282,39 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	protected void onRestoreInstanceState(Bundle savedInstanceState)
 	{
 		super.onRestoreInstanceState(savedInstanceState);
-		Log.e(TAG,"onRestoreInstanceState()");
+		Log.e(TAG, "onRestoreInstanceState()");
 		lastKnownLocation = savedInstanceState.getParcelable("lastKnownLocation");
 		lastRenderTime = savedInstanceState.getLong("lastRenderTime");
 		lastMagnetic = savedInstanceState.getLong("lastMagnetic");
 		lastDim = savedInstanceState.getLong("lastDim");
 		wasDimmed = savedInstanceState.getBoolean("wasDimmed");
 		lastGeoid = savedInstanceState.getBoolean("lastGeoid");
-		
+
 		waypointSelected = savedInstanceState.getInt("waypointSelected");
 		routeSelected = savedInstanceState.getInt("routeSelected");
 
 		/*
-		double[] distAncor = savedInstanceState.getDoubleArray("distAncor");
-		if (distAncor != null)
-		{
-			application.distanceOverlay = new DistanceOverlay(this);
-			application.distanceOverlay.setAncor(distAncor);
-		}
-		*/
+		 * double[] distAncor = savedInstanceState.getDoubleArray("distAncor");
+		 * if (distAncor != null)
+		 * {
+		 * application.distanceOverlay = new DistanceOverlay(this);
+		 * application.distanceOverlay.setAncor(distAncor);
+		 * }
+		 */
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState)
 	{
 		super.onSaveInstanceState(outState);
-		Log.e(TAG,"onSaveInstanceState()");
+		Log.e(TAG, "onSaveInstanceState()");
 		outState.putParcelable("lastKnownLocation", lastKnownLocation);
 		outState.putLong("lastRenderTime", lastRenderTime);
 		outState.putLong("lastMagnetic", lastMagnetic);
 		outState.putLong("lastDim", lastDim);
 		outState.putBoolean("wasDimmed", wasDimmed);
 		outState.putBoolean("lastGeoid", lastGeoid);
-		
+
 		outState.putInt("waypointSelected", waypointSelected);
 		outState.putInt("routeSelected", routeSelected);
 
@@ -2384,18 +2330,18 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		Log.e(TAG, "onRetainNonConfigurationInstance()");
 		MapState mapState = new MapState();
 
-//		application.onRetainNonConfigurationInstance(mapState);
+		// application.onRetainNonConfigurationInstance(mapState);
 
 		mapState.editingTrack = editingTrack;
 		mapState.editingRoute = editingRoute;
 		mapState.routeEditingWaypoints = routeEditingWaypoints;
 
-/*		
-		if (application.currentTrackOverlay != null)
-		{
-			mapState.currentTrack = application.currentTrackOverlay.getTrack();
-		}
-*/
+		/*
+		 * if (application.currentTrackOverlay != null)
+		 * {
+		 * mapState.currentTrack = application.currentTrackOverlay.getTrack();
+		 * }
+		 */
 		return mapState;
 	}
 
@@ -2431,8 +2377,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			application.gridPrefer = Integer.parseInt(sharedPreferences.getString(key, "0"));
 			application.initGrids();
 		}
-		else if (getString(R.string.pref_grid_userscale).equals(key) || getString(R.string.pref_grid_userunit).equals(key)
-				|| getString(R.string.pref_grid_usermpp).equals(key))
+		else if (getString(R.string.pref_grid_userscale).equals(key) || getString(R.string.pref_grid_userunit).equals(key) || getString(R.string.pref_grid_usermpp).equals(key))
 		{
 			application.initGrids();
 		}
@@ -2503,5 +2448,27 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		editor.putBoolean(getString(R.string.ui_drawer_open), true);
 		editor.commit();
+	}
+	
+	@SuppressLint("HandlerLeak")
+	private class FinishHandler extends Handler
+	{
+		private final WeakReference<MapActivity> target;
+
+		FinishHandler(MapActivity activity)
+		{
+			this.target = new WeakReference<MapActivity>(activity);
+		}
+
+		@Override
+		public void handleMessage(Message msg)
+		{
+			MapActivity mapActivity = target.get();
+			if (mapActivity != null)
+			{
+				mapActivity.waitBar.setVisibility(View.INVISIBLE);
+				mapActivity.waitBar.setText("");
+			}
+		}
 	}
 }
