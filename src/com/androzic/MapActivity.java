@@ -162,6 +162,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	protected int showDistance;
 	protected boolean showAccuracy;
 	protected boolean followOnLocation;
+	protected int exitConfirmation;
+	private boolean secondBack;
+	private Toast backToast;
 
 	private TextView coordinates;
 	private TextView satInfo;
@@ -229,6 +232,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 	private boolean restarting = false;
 
 	/** Called when the activity is first created. */
+	@SuppressLint("ShowToast")
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -239,6 +243,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		ready = false;
 		isFullscreen = false;
 
+		backToast = Toast.makeText(this, R.string.backQuit, Toast.LENGTH_SHORT);
+		
 		application = (Androzic) getApplication();
 
 		//FIXME Should find a better place for this
@@ -409,6 +415,8 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			}
 		}
 
+		// set activity preferences
+		onSharedPreferenceChanged(settings, getString(R.string.pref_exit));
 		// set map preferences
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
@@ -1989,32 +1997,48 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		}
 	}
 
+	final Handler backHandler = new Handler();
+	
 	@Override
-	public boolean onKeyDown(final int keyCode, final KeyEvent event)
+	public void onBackPressed()
 	{
-		// Handle the back button
-		if (keyCode == KeyEvent.KEYCODE_BACK)
+		switch (exitConfirmation)
 		{
-			// Ask the user if they want to quit
-			new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.quitQuestion).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-				@Override
-				public void onClick(DialogInterface dialog, int which)
+			case 0:
+				// wait for second back
+				if (secondBack)
 				{
-					// TODO change context everywhere?
-					stopService(new Intent(MapActivity.this, NavigationService.class));
+					backToast.cancel();
 					MapActivity.this.finish();
 				}
-
-			}).setNegativeButton(R.string.no, null).show();
-
-			return true;
+				else
+				{
+					secondBack = true;
+					backToast.show();
+					backHandler.postDelayed(new Runnable() {
+						@Override
+						public void run()
+						{
+							secondBack = false;
+						}
+					}, 2000);
+				}
+				return;
+			case 1:
+				// Ask the user if they want to quit
+				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.quitQuestion).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {	
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						// TODO change context everywhere?
+						stopService(new Intent(MapActivity.this, NavigationService.class));
+						MapActivity.this.finish();
+					}	
+				}).setNegativeButton(R.string.no, null).show();
+				return;
+			default:
+				super.onBackPressed();				
 		}
-		else
-		{
-			return super.onKeyDown(keyCode, event);
-		}
-
 	}
 
 	final Handler finishHandler = new Handler() {
@@ -2444,6 +2468,11 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				else
 					wnd.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			}
+		}
+		else if (getString(R.string.pref_exit).equals(key))
+		{
+			exitConfirmation = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			secondBack = false;
 		}
 		// map preferences
 		else if (getString(R.string.pref_cursorcolor).equals(key))

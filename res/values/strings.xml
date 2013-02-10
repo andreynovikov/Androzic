@@ -68,6 +68,7 @@
     <string name="following_enabled">Following enabled</string>
     <string name="following_disabled">Following disabled</string>
  
+    <string name="backQuit">Press Back again to quit</string>
     <string name="quitQuestion">Do you want to quit?</string>
     <string name="removeWaypointQuestion">Remove waypoint?</string>
 
@@ -248,6 +249,7 @@
     <string name="pref_maphideondrag_title">Hide objects on drag</string>
     <string name="pref_maphideondrag_summary">Mark to hide map objects while dragging</string>
     <string name="pref_unfollowontap_title">Stop following on drag</string>
+    <string name="pref_exit_title">Exit confirmation</string>
     <string name="pref_charset_title">Text file encoding</string>
     <string name="pref_charset_summary">The character set for map and data text files. Caution: you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
     <string name="pref_orientation_title">Screen orientation</string>

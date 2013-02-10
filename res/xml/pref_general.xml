@@ -13,6 +13,15 @@
         android:key="@string/pref_hideactionbar"
         android:summary="@string/pref_hideactionbar_summary"
         android:title="@string/pref_hideactionbar_title" />
+
+    <ListPreference
+        android:defaultValue="0"
+        android:dialogTitle="@string/pref_exit_title"
+        android:entries="@array/exit_names"
+        android:entryValues="@array/exit_values"
+        android:key="@string/pref_exit"
+        android:title="@string/pref_exit_title" />
+
     <com.androzic.ui.preference.HelpfulCheckBoxPreference
         android:defaultValue="@bool/def_mapdim"
         android:key="@string/pref_mapdim"
@@ -35,7 +44,8 @@
         android:entryValues="@array/charset_values"
         android:key="@string/pref_charset"
         android:summary="@string/pref_charset_summary"
-        android:title="@string/pref_charset_title" />
+        android:title="@string/pref_charset_title" />
+
     <ListPreference
         android:defaultValue="-1"
         android:dialogTitle="@string/pref_orientation_title"
