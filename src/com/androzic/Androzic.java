@@ -346,6 +346,8 @@ public class Androzic extends BaseApplication
 	public boolean removeMapObject(long id)
 	{
 		MapObject mo = mapObjects.remove(id);
+		if (mo.bitmap != null)
+			mo.bitmap.recycle();
 		return mo != null;
 	}
 	
