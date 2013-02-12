@@ -49,7 +49,7 @@
 	    
 	</TableLayout>
 	
-	<com.androzic.HSIView android:id="@+id/hsiview"
+	<com.androzic.ui.view.HSIView android:id="@+id/hsiview"
 		android:focusable="true"
 		android:focusableInTouchMode="true"
 		android:layout_width="0dip"
