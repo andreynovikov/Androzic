@@ -70,6 +70,11 @@
     <item>Предпочитать сетку карты</item>
     <item>Предпочитать пользовательскую сетку</item>
   </string-array>
+  <string-array name="exit_names">
+    <item>Двойное нажатие Назад</item>
+    <item>Окно подтверждения</item>
+    <item>Ничего</item>
+  </string-array>
   <string-array name="orientation_names">
     <item>По умолчанию</item>
     <item>Портретная</item>

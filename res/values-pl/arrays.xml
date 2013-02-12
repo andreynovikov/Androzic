@@ -70,6 +70,11 @@
     <item>Preferuj siatkę mapy</item>
     <item>Preferuj siatkę użytkownika</item>
   </string-array>
+  <string-array name="exit_names">
+    <item>Double press Back</item>
+    <item>Confirmation dialog</item>
+    <item>Nothing</item>
+  </string-array>
   <string-array name="orientation_names">
     <item>Domyślna urządzenia</item>
     <item>Pionowa</item>
@@ -102,7 +107,7 @@
     <item>Tureckie tłumaczenie</item>
     <item>Tłumaczenie na włoski</item>
     <item>Tłumaczenie na hiszpański</item>
-    <item>Swedish localization</item>
+    <item>Szwedzkie tłumaczenie</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Przybliż</item>
@@ -115,6 +120,6 @@
     <item>Śledź/przestań śledzić</item>
     <item>Uzyskaj lokalizację</item>
     <item>Zapisz trase</item>
-    <item>Show/hide status bar</item>
+    <item>Pokaż/ukryj pasek statusu</item>
   </string-array>
 </resources>

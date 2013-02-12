@@ -70,6 +70,11 @@
     <item>Voorkeur kaart raster</item>
     <item>Voorkeur gebruikers raster</item>
   </string-array>
+  <string-array name="exit_names">
+    <item>Double press Back</item>
+    <item>Confirmation dialog</item>
+    <item>Nothing</item>
+  </string-array>
   <string-array name="orientation_names">
     <item>Apparaat standaard</item>
     <item>Portret</item>

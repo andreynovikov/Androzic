@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS已打开</string>
   <string name="following_enabled">跟随被启用</string>
   <string name="following_disabled">跟随被禁用</string>
+  <string name="backQuit">Press Back again to quit</string>
   <string name="quitQuestion">确定要退出?</string>
   <string name="removeWaypointQuestion">Remove waypoint?</string>
   <string name="quit">退出</string>
@@ -234,6 +235,7 @@
   <string name="pref_maphideondrag_title">拖动时隐藏对象</string>
   <string name="pref_maphideondrag_summary">设置为拖动时隐藏对象</string>
   <string name="pref_unfollowontap_title">拖动时停止跟随</string>
+  <string name="pref_exit_title">Exit confirmation</string>
   <string name="pref_charset_title">Text file encoding</string>
   <string name="pref_charset_summary">The character set for map and data text files. Caution: you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
   <string name="pref_orientation_title">屏幕方向</string>

@@ -70,6 +70,11 @@
     <item>Préférence pour le quadrillage de la carte</item>
     <item>Préférence pour le quadrillage utilisateur</item>
   </string-array>
+  <string-array name="exit_names">
+    <item>Double press Back</item>
+    <item>Confirmation dialog</item>
+    <item>Nothing</item>
+  </string-array>
   <string-array name="orientation_names">
     <item>Dépend du périphérique</item>
     <item>Portrait</item>
@@ -102,7 +107,7 @@
     <item>Localisation turque</item>
     <item>Traduction italienne</item>
     <item>Traduction espagnole</item>
-    <item>Swedish localization</item>
+    <item>Traduction suédoise</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zoom avant</item>
@@ -115,6 +120,6 @@
     <item>Suivre / Ne plus suivre</item>
     <item>Obtenir la position</item>
     <item>Écrire la trace</item>
-    <item>Show/hide status bar</item>
+    <item>Afficher/masquer la barre d\'état</item>
   </string-array>
 </resources>

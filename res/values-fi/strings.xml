@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS aktivoitunut</string>
   <string name="following_enabled">Seuranta päällä</string>
   <string name="following_disabled">Seuranta pois</string>
+  <string name="backQuit">Press Back again to quit</string>
   <string name="quitQuestion">Haluatko lopettaa?</string>
   <string name="removeWaypointQuestion">Poista reittipiste?</string>
   <string name="quit">Lopetus</string>
@@ -236,6 +237,7 @@
   <string name="pref_maphideondrag_title">Karttakohteiden peitto karttaa siirrettäessä </string>
   <string name="pref_maphideondrag_summary">Merkkaa, karttakohteet peitetään siirron aikana</string>
   <string name="pref_unfollowontap_title">Lopeta seuranta karttaa siirrettäessä</string>
+  <string name="pref_exit_title">Exit confirmation</string>
   <string name="pref_charset_title">Tekstitiedoston enkoodaus</string>
   <string name="pref_charset_summary">Merkistö kartta-ja tekstitiedostoille. Varoitus: et voi sekoittaa Android natiiveja (UTF-8) ja kansallisia merkistöjä, muuta tätä asetusta vain, jos kaikki tiedostot ovat kansallista koodausta, muuten joudut manuaalisesti muuttamaan tiedostoja, jotka eivät ole UTF-8-koodausta. Vaikuttaa vasta, kun sovellus uudelleen käynnistetään.</string>
   <string name="pref_orientation_title">Näytön suunta</string>

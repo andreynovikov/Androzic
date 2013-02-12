@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS активен</string>
   <string name="following_enabled">Слежение включено</string>
   <string name="following_disabled">Слежение выключено</string>
+  <string name="backQuit">Нажмите ещё раз Назад для выхода</string>
   <string name="quitQuestion">Хотите выйти?</string>
   <string name="removeWaypointQuestion">Удалить точку?</string>
   <string name="quit">Выход</string>
@@ -239,6 +240,7 @@
   <string name="pref_maphideondrag_title">Прятать объекты</string>
   <string name="pref_maphideondrag_summary">Отметьте, чтобы прятать объекты на карте при перетаскивании</string>
   <string name="pref_unfollowontap_title">Выключать слежение при перетаскивании</string>
+  <string name="pref_exit_title">Подтверждение выхода</string>
   <string name="pref_charset_title">Кодировка текстовых файлов</string>
   <string name="pref_charset_summary">Кодировка текстовых файлов данных и карт. Внимание: вы не можете смешивать файлы в родной кодировке Андроид (UTF-8) и национальной кодировке, указывайте национальную кодировку, только если все ваши файлы находятся в национальной кодировке, в противном случае вручную перекодируйте файлы не в кодировке UTF-8. Установка действует только после перезапуска приложения.</string>
   <string name="pref_orientation_title">Положение экрана</string>

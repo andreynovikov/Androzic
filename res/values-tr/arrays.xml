@@ -70,6 +70,11 @@
     <item>Harita grid tercihi</item>
     <item>Kullanıcı grid tercihi</item>
   </string-array>
+  <string-array name="exit_names">
+    <item>Double press Back</item>
+    <item>Confirmation dialog</item>
+    <item>Nothing</item>
+  </string-array>
   <string-array name="orientation_names">
     <item>Aygıt varsayılanı</item>
     <item>Dikey</item>

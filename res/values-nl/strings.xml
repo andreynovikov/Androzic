@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS-actief</string>
   <string name="following_enabled">Volgen ingeschakeld</string>
   <string name="following_disabled">Volgen uitgeschakeld</string>
+  <string name="backQuit">Press Back again to quit</string>
   <string name="quitQuestion">Wilt u stoppen?</string>
   <string name="removeWaypointQuestion">Verwijderen waypoint?</string>
   <string name="quit">Stoppen</string>
@@ -234,6 +235,7 @@
   <string name="pref_maphideondrag_title">Verberg objecten bij slepen</string>
   <string name="pref_maphideondrag_summary">Markeer om kaartobjecten te verbergen bij slepen</string>
   <string name="pref_unfollowontap_title">Stop volgen bij slepen</string>
+  <string name="pref_exit_title">Exit confirmation</string>
   <string name="pref_charset_title">Tekstcodering bestand</string>
   <string name="pref_charset_summary">De tekenset voor kaart en gegevens tekstbestanden. Let op: u kunt bestanden in Android native (UTF-8) en nationale tekensets, verandering deze instelling alleen als al uw bestanden in nationale codering, anders handmatig recode de bestanden die niet in UTF-8-codering niet mengen. Neemt invloed op alleen nadat de toepassing opnieuw hebt gestart.</string>
   <string name="pref_orientation_title">Schermoriëntatie</string>

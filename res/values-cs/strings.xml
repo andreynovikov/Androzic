@@ -45,7 +45,7 @@
   <string name="msg_cleaning">Čištění&#8230;</string>
   <string name="msg_paid">Dárcovská verze</string>
   <string name="msg_empty_route_list">Nejsou k dispozici žádné trasy. Použij menu k jejich vytvoření nebo načtení ze souboru.</string>
-  <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: ‘%s’.</string>
+  <string name="msg_newdatafolder">Na základě častého požadavku Androzic nyní funguje se složkami jinak. Můžete svobodně vybrat libovolnou složku pro mapy a data. Složka dat je nyní jednotná pro všechny datové soubory:, průjezdní body a trasy. Musíte ručně zkopírovat existující datové soubory do následující složky vytvořené automaticky: \'%s\'.</string>
   <string name="err_nosdcard">Karta SD nepřístupná</string>
   <string name="err_nofile">Soubor nenalezen</string>
   <string name="err_write">Nelze zapsat soubor</string>
@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS aktivní</string>
   <string name="following_enabled">Následování zapnuto</string>
   <string name="following_disabled">Následování vypnuto</string>
+  <string name="backQuit">Press Back again to quit</string>
   <string name="quitQuestion">Opravdu ukončit?</string>
   <string name="removeWaypointQuestion">Odstranit bod?</string>
   <string name="quit">Konec</string>
@@ -126,7 +127,7 @@
   <string name="vdop">VDOP</string>
   <string name="badmaps">Chyba v mapovém indexu</string>
   <string name="nomaps">Mapy nenalezeny</string>
-  <string name="nomaps_explained">Map folder ‘%s’ is empty. Download and install world map (250KB)?</string>
+  <string name="nomaps_explained">Mapový adresář \'%s\' je prázdný. Stáhnout a instalovat mapu světa (250KB)?</string>
   <string name="upto">Až %.0f metrů</string>
   <string name="arrived">Dosáhli jste cíle routy</string>
   <string name="restart_needed">Je nutný restart aplikace</string>
@@ -218,11 +219,11 @@
   <string name="pref_mapbestinterval_title">Podrobná mapa - interval</string>
   <string name="pref_mapbestinterval_summary">Časový interval pro automatické nahrání nejpodrobnější mapy</string>
   <string name="pref_mapadjacent_title">Sousední mapy</string>
-  <string name="pref_mapadjacent_summary">Mark to display adjacent and better maps (EXPERIMENTAL, can significantly degrade performance!)</string>
+  <string name="pref_mapadjacent_summary">Označ pro zobrazení sousedních a lepších map (experimentální, může výrazně snížit výkon!)</string>
   <string name="pref_mapfollowonloc_title">Sledovat po lokalizaci</string>
   <string name="pref_wakelock_title">Ponechat zapnutý display</string>
   <string name="pref_wakelock_summary">Ponechat zapnutý a rozsvícený display pokud je zobrazena mapa</string>
-  <string name="pref_hideactionbar_title">Hide action bar</string>
+  <string name="pref_hideactionbar_title">Skrýt panel akcí</string>
   <string name="pref_hideactionbar_summary">Mark to hide application action bar when map is displayed. Takes affect only after application restart.</string>
   <string name="pref_mapdim_title">Obrazovka ztmavení</string>
   <string name="pref_mapdim_summary">Označ, obrazovka automaticky ztmavne v nočních hodinách</string>
@@ -234,12 +235,13 @@
   <string name="pref_maphideondrag_title">Skryj při přesunu</string>
   <string name="pref_maphideondrag_summary">Označ, mapové objekty při přesunu jsou skryty</string>
   <string name="pref_unfollowontap_title">Při přesunu netrasuj</string>
+  <string name="pref_exit_title">Exit confirmation</string>
   <string name="pref_charset_title">Text file encoding</string>
   <string name="pref_charset_summary">The character set for map and data text files. Caution: you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
   <string name="pref_orientation_title">Orientace obrazovky</string>
   <string name="pref_locale_title">Jazyk</string>
   <string name="pref_show_title">Zobrazit</string>
-  <string name="pref_scalebarcolor_title">Scale bar color</string>
+  <string name="pref_scalebarcolor_title">Barva pruhu měřítka</string>
   <string name="pref_cursor_title">Pohyblivý kurzor</string>
   <string name="pref_cursorcolor_title">Aktivní barva</string>
   <string name="pref_cursorvector_title">Typ vektoru</string>
@@ -295,7 +297,7 @@
   <string name="pref_waypoint_showname_title">Zobraz jméno</string>
   <string name="pref_waypoint_showname_summary">Označ, zobrazí jméno bodu za značkou</string>
   <string name="pref_route_title">Routy</string>
-  <string name="pref_route_preload_title">Preload routes</string>
+  <string name="pref_route_preload_title">Přednastavení trasy</string>
   <string name="pref_route_preload_summary">Mark to preload routes from files on application start</string>
   <string name="pref_route_linewidth_title">Šířka linie</string>
   <string name="pref_route_linewidth_summary">Šířka linie routy v pixlech</string>
@@ -336,9 +338,9 @@
   <string name="perm_location_description">Access location provided by Androzic</string>
   <string name="perm_tracking_title">Get track</string>
   <string name="perm_tracking_description">Receive track provided by Androzic</string>
-  <string name="perm_read_preferences_title">Read Androzic user preferences</string>
-  <string name="perm_read_map_data_title">Get data from Androzic map</string>
-  <string name="perm_write_map_data_title">Add data to Androzic map</string>
+  <string name="perm_read_preferences_title">Čtení uživatelské předvolby</string>
+  <string name="perm_read_map_data_title">Získat data z mapy</string>
+  <string name="perm_write_map_data_title">Přidání dat do mapy</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

@@ -45,7 +45,7 @@
   <string name="msg_cleaning">Czyszczenie...</string>
   <string name="msg_paid">Wersja dotowana</string>
   <string name="msg_empty_route_list">Brak dostępnych tras. Użyj menu aby stworzyć trasę lub załadować ją z pliku.</string>
-  <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: ‘%s’.</string>
+  <string name="msg_newdatafolder">Ze względu na częste prośby Androzic pracuje teraz inaczej z folderami. Możesz wybrać dowolny folder na mapy i dane. Folder danych jest teraz ujednolicony dla wszystkich typów danych: punktów trasy, śladów i tras. Musisz ręcznie skopiować istniejące pliki danych do następującego folderu, utworzonego automatycznie: \'%s\'.</string>
   <string name="err_nosdcard">Karta SD niedostępna</string>
   <string name="err_nofile">Nie ma takiego pliku</string>
   <string name="err_write">Nie można zapisać pliku</string>
@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS aktywny</string>
   <string name="following_enabled">Podążanie włączone</string>
   <string name="following_disabled">Podążanie wyłączone</string>
+  <string name="backQuit">Press Back again to quit</string>
   <string name="quitQuestion">Czy chcesz zakończyć?</string>
   <string name="removeWaypointQuestion">Usunąć punkt trasy?</string>
   <string name="quit">Zamknij</string>
@@ -238,6 +239,7 @@
   <string name="pref_maphideondrag_title">Ukrywaj obiekty podczas przeciągania</string>
   <string name="pref_maphideondrag_summary">Zaznacz aby ukrywać obiekty mapy podczas przeciągania</string>
   <string name="pref_unfollowontap_title">Zatrzymaj podążanie podczas przeciągania</string>
+  <string name="pref_exit_title">Exit confirmation</string>
   <string name="pref_charset_title">Kodowanie plików tekstowych</string>
   <string name="pref_charset_summary">Zestaw znaków dla map i plików tekstowych danych. Uwaga: nie można mieszać plików w kodowaniu Androida (UTF-8) z innymi kodowaniami. Zmień to ustawienie tylko jeśli wszystkie twoje pliki są w narodowym kodowaniu. W przeciwnym wypadku ręcznie zmień kodowanie plików na UTF-8. Działa po restarcie.</string>
   <string name="pref_orientation_title">Układ ekranu</string>
@@ -249,7 +251,7 @@
   <string name="pref_cursorvector_title">Wektorowy typ linii</string>
   <string name="pref_cursorvector_summary">Wybierz podstawę wyznaczania długości wektora</string>
   <string name="pref_cursorvectormlpr_title">Mnożnik wektora</string>
-  <string name="pref_cursorvectormlpr_summary">Select how many vector line bases will be used to set its length</string>
+  <string name="pref_cursorvectormlpr_summary">Wybierz ile wektorów bazowych zostanie użytych do określenia jego długości całkowitej</string>
   <string name="pref_showsatinfo_title">Pokaż panel satelitów</string>
   <string name="pref_showsatinfo_summary">Zasnacz aby wyświetlić bieżące współrzędne i panel statusu GPS</string>
   <string name="pref_showmapinfo_title">Pokaż panel mapy</string>

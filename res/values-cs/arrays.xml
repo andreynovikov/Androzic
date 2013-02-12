@@ -70,6 +70,11 @@
     <item>Upřednostni mapovou mříž</item>
     <item>Upřednosti vlastní mříž</item>
   </string-array>
+  <string-array name="exit_names">
+    <item>Double press Back</item>
+    <item>Confirmation dialog</item>
+    <item>Nothing</item>
+  </string-array>
   <string-array name="orientation_names">
     <item>Nastaveno ze systému</item>
     <item>Na výšku</item>
@@ -102,7 +107,7 @@
     <item>Turecká lokalizace</item>
     <item>Italský překlad</item>
     <item>Španělský překlad</item>
-    <item>Swedish localization</item>
+    <item>Švédská lokalizace</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Přiblížit</item>
@@ -115,6 +120,6 @@
     <item>﻿Sledovat/nesledovat</item>
     <item>Získej umístění</item>
     <item>Zapisovat stopu</item>
-    <item>Show/hide status bar</item>
+    <item>Zobrazit/skrýt stavový řádek</item>
   </string-array>
 </resources>

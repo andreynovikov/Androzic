@@ -70,6 +70,11 @@
     <item>Griglia mappa preferita</item>
     <item>Griglia utente preferita</item>
   </string-array>
+  <string-array name="exit_names">
+    <item>Double press Back</item>
+    <item>Confirmation dialog</item>
+    <item>Nothing</item>
+  </string-array>
   <string-array name="orientation_names">
     <item>Impostazioni predefinite</item>
     <item>Ritratto</item>

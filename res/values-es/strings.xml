@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS activo</string>
   <string name="following_enabled">Seguimiento activado</string>
   <string name="following_disabled">Seguimiento desactivado</string>
+  <string name="backQuit">Press Back again to quit</string>
   <string name="quitQuestion">¿Desea salir?</string>
   <string name="removeWaypointQuestion">¿Eliminar waypoint?</string>
   <string name="quit">Salir</string>
@@ -238,6 +239,7 @@
   <string name="pref_maphideondrag_title">Ocultar obhetos al arrastrar</string>
   <string name="pref_maphideondrag_summary">Marcar para ocultar objetos al arrastrar el mapa</string>
   <string name="pref_unfollowontap_title">Parar seguimiento al arrastrar</string>
+  <string name="pref_exit_title">Exit confirmation</string>
   <string name="pref_charset_title">Codificación de archivos de texto</string>
   <string name="pref_charset_summary">Conjunto de caracteres para mapas y archivos de texto. Precaución: no se pueden mezclar archivos con la codificación propia de Android (UTF-8) y conjuntos nacionales de caracteres, cambie esta configuración sólo si todos los archivos están en la codificación nacional, de lo contrario recodifique manualmente los archivos que no estén en la codificación UTF-8. Tiene efecto sólo después del reinicio de la aplicación.</string>
   <string name="pref_orientation_title">Orientacion de Pantalla</string>

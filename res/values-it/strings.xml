@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS attivo</string>
   <string name="following_enabled">Inseguimento abilitato</string>
   <string name="following_disabled">Inseguimento disabilitato</string>
+  <string name="backQuit">Press Back again to quit</string>
   <string name="quitQuestion">Vuoi uscire?</string>
   <string name="removeWaypointQuestion">Rimuovere i waypoint?</string>
   <string name="quit">Esci</string>
@@ -234,6 +235,7 @@
   <string name="pref_maphideondrag_title">Nascondi oggetti in trascinamento</string>
   <string name="pref_maphideondrag_summary">Seleziona per nascondere gli oggetti della mappa durante il trascinamento</string>
   <string name="pref_unfollowontap_title">Non seguire più il trascinamento</string>
+  <string name="pref_exit_title">Exit confirmation</string>
   <string name="pref_charset_title">Codifica dei file di testo</string>
   <string name="pref_charset_summary">Set di caratteri per file mappe e di testo. Attenzione: non è possibile combinare file in Android nativo (UTF-8) e set di caratteri nazionali, cambiare questa impostazione solo se tutti i file sono in codifica nazionale, altrimenti ricodificare manualmente i file che non sono in codifica UTF-8. E\' attivo solo dopo il riavvio dell\'applicazione.</string>
   <string name="pref_orientation_title">Orientamento dello schermo</string>

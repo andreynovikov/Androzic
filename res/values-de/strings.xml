@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS aktiv</string>
   <string name="following_enabled">Verfolgung aktiviert</string>
   <string name="following_disabled">Verfolgung deaktiviert</string>
+  <string name="backQuit">Press Back again to quit</string>
   <string name="quitQuestion">Wollen Sie wirklich beenden?</string>
   <string name="removeWaypointQuestion">Remove waypoint?</string>
   <string name="quit">Beenden</string>
@@ -234,6 +235,7 @@
   <string name="pref_maphideondrag_title">Objekte beim Draggen ausblenden</string>
   <string name="pref_maphideondrag_summary">Markieren um Kartenobjekte während des Draggens auszublenden</string>
   <string name="pref_unfollowontap_title">Autofollow beim Draggen stoppen</string>
+  <string name="pref_exit_title">Exit confirmation</string>
   <string name="pref_charset_title">Text file encoding</string>
   <string name="pref_charset_summary">The character set for map and data text files. Caution: you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
   <string name="pref_orientation_title">Bildschirmausrichtung</string>

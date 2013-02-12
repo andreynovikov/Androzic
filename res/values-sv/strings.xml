@@ -63,6 +63,7 @@
   <string name="sat_firstfix">GPS aktiv</string>
   <string name="following_enabled">Följning aktiverad</string>
   <string name="following_disabled">Följning inaktiverad</string>
+  <string name="backQuit">Press Back again to quit</string>
   <string name="quitQuestion">Vill du avsluta?</string>
   <string name="removeWaypointQuestion">Remove waypoint?</string>
   <string name="quit">Avsluta</string>
@@ -234,6 +235,7 @@
   <string name="pref_maphideondrag_title">Dölj objekt på dra</string>
   <string name="pref_maphideondrag_summary">Markera för att dölja kart objekt medan du drar</string>
   <string name="pref_unfollowontap_title">Sluta följa efter vid dra</string>
+  <string name="pref_exit_title">Exit confirmation</string>
   <string name="pref_charset_title">Text file encoding</string>
   <string name="pref_charset_summary">The character set for map and data text files. Caution: you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
   <string name="pref_orientation_title">Skärmorientering</string>
