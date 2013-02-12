@@ -1775,11 +1775,15 @@ public class Androzic extends BaseApplication
 		plugins = packageManager.queryBroadcastReceivers(initializationIntent, 0);
 		for (ResolveInfo plugin : plugins)
 		{
+			// send initialization broadcast, we send it directly instead of sending
+			// one broadcast for all plugins to wake up stopped plugins:
+			// http://developer.android.com/about/versions/android-3.1.html#launchcontrols
+			Intent intent = new Intent();
+			intent.setClassName(plugin.activityInfo.packageName, plugin.activityInfo.name);
+			intent.setAction("com.androzic.plugins.action.INITIALIZE");
+			sendBroadcast(intent);
 		}
 		
-		// send initialization broadcast
-		sendBroadcast(initializationIntent);
-
 		// enumerate plugins with preferences
 		plugins = packageManager.queryIntentActivities(new Intent("com.androzic.plugins.preferences"), 0);
 		for (ResolveInfo plugin : plugins)
