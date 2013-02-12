@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -102,7 +103,9 @@ public class Splash extends Activity implements OnClickListener
 		}
 		else
 		{
-			getActionBar().hide();
+			ActionBar actionBar = getActionBar();
+			if (actionBar != null)
+				actionBar.hide();
 		}
 		
 		application = (Androzic) getApplication();
