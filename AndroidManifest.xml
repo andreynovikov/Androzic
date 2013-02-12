@@ -22,8 +22,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.androzic"
     android:installLocation="auto"
-    android:versionCode="85"
-    android:versionName="1.7.1" >
+    android:versionCode="86"
+    android:versionName="1.7.2" >
 
     <supports-screens
         android:anyDensity="true"
