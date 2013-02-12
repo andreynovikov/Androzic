@@ -20,7 +20,7 @@
 
 package com.androzic.overlay;
 
-import java.util.ListIterator;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -126,38 +126,40 @@ public class TrackOverlay extends MapOverlay
 		final Path path = new Path();
 		int i = 0;
 		int lastX = 0, lastY = 0;
-		ListIterator<TrackPoint> iterator = track.getPoints().listIterator();
-		while (iterator.hasNext())
+		List<TrackPoint> trackpoints = track.getPoints();
+		synchronized (trackpoints)
 		{
-			TrackPoint tp = iterator.next();
-			int[] xy = null;
-			xy = points.get(tp);
-			if (xy == null)
+			for (TrackPoint tp : trackpoints)
 			{
-				xy = application.getXYbyLatLon(tp.latitude, tp.longitude);
-				points.put(tp, xy);
-			}
-
-			if (i == 0)
-			{
-				path.setLastPoint(xy[0] - cxy[0], xy[1] - cxy[1]);
-				lastX = xy[0];
-				lastY = xy[1];
-			}
-			else
-			{
-				if (Math.abs(lastX - xy[0]) > 2 || Math.abs(lastY - xy[1]) > 2)
+				int[] xy = null;
+				xy = points.get(tp);
+				if (xy == null)
 				{
+					xy = application.getXYbyLatLon(tp.latitude, tp.longitude);
+					points.put(tp, xy);
+				}
 
-					if (tp.continous)
-						path.lineTo(xy[0] - cxy[0], xy[1] - cxy[1]);
-					else
-						path.moveTo(xy[0] - cxy[0], xy[1] - cxy[1]);
+				if (i == 0)
+				{
+					path.setLastPoint(xy[0] - cxy[0], xy[1] - cxy[1]);
 					lastX = xy[0];
 					lastY = xy[1];
 				}
+				else
+				{
+					if (Math.abs(lastX - xy[0]) > 2 || Math.abs(lastY - xy[1]) > 2)
+					{
+
+						if (tp.continous)
+							path.lineTo(xy[0] - cxy[0], xy[1] - cxy[1]);
+						else
+							path.moveTo(xy[0] - cxy[0], xy[1] - cxy[1]);
+						lastX = xy[0];
+						lastY = xy[1];
+					}
+				}
+				i++;
 			}
-			i++;
 		}
 		c.drawPath(path, paint);
 	}
