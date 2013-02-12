@@ -83,6 +83,7 @@
         <item></item>
         <item>en</item>
         <item>ru</item>
+        <item>uk</item>
         <item>cs</item>
         <item>fr</item>
         <item>fi</item>
@@ -100,6 +101,7 @@
         <item>Device default</item>
         <item>English</item>
         <item>Русский</item>
+        <item>Український</item>
         <item>Čeština</item>
         <item>Français</item>
         <item>Suomi</item>
