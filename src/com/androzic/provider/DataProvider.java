@@ -161,14 +161,37 @@ public class DataProvider extends ContentProvider
 
 	private void populateFields(MapObject mo, ContentValues values)
 	{
-		mo.name = values.getAsString(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_NAME_COLUMN]);
-		mo.description = values.getAsString(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_DESCRIPTION_COLUMN]);
-		mo.latitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LATITUDE_COLUMN]);
-		mo.longitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LONGITUDE_COLUMN]);
-		mo.image = values.getAsString(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_IMAGE_COLUMN]);
-		byte[] bytes = values.getAsByteArray(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BITMAP_COLUMN]);
-		if (mo.bitmap != null)
-			mo.bitmap.recycle();
-		mo.bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		String key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_NAME_COLUMN];
+		if (values.containsKey(key))
+			mo.name = values.getAsString(key);
+
+		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_DESCRIPTION_COLUMN];
+		if (values.containsKey(key))
+			mo.description = values.getAsString(key);
+
+		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LATITUDE_COLUMN];
+		if (values.containsKey(key))
+			mo.latitude = values.getAsDouble(key);
+
+		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LONGITUDE_COLUMN];
+		if (values.containsKey(key))
+			mo.longitude = values.getAsDouble(key);
+		
+		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_IMAGE_COLUMN];
+		if (values.containsKey(key))
+			mo.image = values.getAsString(key);
+
+		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BITMAP_COLUMN];
+		if (values.containsKey(key))
+		{
+			byte[] bytes = values.getAsByteArray(key);
+			if (mo.bitmap != null)
+			{
+				mo.bitmap.recycle();
+				mo.bitmap = null;
+			}
+			if (bytes != null)
+				mo.bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		}
 	}
 }

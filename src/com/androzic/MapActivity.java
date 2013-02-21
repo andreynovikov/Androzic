@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2013 Andrey Novikov <http://andreynovikov.info/>
  * 
  * This file is part of Androzic application.
  * 
@@ -1321,7 +1321,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			application.waypointsOverlay = new WaypointsOverlay(this);
 			application.waypointsOverlay.setWaypoints(application.getWaypoints());
 		}
-		application.waypointsOverlay.setVisible(wptEnabled);
+		application.waypointsOverlay.setEnabled(wptEnabled);
 		if (navEnabled && application.navigationOverlay == null)
 		{
 			application.navigationOverlay = new NavigationOverlay(this);
@@ -1440,7 +1440,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		findViewById(R.id.trackdetails).setVisibility(View.VISIBLE);
 		updateGPSStatus();
 		if (showDistance > 0)
-			application.distanceOverlay.disable();
+			application.distanceOverlay.setEnabled(false);
 		map.setFocusable(false);
 		map.setFocusableInTouchMode(false);
 		trackBar.requestFocus();
@@ -1472,7 +1472,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		updateGPSStatus();
 		routeEditingWaypoints = new Stack<Waypoint>();
 		if (showDistance > 0)
-			application.distanceOverlay.disable();
+			application.distanceOverlay.setEnabled(false);
 		updateMapViewArea();
 	}
 
@@ -1485,11 +1485,11 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				if (showDistance == 2 && !follow)
 				{
 					application.distanceOverlay.setAncor(application.getLocation());
-					application.distanceOverlay.enable();
+					application.distanceOverlay.setEnabled(true);
 				}
 				else
 				{
-					application.distanceOverlay.disable();
+					application.distanceOverlay.setEnabled(false);
 				}
 			}
 			map.setFollowing(follow);
@@ -1758,7 +1758,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				if (showDistance > 0)
 				{
 					application.distanceOverlay.setAncor(application.getMapCenter());
-					application.distanceOverlay.enable();
+					application.distanceOverlay.setEnabled(true);
 				}
 				return true;
 			case R.id.menuPreferences:
@@ -1871,7 +1871,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				break;
 			case RESULT_MANAGE_WAYPOINTS:
 			{
-				application.waypointsOverlay.clear();
+				application.waypointsOverlay.clearBitmapCache();
 				application.saveWaypoints();
 				break;
 			}
@@ -1883,7 +1883,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 					int count = extras.getInt("count");
 					if (count > 0)
 					{
-						application.waypointsOverlay.clear();
+						application.waypointsOverlay.clearBitmapCache();
 					}
 				}
 				break;
@@ -1892,7 +1892,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			{
 				if (resultCode == RESULT_OK)
 				{
-					application.waypointsOverlay.clear();
+					application.waypointsOverlay.clearBitmapCache();
 					application.saveWaypoints();
 					if (data != null && data.hasExtra("index")
 							&& PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_waypoint_visible), getResources().getBoolean(R.bool.def_waypoint_visible)))
@@ -2219,7 +2219,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				updateGPSStatus();
 				if (showDistance == 2)
 				{
-					application.distanceOverlay.enable();
+					application.distanceOverlay.setEnabled(true);
 				}
 				updateMapViewArea();
 				map.requestFocus();
@@ -2233,7 +2233,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				updateGPSStatus();
 				if (showDistance == 2)
 				{
-					application.distanceOverlay.enable();
+					application.distanceOverlay.setEnabled(true);
 				}
 				map.setFocusable(true);
 				map.setFocusableInTouchMode(true);

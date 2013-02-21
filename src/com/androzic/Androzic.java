@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2013  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -278,7 +278,7 @@ public class Androzic extends BaseApplication
 		int i = 0;
     	for (MapOverlay mo : overlays)
     	{
-   			states[i] = mo.disable();
+   			states[i] = mo.setEnabled(false);
    			i++;
     	}
 		executorThread.execute(new Runnable() {
@@ -288,10 +288,7 @@ public class Androzic extends BaseApplication
 		    	for (MapOverlay mo : overlays)
 		    	{
 		   			mo.onMapChanged();
-		   			if (states[j])
-		   			{
-		   				mo.enable();
-		   			}
+	   				mo.setEnabled(states[j]);
 		   			j++;
 		    	}
 			}
