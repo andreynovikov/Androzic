@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2013 Andrey Novikov <http://andreynovikov.info/>
  * 
  * This file is part of Androzic application.
  * 
@@ -88,10 +88,7 @@ public class DataProvider extends ContentProvider
 		}
 
 		MapObject mo = new MapObject();
-		mo.latitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LATITUDE_COLUMN]);
-		mo.longitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LONGITUDE_COLUMN]);
-		byte[] bytes = values.getAsByteArray(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BITMAP_COLUMN]);
-		mo.bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		populateFields(mo, values);
 
 		Androzic application = Androzic.getApplication();
 		long id = application.addMapObject(mo);
@@ -123,11 +120,7 @@ public class DataProvider extends ContentProvider
 
 		synchronized (mo)
 		{
-			mo.latitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LATITUDE_COLUMN]);
-			mo.longitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LONGITUDE_COLUMN]);
-			byte[] bytes = values.getAsByteArray(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BITMAP_COLUMN]);
-			mo.bitmap.recycle();
-			mo.bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+			populateFields(mo, values);
 		}
 
 		getContext().getContentResolver().notifyChange(uri, null);
@@ -138,7 +131,7 @@ public class DataProvider extends ContentProvider
 	public int delete(Uri uri, String selection, String[] selectionArgs)
 	{
 		Log.d(TAG, "Delete: " + uri);
-		
+
 		long[] ids = null;
 		if (uriMatcher.match(uri) == MAPOBJECTS)
 		{
@@ -164,5 +157,18 @@ public class DataProvider extends ContentProvider
 				result++;
 		}
 		return result;
+	}
+
+	private void populateFields(MapObject mo, ContentValues values)
+	{
+		mo.name = values.getAsString(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_NAME_COLUMN]);
+		mo.description = values.getAsString(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_DESCRIPTION_COLUMN]);
+		mo.latitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LATITUDE_COLUMN]);
+		mo.longitude = values.getAsDouble(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_LONGITUDE_COLUMN]);
+		mo.image = values.getAsString(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_IMAGE_COLUMN]);
+		byte[] bytes = values.getAsByteArray(DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BITMAP_COLUMN]);
+		if (mo.bitmap != null)
+			mo.bitmap.recycle();
+		mo.bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 	}
 }
