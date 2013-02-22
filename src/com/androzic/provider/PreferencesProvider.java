@@ -157,6 +157,12 @@ public class PreferencesProvider extends ContentProvider
 					row.add(elevationAbbr);
 					break;
 				}
+				case PreferencesContract.COORDINATES_FORMAT:
+				{
+					int coordinatesFormat = Integer.parseInt(settings.getString(context.getString(R.string.pref_unitcoordinate), "0"));
+					row.add(coordinatesFormat);
+					break;
+				}
 				default:
 					throw new IllegalArgumentException("Unsupported item");
 			}
