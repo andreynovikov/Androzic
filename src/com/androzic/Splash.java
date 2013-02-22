@@ -349,11 +349,19 @@ public class Splash extends Activity implements OnClickListener
 				datadir.mkdirs();
 			}
 
+			// check icons folder existence
+			File iconsdir = new File(settings.getString(getString(R.string.pref_folder_icon), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_icon)));
+			if (!iconsdir.exists())
+			{
+				iconsdir.mkdirs();
+				application.copyAssets("icons", iconsdir);				
+			}
+			
 			// initialize paths
 			application.setRootPath(root.getAbsolutePath());
 			application.setMapPath(mapdir.getAbsolutePath());
 			application.setDataPath(Androzic.PATH_DATA, datadir.getAbsolutePath());
-			application.setDataPath(Androzic.PATH_ICONS, settings.getString(getString(R.string.pref_folder_icon), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_icon)));
+			application.setDataPath(Androzic.PATH_ICONS, iconsdir.getAbsolutePath());
 			
 			// initialize data
 			application.installData();

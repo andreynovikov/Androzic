@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -1670,6 +1672,45 @@ public class Androzic extends BaseApplication
 		if (index.exists())
 			index.delete();
 		initializeMaps();
+	}
+
+	/**
+	 * Copies file assets from installation package to filesystem.
+	 */
+	public void copyAssets(String folder, File path)
+	{
+		AssetManager assetManager = getAssets();
+		String[] files = null;
+		try
+		{
+			files = assetManager.list(folder);
+		}
+		catch (IOException e)
+		{
+			Log.e("Androzic", "Failed to get assets list", e);
+			return;
+		}
+		for (int i = 0; i < files.length; i++)
+		{
+			try
+			{
+				InputStream in = assetManager.open(folder + "/" + files[i]);
+				OutputStream out = new FileOutputStream(new File(path, files[i]));
+				byte[] buffer = new byte[1024];
+				int read;
+				while ((read = in.read(buffer)) != -1)
+				{
+					out.write(buffer, 0, read);
+				}
+				in.close();
+				out.flush();
+				out.close();
+			}
+			catch (Exception e)
+			{
+				Log.e("Androzic", "Asset copy error", e);
+			}
+		}
 	}
 
 	void installData()
