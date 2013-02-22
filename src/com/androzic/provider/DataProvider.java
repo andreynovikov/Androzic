@@ -181,6 +181,14 @@ public class DataProvider extends ContentProvider
 		if (values.containsKey(key))
 			mo.image = values.getAsString(key);
 
+		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_TEXTCOLOR_COLUMN];
+		if (values.containsKey(key))
+			mo.textcolor = values.getAsInteger(key);
+
+		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BACKCOLOR_COLUMN];
+		if (values.containsKey(key))
+			mo.backcolor = values.getAsInteger(key);
+
 		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_BITMAP_COLUMN];
 		if (values.containsKey(key))
 		{
