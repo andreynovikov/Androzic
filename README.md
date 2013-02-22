@@ -12,8 +12,8 @@ Navigation client that uses OziExplorer maps (ozf2, ozfx3). Great for hiking, ge
 
 ## Help and support ##
 
-* [Feature requests and feedback](http://androzic.uservoice.com/forums/142576-androzic-feedback)
-* [Project page on Google Code](https://code.google.com/p/androzic/) containing F.A.Q. and some documentation.
+* [Feedback and support](https://getsatisfaction.com/androzic)
+* [Project Wiki](http://androzic.com/wiki/) containing F.A.Q. and some documentation.
 * [Draft for user manual](https://docs.google.com/document/pub?id=1t03A90_ML1aU-6D8OKoVR9oQxBV2E90yp5Y3GwWeJq4)
 
 ## Contribution and developement ##

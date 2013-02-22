@@ -4,8 +4,8 @@
     <string name="googleplusuri">https://plus.google.com/communities/104267455273813373911</string>
     <string name="facebookuri">http://www.facebook.com/androzic</string>
     <string name="twitteruri">http://twitter.com/Androzic</string>
-    <string name="faquri">http://code.google.com/p/androzic/wiki/FAQ</string>
-    <string name="featureuri">http://androzic.uservoice.com/</string>
+    <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
+    <string name="featureuri">https://getsatisfaction.com/androzic</string>
     
    	<string name="pref_usemapindex">usemapindex</string>
    	<string name="pref_useonlinemap">useonlinemap</string>
