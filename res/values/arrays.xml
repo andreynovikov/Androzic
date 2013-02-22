@@ -98,6 +98,7 @@
     	<item>Drag\'n\'drop list initial code</item>
     	<item>Multitouch controller</item>
     	<item>Interface icons</item>
+    	<item>Waypoint icons</item>
     	<item>Czech localization</item>
     	<item>French localization</item>
     	<item>Finnish localization</item>
@@ -107,6 +108,8 @@
     	<item>Italian localization</item>
     	<item>Spanish localization</item>
     	<item>Swedish localization</item>
+    	<item>Ukrainian localization</item>
+    	<item>Portuguese localization</item>
     </string-array>
     <string-array name="panel_action_names">
         <item>Zoom in</item>
