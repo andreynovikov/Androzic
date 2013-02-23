@@ -26,7 +26,6 @@ import java.util.Set;
 
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,19 +51,19 @@ import android.widget.Toast;
 import com.androzic.MapActivity;
 import com.androzic.R;
 
-public class LocationService extends Service implements LocationListener, NmeaListener, GpsStatus.Listener, OnSharedPreferenceChangeListener
+public class LocationService extends BaseLocationService implements LocationListener, NmeaListener, GpsStatus.Listener, OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "Location";
 	private static final int NOTIFICATION_ID = 24161;
 
+	/**
+	 * Intent action to enable locating
+	 */
 	public static final String ENABLE_LOCATIONS = "enableLocations";
+	/**
+	 * Intent action to disable locating
+	 */
 	public static final String DISABLE_LOCATIONS = "disableLocations";
-
-	public static final String BROADCAST_LOCATING_STATUS = "com.androzic.locatingStatusChanged";
-
-	public static final int GPS_OFF = 1;
-	public static final int GPS_SEARCHING = 2;
-	public static final int GPS_OK = 3;
 
 	private boolean locationsEnabled = false;
 	private boolean useNetwork = true;
