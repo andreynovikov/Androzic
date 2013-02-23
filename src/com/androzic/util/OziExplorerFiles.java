@@ -87,7 +87,7 @@ public class OziExplorerFiles
 			    	if ("".equals(fields[1]))
 			    		fields[1] = "WPT"+fields[0];
 			    	
-		    		Waypoint waypoint = new Waypoint(fields[1].replace((char) 209, ','), fields[10].replace((char) 209, ','), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
+		    		Waypoint waypoint = new Waypoint(fields[1].replace((char) 209, ','), Entities.XML.unescape(fields[10]), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
 	
 		    		if (! "".equals(fields[4]))
 		    		{
@@ -226,7 +226,7 @@ public class OziExplorerFiles
 	        	writer.write("0,1,3,");
 	        	writer.write((wpt.textcolor != Integer.MIN_VALUE ? rgb2bgr(wpt.textcolor) : "") + ",");
 	        	writer.write((wpt.backcolor != Integer.MIN_VALUE ? rgb2bgr(wpt.backcolor) : "") + ",");
-	        	writer.write(wpt.description.replace(',', (char) 209) + ",");
+	        	writer.write(Entities.XML.escape(wpt.description) + ",");
 	        	writer.write("2,0,");
 	        	writer.write(wpt.proximity + ",");
 	        	writer.write((wpt.altitude == Integer.MIN_VALUE ? -777 : wpt.altitude) + ",");
