@@ -18,6 +18,10 @@
  * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Contributor: Gutorov Dmitry <dolfwolkov at gmail dot com>
+ */
+
 package com.androzic.waypoint;
 
 import java.io.File;
@@ -32,10 +36,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Base64;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -134,16 +138,9 @@ public class WaypointInfo extends Activity implements OnClickListener
 			
 			WebSettings settings = description.getSettings();
 			settings.setDefaultTextEncodingName("utf-8");
-			
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-			{
-				String base64 = Base64.encodeToString(descriptionHtml.getBytes(), Base64.DEFAULT);
-				description.loadData(base64, "text/html; charset=utf-8", "base64");
-			}
-			else
-			{
-				description.loadData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" + descriptionHtml, "text/html; chartset=UTF-8", null);
-			}
+			settings.setAllowFileAccess(true);
+			Uri baseUrl = Uri.fromFile(new File(application.dataPath));
+			description.loadDataWithBaseURL(baseUrl.toString() + "/", descriptionHtml, "text/html", "utf-8", null);
 		}
 
 		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
