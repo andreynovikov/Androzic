@@ -363,7 +363,10 @@ public class Androzic extends BaseApplication
 	public int addWaypoint(final Waypoint newWaypoint)
 	{
 		newWaypoint.set = defWaypointSet;
-		waypoints.add(newWaypoint);
+		synchronized (waypoints)
+		{
+			waypoints.add(newWaypoint);
+		}
 		return waypoints.lastIndexOf(newWaypoint);
 	}
 
@@ -373,7 +376,10 @@ public class Androzic extends BaseApplication
 		{
 			for (Waypoint waypoint : newWaypoints)
 				waypoint.set = defWaypointSet;
-			waypoints.addAll(newWaypoints);
+			synchronized (waypoints)
+			{
+				waypoints.addAll(newWaypoints);
+			}
 		}
 		return waypoints.size() - 1;
 	}
@@ -384,7 +390,10 @@ public class Androzic extends BaseApplication
 		{
 			for (Waypoint waypoint : newWaypoints)
 				waypoint.set = waypointSet;
-			waypoints.addAll(newWaypoints);
+			synchronized (waypoints)
+			{
+				waypoints.addAll(newWaypoints);
+			}
 			waypointSets.add(waypointSet);
 		}
 		return waypoints.size() - 1;
@@ -392,12 +401,18 @@ public class Androzic extends BaseApplication
 
 	public boolean removeWaypoint(final Waypoint delWaypoint)
 	{
-		return waypoints.remove(delWaypoint);
+		synchronized (waypoints)
+		{
+			return waypoints.remove(delWaypoint);
+		}
 	}
 	
 	public void removeWaypoint(final int delWaypoint)
 	{
-		waypoints.remove(delWaypoint);
+		synchronized (waypoints)
+		{
+			waypoints.remove(delWaypoint);
+		}
 	}
 
 	/**
@@ -405,7 +420,10 @@ public class Androzic extends BaseApplication
 	 */
 	public void clearWaypoints()
 	{
-		waypoints.clear();
+		synchronized (waypoints)
+		{
+			waypoints.clear();
+		}
 	}
 	
 	/**
@@ -450,11 +468,14 @@ public class Androzic extends BaseApplication
 	public int getWaypointCount(WaypointSet set)
 	{
 		int n = 0;
-		for (Waypoint wpt : waypoints)
+		synchronized (waypoints)
 		{
-			if (wpt.set == set)
+			for (Waypoint wpt : waypoints)
 			{
-				n++;
+				if (wpt.set == set)
+				{
+					n++;
+				}
 			}
 		}
 		return n;
@@ -463,11 +484,14 @@ public class Androzic extends BaseApplication
 	public List<Waypoint> getWaypoints(WaypointSet set)
 	{
 		List<Waypoint> wpts = new ArrayList<Waypoint>();
-		for (Waypoint wpt : waypoints)
+		synchronized (waypoints)
 		{
-			if (wpt.set == set)
+			for (Waypoint wpt : waypoints)
 			{
-				wpts.add(wpt);
+				if (wpt.set == set)
+				{
+					wpts.add(wpt);
+				}
 			}
 		}
 		return wpts;
