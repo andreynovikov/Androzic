@@ -20,8 +20,8 @@ import com.androzic.Androzic;
 import com.androzic.HSIActivity;
 import com.androzic.MapActivity;
 import com.androzic.R;
+import com.androzic.data.MapObject;
 import com.androzic.data.Route;
-import com.androzic.data.Waypoint;
 import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
@@ -33,7 +33,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
     private static final String TAG = "Navigation";
 	private static final int NOTIFICATION_ID = 24163;
 	
-    public static final String NAVIGATE_WAYPOINT = "navigateWaypoint";
+    public static final String NAVIGATE_MAPOBJECT = "navigateWaypoint";
 	public static final String NAVIGATE_ROUTE = "navigateRoute";
 	
 	public static final String BROADCAST_NAVIGATION_STATUS = "com.androzic.navigationStatusChanged";
@@ -62,11 +62,11 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 	/**
 	 * Active route waypoint
 	 */
-	public Waypoint navWaypoint = null;
+	public MapObject navWaypoint = null;
 	/**
 	 * Previous route waypoint
 	 */
-	public Waypoint prevWaypoint = null;
+	public MapObject prevWaypoint = null;
 	/**
 	 * Active route
 	 */
@@ -120,12 +120,16 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		{
 			Intent activity = new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 			Bundle extras = intent.getExtras();
-			if (intent.getAction().equals(NAVIGATE_WAYPOINT))
+			if (intent.getAction().equals(NAVIGATE_MAPOBJECT))
 			{
-				int index = extras.getInt("index");
+				MapObject mo = new MapObject();
+				mo.name = extras.getString("name");
+				mo.latitude = extras.getDouble("latitude");
+				mo.longitude = extras.getDouble("longitude");
+				mo.proximity = extras.getInt("proximity");
 				activity.putExtra("launch", HSIActivity.class);
 				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
-				navigateTo(index);
+				navigateTo(mo);
 			}
 			if (intent.getAction().equals(NAVIGATE_ROUTE))
 			{
@@ -238,7 +242,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		return navRoute != null;
 	}
 
-	public void navigateTo(final Waypoint waypoint)
+	public void navigateTo(final MapObject waypoint)
 	{
 		clearNavigation();
 		connect();
@@ -251,11 +255,6 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		updateNavigationState(STATE_STARTED);
 		if (lastKnownLocation != null)
 			calculateNavigationStatus(lastKnownLocation, 0, 0);
-	}
-
-	public void navigateTo(final int index)
-	{
-		navigateTo(application.getWaypoints().get(index));
 	}
 
 	public void navigateTo(final Route route, final int direction)
@@ -295,7 +294,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		updateNavigationState(STATE_NEXTWPT);
 	}
 
-	public Waypoint getNextRouteWaypoint()
+	public MapObject getNextRouteWaypoint()
 	{
 		try
 		{
@@ -407,8 +406,8 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		{
 			int i = navDirection == DIRECTION_FORWARD ? index : navRoute.length() - index - 1;
 			int j = i - navDirection;
-			Waypoint w1 = navRoute.getWaypoint(i);
-			Waypoint w2 = navRoute.getWaypoint(j);
+			MapObject w1 = navRoute.getWaypoint(i);
+			MapObject w2 = navRoute.getWaypoint(j);
 			double distance = Geo.distance(w1.latitude, w1.longitude, w2.latitude, w2.longitude);
 			ete = (int) Math.round(distance / avvmg / 60);
 		}
@@ -503,7 +502,7 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 					if (useTraverse && hasNext)
 					{
 						double cxtk2 = Double.NEGATIVE_INFINITY;
-						Waypoint nextWpt = getNextRouteWaypoint();
+						MapObject nextWpt = getNextRouteWaypoint();
 						if (nextWpt != null)
 						{
 							double dtk2 = Geo.bearing(nextWpt.latitude, nextWpt.longitude, navWaypoint.latitude, navWaypoint.longitude);

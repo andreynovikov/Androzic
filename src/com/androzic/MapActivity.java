@@ -74,7 +74,6 @@ import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -94,6 +93,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
@@ -362,19 +362,12 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		{
 			try
 			{
-				int index = -1;
-				if (mapState == null)
-				{
-					// float lat = settings.getFloat(getString(R.string.nav_wpt_lat), 0);
-					// float lon = settings.getFloat(getString(R.string.nav_wpt_lon), 0);
-					// index = application.addWaypoint(new Waypoint(navWpt, "", lat, lon));
-				}
-				else
-				{
-					index = settings.getInt(getString(R.string.nav_wpt_idx), -1);
-					startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", index));
-				}
-				// startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", index));
+				Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+				intent.putExtra("name", navWpt);
+				intent.putExtra("latitude", (double) settings.getFloat(getString(R.string.nav_wpt_lat), 0));
+				intent.putExtra("longitude", (double) settings.getFloat(getString(R.string.nav_wpt_lon), 0));
+				intent.putExtra("proximity", settings.getInt(getString(R.string.nav_wpt_prx), 0));
+				startService(intent);
 			}
 			catch (Exception e)
 			{
@@ -603,9 +596,9 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			}
 			else if (navigationService.isNavigating())
 			{
-				Waypoint wpt = navigationService.navWaypoint;
+				MapObject wpt = navigationService.navWaypoint;
 				editor.putString(getString(R.string.nav_wpt), wpt.name);
-				editor.putInt(getString(R.string.nav_wpt_idx), application.getWaypointIndex(wpt));
+				editor.putInt(getString(R.string.nav_wpt_prx), wpt.proximity);
 				editor.putFloat(getString(R.string.nav_wpt_lat), (float) wpt.latitude);
 				editor.putFloat(getString(R.string.nav_wpt_lon), (float) wpt.longitude);
 			}
@@ -1837,7 +1830,13 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 					switch (action)
 					{
 						case R.id.navigate_button:
-							startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", index));
+							Waypoint wpt = application.getWaypoint(index);
+							Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+							intent.putExtra("name", wpt.name);
+							intent.putExtra("latitude", wpt.latitude);
+							intent.putExtra("longitude", wpt.longitude);
+							intent.putExtra("proximity", wpt.proximity);
+							startService(intent);
 							break;
 						case R.id.edit_button:
 							startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index), RESULT_SAVE_WAYPOINT);

@@ -82,7 +82,12 @@ public class ExternalActions extends Activity
     		waypoint.date = Calendar.getInstance().getTime();
 			int wpt = application.addWaypoint(waypoint);
 			waypoint.name = "WPT" + wpt;
-			startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", wpt));
+			Intent i = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+			i.putExtra("name", waypoint.name);
+			i.putExtra("latitude", waypoint.latitude);
+			i.putExtra("longitude", waypoint.longitude);
+			i.putExtra("proximity", waypoint.proximity);
+			startService(i);
 		}
         startActivity(new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
 		finish();

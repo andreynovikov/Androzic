@@ -286,8 +286,12 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
 					finish();
 					break;
 				case qaWaypointNavigate:
-					// FIXME context!
-					startService(new Intent(WaypointList.this, NavigationService.class).setAction(NavigationService.NAVIGATE_WAYPOINT).putExtra("index", position));
+					Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+					intent.putExtra("name", waypoint.name);
+					intent.putExtra("latitude", waypoint.latitude);
+					intent.putExtra("longitude", waypoint.longitude);
+					intent.putExtra("proximity", waypoint.proximity);
+					startService(intent);
 					finish();
 					break;
 	    		case qaWaypointProperties:
