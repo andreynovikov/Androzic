@@ -338,16 +338,33 @@ public class Androzic extends BaseApplication
 	public long addMapObject(MapObject mapObject)
 	{
 		mapObject._id = getNewUID();
-		mapObjects.put(mapObject._id, mapObject);
+		synchronized (mapObjects)
+		{
+			mapObjects.put(mapObject._id, mapObject);
+		}
 		return mapObject._id;
 	}
 	
 	public boolean removeMapObject(long id)
 	{
-		MapObject mo = mapObjects.remove(id);
-		if (mo.bitmap != null)
-			mo.bitmap.recycle();
-		return mo != null;
+		synchronized (mapObjects)
+		{
+			MapObject mo = mapObjects.remove(id);
+			if (mo.bitmap != null)
+				mo.bitmap.recycle();
+			return mo != null;
+		}
+	}
+	
+	/**
+	 * Clear all map objects.
+	 */
+	public void clearMapObjects()
+	{
+		synchronized (mapObjects)
+		{
+			mapObjects.clear();
+		}
 	}
 	
 	public MapObject getMapObject(long id)
@@ -1443,6 +1460,7 @@ public class Androzic extends BaseApplication
 		clearTracks();
 		clearWaypoints();
 		clearWaypointSets();
+		clearMapObjects();
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
 		editor.commit();			
