@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+   along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -166,7 +166,13 @@
         <activity
             android:name=".ui.MarkerPickerActivity"
             android:label="@string/markericon_name"
-            android:theme="@style/BlackDialog" />
+            android:theme="@style/BlackDialog" >
+            <intent-filter>
+                <action android:name="com.androzic.PICK_ICON" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".waypoint.WaypointInfo"
             android:theme="@style/BlackDialog" />
@@ -246,14 +252,14 @@
         <provider
             android:name=".provider.PreferencesProvider"
             android:authorities="com.androzic.PreferencesProvider"
-            android:readPermission="com.androzic.permission.READ_PREFERENCES"
-            android:exported="true" />
+            android:exported="true"
+            android:readPermission="com.androzic.permission.READ_PREFERENCES" />
         <provider
             android:name=".provider.DataProvider"
             android:authorities="com.androzic.DataProvider"
+            android:exported="true"
             android:readPermission="com.androzic.permission.READ_MAP_DATA"
-            android:writePermission="com.androzic.permission.WRITE_MAP_DATA"
-            android:exported="true" />
+            android:writePermission="com.androzic.permission.WRITE_MAP_DATA" />
         <provider
             android:name=".provider.SuggestionProvider"
             android:authorities="com.androzic.SuggestionProvider"

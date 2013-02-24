@@ -20,11 +20,16 @@
 
 package com.androzic.provider;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
@@ -38,6 +43,7 @@ public class DataProvider extends ContentProvider
 
 	private static final int MAPOBJECTS = 1;
 	private static final int MAPOBJECTS_ID = 2;
+	private static final int ICONS_ID = 3;
 
 	private static final UriMatcher uriMatcher;
 
@@ -46,6 +52,7 @@ public class DataProvider extends ContentProvider
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(DataContract.AUTHORITY, DataContract.MAPOBJECTS_PATH, MAPOBJECTS);
 		uriMatcher.addURI(DataContract.AUTHORITY, DataContract.MAPOBJECTS_PATH + "/#", MAPOBJECTS_ID);
+		uriMatcher.addURI(DataContract.AUTHORITY, DataContract.ICONS_PATH + "/*", ICONS_ID);
 	}
 
 	@Override
@@ -63,6 +70,8 @@ public class DataProvider extends ContentProvider
 				return "vnd.android.cursor.dir/vnd.com.androzic.provider.mapobject";
 			case MAPOBJECTS_ID:
 				return "vnd.android.cursor.item/vnd.com.androzic.provider.mapobject";
+			case ICONS_ID:
+				return "vnd.android.cursor.item/vnd.com.androzic.provider.icon";
 			default:
 				throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -71,7 +80,27 @@ public class DataProvider extends ContentProvider
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 	{
-		throw new UnsupportedOperationException("Quering objects is not supported");
+		Log.e(TAG, uri.toString());
+		if (uriMatcher.match(uri) != ICONS_ID)
+		{
+			throw new UnsupportedOperationException("Quering objects is not supported");
+		}
+		
+		String id = uri.getLastPathSegment();
+		MatrixCursor cursor = new MatrixCursor(projection);
+		
+		Androzic application = Androzic.getApplication();
+		Bitmap bitmap = BitmapFactory.decodeFile(application.iconPath + File.separator + id);
+		if (bitmap != null)
+		{
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+			byte[] bytes = stream.toByteArray();
+			MatrixCursor.RowBuilder row = cursor.newRow();
+			row.add(bytes);
+		}
+		
+		return cursor;
 	}
 
 	@Override
@@ -130,8 +159,6 @@ public class DataProvider extends ContentProvider
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs)
 	{
-		Log.d(TAG, "Delete: " + uri);
-
 		long[] ids = null;
 		if (uriMatcher.match(uri) == MAPOBJECTS)
 		{
