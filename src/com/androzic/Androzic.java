@@ -76,6 +76,7 @@ import com.androzic.map.MapIndex;
 import com.androzic.map.MockMap;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.TileProvider;
+import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.AccuracyOverlay;
 import com.androzic.overlay.CurrentTrackOverlay;
 import com.androzic.overlay.DistanceOverlay;
@@ -1466,6 +1467,7 @@ public class Androzic extends BaseApplication
 		editor.commit();			
 		
 		stopService(new Intent(this, TrackingService.class));
+		stopService(new Intent(this, NavigationService.class));
 		stopService(new Intent(this, LocationService.class));
 		
 		llGridOverlay = null;
