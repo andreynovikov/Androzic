@@ -176,7 +176,7 @@ public class LocationService extends BaseLocationService implements LocationList
 	@Override
 	public IBinder onBind(Intent intent)
 	{
-		if ("com.androzic.location".equals(intent.getAction()) || ILocationRemoteService.class.getName().equals(intent.getAction()))
+		if (ANDROZIC_LOCATION_SERVICE.equals(intent.getAction()) || ILocationRemoteService.class.getName().equals(intent.getAction()))
 		{
 			return remoteBinder;
 		}

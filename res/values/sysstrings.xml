@@ -113,6 +113,7 @@
 	<string name="loc_last">loc_last</string>
 	<string name="trk_current">trk_current</string>
 	<string name="nav_wpt">nav_wpt</string>
+	<string name="nav_wpt_idx">nav_wpt_idx</string>
 	<string name="nav_wpt_prx">nav_wpt_prx</string>
 	<string name="nav_wpt_lat">nav_wpt_lat</string>
 	<string name="nav_wpt_lon">nav_wpt_lon</string>

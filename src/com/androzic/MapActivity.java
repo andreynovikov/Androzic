@@ -362,12 +362,23 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		{
 			try
 			{
-				Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
-				intent.putExtra("name", navWpt);
-				intent.putExtra("latitude", (double) settings.getFloat(getString(R.string.nav_wpt_lat), 0));
-				intent.putExtra("longitude", (double) settings.getFloat(getString(R.string.nav_wpt_lon), 0));
-				intent.putExtra("proximity", settings.getInt(getString(R.string.nav_wpt_prx), 0));
-				startService(intent);
+				long id = settings.getLong(getString(R.string.nav_wpt_idx), 0);
+				Intent intent = null;
+				if (id > 0 && mapState != null)
+				{
+					intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT_WITH_ID);
+					intent.putExtra(NavigationService.EXTRA_ID, id);
+				}
+				else if (id == 0)
+				{
+					intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+					intent.putExtra(NavigationService.EXTRA_NAME, navWpt);
+					intent.putExtra(NavigationService.EXTRA_LATITUDE, (double) settings.getFloat(getString(R.string.nav_wpt_lat), 0));
+					intent.putExtra(NavigationService.EXTRA_LONGITUDE, (double) settings.getFloat(getString(R.string.nav_wpt_lon), 0));
+					intent.putExtra(NavigationService.EXTRA_PROXIMITY, settings.getInt(getString(R.string.nav_wpt_prx), 0));
+				}
+				if (intent != null)
+					startService(intent);
 			}
 			catch (Exception e)
 			{
@@ -403,7 +414,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 				{
 					rt = settings.getInt(getString(R.string.nav_route_idx), -1);
 				}
-				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra("index", rt).putExtra("direction", ndir).putExtra("start", nwpt));
+				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt).putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, ndir).putExtra(NavigationService.EXTRA_ROUTE_START, nwpt));
 			}
 			catch (Exception e)
 			{
@@ -598,6 +609,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 			{
 				MapObject wpt = navigationService.navWaypoint;
 				editor.putString(getString(R.string.nav_wpt), wpt.name);
+				editor.putLong(getString(R.string.nav_wpt_idx), wpt._id);
 				editor.putInt(getString(R.string.nav_wpt_prx), wpt.proximity);
 				editor.putFloat(getString(R.string.nav_wpt_lat), (float) wpt.latitude);
 				editor.putFloat(getString(R.string.nav_wpt_lon), (float) wpt.longitude);
@@ -1832,10 +1844,10 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 						case R.id.navigate_button:
 							Waypoint wpt = application.getWaypoint(index);
 							Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
-							intent.putExtra("name", wpt.name);
-							intent.putExtra("latitude", wpt.latitude);
-							intent.putExtra("longitude", wpt.longitude);
-							intent.putExtra("proximity", wpt.proximity);
+							intent.putExtra(NavigationService.EXTRA_NAME, wpt.name);
+							intent.putExtra(NavigationService.EXTRA_LATITUDE, wpt.latitude);
+							intent.putExtra(NavigationService.EXTRA_LONGITUDE, wpt.longitude);
+							intent.putExtra(NavigationService.EXTRA_PROXIMITY, wpt.proximity);
 							startService(intent);
 							break;
 						case R.id.edit_button:
@@ -1941,7 +1953,7 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 					int index = extras.getInt("index");
 					int dir = extras.getInt("dir");
 					if (dir != 0)
-						startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra("index", index).putExtra("direction", dir));
+						startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, index).putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, dir));
 					else
 						startEditRoute(application.getRoute(index));
 				}

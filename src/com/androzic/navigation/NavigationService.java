@@ -3,7 +3,6 @@ package com.androzic.navigation;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -28,25 +27,11 @@ import com.androzic.location.LocationService;
 import com.androzic.route.RouteDetails;
 import com.androzic.util.Geo;
 
-public class NavigationService extends Service implements OnSharedPreferenceChangeListener
+public class NavigationService extends BaseNavigationService implements OnSharedPreferenceChangeListener
 {
     private static final String TAG = "Navigation";
 	private static final int NOTIFICATION_ID = 24163;
 	
-    public static final String NAVIGATE_MAPOBJECT = "navigateWaypoint";
-	public static final String NAVIGATE_ROUTE = "navigateRoute";
-	
-	public static final String BROADCAST_NAVIGATION_STATUS = "com.androzic.navigationStatusChanged";
-	public static final String BROADCAST_NAVIGATION_STATE = "com.androzic.navigationStateChanged";
-	
-	public static final int STATE_STARTED = 1;
-	public static final int STATE_NEXTWPT = 2;
-	public static final int STATE_REACHED = 3;
-	public static final int STATE_STOPED = 4;
-	
-	public static final int DIRECTION_FORWARD =  1;
-	public static final int DIRECTION_REVERSE = -1;
-
 	private Androzic application;
 	
 	private ILocationService locationService = null;
@@ -119,23 +104,34 @@ public class NavigationService extends Service implements OnSharedPreferenceChan
 		if (intent != null)
 		{
 			Intent activity = new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+			String action = intent.getAction();
+			if (action == null)
+				return 0;
 			Bundle extras = intent.getExtras();
-			if (intent.getAction().equals(NAVIGATE_MAPOBJECT))
+			if (action.equals(NAVIGATE_MAPOBJECT))
 			{
 				MapObject mo = new MapObject();
-				mo.name = extras.getString("name");
-				mo.latitude = extras.getDouble("latitude");
-				mo.longitude = extras.getDouble("longitude");
-				mo.proximity = extras.getInt("proximity");
+				mo.name = extras.getString(EXTRA_NAME);
+				mo.latitude = extras.getDouble(EXTRA_LATITUDE);
+				mo.longitude = extras.getDouble(EXTRA_LONGITUDE);
+				mo.proximity = extras.getInt(EXTRA_PROXIMITY);
 				activity.putExtra("launch", HSIActivity.class);
 				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				navigateTo(mo);
 			}
-			if (intent.getAction().equals(NAVIGATE_ROUTE))
+			if (action.equals(NAVIGATE_MAPOBJECT_WITH_ID))
 			{
-				int index = extras.getInt("index");
-				int dir = extras.getInt("direction", DIRECTION_FORWARD);
-				int start = extras.getInt("start", -1);
+				long id = extras.getLong(EXTRA_ID);
+				MapObject mo = application.getMapObject(id);
+				activity.putExtra("launch", HSIActivity.class);
+				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
+				navigateTo(mo);
+			}
+			if (action.equals(NAVIGATE_ROUTE))
+			{
+				int index = extras.getInt(EXTRA_ROUTE_INDEX);
+				int dir = extras.getInt(EXTRA_ROUTE_DIRECTION, DIRECTION_FORWARD);
+				int start = extras.getInt(EXTRA_ROUTE_START, -1);
 				activity.putExtra("launch", RouteDetails.class);
 				activity.putExtra("index", index);
 				activity.putExtra("nav", true);

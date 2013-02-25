@@ -354,6 +354,8 @@
 	<string name="perm_location_description">Access location provided by Androzic</string>
 	<string name="perm_tracking_title">Get track</string>
 	<string name="perm_tracking_description">Receive track provided by Androzic</string>
+	<string name="perm_navigation_title">Initiate navigation</string>
+	<string name="perm_navigation_description">Initiate/modify navigation provided by Androzic</string>
 	<string name="perm_read_preferences_title">Read Androzic user preferences</string>
 	<string name="perm_read_map_data_title">Get data from Androzic map</string>
 	<string name="perm_write_map_data_title">Add data to Androzic map</string>

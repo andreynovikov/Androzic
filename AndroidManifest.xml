@@ -59,6 +59,12 @@
         android:label="@string/perm_tracking_title"
         android:protectionLevel="dangerous" />
     <permission
+        android:name="com.androzic.permission.NAVIGATION"
+        android:description="@string/perm_navigation_description"
+        android:icon="@drawable/icon"
+        android:label="@string/perm_navigation_title"
+        android:protectionLevel="dangerous" />
+    <permission
         android:name="com.androzic.permission.READ_PREFERENCES"
         android:label="@string/perm_read_preferences_title"
         android:protectionLevel="dangerous" />
@@ -107,7 +113,9 @@
                 android:name="android.app.default_searchable"
                 android:value=".SearchableActivity" />
         </activity>
-        <activity android:name=".ExternalActions" >
+        <activity
+            android:name=".ExternalActions"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.androzic.PLOT_ROUTE" />
                 <action android:name="com.google.android.radar.SHOW_RADAR" />
@@ -117,6 +125,7 @@
         </activity>
         <activity
             android:name=".SearchableActivity"
+            android:exported="true"
             android:label="@string/search_name"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -165,6 +174,7 @@
             android:label="@string/waypointproperties_name" />
         <activity
             android:name=".ui.MarkerPickerActivity"
+            android:exported="true"
             android:label="@string/markericon_name"
             android:theme="@style/BlackDialog" >
             <intent-filter>
@@ -228,7 +238,9 @@
             android:name=".route.RouteDetails"
             android:label="@string/routedetails_name" />
 
-        <receiver android:name="ActionsReceiver" >
+        <receiver
+            android:name="ActionsReceiver"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.androzic.COORDINATES_RECEIVED" />
             </intent-filter>
@@ -267,33 +279,37 @@
 
         <service
             android:name=".track.TrackingService"
+            android:exported="true"
             android:icon="@drawable/icon"
             android:permission="com.androzic.permission.RECEIVE_TRACK" >
             <intent-filter>
                 <action android:name="com.androzic.tracking" />
                 <action android:name="com.androzic.track.ITrackingRemoteService" />
-
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
         <service
             android:name=".location.LocationService"
+            android:exported="true"
             android:icon="@drawable/icon"
             android:permission="com.androzic.permission.RECEIVE_LOCATION" >
             <intent-filter>
                 <action android:name="com.androzic.location" />
                 <action android:name="com.androzic.location.ILocationRemoteService" />
-
-                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".navigation.NavigationService"
+            android:exported="true"
+            android:icon="@drawable/icon"
+            android:permission="com.androzic.permission.NAVIGATION" >
+            <intent-filter>
+                <action android:name="com.androzic.navigation" />
             </intent-filter>
         </service>
         <service
             android:name=".WidgetService"
             android:icon="@drawable/widget_icon"
             android:process=":widget" />
-        <service
-            android:name=".navigation.NavigationService"
-            android:icon="@drawable/widget_icon" />
 
         <meta-data
             android:name="com.google.android.backup.api_key"
