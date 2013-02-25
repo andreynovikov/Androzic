@@ -350,7 +350,7 @@ public class Androzic extends BaseApplication
 		synchronized (mapObjects)
 		{
 			MapObject mo = mapObjects.remove(id);
-			if (mo.bitmap != null)
+			if (mo != null && mo.bitmap != null)
 				mo.bitmap.recycle();
 			return mo != null;
 		}
