@@ -79,7 +79,7 @@
     </item>
     <item
         android:id="@+id/menuView"
-        android:icon="@drawable/ic_menu_view"
+        android:icon="@drawable/ic_menu_eye"
         android:orderInCategory="0"
         android:showAsAction="ifRoom"
         android:title="@string/menu_view">
