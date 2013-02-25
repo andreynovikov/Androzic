@@ -32,7 +32,7 @@ import android.content.Context;
 
 public class CrashHandler implements UncaughtExceptionHandler
 {
-	private static final int ANDROZIC_NOTIFICATION_ID = 2416;
+	private static final int[] ANDROZIC_NOTIFICATION_IDS = new int[] {24161, 24162, 24163};
 
 	private UncaughtExceptionHandler defaultUEH;
 	private NotificationManager notificationManager;
@@ -66,7 +66,8 @@ public class CrashHandler implements UncaughtExceptionHandler
 		{
 			try
 			{
-				notificationManager.cancel(ANDROZIC_NOTIFICATION_ID);
+				for (int id : ANDROZIC_NOTIFICATION_IDS)
+					notificationManager.cancel(id);
 			}
 			catch (Throwable ex)
 			{
