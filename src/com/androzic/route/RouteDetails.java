@@ -87,14 +87,14 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 		
 		Resources resources = getResources();
 		quickAction = new QuickAction(this);
-		quickAction.addActionItem(new ActionItem(qaWaypointVisible, getString(R.string.menu_view), resources.getDrawable(R.drawable.ic_menu_view)));
+		quickAction.addActionItem(new ActionItem(qaWaypointVisible, getString(R.string.menu_view), resources.getDrawable(R.drawable.ic_action_show)));
 		if (navigation)
 		{
-			quickAction.addActionItem(new ActionItem(qaWaypointNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_menu_goto)));
+			quickAction.addActionItem(new ActionItem(qaWaypointNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_directions)));
 		}
 		else
 		{
-			quickAction.addActionItem(new ActionItem(qaWaypointProperties, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_menu_edit)));
+			quickAction.addActionItem(new ActionItem(qaWaypointProperties, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_action_edit)));
 		}
 		quickAction.setOnActionItemClickListener(actionItemClickListener);
 		

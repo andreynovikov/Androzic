@@ -150,7 +150,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 
 		iconValue = null;
 		ImageButton icon = (ImageButton) findViewById(R.id.icon_button);
-		icon.setImageDrawable(this.getResources().getDrawable(R.drawable.no));
+		icon.setImageDrawable(this.getResources().getDrawable(R.drawable.ic_action_halt));
 		if (application.iconsEnabled)
 		{
 			if (waypoint.drawImage)
@@ -246,7 +246,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 		}
 		else
 		{
-			icon.setImageDrawable(this.getResources().getDrawable(R.drawable.no));
+			icon.setImageDrawable(this.getResources().getDrawable(R.drawable.ic_action_halt));
 		}
 	}
 
@@ -292,7 +292,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 			case R.id.remove:
 				iconValue = null;
 				ImageButton icon = (ImageButton) findViewById(R.id.icon_button);
-				icon.setImageDrawable(this.getResources().getDrawable(R.drawable.no));
+				icon.setImageDrawable(this.getResources().getDrawable(R.drawable.ic_action_halt));
 				break;
 		}
 		return true;

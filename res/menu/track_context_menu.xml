@@ -3,27 +3,27 @@
 
     <item
         android:id="@+id/menuTrackProperties"
-        android:icon="@drawable/ic_menu_edit"
+        android:icon="@drawable/ic_action_edit"
         android:title="@string/menu_properties">
     </item>
     <item
         android:id="@+id/menuTrackEdit"
-        android:icon="@drawable/ic_menu_edit"
+        android:icon="@drawable/ic_action_edit"
         android:title="@string/menu_edit">
     </item>
     <item
         android:id="@+id/menuTrackToRoute"
-        android:icon="@drawable/ic_menu_directions"
+        android:icon="@drawable/ic_action_directions"
         android:title="@string/menu_track2route">
     </item>
     <item
         android:id="@+id/menuTrackSave"
-        android:icon="@drawable/ic_menu_save"
+        android:icon="@drawable/ic_action_save"
         android:title="@string/menu_save">
     </item>
     <item
         android:id="@+id/menuTrackRemove"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/ic_action_trash"
         android:title="@string/menu_remove">
     </item>
 

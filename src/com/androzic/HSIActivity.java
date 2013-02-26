@@ -34,9 +34,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -158,29 +155,6 @@ public class HSIActivity extends Activity
 		}
     	unregisterReceiver(navigationReceiver);
 		unbindService(navigationConnection);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu)
-	{
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.view_menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item)
-	{
-		switch (item.getItemId())
-		{
-			case R.id.menuGPS:
-				startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-				return true;
-			case R.id.menuPreferences:
-				startActivity(new Intent(this, Preferences.class));
-				return true;
-		}
-		return false;
 	}
 
 	private void updateNavigationInfo(boolean full)

@@ -106,12 +106,12 @@ public class RouteList extends ListActivity
 
 		Resources resources = getResources();
 		quickAction = new QuickAction(this);
-		quickAction.addActionItem(new ActionItem(qaRouteDetails, getString(R.string.menu_details), resources.getDrawable(R.drawable.ic_menu_info_details)));
-		quickAction.addActionItem(new ActionItem(qaRouteNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_menu_directions)));
-		quickAction.addActionItem(new ActionItem(qaRouteProperties, getString(R.string.menu_properties), resources.getDrawable(R.drawable.ic_menu_edit)));
-		quickAction.addActionItem(new ActionItem(qaRouteEdit, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_menu_track)));
-		quickAction.addActionItem(new ActionItem(qaRouteSave, getString(R.string.menu_save), resources.getDrawable(R.drawable.ic_menu_save)));
-		quickAction.addActionItem(new ActionItem(qaRouteRemove, getString(R.string.menu_remove), resources.getDrawable(R.drawable.ic_menu_close_clear_cancel)));
+		quickAction.addActionItem(new ActionItem(qaRouteDetails, getString(R.string.menu_details), resources.getDrawable(R.drawable.ic_action_list)));
+		quickAction.addActionItem(new ActionItem(qaRouteNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_directions)));
+		quickAction.addActionItem(new ActionItem(qaRouteProperties, getString(R.string.menu_properties), resources.getDrawable(R.drawable.ic_action_edit)));
+		quickAction.addActionItem(new ActionItem(qaRouteEdit, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_action_track)));
+		quickAction.addActionItem(new ActionItem(qaRouteSave, getString(R.string.menu_save), resources.getDrawable(R.drawable.ic_action_save)));
+		quickAction.addActionItem(new ActionItem(qaRouteRemove, getString(R.string.menu_remove), resources.getDrawable(R.drawable.ic_action_cancel)));
 
 		quickAction.setOnActionItemClickListener(routeActionItemClickListener);
 		quickAction.setOnDismissListener(new PopupWindow.OnDismissListener() {

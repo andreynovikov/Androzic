@@ -346,11 +346,11 @@ public class MapActivity extends Activity implements OnClickListener, OnSharedPr
 		panel.setInterpolator(new ExpoInterpolator(Type.OUT));
 
 		wptQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
-		wptQuickAction.addActionItem(new ActionItem(qaAddWaypointToRoute, getString(R.string.menu_addtoroute), resources.getDrawable(R.drawable.ic_menu_add)));
+		wptQuickAction.addActionItem(new ActionItem(qaAddWaypointToRoute, getString(R.string.menu_addtoroute), resources.getDrawable(R.drawable.ic_action_add)));
 		wptQuickAction.setOnActionItemClickListener(waypointActionItemClickListener);
 
 		rteQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
-		rteQuickAction.addActionItem(new ActionItem(qaNavigateToWaypoint, getString(R.string.menu_thisnavpoint), resources.getDrawable(R.drawable.ic_menu_goto)));
+		rteQuickAction.addActionItem(new ActionItem(qaNavigateToWaypoint, getString(R.string.menu_thisnavpoint), resources.getDrawable(R.drawable.ic_action_directions)));
 		rteQuickAction.setOnActionItemClickListener(routeActionItemClickListener);
 
 		trackBar.setOnSeekBarChangeListener(this);

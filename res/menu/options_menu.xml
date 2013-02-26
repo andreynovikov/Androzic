@@ -3,68 +3,73 @@
 
     <item
         android:id="@+id/menuAddWaypoint"
-        android:icon="@drawable/ic_menu_add"
+        android:icon="@drawable/ic_action_pin"
         android:orderInCategory="0"
         android:showAsAction="always"
         android:title="@string/menu_addwaypoint"/>
     <item
         android:id="@+id/menuWaypoints"
-        android:icon="@drawable/ic_menu_myplaces"
+        android:icon="@drawable/ic_action_location"
         android:orderInCategory="0"
         android:showAsAction="ifRoom"
         android:title="@string/menu_waypoints">
         <menu>
             <item
                 android:id="@+id/menuNewWaypoint"
-                android:icon="@drawable/ic_menu_add"
+                android:icon="@drawable/ic_action_add"
                 android:title="@string/menu_new"/>
             <item
                 android:id="@+id/menuProjectWaypoint"
-                android:icon="@drawable/ic_menu_goto"
+                android:icon="@drawable/ic_action_arrow_right_top"
                 android:title="@string/menu_project"/>
             <item
                 android:id="@+id/menuManageWaypoints"
-                android:icon="@drawable/ic_menu_list"
+                android:icon="@drawable/ic_action_list_2"
                 android:title="@string/menu_manage"/>
             <item
                 android:id="@+id/menuLoadWaypoints"
-                android:icon="@drawable/ic_menu_archive"
+                android:icon="@drawable/ic_action_import"
                 android:title="@string/menu_load"/>
         </menu>
     </item>
     <item
         android:id="@+id/menuMaps"
-        android:icon="@drawable/ic_menu_mapmode"
+        android:icon="@drawable/ic_action_map"
         android:orderInCategory="0"
         android:showAsAction="ifRoom"
         android:title="@string/menu_maps">
         <menu>
             <item
                 android:id="@+id/menuMapInfo"
+                android:icon="@drawable/ic_action_info"
                 android:title="@string/menu_information"/>
             <item
                 android:id="@+id/menuCursorMaps"
                 android:title="@string/menu_atcursor"/>
             <item
                 android:id="@+id/menuAllMaps"
+                android:icon="@drawable/ic_action_list_2"
                 android:title="@string/menu_all"/>
         </menu>
     </item>
     <item
         android:id="@+id/menuNavigation"
-        android:icon="@drawable/ic_menu_directions"
+        android:icon="@drawable/ic_action_directions"
         android:orderInCategory="0"
         android:showAsAction="ifRoom"
         android:title="@string/menu_navigation">
         <menu>
             <item
                 android:id="@+id/menuManageRoutes"
+                android:icon="@drawable/ic_action_list_2"
                 android:title="@string/menu_routes"/>
             <item
                 android:id="@+id/menuStartNavigation"
+                android:icon="@drawable/ic_action_directions"
                 android:title="@string/menu_startnavigation"/>
             <item
                 android:id="@+id/menuNavigationDetails"
+                android:icon="@drawable/ic_action_list"
                 android:title="@string/menu_details"/>
             <item
                 android:id="@+id/menuNextNavPoint"
@@ -74,12 +79,13 @@
                 android:title="@string/menu_prevnavpoint"/>
             <item
                 android:id="@+id/menuStopNavigation"
+                android:icon="@drawable/ic_action_cancel"
                 android:title="@string/menu_stopnavigation"/>
         </menu>
     </item>
     <item
         android:id="@+id/menuView"
-        android:icon="@drawable/ic_menu_eye"
+        android:icon="@drawable/ic_action_show"
         android:orderInCategory="0"
         android:showAsAction="ifRoom"
         android:title="@string/menu_view">
@@ -89,64 +95,63 @@
                 android:title="@string/menu_hsi"/>
             <item
                 android:id="@+id/menuInformation"
-                android:icon="@drawable/ic_menu_info_details"
+                android:icon="@drawable/ic_action_list_2"
                 android:title="@string/menu_information"/>
         </menu>
     </item>
     <item
         android:id="@+id/menuTrack"
-        android:icon="@drawable/ic_menu_track"
+        android:icon="@drawable/ic_action_track"
         android:orderInCategory="1"
         android:title="@string/menu_tracks">
         <menu>
             <item
                 android:id="@+id/menuManageTracks"
-                android:icon="@drawable/ic_menu_list"
+                android:icon="@drawable/ic_action_list_2"
                 android:title="@string/menu_manage"/>
             <item
                 android:id="@+id/menuLoadTrack"
-                android:icon="@drawable/ic_menu_archive"
+                android:icon="@drawable/ic_action_import"
                 android:title="@string/menu_load"/>
             <item
                 android:id="@+id/menuClearTrackTail"
-                android:icon="@drawable/ic_menu_delete"
+                android:icon="@drawable/ic_action_trash"
                 android:title="@string/menu_cleartail"/>
         </menu>
     </item>
     <item
         android:id="@+id/menuLocation"
-        android:icon="@drawable/ic_menu_mylocation"
+        android:icon="@drawable/ic_action_location_found"
         android:orderInCategory="1"
         android:title="@string/menu_location">
         <menu>
             <item
                 android:id="@+id/menuShare"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_action_share"
                 android:title="@string/menu_share"/>
             <item
                 android:id="@+id/menuCopyLocation"
-                android:icon="@drawable/ic_menu_copy"
+                android:icon="@drawable/ic_action_copy"
                 android:title="@string/menu_copy"/>
             <item
                 android:id="@+id/menuPasteLocation"
-                android:icon="@drawable/ic_menu_paste"
+                android:icon="@drawable/ic_action_paste"
                 android:title="@string/menu_paste"/>
         </menu>
     </item>
     <item
         android:id="@+id/menuSetAnchor"
-        android:icon="@drawable/ic_menu_goto"
         android:orderInCategory="1"
         android:title="@string/menu_anchor"/>
     <item
         android:id="@+id/menuSearch"
-        android:icon="@drawable/ic_menu_search"
+        android:icon="@drawable/ic_action_search"
         android:orderInCategory="0"
         android:showAsAction="always"
         android:title="@string/menu_search"/>
     <item
         android:id="@+id/menuPreferences"
-        android:icon="@drawable/ic_menu_preferences"
+        android:icon="@drawable/ic_action_settings"
         android:orderInCategory="1"
         android:title="@string/menu_preferences"/>
 
