@@ -20,7 +20,11 @@ Navigation client that uses OziExplorer maps (ozf2, ozfx3). Great for hiking, ge
 
 If you want to contribute as a translator please visit [Crowdin project](http://crowdin.net/project/androzic).
 
-If you are a developer you can request pulls, of course. You can fix annoying bugs or have a look at [the road map](https://github.com/andreynovikov/Androzic/wiki/Road-map).
+If you are a developer you can request pulls, of course. You can fix [annoying bugs](https://github.com/andreynovikov/Androzic/issues?labels=bug&state=open)
+or have a look at [the road map](https://github.com/andreynovikov/Androzic/wiki/Road-map).
 
 You can also [write a plugin](https://github.com/andreynovikov/Androzic/wiki/Creating-plugins) for Androzic.
 
+All development support is maintained on GitHub. There is a full [repository mirror](https://bitbucket.org/andreynovikov/)
+on BitBucket, if you are a BitBucket user you can fork and pull there, but other resources (issues, documentation, etc)
+is managed only on GitHub.
