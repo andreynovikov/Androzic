@@ -360,6 +360,19 @@
 	<string name="perm_read_map_data_title">Get data from Androzic map</string>
 	<string name="perm_write_map_data_title">Add data to Androzic map</string>
 	
+	<string name="showcase_panel_title">Quick actions</string>
+	<string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
+	<string name="showcase_follow_title">Location following</string>
+	<string name="showcase_follow_description">Press follow icon to switch to following mode. In this mode map will be fixed to your current position.</string>
+	<string name="showcase_add_waypoint_title">Add waypoint</string>
+	<string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
+	<string name="showcase_search_title">Search</string>
+	<string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
+	<string name="showcase_load_waypoints_title">Load waypoints</string>
+	<string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
+	<string name="showcase_waypointset_actions_title">Waypoint set actions</string>
+	<string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
+				
 	<string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

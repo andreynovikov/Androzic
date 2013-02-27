@@ -68,6 +68,7 @@ import com.androzic.data.WaypointSet;
 import com.androzic.navigation.NavigationService;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
+import com.github.espiandev.showcaseview.ShowcaseView;
 
 public class WaypointList extends ExpandableListActivity implements OnItemLongClickListener
 {
@@ -82,6 +83,7 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
 	private WaypointExpandableListAdapter adapter;
     private QuickAction quickAction;
     private QuickAction setQuickAction;
+	private ShowcaseView showcaseView;
 
 	private long selectedKey;
 	private int selectedSetKey;
@@ -136,6 +138,8 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
 		mSortMode = -1;
 		adapter.sort(0);
 		getExpandableListView().expandGroup(0);
+		
+		runShowcase();
 	}
 
 	@Override
@@ -561,4 +565,83 @@ public class WaypointList extends ExpandableListActivity implements OnItemLongCl
             notifyDataSetChanged();
         }
     }
+
+	private enum Showcase
+	{
+		NONE, LOADSET, SETACTIONS
+	};
+
+	@SuppressLint("NewApi")
+	private Showcase selectShowcase(SharedPreferences internal)
+	{
+		boolean hasActionBar = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) && getActionBar() != null;
+
+		if (!internal.getBoolean("shown_load_waypointset", false) && hasActionBar)
+			return Showcase.LOADSET;
+
+		if (!internal.getBoolean("shown_waypointset_actions", false))
+			return Showcase.SETACTIONS;
+
+		return Showcase.NONE;
+	}
+
+	private void runShowcase()
+	{
+		final SharedPreferences internal = getSharedPreferences("showcase", Context.MODE_PRIVATE);
+		Showcase show = selectShowcase(internal);
+
+		if (show == Showcase.NONE)
+		{
+			if (showcaseView != null)
+				showcaseView.hide();
+			return;
+		}
+
+		if (showcaseView == null)
+		{
+			getExpandableListView().collapseGroup(0);
+			ShowcaseView.ConfigOptions showcaseOptions = new ShowcaseView.ConfigOptions();
+			showcaseView = ShowcaseView.insertShowcaseView(0, 0, this, "", "", showcaseOptions);
+		}
+
+		switch (show)
+		{
+			case LOADSET:
+			{
+				showcaseView.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.menuLoadWaypoints, this);
+				showcaseView.setText(R.string.showcase_load_waypoints_title, R.string.showcase_load_waypoints_description);
+				showcaseView.overrideButtonClick(new View.OnClickListener() {
+					@Override
+					public void onClick(View v)
+					{
+						internal.edit().putBoolean("shown_load_waypointset", true).commit();
+						runShowcase();
+					}
+				});
+				break;
+			}
+			case SETACTIONS:
+			{
+				getExpandableListView().post(new Runnable() {
+					@Override
+					public void run()
+					{
+						showcaseView.setShowcaseView(getExpandableListView().getChildAt(0));
+						showcaseView.setText(R.string.showcase_waypointset_actions_title, R.string.showcase_waypointset_actions_description);
+						showcaseView.overrideButtonClick(new View.OnClickListener() {
+							@Override
+							public void onClick(View v)
+							{
+								internal.edit().putBoolean("shown_waypointset_actions", true).commit();
+								runShowcase();
+							}
+						});
+					}
+				});
+				break;
+			}
+			default:
+				break;
+		}
+	}
 }
