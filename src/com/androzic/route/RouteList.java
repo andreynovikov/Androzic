@@ -138,8 +138,11 @@ public class RouteList extends ListActivity
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.routelist_menu, menu);
+		if (mode == MODE_MANAGE)
+		{
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.routelist_menu, menu);
+		}
 		return true;
 	}
 
