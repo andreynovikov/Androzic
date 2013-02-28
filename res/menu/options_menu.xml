@@ -73,9 +73,11 @@
                 android:title="@string/menu_details"/>
             <item
                 android:id="@+id/menuNextNavPoint"
+                android:icon="@drawable/ic_action_arrow_top"
                 android:title="@string/menu_nextnavpoint"/>
             <item
                 android:id="@+id/menuPrevNavPoint"
+                android:icon="@drawable/ic_action_arrow_bottom"
                 android:title="@string/menu_prevnavpoint"/>
             <item
                 android:id="@+id/menuStopNavigation"
