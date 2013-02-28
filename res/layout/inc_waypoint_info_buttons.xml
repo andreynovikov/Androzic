@@ -3,16 +3,16 @@
 
     <ImageButton
         android:id="@+id/navigate_button"
+        style="@style/Button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:contentDescription="@string/menu_navigate"
-        android:src="@drawable/ic_action_directions"
-        android:paddingLeft="12dip"
-        android:paddingRight="12dip" />
+        android:src="@drawable/ic_action_directions" />
 
     <ImageButton
         android:id="@+id/edit_button"
+        style="@style/Button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -21,6 +21,7 @@
 
     <ImageButton
         android:id="@+id/share_button"
+        style="@style/Button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -29,6 +30,7 @@
 
     <ImageButton
         android:id="@+id/remove_button"
+        style="@style/Button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
