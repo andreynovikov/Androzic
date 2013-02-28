@@ -6,7 +6,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="0"
-			android:src="@drawable/tick_button"
+			android:src="@drawable/ic_action_tick"
 			android:id="@+id/finishtrackedit" />
 		<SeekBar android:id="@+id/trackbar"
 			android:layout_width="fill_parent"
@@ -14,19 +14,19 @@
 			android:focusable="true"
 			android:focusableInTouchMode="true"
 			android:layout_weight="1"
-			android:paddingLeft="8dip"
-			android:paddingRight="8dip" />			
+			android:paddingLeft="14dip"
+			android:paddingRight="14dip" />			
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="0"
-			android:src="@drawable/cut_before"
+			android:src="@drawable/ic_action_cut_before"
 			android:id="@+id/cutbefore" />
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="0"
-			android:src="@drawable/cut_after"
+			android:src="@drawable/ic_action_cut_after"
 			android:id="@+id/cutafter" />
 
 </merge>

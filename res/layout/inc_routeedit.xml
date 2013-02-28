@@ -6,31 +6,31 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:src="@drawable/tick_button"
+			android:src="@drawable/ic_action_tick"
 			android:id="@+id/finishedit" />
 		<ImageButton
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:src="@drawable/point_plus"
+			android:src="@drawable/ic_action_list_add"
 			android:id="@+id/addpoint" />
 		<ImageButton
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:src="@drawable/point_arrow"
+			android:src="@drawable/ic_action_list_insert"
 			android:id="@+id/insertpoint" />
 		<ImageButton
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:src="@drawable/point_minus"
+			android:src="@drawable/ic_action_list_remove"
 			android:id="@+id/removepoint" />
 		<ImageButton
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:src="@drawable/point_order"
+			android:src="@drawable/ic_action_list_2"
 			android:id="@+id/orderpoints" />
 
 </merge>
