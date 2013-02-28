@@ -218,7 +218,8 @@
             android:theme="@style/BlackDialog" />
         <activity
             android:name=".route.RouteFileList"
-            android:label="@string/loadroute_name" />
+            android:label="@string/loadroute_name"
+            android:theme="@style/BlackDialog" />
         <activity
             android:name=".route.RouteStart"
             android:theme="@style/BlackDialog" />
