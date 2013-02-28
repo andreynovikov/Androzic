@@ -2213,7 +2213,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 				}
 				break;
 			case R.id.orderpoints:
-				startActivityForResult(new Intent(this, RouteEdit.class).putExtra("INDEX", application.getRoutes().size() - 1), RESULT_EDIT_ROUTE);
+				startActivityForResult(new Intent(this, RouteEdit.class).putExtra("INDEX", application.getRouteIndex(editingRoute)), RESULT_EDIT_ROUTE);
 				break;
 			case R.id.finishedit:
 				if ("New route".equals(editingRoute.name))
