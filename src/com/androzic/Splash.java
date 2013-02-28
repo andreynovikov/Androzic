@@ -59,6 +59,7 @@ import android.widget.TextView;
 
 import com.androzic.data.Route;
 import com.androzic.overlay.CurrentTrackOverlay;
+import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.FileList;
 import com.androzic.util.GpxFiles;
 import com.androzic.util.KmlFiles;
@@ -428,6 +429,11 @@ public class Splash extends Activity implements OnClickListener
 							routes = GpxFiles.loadRoutesFromFile(file);
 						}
 						application.addRoutes(routes);
+						for (Route route : routes)
+						{
+							RouteOverlay newRoute = new RouteOverlay(Splash.this, route);
+							application.routeOverlays.add(newRoute);
+						}
 					}
 					catch (Exception e)
 					{
