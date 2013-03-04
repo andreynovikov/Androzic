@@ -127,16 +127,19 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	public MapView(Context context)
 	{
 		super(context);
+		setWillNotDraw(false);
 	}
 
 	public MapView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
+		setWillNotDraw(false);
 	}
 
 	public MapView(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
+		setWillNotDraw(false);
 	}
 
 	public void initialize(Androzic application)

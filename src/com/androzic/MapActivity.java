@@ -2489,7 +2489,6 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	@Override
 	public void onShowcaseViewHide(ShowcaseView showcaseView)
 	{
-		map.setVisibility(View.VISIBLE);
 		Panel panel = (Panel) findViewById(R.id.panel);
 		panel.setOpen(false, true);
 	}
@@ -2535,7 +2534,6 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		
 		if (showcaseView == null)
 		{
-			map.setVisibility(View.INVISIBLE);
 			ShowcaseView.ConfigOptions showcaseOptions = new ShowcaseView.ConfigOptions();
 			showcaseView = ShowcaseView.insertShowcaseView(0, 0, this, "", "", showcaseOptions);
 			showcaseView.setOnShowcaseEventListener(this);
