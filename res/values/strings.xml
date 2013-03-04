@@ -363,7 +363,7 @@
 	<string name="showcase_panel_title">Quick actions</string>
 	<string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
 	<string name="showcase_follow_title">Location following</string>
-	<string name="showcase_follow_description">Press follow icon to switch to following mode. In this mode map will be fixed to your current position.</string>
+	<string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
 	<string name="showcase_add_waypoint_title">Add waypoint</string>
 	<string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
 	<string name="showcase_search_title">Search</string>

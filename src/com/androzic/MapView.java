@@ -1,30 +1,33 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
- *
+ * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * 
  * This file is part of Androzic application.
- *
+ * 
  * Androzic is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ * 
  * Androzic is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ * 
  * You should have received a copy of the GNU General Public License
- * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.androzic;
+
+import java.lang.ref.WeakReference;
 
 import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -36,6 +39,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -58,8 +63,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private static final float INC_ROTATION_SPEED = 0.5f;
 	private static final float MAX_SHIFT_SPEED = 20f;
 	private static final float INC_SHIFT_SPEED = 2f;
-	
+
 	private static final int GESTURE_THRESHOLD_DP = (int) (ViewConfiguration.get(Androzic.getApplication()).getScaledTouchSlop() * 3);
+	private static final int DOUBLE_TAP_TIMEOUT = ViewConfiguration.getDoubleTapTimeout();
 
 	private int vectorType = 1;
 	private int vectorMultiplier = 10;
@@ -84,6 +90,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private long lastBestMap = 0;
 	private boolean bestMapEnabled = true;
 
+	private GestureHandler tapHandler;
+	private long firstTapTime = 0;
+	private boolean wasDoubleTap = false;
+	private MotionEvent upEvent = null;
 	private int penX = 0;
 	private int penY = 0;
 	private int penOX = 0;
@@ -118,7 +128,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private DrawingThread drawingThread;
 	private Object lock = new Object();
-	
+
 	private MultiTouchController<Object> multiTouchController;
 	private float pinch = 0;
 	private float scale = 1;
@@ -173,16 +183,17 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		movingCursor.setBounds(-movingCursor.getIntrinsicWidth() / 2, 0, movingCursor.getIntrinsicWidth() / 2, movingCursor.getIntrinsicHeight());
 
 		multiTouchController = new MultiTouchController<Object>(this, false);
+		tapHandler = new GestureHandler(this);
 
 		viewArea = new Rect();
-
+		
 		Log.d(TAG, "Map initialize");
 	}
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
-		Log.e(TAG, "surfaceChanged("+width+","+height+")");
+		Log.e(TAG, "surfaceChanged(" + width + "," + height + ")");
 		synchronized (lock)
 		{
 			setLookAhead(lookAheadPst);
@@ -192,9 +203,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-        drawingThread = new DrawingThread(holder, this);
-        drawingThread.setRunning(true);
-        drawingThread.start();
+		drawingThread = new DrawingThread(holder, this);
+		drawingThread.setRunning(true);
+		drawingThread.start();
 	}
 
 	@Override
@@ -214,7 +225,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			}
 		}
 	}
-    
+
 	class DrawingThread extends Thread
 	{
 		private boolean runFlag = false;
@@ -240,7 +251,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			Canvas canvas;
 			while (runFlag)
 			{
-				//limit the frame rate to maximum 5 frames per second (200 miliseconds)
+				// limit the frame rate to maximum 5 frames per second (200 miliseconds)
 				long elapsedTime = System.currentTimeMillis() - prevTime;
 				if (elapsedTime < drawPeriod)
 				{
@@ -274,7 +285,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			}
 		}
 	}
-	
+
 	protected void doDraw(Canvas canvas)
 	{
 		boolean scaled = scale > 1.1 || scale < 0.9;
@@ -292,7 +303,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		int cx = getWidth() / 2;
 		int cy = getHeight() / 2;
 
-		//canvas.rotate(-bearing, lookAheadXY[0] + cx, lookAheadXY[1] + cy);
+		// canvas.rotate(-bearing, lookAheadXY[0] + cx, lookAheadXY[1] + cy);
 		application.drawMap(mapCenter, lookAheadXY, loadBestMap, getWidth(), getHeight(), canvas);
 
 		canvas.translate(lookAheadXY[0] + cx, lookAheadXY[1] + cy);
@@ -379,11 +390,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			currentLocation[0] = loc.getLatitude();
 			currentLocation[1] = loc.getLongitude();
 			currentLocationXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
-	
+
 			lookAheadB = Math.round(bearing / 10) * 10;
-	
+
 			long lastLocationMillis = loc.getTime();
-	
+
 			if (isFollowing)
 			{
 				boolean newMap = false;
@@ -448,7 +459,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			if (lookAheadC != lookAheadS)
 			{
 				recalculated = true;
-	
+
 				float diff = lookAheadC - lookAheadS;
 				if (Math.abs(diff) > Math.abs(lookAheadSS) * (MAX_SHIFT_SPEED / INC_SHIFT_SPEED))
 				{
@@ -479,7 +490,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			if (lookAheadB != smoothB)
 			{
 				recalculated = true;
-	
+
 				float turn = lookAheadB - smoothB;
 				if (Math.abs(turn) > 180)
 				{
@@ -578,7 +589,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				{
 					Toast.makeText(getContext(), R.string.following_disabled, Toast.LENGTH_SHORT).show();
 				}
-	
+
 				isFollowing = follow;
 			}
 			update();
@@ -656,7 +667,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	/**
 	 * Set the amount of screen intended for looking ahead
 	 * 
-	 * @param ahead % of the smaller dimension of screen
+	 * @param ahead
+	 *            % of the smaller dimension of screen
 	 */
 	public void setLookAhead(final int ahead)
 	{
@@ -689,19 +701,19 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	}
 
 	/*
-	@Override
-	protected void onSizeChanged(int w, int h, int oldw, int oldh)
-	{
-		Log.d(TAG, "Size: " + w + "," + h + "," + oldw + "," + oldh);
-		super.onSizeChanged(w, h, oldw, oldh);
-		if ((w != oldw || h != oldh))
-		{
-			setLookAhead(lookAheadPst);
-			updateViewArea(new Rect(0, 0, w, h));
-			update();
-		}
-	}
-	*/
+	 * @Override
+	 * protected void onSizeChanged(int w, int h, int oldw, int oldh)
+	 * {
+	 * Log.d(TAG, "Size: " + w + "," + h + "," + oldw + "," + oldh);
+	 * super.onSizeChanged(w, h, oldw, oldh);
+	 * if ((w != oldw || h != oldh))
+	 * {
+	 * setLookAhead(lookAheadPst);
+	 * updateViewArea(new Rect(0, 0, w, h));
+	 * update();
+	 * }
+	 * }
+	 */
 
 	public void updateViewArea(Rect area)
 	{
@@ -732,14 +744,85 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	{
 		synchronized (lock)
 		{
-			//double rad = Math.toRadians(-bearing);
-			//int dX = (int) (deltaX * Math.cos(rad) + deltaY * Math.sin(rad));
-			//int dY = (int) (deltaX * Math.sin(-rad) + deltaY * Math.cos(rad));
+			// double rad = Math.toRadians(-bearing);
+			// int dX = (int) (deltaX * Math.cos(rad) + deltaY * Math.sin(rad));
+			// int dY = (int) (deltaX * Math.sin(-rad) + deltaY * Math.cos(rad));
 			boolean mapChanged = application.scrollMap(-deltaX, -deltaY);
 			if (mapChanged)
 				updateMapInfo();
 			update();
 		}
+	}
+
+	private void onSingleTap(int x, int y)
+	{
+		synchronized (lock)
+		{
+			int mapTapX = x + mapCenterXY[0] - getWidth() / 2;
+			int mapTapY = y + mapCenterXY[1] - getHeight() / 2;
+
+			if (isMoving && isFollowing && isFixed)
+			{
+				mapTapX -= lookAheadXY[0];
+				mapTapY -= lookAheadXY[1];
+			}
+
+			int dt = GESTURE_THRESHOLD_DP / 2;
+			Rect tap = new Rect(mapTapX - dt, mapTapY - dt, mapTapX + dt, mapTapY + dt);
+			for (MapOverlay mo : application.getOverlays(Androzic.ORDER_SHOW_PREFERENCE))
+				if (mo.onSingleTap(upEvent, tap, this))
+					break;
+		}
+	}
+
+	private void onDoubleTap(int x, int y)
+	{
+		setFollowingThroughContext(!isFollowing);
+	}
+
+	private static final int TAP = 1;
+
+	@SuppressLint("HandlerLeak")
+	private class GestureHandler extends Handler
+	{
+		private final WeakReference<MapView> target;
+		
+		GestureHandler(MapView view)
+		{
+			super();
+			this.target = new WeakReference<MapView>(view);
+		}
+
+		@Override
+		public void handleMessage(Message msg)
+		{
+			MapView mapView = target.get();
+			if (mapView == null)
+				return;
+			switch (msg.what)
+			{
+				case TAP:
+					mapView.onSingleTap(penOX, penOY);
+					mapView.cancelMotionEvent();
+					break;
+
+				default:
+					throw new RuntimeException("Unknown message " + msg); // never
+			}
+		}
+	}
+
+	private void cancelMotionEvent()
+	{
+		tapHandler.removeMessages(TAP);
+		if (upEvent != null)
+			upEvent.recycle();
+		upEvent = null;
+		penX = 0;
+		penY = 0;
+		penOX = 0;
+		penOY = 0;
+		firstTapTime = 0;
 	}
 
 	@Override
@@ -756,6 +839,21 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		switch (action)
 		{
 			case MotionEvent.ACTION_DOWN:
+				boolean hadTapMessage = tapHandler.hasMessages(TAP);
+				if (hadTapMessage)
+					tapHandler.removeMessages(TAP);
+
+				if (event.getEventTime() - firstTapTime <= DOUBLE_TAP_TIMEOUT)
+				{
+					onDoubleTap(penOX, penOY);
+					cancelMotionEvent();
+					wasDoubleTap = true;
+				}
+				else
+				{
+					firstTapTime = event.getDownTime();
+				}
+
 				penOX = penX = (int) event.getX();
 				penOY = penY = (int) event.getY();
 				break;
@@ -782,33 +880,28 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				}
 				break;
 			case MotionEvent.ACTION_UP:
+				if (upEvent != null)
+					upEvent.recycle();
+				upEvent = MotionEvent.obtain(event);
+
 				int dx = -(penOX - (int) event.getX());
 				int dy = -(penOY - (int) event.getY());
-				if (!wasMultitouch && Math.abs(dx) < GESTURE_THRESHOLD_DP && Math.abs(dy) < GESTURE_THRESHOLD_DP)
+				if (!wasMultitouch && !wasDoubleTap && Math.abs(dx) < GESTURE_THRESHOLD_DP && Math.abs(dy) < GESTURE_THRESHOLD_DP)
 				{
-					synchronized (lock)
-					{
-						int mapTapX = penOX + mapCenterXY[0] - getWidth() / 2;
-						int mapTapY = penOY + mapCenterXY[1] - getHeight() / 2;
-	
-						if (isMoving && isFollowing && isFixed)
-						{
-							mapTapX -= lookAheadXY[0];
-							mapTapY -= lookAheadXY[1];
-						}
-	
-						int dt = GESTURE_THRESHOLD_DP / 2;
-						Rect tap = new Rect(mapTapX - dt, mapTapY - dt, mapTapX + dt, mapTapY + dt);
-						for (MapOverlay mo : application.getOverlays(Androzic.ORDER_SHOW_PREFERENCE))
-							if (mo.onSingleTap(event, tap, this))
-								break;
-					}
+					tapHandler.sendEmptyMessageDelayed(TAP, DOUBLE_TAP_TIMEOUT);
 				}
-				penX = 0;
-				penY = 0;
-				penOX = 0;
-				penOY = 0;
+				if (wasMultitouch || wasDoubleTap)
+				{
+					wasMultitouch = false;
+					wasDoubleTap = false;
+					cancelMotionEvent();
+				}
+				break;
+			case MotionEvent.ACTION_CANCEL:
 				wasMultitouch = false;
+				wasDoubleTap = false;
+				cancelMotionEvent();
+				break;
 		}
 
 		return true;
