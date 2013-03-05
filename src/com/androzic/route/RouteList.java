@@ -197,14 +197,7 @@ public class RouteList extends ListActivity
 		{
 			case RESULT_START_ROUTE:
 				if (resultCode == RESULT_OK)
-				{
-					setResult(Activity.RESULT_OK, new Intent().putExtras(data.getExtras()));
 					finish();
-				}
-				else
-				{
-					setResult(Activity.RESULT_CANCELED);
-				}
 				break;
 			case RESULT_LOAD_ROUTE:
 				if (resultCode == RESULT_OK)

@@ -75,15 +75,16 @@ public class RouteStart extends Activity
 		forward.setChecked(true);
 		
 	    Button navigate = (Button) findViewById(R.id.navigate_button);
-	    navigate.setOnClickListener(saveOnClickListener);
+	    navigate.setOnClickListener(navigateOnClickListener);
     }
 
-	private OnClickListener saveOnClickListener = new OnClickListener()
+	private OnClickListener navigateOnClickListener = new OnClickListener()
 	{
         public void onClick(View v)
         {
         	int dir = forward.isChecked() ? NavigationService.DIRECTION_FORWARD : NavigationService.DIRECTION_REVERSE;
-			setResult(Activity.RESULT_OK, new Intent().putExtra("index", index).putExtra("dir", dir));
+			startService(new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra("index", index).putExtra("direction", dir));
+			setResult(Activity.RESULT_OK);
     		finish();
         }
     };

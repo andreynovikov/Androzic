@@ -23,6 +23,7 @@ package com.androzic.route;
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -36,6 +37,9 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -57,6 +61,8 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 {
 	private static final String TAG = "RouteDetails";
 
+	private static final int RESULT_START_ROUTE = 1;
+	
 	private static final int qaWaypointVisible = 1;
 	private static final int qaWaypointNavigate = 2;
 	private static final int qaWaypointProperties = 3;
@@ -122,6 +128,48 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 		{
 			unregisterReceiver(navigationReceiver);
 			unbindService(navigationConnection);
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu)
+	{
+		if (! navigation)
+		{
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.routedetails_menu, menu);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.menuStartNavigation:
+				Androzic application = (Androzic) getApplication();
+				int index = application.getRouteIndex(route);
+				startActivityForResult(new Intent(this, RouteStart.class).putExtra("index", index), RESULT_START_ROUTE);
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+
+		switch (requestCode)
+		{
+			case RESULT_START_ROUTE:
+				if (resultCode == RESULT_OK)
+				{
+					setResult(Activity.RESULT_OK);
+					finish();
+				}
+				break;
 		}
 	}
 

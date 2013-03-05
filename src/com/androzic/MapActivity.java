@@ -140,7 +140,6 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	private static final int RESULT_SAVE_WAYPOINT = 0x400;
 	private static final int RESULT_LOAD_MAP = 0x500;
 	private static final int RESULT_MANAGE_TRACKS = 0x600;
-	private static final int RESULT_START_ROUTE = 0x800;
 	private static final int RESULT_MANAGE_ROUTES = 0x900;
 	private static final int RESULT_EDIT_ROUTE = 0x110;
 	private static final int RESULT_LOAD_MAP_ATPOSITION = 0x120;
@@ -1685,11 +1684,11 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 			case R.id.menuStartNavigation:
 				if (application.getRoutes().size() > 1)
 				{
-					startActivityForResult(new Intent(this, RouteList.class).putExtra("MODE", RouteList.MODE_START), RESULT_START_ROUTE);
+					startActivity(new Intent(this, RouteList.class).putExtra("MODE", RouteList.MODE_START));
 				}
 				else
 				{
-					startActivityForResult(new Intent(this, RouteStart.class).putExtra("INDEX", 0), RESULT_START_ROUTE);
+					startActivity(new Intent(this, RouteStart.class).putExtra("INDEX", 0));
 				}
 				return true;
 			case R.id.menuNavigationDetails:
@@ -1962,15 +1961,6 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 				}
 				break;
 			}
-			case RESULT_START_ROUTE:
-				if (resultCode == RESULT_OK)
-				{
-					Bundle extras = data.getExtras();
-					int index = extras.getInt("index");
-					int dir = extras.getInt("dir");
-					startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra("index", index).putExtra("direction", dir));
-				}
-				break;
 			case RESULT_EDIT_ROUTE:
 				for (Iterator<RouteOverlay> iter = application.routeOverlays.iterator(); iter.hasNext();)
 				{
