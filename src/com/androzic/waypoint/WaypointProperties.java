@@ -113,6 +113,10 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 				tabHost.getTabWidget().getChildAt(1).getLayoutParams().height = 50;
 		}
+		else
+		{
+			findViewById(android.R.id.tabs).setVisibility(View.GONE);
+		}
 
 		if (savedInstanceState != null)
 		{
