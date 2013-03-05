@@ -120,6 +120,9 @@ public class DataProvider extends ContentProvider
 		populateFields(mo, values);
 
 		Androzic application = Androzic.getApplication();
+		if (application == null)
+			return null;
+		
 		long id = application.addMapObject(mo);
 		Uri objectUri = ContentUris.withAppendedId(DataContract.MAPOBJECTS_URI, id);
 		getContext().getContentResolver().notifyChange(objectUri, null);
@@ -143,6 +146,9 @@ public class DataProvider extends ContentProvider
 		}
 		long id = ContentUris.parseId(uri);
 		Androzic application = Androzic.getApplication();
+		if (application == null)
+			return 0;
+
 		MapObject mo = application.getMapObject(id);
 		if (mo == null)
 			return 0;
@@ -176,6 +182,8 @@ public class DataProvider extends ContentProvider
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 
 		Androzic application = Androzic.getApplication();
+		if (application == null)
+			return 0;
 
 		int result = 0;
 		for (long id : ids)
