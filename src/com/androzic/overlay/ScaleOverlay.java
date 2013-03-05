@@ -64,6 +64,7 @@ public class ScaleOverlay extends MapOverlay
     	lastScaleMove = 0;
     	lastScalePos = 1;
     	onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
+    	enabled = true;
 	}
 
 	@Override
@@ -73,9 +74,7 @@ public class ScaleOverlay extends MapOverlay
     	Map map = application.getCurrentMap();
     	if (map == null)
     		return;
-    	
     	mpp = map.mpp / map.getZoom();
-    	this.enabled = true;
 	}
 	
 	@Override
