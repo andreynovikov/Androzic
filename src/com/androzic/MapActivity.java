@@ -59,6 +59,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -86,6 +87,7 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -158,7 +160,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	protected int magInterval;
 	protected boolean autoDim;
 	protected int dimInterval;
-	protected float dimValue;
+	protected int dimValue;
 	protected int showDistance;
 	protected boolean showAccuracy;
 	protected boolean followOnLocation;
@@ -197,6 +199,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	protected MapView map;
 	protected QuickAction3D wptQuickAction;
 	protected QuickAction3D rteQuickAction;
+	private ViewGroup dimView;
 	private ShowcaseView showcaseView;
 
 	protected Androzic application;
@@ -220,8 +223,6 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	protected long lastDim = 0;
 	protected long lastMagnetic = 0;
 	private boolean lastGeoid = true;
-
-	protected boolean wasDimmed = false;
 
 	private boolean animationSet;
 	private boolean isFullscreen;
@@ -357,6 +358,8 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 
 		map.initialize(application);
 
+		dimView = new RelativeLayout(this);
+
 		String navWpt = settings.getString(getString(R.string.nav_wpt), "");
 		if (!"".equals(navWpt))
 		{
@@ -444,6 +447,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	{
 		super.onStart();
 		Log.e(TAG, "onStart()");
+		((ViewGroup) getWindow().getDecorView()).addView(dimView);
 	}
 
 	@Override
@@ -504,7 +508,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		showAccuracy = settings.getBoolean(getString(R.string.pref_showaccuracy), true);
 		autoDim = settings.getBoolean(getString(R.string.pref_mapdim), resources.getBoolean(R.bool.def_mapdim));
 		dimInterval = settings.getInt(getString(R.string.pref_mapdiminterval), resources.getInteger(R.integer.def_mapdiminterval)) * 1000;
-		dimValue = (float) ((100 - settings.getInt(getString(R.string.pref_mapdimvalue), resources.getInteger(R.integer.def_mapdimvalue))) * 0.01);
+		dimValue = settings.getInt(getString(R.string.pref_mapdimvalue), resources.getInteger(R.integer.def_mapdimvalue));
 
 		map.setHideOnDrag(settings.getBoolean(getString(R.string.pref_maphideondrag), resources.getBoolean(R.bool.def_maphideondrag)));
 		map.setStrictUnfollow(!settings.getBoolean(getString(R.string.pref_unfollowontap), resources.getBoolean(R.bool.def_unfollowontap)));
@@ -533,6 +537,9 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 			panel.setOpen(true, false);
 		}
 
+		onSharedPreferenceChanged(settings, getString(R.string.pref_wakelock));
+		map.setKeepScreenOn(keepScreenOn);
+
 		// TODO move into application
 		if (lastKnownLocation != null)
 		{
@@ -547,12 +554,6 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 				dimScreen(lastKnownLocation);
 			}
 		}
-
-		onSharedPreferenceChanged(settings, getString(R.string.pref_wakelock));
-		if (keepScreenOn)
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		else
-			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
 		bindService(new Intent(this, TrackingService.class), trackingConnection, BIND_AUTO_CREATE);
@@ -638,6 +639,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	{
 		super.onStop();
 		Log.e(TAG, "onStop()");
+		((ViewGroup) getWindow().getDecorView()).removeView(dimView);
 	}
 
 	@Override
@@ -1525,27 +1527,11 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 
 	protected void dimScreen(Location location)
 	{
-		if (!autoDim)
-			return;
-
+		int color = Color.TRANSPARENT;
 		Calendar now = GregorianCalendar.getInstance(TimeZone.getDefault());
-		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		if (Astro.isDaytime(application.getZenith(), location, now))
-		{
-			// dim with user preferences is broken, so undim only if dimmed
-			// before
-			if (wasDimmed)
-			{
-				lp.screenBrightness = -1.0f;
-				getWindow().setAttributes(lp);
-			}
-		}
-		else
-		{
-			wasDimmed = true;
-			lp.screenBrightness = dimValue;
-			getWindow().setAttributes(lp);
-		}
+		if (autoDim && !Astro.isDaytime(application.getZenith(), location, now))
+			color = dimValue << 57; // value * 2 and shifted to transparency octet
+		dimView.setBackgroundColor(color);
 	}
 
 	public boolean waypointTapped(int index, int x, int y)
@@ -2291,7 +2277,6 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		lastRenderTime = savedInstanceState.getLong("lastRenderTime");
 		lastMagnetic = savedInstanceState.getLong("lastMagnetic");
 		lastDim = savedInstanceState.getLong("lastDim");
-		wasDimmed = savedInstanceState.getBoolean("wasDimmed");
 		lastGeoid = savedInstanceState.getBoolean("lastGeoid");
 
 		waypointSelected = savedInstanceState.getInt("waypointSelected");
@@ -2316,7 +2301,6 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		outState.putLong("lastRenderTime", lastRenderTime);
 		outState.putLong("lastMagnetic", lastMagnetic);
 		outState.putLong("lastDim", lastDim);
-		outState.putBoolean("wasDimmed", wasDimmed);
 		outState.putBoolean("lastGeoid", lastGeoid);
 
 		outState.putInt("waypointSelected", waypointSelected);

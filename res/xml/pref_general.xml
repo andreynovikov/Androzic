@@ -34,8 +34,8 @@
         android:text=" %"
         android:title="@string/pref_mapdimvalue_title"
         androzic:defaultValue="@integer/def_mapdimvalue"
-        androzic:max="99"
-        androzic:min="5" />
+        androzic:max="100"
+        androzic:min="10" />
 
     <com.androzic.ui.preference.HelpfulListPreference
         android:defaultValue="UTF-8"
