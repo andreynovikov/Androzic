@@ -371,7 +371,9 @@ public class SearchableActivity extends ListActivity
 		private int mPointWidth;
 
 		private Path mRouteLinePath;
+		private Paint mRouteFillPaint;
 		private Paint mRouteLinePaint;
+		private Paint mRouteBorderPaint;
 		private int mRouteWidth;
 
 		public SearchResultsListAdapter(Context context, List<Object> items)
@@ -404,14 +406,24 @@ public class SearchableActivity extends ListActivity
 			mRouteWidth = settings.getInt(context.getString(R.string.pref_route_linewidth), context.getResources().getInteger(R.integer.def_route_linewidth));
 			mRouteLinePath = new Path();
 			mRouteLinePath.setLastPoint(12 * mDensity, 5 * mDensity);
-			mRouteLinePath.lineTo(33 * mDensity, 12 * mDensity);
-			mRouteLinePath.lineTo(7 * mDensity, 24 * mDensity);
+			mRouteLinePath.lineTo(24 * mDensity, 12 * mDensity);
+			mRouteLinePath.lineTo(15 * mDensity, 24 * mDensity);
 			mRouteLinePath.lineTo(28 * mDensity, 35 * mDensity);
+			mRouteFillPaint = new Paint();
+			mRouteFillPaint.setAntiAlias(false);
+			mRouteFillPaint.setStrokeWidth(1);
+			mRouteFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+			mRouteFillPaint.setColor(context.getResources().getColor(R.color.routewaypoint));
 			mRouteLinePaint = new Paint();
 			mRouteLinePaint.setAntiAlias(true);
 			mRouteLinePaint.setStrokeWidth(mRouteWidth * mDensity);
 			mRouteLinePaint.setStyle(Paint.Style.STROKE);
 			mRouteLinePaint.setColor(context.getResources().getColor(R.color.routeline));
+			mRouteBorderPaint = new Paint();
+			mRouteBorderPaint.setAntiAlias(false);
+			mRouteBorderPaint.setStrokeWidth(1 * mDensity);
+			mRouteBorderPaint.setStyle(Paint.Style.STROKE);
+			mRouteBorderPaint.setColor(context.getResources().getColor(R.color.routeline));
 
 			mApplication = Androzic.getApplication();
 			mLocation = mApplication.getLocation();
@@ -580,7 +592,17 @@ public class SearchableActivity extends ListActivity
 				bm.eraseColor(Color.TRANSPARENT);
 				Canvas bc = new Canvas(bm);
 				mRouteLinePaint.setColor(route.lineColor);
-				bc.drawPath(mRouteLinePath, mRouteLinePaint);
+				mRouteBorderPaint.setColor(route.lineColor);
+				bc.drawPath(mRouteLinePath, mRouteLinePaint);				
+				int half = Math.round(mPointWidth / 2);				
+				bc.drawCircle(12 * mDensity, 5 * mDensity, half, mRouteFillPaint);
+				bc.drawCircle(12 * mDensity, 5 * mDensity, half, mRouteBorderPaint);
+				bc.drawCircle(24 * mDensity, 12 * mDensity, half, mRouteFillPaint);
+				bc.drawCircle(24 * mDensity, 12 * mDensity, half, mRouteBorderPaint);
+				bc.drawCircle(15 * mDensity, 24 * mDensity, half, mRouteFillPaint);
+				bc.drawCircle(15 * mDensity, 24 * mDensity, half, mRouteBorderPaint);
+				bc.drawCircle(28 * mDensity, 35 * mDensity, half, mRouteFillPaint);
+				bc.drawCircle(28 * mDensity, 35 * mDensity, half, mRouteBorderPaint);
 				icon.setImageBitmap(bm);
 			}
 			else if (isTrack)

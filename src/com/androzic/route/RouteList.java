@@ -259,7 +259,10 @@ public class RouteList extends ListActivity
 		private int mItemLayout;
 		private float mDensity;
 		private Path mLinePath;
+		private Paint mFillPaint;
 		private Paint mLinePaint;
+		private Paint mBorderPaint;
+		private int mPointWidth;
 		private int mRouteWidth;
 		private Androzic application;
 
@@ -273,16 +276,27 @@ public class RouteList extends ListActivity
 
 			mLinePath = new Path();
 			mLinePath.setLastPoint(12 * mDensity, 5 * mDensity);
-			mLinePath.lineTo(33 * mDensity, 12 * mDensity);
-			mLinePath.lineTo(7 * mDensity, 24 * mDensity);
+			mLinePath.lineTo(24 * mDensity, 12 * mDensity);
+			mLinePath.lineTo(15 * mDensity, 24 * mDensity);
 			mLinePath.lineTo(28 * mDensity, 35 * mDensity);
 
+			mPointWidth = settings.getInt(context.getString(R.string.pref_waypoint_width), context.getResources().getInteger(R.integer.def_waypoint_width));
 			mRouteWidth = settings.getInt(context.getString(R.string.pref_route_linewidth), context.getResources().getInteger(R.integer.def_route_linewidth));
+			mFillPaint = new Paint();
+			mFillPaint.setAntiAlias(false);
+			mFillPaint.setStrokeWidth(1);
+			mFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+			mFillPaint.setColor(context.getResources().getColor(R.color.routewaypoint));
 			mLinePaint = new Paint();
 			mLinePaint.setAntiAlias(true);
 			mLinePaint.setStrokeWidth(mRouteWidth * mDensity);
 			mLinePaint.setStyle(Paint.Style.STROKE);
 			mLinePaint.setColor(context.getResources().getColor(R.color.routeline));
+			mBorderPaint = new Paint();
+			mBorderPaint.setAntiAlias(false);
+			mBorderPaint.setStrokeWidth(1 * mDensity);
+			mBorderPaint.setStyle(Paint.Style.STROKE);
+			mBorderPaint.setColor(context.getResources().getColor(R.color.routeline));
 
 			application = Androzic.getApplication();
 		}
@@ -340,7 +354,17 @@ public class RouteList extends ListActivity
 			bm.eraseColor(Color.TRANSPARENT);
 			Canvas bc = new Canvas(bm);
 			mLinePaint.setColor(route.lineColor);
+			mBorderPaint.setColor(route.lineColor);
 			bc.drawPath(mLinePath, mLinePaint);
+			int half = Math.round(mPointWidth / 2);				
+			bc.drawCircle(12 * mDensity, 5 * mDensity, half, mFillPaint);
+			bc.drawCircle(12 * mDensity, 5 * mDensity, half, mBorderPaint);
+			bc.drawCircle(24 * mDensity, 12 * mDensity, half, mFillPaint);
+			bc.drawCircle(24 * mDensity, 12 * mDensity, half, mBorderPaint);
+			bc.drawCircle(15 * mDensity, 24 * mDensity, half, mFillPaint);
+			bc.drawCircle(15 * mDensity, 24 * mDensity, half, mBorderPaint);
+			bc.drawCircle(28 * mDensity, 35 * mDensity, half, mFillPaint);
+			bc.drawCircle(28 * mDensity, 35 * mDensity, half, mBorderPaint);
 			icon.setImageBitmap(bm);
 
 			return v;
