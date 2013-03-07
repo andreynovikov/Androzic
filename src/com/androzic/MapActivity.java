@@ -1572,6 +1572,10 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 			rteQuickAction.show(map, x, y);
 			return true;
 		}
+		else
+		{
+			startActivity(new Intent(this, RouteDetails.class).putExtra("INDEX", route));
+		}
 		return false;
 	}
 
