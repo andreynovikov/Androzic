@@ -15,6 +15,7 @@
         android:layout_height="fill_parent"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:padding="12dip"
         android:visibility="gone" />
 
 </FrameLayout>

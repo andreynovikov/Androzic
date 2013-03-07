@@ -45,6 +45,7 @@
     <string name="msg_initializingview">Initializing view&#8230;</string>
     <string name="msg_cleaning">Cleaning&#8230;</string>
     <string name="msg_paid">Donated version</string>
+    <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
     <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
     <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: &#8216;%s&#8217;.</string>
 

@@ -1,34 +1,61 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
- *
+ * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * 
  * This file is part of Androzic application.
- *
+ * 
  * Androzic is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ * 
  * Androzic is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ * 
  * You should have received a copy of the GNU General Public License
- * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.androzic;
 
+import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import android.annotation.SuppressLint;
+import android.app.ListActivity;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.provider.SearchRecentSuggestions;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androzic.data.Route;
 import com.androzic.data.Track;
@@ -37,45 +64,36 @@ import com.androzic.provider.SuggestionProvider;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
-
-import android.app.ListActivity;
-import android.app.ProgressDialog;
-import android.app.SearchManager;
-import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
-import android.os.Bundle;
-import android.os.Handler;
-import android.provider.SearchRecentSuggestions;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
+import com.jhlabs.map.GeodeticPosition;
 
 public class SearchableActivity extends ListActivity
 {
-	List<Address> addresses;
-	List<Map<String, String>> addressData = new ArrayList<Map<String, String>>();
+	private static final int MSG_FINISH = 1;
 
-	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
-	final Handler handler = new Handler();
+	private static List<Object> results = new ArrayList<Object>();
+	private static SearchThread thread;
+	private FinishHandler finishHandler;
 
-	private final static String KEY_NAME = "NAME";
-	private final static String KEY_DESC = "DESC";
-
-	final DecimalFormat coordFormat = new DecimalFormat("0.000000");
+	private SearchResultsListAdapter adapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setContentView(R.layout.list_with_empty_view);
+		
+		finishHandler = new FinishHandler(this);
 
 		if (Intent.ACTION_SEARCH.equals(getIntent().getAction()))
-	    {
-	        String query = getIntent().getStringExtra(SearchManager.QUERY);
-	        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
-	        suggestions.saveRecentQuery(query, null);
-	    }
+		{
+			String query = getIntent().getStringExtra(SearchManager.QUERY);
+			SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+			suggestions.saveRecentQuery(query, null);
+		}
+
+		adapter = new SearchResultsListAdapter(this, results);
+		setListAdapter(adapter);
 
 		handleIntent(getIntent());
 	}
@@ -96,7 +114,7 @@ public class SearchableActivity extends ListActivity
 		}
 	}
 
-	private void doSearch(String query)
+	private void doSearch(final String query)
 	{
 		if (query.length() == 0)
 		{
@@ -104,153 +122,175 @@ public class SearchableActivity extends ListActivity
 			return;
 		}
 
-		final ProgressDialog pd = new ProgressDialog(this);
-
-		pd.setIndeterminate(true);
-		pd.setMessage(getString(R.string.msg_wait));
-		pd.show();
-
-		final String q = query;
-
-		new Thread(new Runnable() {
-			public void run()
+		setProgressBarIndeterminateVisibility(true);
+		
+		if (thread == null)
+		{
+			synchronized (results)
 			{
-				Androzic application = (Androzic) getApplication();
+				results.clear();
+			}
+			adapter.notifyDataSetChanged();
+			thread = new SearchThread(finishHandler, query);
+			thread.start();
+		}
+		else if (thread.isAlive())
+		{
+			thread.setHandler(finishHandler);			
+		}
+		else
+		{
+			onSearchFinished();
+		}
+	}
 
-				addressData.clear();
-				Geocoder geocoder = new Geocoder(SearchableActivity.this);
+	@Override
+	public void onBackPressed()
+	{
+		thread = null;
+		super.onBackPressed();
+	}
+	
+	private void onSearchFinished()
+	{
+		TextView emptyView = (TextView) getListView().getEmptyView();
+		if (emptyView != null)
+			emptyView.setText(R.string.msg_nothing_found);
+		setProgressBarIndeterminateVisibility(false);
+		adapter.notifyDataSetChanged();
+	}
 
-				try
+	@SuppressLint("HandlerLeak")
+	private class FinishHandler extends Handler
+	{
+		private final WeakReference<SearchableActivity> target;
+
+		FinishHandler(SearchableActivity activity)
+		{
+			this.target = new WeakReference<SearchableActivity>(activity);
+		}
+
+		public void handleMessage(Message msg)
+		{
+			SearchableActivity activity = target.get();
+			switch (msg.what)
+			{
+				case MSG_FINISH:
+					activity.onSearchFinished();
+					break;
+			}
+		}
+	};
+
+	private class SearchThread extends Thread
+	{
+		private Handler handler;
+		private String query;
+
+		SearchThread(Handler h, String q)
+		{
+			handler = h;
+			query = q;
+		}
+
+		public synchronized void setHandler(Handler h)
+		{
+			handler = h;
+		}
+
+		public void run()
+		{
+			Androzic application = (Androzic) getApplication();
+
+			// Coordinates
+			double c[] = CoordinateParser.parse(query);
+			if (!Double.isNaN(c[0]) && !Double.isNaN(c[1]))
+			{
+				GeodeticPosition coordinates = new GeodeticPosition(c[0], c[1]);
+				synchronized (results)
 				{
-					addresses = geocoder.getFromLocationName(q, 5);
+					results.add(coordinates);
 				}
-				catch (IOException e)
+				runOnUiThread(updateResults);
+			}
+
+			String lq = query.toLowerCase();
+
+			// Waypoints
+			for (Waypoint waypoint : application.getWaypoints())
+			{
+				if (waypoint.name.toLowerCase().contains(lq) || waypoint.description.toLowerCase().contains(lq))
 				{
-					runOnUiThread(noConnection);
-				}
-				
-				String lq = q.toLowerCase();
-				
-				for (Track track : application.getTracks())
-				{
-					if (track.name.toLowerCase().contains(lq) || track.description.toLowerCase().contains(lq))
+					synchronized (results)
 					{
-						Address address = new Address(Locale.getDefault());
-						try
-						{
-							Track.TrackPoint tp = track.getPoint(0);
-							address.setLatitude(tp.latitude);
-							address.setLongitude(tp.longitude);
-							address.setFeatureName(track.name);
-							if (addresses == null)
-							{
-								addresses = new ArrayList<Address>();
-							}
-							addresses.add(0, address);
-						}
-						catch (IndexOutOfBoundsException e)
-						{
-						}
+						results.add(waypoint);
 					}
+					runOnUiThread(updateResults);
 				}
+			}
 
-				for (Route route : application.getRoutes())
+			// Routes
+			for (Route route : application.getRoutes())
+			{
+				if (route.name.toLowerCase().contains(lq) || route.description.toLowerCase().contains(lq))
 				{
-					if (route.name.toLowerCase().contains(lq) || route.description.toLowerCase().contains(lq))
+					synchronized (results)
 					{
-						Address address = new Address(Locale.getDefault());
-						try
-						{
-							Waypoint waypoint = route.getWaypoint(0);
-							address.setLatitude(waypoint.latitude);
-							address.setLongitude(waypoint.longitude);
-							address.setFeatureName(route.name);
-							if (addresses == null)
-							{
-								addresses = new ArrayList<Address>();
-							}
-							addresses.add(0, address);
-						}
-						catch (IndexOutOfBoundsException e)
-						{
-						}
+						results.add(route);
 					}
+					runOnUiThread(updateResults);
+					continue;
 				}
-
-				for (Waypoint waypoint : application.getWaypoints())
+				for (Waypoint waypoint : route.getWaypoints())
 				{
 					if (waypoint.name.toLowerCase().contains(lq) || waypoint.description.toLowerCase().contains(lq))
 					{
-						Address address = new Address(Locale.getDefault());
-						address.setLatitude(waypoint.latitude);
-						address.setLongitude(waypoint.longitude);
-						address.setFeatureName(waypoint.name);
-						if (addresses == null)
+						synchronized (results)
 						{
-							addresses = new ArrayList<Address>();
+							results.add(route);
 						}
-						addresses.add(0, address);						
+						runOnUiThread(updateResults);
+						break;
 					}
 				}
-
-				double c[] = CoordinateParser.parse(q);
-				if (! Double.isNaN(c[0]) && ! Double.isNaN(c[1]))
-				{
-					Address address = new Address(Locale.getDefault());
-					address.setLatitude(c[0]);
-					address.setLongitude(c[1]);
-					address.setFeatureName(q);
-					if (addresses == null)
-					{
-						addresses = new ArrayList<Address>();
-					}
-					addresses.add(0, address);
-				}
-
-				if (addresses != null && addresses.isEmpty() == false)
-				{
-					Map<String, String> group;
-					double[] loc = application.getLocation();
-
-					for (Address address : addresses)
-					{
-						if (address.hasLatitude() && address.hasLongitude())
-						{
-							group = new HashMap<String, String>();
-
-							String name = address.getFeatureName();
-
-							StringBuilder b = new StringBuilder();
-							for (int i = 0; i < address.getMaxAddressLineIndex(); i++)
-							{
-								b.append(address.getAddressLine(i));
-								if (i < (address.getMaxAddressLineIndex() - 1))
-								{
-									b.append(" ");
-								}
-							}
-
-							String addr = b.toString();
-							if (! addr.contains(name))
-								name = name + " " + addr;
-							else
-								name = addr;
-
-							group.put(KEY_NAME, name);
-							double dist = Geo.distance(loc[0], loc[1], address.getLatitude(), address.getLongitude());
-							double bearing = Geo.bearing(loc[0], loc[1], address.getLatitude(), address.getLongitude());
-							String desc = StringFormatter.coordinates(application.coordinateFormat, " ", address.getLatitude(), address.getLongitude())
-									+ " | " + StringFormatter.distanceH(dist) + " " + StringFormatter.bearingSimpleH(bearing);
-							group.put(KEY_DESC, desc);
-
-							addressData.add(group);
-						}
-					}
-					handler.post(updateResults);
-				}
-				pd.dismiss();
 			}
-		}).start();
+
+			for (Track track : application.getTracks())
+			{
+				if (track.name.toLowerCase().contains(lq) || track.description.toLowerCase().contains(lq))
+				{
+					synchronized (results)
+					{
+						results.add(track);
+					}
+					runOnUiThread(updateResults);
+				}
+			}
+			
+			// Addresses
+			try
+			{
+				Geocoder geocoder = new Geocoder(application);
+				List<Address> addresses = geocoder.getFromLocationName(query, 15);
+				if (addresses != null && addresses.size() > 0)
+				{
+					synchronized (results)
+					{
+						results.addAll(addresses);
+					}
+					runOnUiThread(updateResults);
+				}
+			}
+			catch (IOException e)
+			{
+				runOnUiThread(noConnection);
+			}
+
+			synchronized (this)
+			{
+				handler.sendEmptyMessage(MSG_FINISH);
+			}
+		}
 	}
 
 	final Runnable noConnection = new Runnable() {
@@ -263,30 +303,343 @@ public class SearchableActivity extends ListActivity
 	final Runnable updateResults = new Runnable() {
 		public void run()
 		{
-			setListAdapter(new SimpleAdapter(SearchableActivity.this, addressData, android.R.layout.simple_list_item_2, new String[] {
-					KEY_NAME, KEY_DESC }, new int[] { android.R.id.text1, android.R.id.text2 }));
-			getListView().setTextFilterEnabled(true);
+			adapter.notifyDataSetChanged();
 		}
 	};
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id)
 	{
-		super.onListItemClick(l, v, position, id);
-
-		final Address address = addresses.get(position);
+		Object item = adapter.getItem(position);
 		Androzic application = (Androzic) getApplication();
-		application.ensureVisible(new Waypoint(address.getLatitude(), address.getLongitude()));
+		double[] location = application.getLocation();
+
+		if (item instanceof GeodeticPosition)
+		{
+			GeodeticPosition coordinates = (GeodeticPosition) item;
+			location[0] = coordinates.lat;
+			location[1] = coordinates.lon;
+		}
+		else if (item instanceof Waypoint)
+		{
+			Waypoint waypoint = (Waypoint) item;
+			location[0] = waypoint.latitude;
+			location[1] = waypoint.longitude;
+		}
+		else if (item instanceof Route)
+		{
+			Route route = (Route) item;
+			Waypoint waypoint = route.getWaypoint(0);
+			location[0] = waypoint.latitude;
+			location[1] = waypoint.longitude;
+		}
+		else if (item instanceof Track)
+		{
+			Track track = (Track) item;
+			Track.TrackPoint tp = track.getPoint(0);
+			location[0] = tp.latitude;
+			location[1] = tp.longitude;
+		}
+		else if (item instanceof Address)
+		{
+			Address address = (Address) item;
+			location[0] = address.getLatitude();
+			location[1] = address.getLongitude();
+		}
+		
+		application.ensureVisible(location[0], location[1]);
 		finish();
 	}
 
-	@Override
-	protected void onStop()
+	public class SearchResultsListAdapter extends BaseAdapter
 	{
-		super.onStop();
-		if (addresses != null)
-			addresses.clear();
-		addressData.clear();
-	}
+		List<Object> mItems;
+		private LayoutInflater mInflater;
+		private Androzic mApplication;
+		private double[] mLocation;
 
+		private int mCoordinatesItemLayout;
+		private int mWaypointItemLayout;
+		private int mRouteItemLayout;
+		private int mTrackItemLayout;
+		private int mAddressItemLayout;
+
+		private float mDensity;
+
+		private Paint mWaypointBorderPaint;
+		private Paint mWaypointFillPaint;
+		private int mPointWidth;
+
+		private Path mRouteLinePath;
+		private Paint mRouteLinePaint;
+		private int mRouteWidth;
+
+		public SearchResultsListAdapter(Context context, List<Object> items)
+		{
+			mItems = items;
+
+			mCoordinatesItemLayout = R.layout.list_item_coordinates;
+			mWaypointItemLayout = R.layout.waypoint_list_item;
+			mRouteItemLayout = R.layout.route_list_item;
+			mTrackItemLayout = R.layout.list_item_track;
+			mAddressItemLayout = R.layout.list_item_address;
+			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			mDensity = context.getResources().getDisplayMetrics().density;
+
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+			mPointWidth = settings.getInt(context.getString(R.string.pref_waypoint_width), context.getResources().getInteger(R.integer.def_waypoint_width));
+			mWaypointFillPaint = new Paint();
+			mWaypointFillPaint.setAntiAlias(false);
+			mWaypointFillPaint.setStrokeWidth(1);
+			mWaypointFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+			mWaypointFillPaint.setColor(settings.getInt(context.getString(R.string.pref_waypoint_color), context.getResources().getColor(R.color.waypoint)));
+			mWaypointBorderPaint = new Paint();
+			mWaypointBorderPaint.setAntiAlias(false);
+			mWaypointBorderPaint.setStrokeWidth(1);
+			mWaypointBorderPaint.setStyle(Paint.Style.STROKE);
+			mWaypointBorderPaint.setColor(context.getResources().getColor(R.color.waypointtext));
+			mWaypointBorderPaint.setColor(settings.getInt(context.getString(R.string.pref_waypoint_namecolor), context.getResources().getColor(R.color.waypointtext)));
+
+			mRouteWidth = settings.getInt(context.getString(R.string.pref_route_linewidth), context.getResources().getInteger(R.integer.def_route_linewidth));
+			mRouteLinePath = new Path();
+			mRouteLinePath.setLastPoint(12 * mDensity, 5 * mDensity);
+			mRouteLinePath.lineTo(33 * mDensity, 12 * mDensity);
+			mRouteLinePath.lineTo(7 * mDensity, 24 * mDensity);
+			mRouteLinePath.lineTo(28 * mDensity, 35 * mDensity);
+			mRouteLinePaint = new Paint();
+			mRouteLinePaint.setAntiAlias(true);
+			mRouteLinePaint.setStrokeWidth(mRouteWidth * mDensity);
+			mRouteLinePaint.setStyle(Paint.Style.STROKE);
+			mRouteLinePaint.setColor(context.getResources().getColor(R.color.routeline));
+
+			mApplication = Androzic.getApplication();
+			mLocation = mApplication.getLocation();
+		}
+
+		@Override
+		public Object getItem(int position)
+		{
+			synchronized (mItems)
+			{
+				return mItems.get(position);
+			}
+		}
+
+		@Override
+		public long getItemId(int position)
+		{
+			return position;
+		}
+
+		@Override
+		public int getCount()
+		{
+			synchronized (mItems)
+			{
+				return mItems.size();
+			}
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
+			Object item = getItem(position);
+
+			boolean isCoordinates = item instanceof GeodeticPosition;
+			boolean isWaypoint = item instanceof Waypoint;
+			boolean isRoute = item instanceof Route;
+			boolean isTrack = item instanceof Track;
+			boolean isAddress = item instanceof Address;
+
+			GeodeticPosition coordinates = null;
+			Waypoint waypoint = null;
+			Route route = null;
+			Track track = null;
+			Address address = null;
+
+			int layout = 0;
+			if (isCoordinates)
+			{
+				layout = mCoordinatesItemLayout;
+				coordinates = (GeodeticPosition) item;
+			}
+			else if (isWaypoint)
+			{
+				layout = mWaypointItemLayout;
+				waypoint = (Waypoint) item;
+			}
+			else if (isRoute)
+			{
+				layout = mRouteItemLayout;
+				route = (Route) item;
+			}
+			else if (isTrack)
+			{
+				layout = mTrackItemLayout;
+				track = (Track) item;
+			}
+			else if (isAddress)
+			{
+				layout = mAddressItemLayout;
+				address = (Address) item;
+			}
+			else
+			{
+				layout = android.R.layout.simple_list_item_1;
+			}
+
+			// TODO Think how to reuse convertView
+			View v = mInflater.inflate(layout, parent, false);
+
+			if (isCoordinates)
+			{
+				TextView textView = (TextView) v.findViewById(R.id.name);
+				String coords = StringFormatter.coordinates(mApplication.coordinateFormat, " ", coordinates.lat, coordinates.lon);
+				textView.setText(coords);
+				double dist = Geo.distance(mLocation[0], mLocation[1], coordinates.lat, coordinates.lon);
+				double bearing = Geo.bearing(mLocation[0], mLocation[1], coordinates.lat, coordinates.lon);
+				String distance = StringFormatter.distanceH(dist) + " " + StringFormatter.bearingSimpleH(bearing);
+				textView = (TextView) v.findViewById(R.id.distance);
+				textView.setText(distance);
+			}
+			else if (isWaypoint)
+			{
+				TextView textView = (TextView) v.findViewById(R.id.name);
+				textView.setText(waypoint.name);
+				String coords = StringFormatter.coordinates(mApplication.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
+				textView = (TextView) v.findViewById(R.id.coordinates);
+				textView.setText(coords);
+				double dist = Geo.distance(mLocation[0], mLocation[1], waypoint.latitude, waypoint.longitude);
+				double bearing = Geo.bearing(mLocation[0], mLocation[1], waypoint.latitude, waypoint.longitude);
+				String distance = StringFormatter.distanceH(dist) + " " + StringFormatter.bearingSimpleH(bearing);
+				textView = (TextView) v.findViewById(R.id.distance);
+				textView.setText(distance);
+				ImageView icon = (ImageView) v.findViewById(R.id.icon);
+				Bitmap b = null;
+				if (mApplication.iconsEnabled && waypoint.drawImage)
+				{
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inScaled = false;
+					b = BitmapFactory.decodeFile(mApplication.iconPath + File.separator + waypoint.image, options);
+				}
+				int h = b != null ? b.getHeight() : 30;
+				Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity), h, Config.ARGB_8888);
+				bm.eraseColor(Color.TRANSPARENT);
+				Canvas bc = new Canvas(bm);
+				if (b != null)
+				{
+					b.setDensity(Bitmap.DENSITY_NONE);
+					int l = (int) ((38 * mDensity - b.getWidth()) / 2);
+					bc.drawBitmap(b, null, new Rect(l, 0, b.getWidth() + l, b.getHeight()), null);
+				}
+				else
+				{
+					int tc = 0, bgc = 0;
+					if (waypoint.textcolor != Integer.MIN_VALUE)
+					{
+						tc = mWaypointBorderPaint.getColor();
+						mWaypointBorderPaint.setColor(waypoint.textcolor);
+					}
+					if (waypoint.backcolor != Integer.MIN_VALUE)
+					{
+						bgc = mWaypointFillPaint.getColor();
+						mWaypointFillPaint.setColor(waypoint.backcolor);
+					}
+					Rect rect = new Rect(0, 0, mPointWidth, mPointWidth);
+					bc.translate((38 * mDensity - mPointWidth) / 2, (30 - mPointWidth) / 2);
+					bc.drawRect(rect, mWaypointBorderPaint);
+					rect.inset(1, 1);
+					bc.drawRect(rect, mWaypointFillPaint);
+					if (waypoint.textcolor != Integer.MIN_VALUE)
+					{
+						mWaypointBorderPaint.setColor(tc);
+					}
+					if (waypoint.backcolor != Integer.MIN_VALUE)
+					{
+						mWaypointFillPaint.setColor(bgc);
+					}
+				}
+				icon.setImageBitmap(bm);
+			}
+			else if (isRoute)
+			{
+				TextView textView = (TextView) v.findViewById(R.id.name);
+				textView.setText(route.name);
+				String distance = StringFormatter.distanceH(route.distance);
+				textView = (TextView) v.findViewById(R.id.distance);
+				textView.setText(distance);
+				textView = (TextView) v.findViewById(R.id.filename);
+				if (route.filepath != null)
+				{
+					String filepath = route.filepath.startsWith(mApplication.dataPath) ? route.filepath.substring(mApplication.dataPath.length() + 1, route.filepath.length()) : route.filepath;
+					textView.setText(filepath);
+				}
+				ImageView icon = (ImageView) v.findViewById(R.id.icon);
+				Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity), (int) (40 * mDensity), Config.ARGB_8888);
+				bm.eraseColor(Color.TRANSPARENT);
+				Canvas bc = new Canvas(bm);
+				mRouteLinePaint.setColor(route.lineColor);
+				bc.drawPath(mRouteLinePath, mRouteLinePaint);
+				icon.setImageBitmap(bm);
+			}
+			else if (isTrack)
+			{
+				TextView textView = (TextView) v.findViewById(R.id.name);
+				textView.setText(track.name);
+				String distance = StringFormatter.distanceH(track.distance);
+				textView = (TextView) v.findViewById(R.id.distance);
+				textView.setText(distance);
+				textView = (TextView) v.findViewById(R.id.filename);
+				if (track.filepath != null)
+				{
+					String filepath = track.filepath.startsWith(mApplication.dataPath) ? track.filepath.substring(mApplication.dataPath.length() + 1, track.filepath.length()) : track.filepath;
+					textView.setText(filepath);
+				}
+				ImageView icon = (ImageView) v.findViewById(R.id.icon);
+				Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity), (int) (40 * mDensity), Config.ARGB_8888);
+				bm.eraseColor(Color.TRANSPARENT);
+				Canvas bc = new Canvas(bm);
+				mRouteLinePaint.setColor(track.color);
+				bc.drawPath(mRouteLinePath, mRouteLinePaint);
+				icon.setImageBitmap(bm);
+			}
+			else if (isAddress)
+			{
+				String name = address.getFeatureName();
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < address.getMaxAddressLineIndex(); i++)
+				{
+					sb.append(address.getAddressLine(i));
+					if (i < (address.getMaxAddressLineIndex() - 1))
+					{
+						sb.append(" ");
+					}
+				}
+				String addr = sb.toString();
+				if (!addr.contains(name))
+					name = name + " " + addr;
+				else
+					name = addr;
+				TextView textView = (TextView) v.findViewById(R.id.name);
+				textView.setText(name);
+				String coords = StringFormatter.coordinates(mApplication.coordinateFormat, " ", address.getLatitude(), address.getLongitude());
+				textView = (TextView) v.findViewById(R.id.coordinates);
+				textView.setText(coords);
+				double dist = Geo.distance(mLocation[0], mLocation[1], address.getLatitude(), address.getLongitude());
+				double bearing = Geo.bearing(mLocation[0], mLocation[1], address.getLatitude(), address.getLongitude());
+				String distance = StringFormatter.distanceH(dist) + " " + StringFormatter.bearingSimpleH(bearing);
+				textView = (TextView) v.findViewById(R.id.distance);
+				textView.setText(distance);
+			}
+
+			return v;
+		}
+
+		@Override
+		public boolean hasStableIds()
+		{
+			return true;
+		}
+	}
 }
