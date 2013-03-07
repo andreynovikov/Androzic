@@ -781,6 +781,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	}
 
 	private static final int TAP = 1;
+	private static final int CANCEL = 2;
 
 	@SuppressLint("HandlerLeak")
 	private class GestureHandler extends Handler
@@ -805,7 +806,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 					mapView.onSingleTap(penOX, penOY);
 					mapView.cancelMotionEvent();
 					break;
-
+				case CANCEL:
+					mapView.cancelMotionEvent();
+					break;
 				default:
 					throw new RuntimeException("Unknown message " + msg); // never
 			}
@@ -815,6 +818,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private void cancelMotionEvent()
 	{
 		tapHandler.removeMessages(TAP);
+		tapHandler.removeMessages(CANCEL);
 		if (upEvent != null)
 			upEvent.recycle();
 		upEvent = null;
@@ -842,6 +846,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				boolean hadTapMessage = tapHandler.hasMessages(TAP);
 				if (hadTapMessage)
 					tapHandler.removeMessages(TAP);
+				tapHandler.removeMessages(CANCEL);
 
 				if (event.getEventTime() - firstTapTime <= DOUBLE_TAP_TIMEOUT)
 				{
@@ -890,11 +895,15 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				{
 					tapHandler.sendEmptyMessageDelayed(TAP, DOUBLE_TAP_TIMEOUT);
 				}
-				if (wasMultitouch || wasDoubleTap)
+				else if (wasMultitouch || wasDoubleTap)
 				{
 					wasMultitouch = false;
 					wasDoubleTap = false;
 					cancelMotionEvent();
+				}
+				else
+				{
+					tapHandler.sendEmptyMessageDelayed(CANCEL, DOUBLE_TAP_TIMEOUT);
 				}
 				break;
 			case MotionEvent.ACTION_CANCEL:
