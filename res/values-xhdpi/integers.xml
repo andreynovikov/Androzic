@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<integer name="def_waypoint_width">16</integer>
+<integer name="def_route_linewidth">4</integer>
+<integer name="def_route_pointwidth">14</integer>
+<integer name="def_navigation_linewidth">10</integer>
+</resources>

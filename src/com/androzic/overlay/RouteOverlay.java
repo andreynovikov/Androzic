@@ -28,12 +28,13 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.Paint.Align;
 import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
@@ -92,7 +93,7 @@ public class RouteOverlay extends MapOverlay
 		textFillPaint.setAntiAlias(false);
 		textFillPaint.setStrokeWidth(1);
 		textFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-		textFillPaint.setColor(context.getResources().getColor(R.color.routewaypointwithalpha));
+		textFillPaint.setColor(context.getResources().getColor(R.color.routeline));
 
 		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
 
@@ -104,24 +105,50 @@ public class RouteOverlay extends MapOverlay
 		this(mapActivity);
 
 		route = aRoute;
-		if (route.lineColor != -1)
-		{
-			linePaint.setColor(route.lineColor);
-			borderPaint.setColor(route.lineColor);
-		}
-		else
-		{
+		if (route.lineColor == -1)
 			route.lineColor = linePaint.getColor();
-		}
 		onRoutePropertiesChanged();
+	}
+	
+	private void initRouteColors()
+	{
+		linePaint.setColor(route.lineColor);
+		linePaint.setAlpha(0xAA);
+		borderPaint.setColor(route.lineColor);
+		textFillPaint.setColor(route.lineColor);
+		textFillPaint.setAlpha(0x88);
+		double Y = getLuminance(route.lineColor);
+		if (Y <= .5)
+			textPaint.setColor(Color.WHITE);
+		else
+			textPaint.setColor(Color.BLACK);
+	}
+
+	private double adjustValue(int cc)
+	{
+		double val = cc;
+		val = val / 255;
+		if (val <= 0.03928)
+			val = val / 12.92;
+		else
+			val = Math.pow(((val + 0.055) / 1.055), 2.4);
+		return val;
+	}
+
+	private double getLuminance(int rgb)
+	{
+		// http://www.w3.org/TR/WCAG20/relative-luminance.xml
+		int R = (rgb & 0x00FF0000) >>> 16;
+		int G = (rgb & 0x0000FF00) >>> 8;
+		int B = (rgb & 0x000000FF);
+		return 0.2126 * adjustValue(R) + 0.7152 * adjustValue(G) + 0.0722 * adjustValue(B);
 	}
 
 	public void onRoutePropertiesChanged()
 	{
 		if (linePaint.getColor() != route.lineColor)
 		{
-			linePaint.setColor(route.lineColor);
-			borderPaint.setColor(route.lineColor);
+			initRouteColors();
 		}
 		if (route.editing)
 		{
@@ -257,7 +284,7 @@ public class RouteOverlay extends MapOverlay
 						Rect rect = new Rect();
 						textPaint.getTextBounds(wpt.name, 0, wpt.name.length(), rect);
 						rect.inset(-2, -4);
-						rect.offset(+half + 5, +half - 2);
+						rect.offset(+half + 5, +half - 3);
 						bc.drawRect(rect, textFillPaint);
 						bc.drawText(wpt.name, +half + 6, +half, textPaint);
 					}
