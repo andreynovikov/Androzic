@@ -34,8 +34,10 @@ import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
+import android.view.MotionEvent;
 
 import com.androzic.Androzic;
+import com.androzic.MapActivity;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.MapObject;
@@ -119,6 +121,26 @@ public class MapObjectsOverlay extends MapOverlay
 		mpp = map.mpp / map.getZoom();
 	}
 	
+	@Override
+	public boolean onSingleTap(MotionEvent e, Rect mapTap, MapView mapView)
+	{
+		Androzic application = (Androzic) context.getApplication();
+		Iterator<MapObject> mapObjects = application.getMapObjects().iterator();
+		while (mapObjects.hasNext())
+		{
+			MapObject mo = mapObjects.next();
+			synchronized (mo)
+			{
+				int[] pointXY = application.getXYbyLatLon(mo.latitude, mo.longitude);
+				if (mapTap.contains(pointXY[0], pointXY[1]) && context instanceof MapActivity)
+				{
+					return ((MapActivity) context).mapObjectTapped(mo._id, (int) e.getX(), (int) e.getY());
+				}
+			}
+		}
+		return false;
+	}
+
 	protected void drawMapObject(Canvas c, MapObject mo, Androzic application, int[] cxy)
 	{
 		int[] xy = application.getXYbyLatLon(mo.latitude, mo.longitude);

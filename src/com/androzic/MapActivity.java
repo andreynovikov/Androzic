@@ -150,6 +150,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 
 	private static final int qaAddWaypointToRoute = 1;
 	private static final int qaNavigateToWaypoint = 2;
+	private static final int qaNavigateToMapObject = 2;
 
 	// main preferences
 	protected double speedFactor;
@@ -199,6 +200,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	protected MapView map;
 	protected QuickAction3D wptQuickAction;
 	protected QuickAction3D rteQuickAction;
+	protected QuickAction3D mobQuickAction;
 	private ViewGroup dimView;
 	private ShowcaseView showcaseView;
 
@@ -213,6 +215,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 
 	private int waypointSelected = -1;
 	private int routeSelected = -1;
+	private long mapObjectSelected = -1;
 
 	private ILocationService locationService = null;
 	private ITrackingService trackingService = null;
@@ -353,6 +356,10 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		rteQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
 		rteQuickAction.addActionItem(new ActionItem(qaNavigateToWaypoint, getString(R.string.menu_thisnavpoint), resources.getDrawable(R.drawable.ic_action_directions)));
 		rteQuickAction.setOnActionItemClickListener(routeActionItemClickListener);
+
+		mobQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
+		mobQuickAction.addActionItem(new ActionItem(qaNavigateToMapObject, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_directions)));
+		mobQuickAction.setOnActionItemClickListener(mapObjectActionItemClickListener);
 
 		trackBar.setOnSeekBarChangeListener(this);
 
@@ -1579,6 +1586,13 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		return false;
 	}
 
+	public boolean mapObjectTapped(long id, int x, int y)
+	{
+		mapObjectSelected = id;
+		mobQuickAction.show(map, x, y);
+		return true;
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
@@ -1800,6 +1814,20 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 					break;
 			}
 			waypointSelected = -1;
+		}
+	};
+
+	private OnActionItemClickListener mapObjectActionItemClickListener = new OnActionItemClickListener() {
+		@Override
+		public void onItemClick(QuickAction3D source, int pos, int actionId)
+		{
+			switch (actionId)
+			{
+				case qaNavigateToMapObject:
+					navigationService.navigateTo(application.getMapObject(mapObjectSelected));
+					break;
+			}
+			mapObjectSelected = -1;
 		}
 	};
 
@@ -2285,6 +2313,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 
 		waypointSelected = savedInstanceState.getInt("waypointSelected");
 		routeSelected = savedInstanceState.getInt("routeSelected");
+		mapObjectSelected = savedInstanceState.getLong("mapObjectSelected");
 
 		/*
 		 * double[] distAncor = savedInstanceState.getDoubleArray("distAncor");
@@ -2309,6 +2338,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 
 		outState.putInt("waypointSelected", waypointSelected);
 		outState.putInt("routeSelected", routeSelected);
+		outState.putLong("mapObjectSelected", mapObjectSelected);
 
 		if (application.distanceOverlay != null)
 		{
