@@ -188,6 +188,7 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 	    	switch (actionId)
 	    	{
 	    		case qaWaypointVisible:
+	    			route.show = true;
 	    			application.ensureVisible(route.getWaypoint(selectedPosition));
 	    			setResult(RESULT_OK);
 					finish();

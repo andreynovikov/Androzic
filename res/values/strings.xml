@@ -314,6 +314,8 @@
 	<string name="pref_route_title">Routes</string>
 	<string name="pref_route_preload_title">Preload routes</string>
 	<string name="pref_route_preload_summary">Mark to preload routes from files on application start</string>
+	<string name="pref_route_preload_hidden_title">Hide preloaded routes</string>
+	<string name="pref_route_preload_hidden_summary">Hide preloaded routes until they are viewed, edited or navigated</string>
 	<string name="pref_route_linewidth_title">Line width</string>
 	<string name="pref_route_linewidth_summary">Pixel width of the route line</string>
 	<string name="pref_route_pointwidth_title">Marker size</string>

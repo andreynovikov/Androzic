@@ -239,6 +239,7 @@ public class RouteList extends ListActivity
 					startActivity(new Intent(RouteList.this, RouteProperties.class).putExtra("index", position));
 					break;
 				case qaRouteEdit:
+					route.show = true;
 					setResult(Activity.RESULT_OK, new Intent().putExtra("index", position));
 					finish();
 					break;
@@ -293,8 +294,8 @@ public class RouteList extends ListActivity
 			mLinePaint.setStyle(Paint.Style.STROKE);
 			mLinePaint.setColor(context.getResources().getColor(R.color.routeline));
 			mBorderPaint = new Paint();
-			mBorderPaint.setAntiAlias(false);
-			mBorderPaint.setStrokeWidth(1 * mDensity);
+			mBorderPaint.setAntiAlias(true);
+			mBorderPaint.setStrokeWidth(1);
 			mBorderPaint.setStyle(Paint.Style.STROKE);
 			mBorderPaint.setColor(context.getResources().getColor(R.color.routeline));
 
@@ -356,7 +357,7 @@ public class RouteList extends ListActivity
 			mLinePaint.setColor(route.lineColor);
 			mBorderPaint.setColor(route.lineColor);
 			bc.drawPath(mLinePath, mLinePaint);
-			int half = Math.round(mPointWidth / 2);				
+			int half = Math.round(mPointWidth / 4);				
 			bc.drawCircle(12 * mDensity, 5 * mDensity, half, mFillPaint);
 			bc.drawCircle(12 * mDensity, 5 * mDensity, half, mBorderPaint);
 			bc.drawCircle(24 * mDensity, 12 * mDensity, half, mFillPaint);

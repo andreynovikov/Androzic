@@ -408,6 +408,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 					Route route = application.getRouteByFile(navRoute);
 					if (route != null)
 					{
+						route.show = true;
 						rt = application.getRouteIndex(route);
 					}
 					else

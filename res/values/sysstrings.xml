@@ -77,6 +77,7 @@
 	<string name="pref_waypoint_bgcolor">waypoint_bgcolor</string>
 	<string name="pref_waypoint_showname">waypoint_showname</string>
 	<string name="pref_route_preload">route_preload</string>
+	<string name="pref_route_preload_hidden">route_preload_hidden</string>
 	<string name="pref_route_linewidth">route_linewidth</string>
 	<string name="pref_route_pointwidth">route_pointwidth</string>
 	<string name="pref_route_showname">route_showname</string>

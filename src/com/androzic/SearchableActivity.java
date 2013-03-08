@@ -420,8 +420,8 @@ public class SearchableActivity extends ListActivity
 			mRouteLinePaint.setStyle(Paint.Style.STROKE);
 			mRouteLinePaint.setColor(context.getResources().getColor(R.color.routeline));
 			mRouteBorderPaint = new Paint();
-			mRouteBorderPaint.setAntiAlias(false);
-			mRouteBorderPaint.setStrokeWidth(1 * mDensity);
+			mRouteBorderPaint.setAntiAlias(true);
+			mRouteBorderPaint.setStrokeWidth(1);
 			mRouteBorderPaint.setStyle(Paint.Style.STROKE);
 			mRouteBorderPaint.setColor(context.getResources().getColor(R.color.routeline));
 
@@ -594,7 +594,7 @@ public class SearchableActivity extends ListActivity
 				mRouteLinePaint.setColor(route.lineColor);
 				mRouteBorderPaint.setColor(route.lineColor);
 				bc.drawPath(mRouteLinePath, mRouteLinePaint);				
-				int half = Math.round(mPointWidth / 2);				
+				int half = Math.round(mPointWidth / 4);				
 				bc.drawCircle(12 * mDensity, 5 * mDensity, half, mRouteFillPaint);
 				bc.drawCircle(12 * mDensity, 5 * mDensity, half, mRouteBorderPaint);
 				bc.drawCircle(24 * mDensity, 12 * mDensity, half, mRouteFillPaint);

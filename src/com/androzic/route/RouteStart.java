@@ -82,6 +82,7 @@ public class RouteStart extends Activity
 	{
         public void onClick(View v)
         {
+        	route.show = true;
         	int dir = forward.isChecked() ? NavigationService.DIRECTION_FORWARD : NavigationService.DIRECTION_REVERSE;
 			startService(new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra("index", index).putExtra("direction", dir));
 			setResult(Activity.RESULT_OK);

@@ -409,6 +409,7 @@ public class Splash extends Activity implements OnClickListener
 			// load routes
 			if (settings.getBoolean(getString(R.string.pref_route_preload), resources.getBoolean(R.bool.def_route_preload)))
 			{
+				boolean hide = settings.getBoolean(getString(R.string.pref_route_preload_hidden), resources.getBoolean(R.bool.def_route_preload_hidden));
 				List<File> files = FileList.getFileListing(new File(application.dataPath), new RouteFilenameFilter());
 				for (File file : files)
 				{
@@ -431,6 +432,7 @@ public class Splash extends Activity implements OnClickListener
 						application.addRoutes(routes);
 						for (Route route : routes)
 						{
+							route.show = ! hide;
 							RouteOverlay newRoute = new RouteOverlay(Splash.this, route);
 							application.routeOverlays.add(newRoute);
 						}
