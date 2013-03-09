@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+   along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -305,7 +305,9 @@
             android:icon="@drawable/icon"
             android:permission="com.androzic.permission.NAVIGATION" >
             <intent-filter>
-                <action android:name="com.androzic.navigation" />
+                <action android:name="com.androzic.navigateMapObjectWithId" />
+                <action android:name="com.androzic.navigateMapObject" />
+                <action android:name="com.androzic.navigateRoute" />
             </intent-filter>
         </service>
         <service
