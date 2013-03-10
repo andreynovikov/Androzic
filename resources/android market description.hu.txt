@@ -1,0 +1,27 @@
+<b>Navigációs program, ami OziExplorer térképeket használ</b> (ozf2, ozfx3). Jól használható túrázáshoz, off-roadozni, vitorlázni, hajózni és egyéb szabadtéri tevékenységekhez. Feltehetően ismered az OziExplorert vagy legalább tudod, honnan lesz térképed. Térképeket saját magad is létre tudsz hozni, a részleteket megtalálod a GYIK között. Működhet térkép nélkül, mint egy egyszerű navigátor. Működik számos online térképpel is, pl. az Open Street Map (Internet kapcsolat szükséges). 
+
+<b>Alkalmazás jellemzői:</b>
+• ozf2 és ozf3 térképek támogatása
+• online térképek támogatása
+• térkép nélkül működés, mint egy egyszerű navigátor
+• útvonal rögzítés a háttérben (energiatakarékos)
+• navigáció útponthoz és útvonalakon
+• nyomvonal átalakítása útvonalra
+• útvonal készítés és kezelés
+• Ozi formátumú útpontok, nyomvonalak és útvonalak kezelése
+• KML és GPX formátumú  útpontok, nyomvonalak és útvonalak olvasása
+• HSI és iránytű
+• kiválasztható egységek
+• UTM koordináták
+• hely keresés Google geocoderrel
+• hely és útpont megosztás
+• álló- és fekvőképernyős üzemmód
+• tablet támogatás
+
+<b>Bővíthető funkciók beépülő modulokkal:</b>
+• koordináták fogadása SMS-ben
+• valós idejű helymegosztás
+
+<b>Az Androzic ingyenes és nyílt forráskódú</b>, GNU GPL v3 kiadott licenc alapján. További információk itt találhatók http://androzic.com/
+
+<b>Figyelmeztetés!</b> Az Img2Ozf aktuális verziója az ozfx3 térképeket új, titkosított formában generálja, amit nem tud megnyitni az Androzic. Kérjük, használd régebbi Img2Ozf-t, utolsó ismert működő változat a 3.03.

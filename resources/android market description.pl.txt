@@ -1,0 +1,27 @@
+<b>Klient nawigacji, który używa map OziExplorer</b> (ozf2, ozfx3). Doskonały do ​​uprawiania turystyki pieszej, żeglarstwa, pływania łódką, geocaching-u, off-road-u i innych atrakcji. OD użytkownika oczekuje się znajomości OziExplorer-a lub przynajmniej gdzie uzyskać jego mapy. Mapy mogą być także tworzone samodzielnie ale z pewnym wysiłkiem, zobacz szczegóły w FAQ. Może pracować bez map jako prosta nawigacja. Współpracuje z wieloma mapami on-line takimi jak Open Street Map (Wymaga połączenia z internetem). 
+
+<b>Funkcje aplikacji:</b>
+• wsparcie dla map ozf2, ozfx3
+• wsparcie dla map on-line
+• działa bez mapy jako prosta nawigacja
+• nagrywanie śladu w tle (oszczędza baterię)
+• nawigacja do punktu i po trasie
+• konwersja śladu do trasy
+• tworzenie i modyfikacja tras
+• współpracuje z punktami trasy, śladami i trasami w formacie Ozi
+• czyta punkty trasy, ślady i trasy zapisane w formacie KML i GPX
+• HSI i kompas
+• konfigurowalne jednostki
+• współrzędne UTM
+• wyszukiwanie lokalizacji za pomocą Google geocoder
+• udostępnianie lokalizacji i punktów trasy
+• poziomy i pionowy tryb wyświetlania
+• wsparcie dla tabletów
+
+<b>Funkcjonalność może zostać rozszerzona przez wtyczki:</b>
+• odbieranie współrzędnych za pomocą wiadomości tekstowych (sms)
+• udostępnianie informacji o lokalizacji w czasie rzeczywistym
+
+<b>Androzic jest aplikacją darmową i open-source.</b> Jest rozpowszechniany na licencji GNU GPL v3. Więcej informacji można znaleźć na http://androzic.com/
+
+<b>Uwaga!</b> Aktualna wersja Img2Ozf generuje mapy ozfx3 w nowym, zaszyfrowanym formacie, który nie otwiera się w Androzic. Proszę używać starszych wersji Img2Ozf, ostatnia znana działająca wersja to 3.03.

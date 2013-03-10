@@ -1,0 +1,27 @@
+<b>Programa de navegación que utiliza mapas OziExplorer</b> (ozf2, ozfx3). Ideal para el senderismo, geocaching, off-road, navegación a vela, paseos en bote y otras actividades al aire libre. Se supone que usted conoce OziExplorer o, al menos, dónde conseguir sus mapas. Usted puede crear sus propios mapas, aunque sea laborioso; consulte las FAQ para más detalles. Puede funcionar sin mapas como un simple navegador. Funciona con una serie de mapas en línea como Open Street Map (requerida conexión a Internet). 
+
+<b>Características de la aplicación:</b>
+• soporte para mapas ozf2, ozfx3
+• soporte para mapas en línea
+• puede funcionar sin mapas como un simple navegador
+• grabación de track en segundo plano (ahorro de energía)
+• navegación a waypoints y por medio de rutas
+• conversión de track a ruta
+• creación y manipulación de rutas
+• trabaja con waypoints, tracks y rutas en formato Ozi
+• carga waypoints, tracks y rutas en formato KML y GPX
+• HSI y brújula
+• unidades configurables
+• coordenadas UTM
+• búsqueda de ubicaciones mediante el geocoder de Google
+• compartir ubicación y waypoint
+• modos vertical y horizontal
+• soporte para Tablet
+
+<b>Se puede ampliar la funcionalidad con complementos:</b>
+• recibir las coordenadas a través de mensajes de texto (sms)
+• compartir ubicación en tiempo real
+
+<b>Androzic es gratuito y de código abierto.</b> Se distribuye bajo licencia GNU GPL v3. Puede encontrar más información en http://androzic.com/
+
+<b>PRECAUCIÓN!</b> La versión actual de Img2Ozf genera mapas ozfx3 en un nuevo formato cifrado que no funcionan en Androzic. Por favor use versiones más antiguas de Img2Ozf, la última versión compatible es la 3.03.

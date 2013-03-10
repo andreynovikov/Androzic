@@ -1,0 +1,27 @@
+<b>Navigointi ohjelma, joka käyttää OziExplorer karttoja</b> (ozf2, ozfx3). Sopii patikointiin, geokätköilyyn, off-roadingiin, purjehdukseen, veneilyyn ja muita harrasteisiin. Sinun odotetaan tuntevan OziExplorerin tai ainakin mistä saa sen karttoja. Voit myös luoda itse omia karttoja. Katso FAQ:sta lisätietoja. Toimii ilman karttaa yksinkertaisena Navigaattorina. Toimii useilla online-kartoilla, kuten Open Street Map (vaatii Internet-yhteyden). 
+
+<b>Ominaisuudet:</b>
+• tuki ozf2, ozfx3 kartoille
+• tuki online kartoille
+• toimii ilman karttaa yksinkertaisena Navigaattorina
+• jäljen tallennus taustalla (tehonsäästö)
+• navigointi reittipisteeseen ja reitin kautta
+• jäljen muunto reitiksi
+• reitin luonti ja muokkaus
+• Ozi formaatin mukaiset reittipisteet, jäljet ja reitit
+• lukee reittipisteitä, jälkiä ja reittejä KML ja GPX-muodossa
+• HSI ja kompassi
+• konfiguroitavat yksiköt
+• UTM koordinaatit
+• haku Google geocoderin avulla
+• sijainnin ja reittipisteen jakaminen
+• pysty-ja vaakanäyttö
+• tablet tuki
+
+<b>Toimintoja voidaan laajentaa lisäosilla:</b>
+• vastaanottaa tekstiviestillä (sms) koordinaatit
+• sijainti reaaliajassa
+
+<b>Androzic on ilmainen ja avoimen lähdekoodin.</b> Se on jaettu GNU GPL v3-lisenssillä. Lisätietoa löydät http://androzic.com/
+
+<b>Varoitus!</b> Nykyisen version Img2Ozf tuottaa ozfx3 karttoja salatussa muodossa, niitä ei voi avata Androzic. Käytä vanhempaa versiota Img2Ozf, Viimeisin toimiva versio on 3.03.

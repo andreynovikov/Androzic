@@ -1,0 +1,27 @@
+<b>Logiciel de navigation qui utilise des cartes au format OziExplorer</b> (ozf2, ozfx3). Parfait pour la grande randonnée, le géocaching, en dehors des routes, la voile, la navigation de plaisance et les autres activités de plein air. Vous devrez connaître OziExplorer ou au moins savoir où obtenir ses cartes. Vous pouvez également créer vos cartes vous-même, mais cela prend un certain temps, voir la FAQ pour plus de détails. Peut travailler sans carte comme un simple navigateur. Fonctionne avec certaines cartes en ligne telles que OpenStreetMap (connexion Internet requise). 
+
+<b>Fonctionnalités de l'application :</b>
+• prise en charge des cartes ozf2 et ozfx3
+• prise en charge des cartes en ligne
+• peut travailler sans carte comme un simple navigateur
+• enregistrement du tracé en arrière-plan (économise la puissance)
+• navigation vers un waypoint ou en suivant un itinéraire de navigation
+• conversion d'un tracé en itinéraire
+• création et manipulation d'itinéraires
+• fonctionne avec les waypoints, les tracés et les itinéraires au format Ozi
+• lit les waypoints, les tracés et les itinéraires aux formats KML et GPX
+• HSI (Indicateur de Situation Horizontale) et compas
+• unités configurables
+• coordonnées UTM
+• recherche des lieux via le géocodeur de Google
+• partage de position et de waypoint
+• modes portrait et paysage
+• fonctionne sur tablettes
+
+<b>Les fonctionnalité peuvent être étendues par des plugins :</b>
+• réception de coordonnées par l'intermédiaire de messages texte (SMS)
+• partage de position en temps réel
+
+<b>Androzic est libre et open-source.</b> Il est distribué sous license GNU GPL v3. Vous trouverez plus d'informations sur http://androzic.com/
+
+<b>Attention!</b> La version actuelle de Img2Ozf génère des cartes ozfx3 au nouveau format chiffré, que Androzic ne peut pas déchiffrer. Veuillez utiliser une ancienne version de Img2Ozf, la dernière bonne version connue est la 3.03.

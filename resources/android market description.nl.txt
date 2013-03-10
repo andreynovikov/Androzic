@@ -1,0 +1,27 @@
+<b>Navigatie-client die gebruik maakt van OziExplorer kaarten</b> (ozf2, ozfx3). Geweldig om te wandelen, geocaching, off-road, zeilen, varen en andere outdoor activiteiten. Enige kennis van OziExplorer is gewenst of in ieder geval waar de (staf)kaarten te krijgen zijn. Kaarten kunnen ook gemaakt worden door uzelf, maar met een aantal veroorloven, zie FAQ voor meer informatie. Kan zonder kaarten werken als een eenvoudige navigator. Werkt met een aantal online kaarten zoals Open Street kaart (internetverbinding vereist). 
+
+<b>Toepassing functies:</b>
+• ondersteuning voor ozf2, ozfx3 kaarten
+• ondersteuning voor online kaarten
+• werkt zonder kaarten als een eenvoudige navigator
+• neemt track op in de achtergrond (stroom uitval veilig)
+• navigatie naar waypoint en via-route
+• bijhouden voor het routeren van conversie
+• route genereren en wijzigen
+• werkt met waypoints, tracks en routes in Ozi formaat
+• laadt waypoints, tracks en routes in KML-en GPX-formaat
+• HSI en kompas
+• configureerbare eenheden
+• UTM coordinaat
+• zoeken naar locaties via Google geocoder
+• locatie en het delen van waypoint
+• portret en landschap modes
+• ondersteuning voor Tablet
+
+<b>Functionaliteit kan worden uitgebreid met plugins:</b>
+• Ontvangen coördinaten via tekstberichten (sms)
+• deel locatie in "real time"
+
+<b>Androzic is gratis en open-source.</b> Het is gedistribueerd onder de GNU GPL v3 licentie. Meer informatie vindt u op http://androzic.com/
+
+<b>Let op!</b> Huidige versie van Img2Ozf produceert ozfx3 kaarten in nieuwe gecodeerde indeling, ze niet te openen in Androzic. Gebruik oudere versies van Img2Ozf, laatst bekende goede versie is 3,03.
