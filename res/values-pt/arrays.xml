@@ -98,16 +98,20 @@
     <item>Cálculo do Nascer/Pôr do sol</item>
     <item>Código inicial da lista arrastar\largar</item>
     <item>Controlador multitoque</item>
-    <item>Ícones da interface</item>
-    <item>Localização República Checa</item>
-    <item>Localização francesa</item>
-    <item>Localização finlandesa</item>
-    <item>Localização Búlgara</item>
-    <item>Localização alemã</item>
-    <item>Localização turca</item>
-    <item>Localização italiana</item>
-    <item>Localização espanhola</item>
-    <item>Localização sueca</item>
+    <item>Showcase library</item>
+    <item>Interface icons</item>
+    <item>Waypoint icons</item>
+    <item>Czech localization</item>
+    <item>French localization</item>
+    <item>Finnish localization</item>
+    <item>Bulgarian localization</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
+    <item>Swedish localization</item>
+    <item>Ukrainian localization</item>
+    <item>Portuguese localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Aumentar o zoom</item>

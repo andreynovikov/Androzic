@@ -71,9 +71,9 @@
     <item>Préférence pour le quadrillage utilisateur</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Double press Back</item>
-    <item>Confirmation dialog</item>
-    <item>Nothing</item>
+    <item>Appuyez deux fois sur retour</item>
+    <item>Boîte de dialogue de confirmation</item>
+    <item>Rien</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Dépend du périphérique</item>
@@ -98,16 +98,20 @@
     <item>Calcul de lever et du coucher du soleil</item>
     <item>Code initial du glisser/déposer dans les listes</item>
     <item>Contrôleur multitouche</item>
+    <item>Vitrine de présentation</item>
     <item>Icônes de l\'interface</item>
+    <item>Icônes des waypoints</item>
     <item>Traduction tchèque</item>
     <item>Traduction française</item>
     <item>Traduction finlandaise</item>
     <item>Traduction Bulgare</item>
-    <item>Localisation allemande</item>
-    <item>Localisation turque</item>
+    <item>Traduction allemande</item>
+    <item>Traduction turque</item>
     <item>Traduction italienne</item>
     <item>Traduction espagnole</item>
     <item>Traduction suédoise</item>
+    <item>Traduction ukrainienne</item>
+    <item>Traduction portugaise</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zoom avant</item>

@@ -98,16 +98,20 @@
     <item>Východ/západ slunce - výpočty</item>
     <item>Táhni a pust prvotní kód</item>
     <item>Multitouch kód</item>
-    <item>Ikony rozhraní</item>
-    <item>Český překlad</item>
-    <item>Francouzský překlad</item>
-    <item>Finský překlad</item>
-    <item>Bulharský překlad</item>
-    <item>Německá lokalizace</item>
-    <item>Turecká lokalizace</item>
-    <item>Italský překlad</item>
-    <item>Španělský překlad</item>
-    <item>Švédská lokalizace</item>
+    <item>Showcase library</item>
+    <item>Interface icons</item>
+    <item>Waypoint icons</item>
+    <item>Czech localization</item>
+    <item>French localization</item>
+    <item>Finnish localization</item>
+    <item>Bulgarian localization</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
+    <item>Swedish localization</item>
+    <item>Ukrainian localization</item>
+    <item>Portuguese localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Přiblížit</item>

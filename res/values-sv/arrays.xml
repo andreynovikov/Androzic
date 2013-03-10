@@ -98,16 +98,20 @@
     <item>Soluppgång/solnedgångs beräkning</item>
     <item>Dra och släpp inledande kod listan</item>
     <item>Multitouch-styrenhet</item>
-    <item>Gränssnitt ikoner</item>
-    <item>Tjeckisk lokalisering</item>
-    <item>Fransk lokalisering</item>
-    <item>Finsk lokalisering</item>
-    <item>Bulgarisk lokalanpassning</item>
-    <item>Tysk lokalisering</item>
-    <item>Turkisk lokalisering</item>
-    <item>Italiensk lokalisering</item>
-    <item>Spansk lokalisering</item>
+    <item>Showcase library</item>
+    <item>Interface icons</item>
+    <item>Waypoint icons</item>
+    <item>Czech localization</item>
+    <item>French localization</item>
+    <item>Finnish localization</item>
+    <item>Bulgarian localization</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
     <item>Swedish localization</item>
+    <item>Ukrainian localization</item>
+    <item>Portuguese localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zooma in</item>

@@ -71,9 +71,9 @@
     <item>Preferuj siatkę użytkownika</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Double press Back</item>
-    <item>Confirmation dialog</item>
-    <item>Nothing</item>
+    <item>Dwukrotnie naciśnij przycisk wstecz</item>
+    <item>Okno dialogowe potwierdzenia</item>
+    <item>Nic</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Domyślna urządzenia</item>
@@ -98,16 +98,20 @@
     <item>Obliczenia wschodu/zachodu słońca</item>
     <item>Wstępny kod drag\'n\'drop</item>
     <item>Kontroler multitouch</item>
+    <item>Biblioteka podpowiedzi</item>
     <item>Ikony interfejsu</item>
+    <item>Ikony waypointów</item>
     <item>Tłumaczenie na czeski</item>
     <item>Tłumaczenie na francuski</item>
     <item>Tłumaczenie na fiński</item>
-    <item>Tłumaczenie na Bułgarski</item>
-    <item>Niemieckie tłumaczenie</item>
-    <item>Tureckie tłumaczenie</item>
+    <item>Tłumaczenie na bułgarski</item>
+    <item>Tłumaczenie na niemiecki</item>
+    <item>Tłumaczenie na turecki</item>
     <item>Tłumaczenie na włoski</item>
     <item>Tłumaczenie na hiszpański</item>
-    <item>Szwedzkie tłumaczenie</item>
+    <item>Tłumaczenie na szwedzki</item>
+    <item>Tłumaczenie na ukraiński</item>
+    <item>Tłumaczenie na portugalski</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Przybliż</item>

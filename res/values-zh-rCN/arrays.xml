@@ -98,16 +98,20 @@
     <item>日出/日落计算</item>
     <item>下拉列表初始代码</item>
     <item>多点触摸控制器</item>
-    <item>界面图标</item>
-    <item>捷克的本地化</item>
-    <item>法国的本地化</item>
-    <item>芬兰的本地化</item>
-    <item>保加利亚本地化</item>
-    <item>德国的本地化</item>
-    <item>土耳其的本地化</item>
-    <item>意大利的本地化</item>
-    <item>西班牙本地化</item>
+    <item>Showcase library</item>
+    <item>Interface icons</item>
+    <item>Waypoint icons</item>
+    <item>Czech localization</item>
+    <item>French localization</item>
+    <item>Finnish localization</item>
+    <item>Bulgarian localization</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
     <item>Swedish localization</item>
+    <item>Ukrainian localization</item>
+    <item>Portuguese localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>放大</item>

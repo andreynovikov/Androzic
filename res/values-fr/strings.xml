@@ -13,7 +13,7 @@
   <string name="waypointproject_name">Créer un nouveau</string>
   <string name="advanced_name">Propriétés avancées</string>
   <string name="manageroutes_name">Routes</string>
-  <string name="selectroute_name">Choisir une route</string>
+  <string name="selectroute_name">Choisir un itinéraire</string>
   <string name="loadroute_name">Charger fichier route</string>
   <string name="saveroute_name">Enregistrer fichier route</string>
   <string name="routeproperties_name">Editer la route</string>
@@ -44,13 +44,14 @@
   <string name="msg_initializingview">Initialisation des vues&#8230;</string>
   <string name="msg_cleaning">Nettoyage&#8230;</string>
   <string name="msg_paid">Version donateur</string>
+  <string name="msg_nothing_found">Rien n\'a été trouvé. Veuillez tenir compte que les données sont recherchées seulement si elles sont chargées dans Androzic, les nom des emplacements sont recherchés uniquement si une connexion Internet est disponible.</string>
   <string name="msg_empty_route_list">Aucun itinéraire disponible. Utilisez le menu pour créer un itinéraire ou le charger depuis un fichier.</string>
   <string name="msg_newdatafolder">À la demande générale Androzic fonctionne maintenant différemment avec les dossiers. Vous pouvez sélectionner librement n\'importe quel dossier pour stocker cartes et données. Le dossier de données est désormais unifié pour tous les types de données : waypoints, traces et routes. Si vous avez des fichiers de données existants, vous devez copier ces fichiers vers le dossier suivant : «%s» (il est créé automatiquement).</string>
   <string name="err_nosdcard">Carte SD indisponible</string>
   <string name="err_nofile">Fichier non trouvé</string>
   <string name="err_write">Impossible d\'écrire dans le fichier</string>
   <string name="err_currentlog">Impossible d\'écrire le log courant</string>
-  <string name="err_noconnection">Probl�me de connexion réseau</string>
+  <string name="err_noconnection">Probléme de connexion réseau</string>
   <string name="err_wrongformat">Mauvais format de fichier</string>
   <string name="err_read">Impossible de lire le fichier</string>
   <string name="err_shortroute">Une route doit conteniri au moins deux waypoints</string>
@@ -63,7 +64,7 @@
   <string name="sat_firstfix">GPS actif</string>
   <string name="following_enabled">﻿Suivi activé</string>
   <string name="following_disabled">Suivi désactivé</string>
-  <string name="backQuit">Press Back again to quit</string>
+  <string name="backQuit">Réappuyez sur retour pour quitter</string>
   <string name="quitQuestion">Voulez-vous quitter?</string>
   <string name="removeWaypointQuestion">Supprimer waypoint?</string>
   <string name="quit">Quitter</string>
@@ -235,7 +236,7 @@
   <string name="pref_maphideondrag_title">Masquage des objets</string>
   <string name="pref_maphideondrag_summary">Cocher pour masquer les objets de la cartes pendant un glisser/déplacer</string>
   <string name="pref_unfollowontap_title">Arrét du suivi</string>
-  <string name="pref_exit_title">Exit confirmation</string>
+  <string name="pref_exit_title">Confirmation de sortie</string>
   <string name="pref_charset_title">Encodage des fichiers texte</string>
   <string name="pref_charset_summary">Le jeu de caractères les fichiers texte de cartes et de données. Attention : vous ne pouvez pas mélanger des fichiers dans l\'encodage natif d\'Android (UTF-8) et dans l\'encodage du jeu de caractères national. Ne modifiez ce paramètre que si tous les fichiers se trouvent dans l\'encodage national. Sinon il faut manuellement réencoder les fichiers qui ne sont pas encodés en UTF-8. Prend effet uniquement après le redémarrage de l\'application.</string>
   <string name="pref_orientation_title">Orientation de l\'écran</string>
@@ -299,6 +300,8 @@
   <string name="pref_route_title">Itinéraires</string>
   <string name="pref_route_preload_title">Précharger les itinéraires</string>
   <string name="pref_route_preload_summary">Cochez cette option pour précharger les itinéraires à partir de fichiers au démarrage de l\'application</string>
+  <string name="pref_route_preload_hidden_title">Masquer les routes préchargées</string>
+  <string name="pref_route_preload_hidden_summary">Masquer les routes préchargées jusqu\'à ce qu\'elles soient lues, éditées ou utilisées pour la navigation</string>
   <string name="pref_route_linewidth_title">Largeur de ligne</string>
   <string name="pref_route_linewidth_summary">Largeur en pixel de la ligne de route</string>
   <string name="pref_route_pointwidth_title">Taille du marqueur</string>
@@ -321,7 +324,7 @@
   <string name="pref_donate_google_title">Faire un don via Google Play Store</string>
   <string name="pref_donate_paypal_title">Faire un don via PayPal</string>
   <string name="pref_faq_title">F.A.Q.</string>
-  <string name="pref_feature_title">Demander une fonctionnalité</string>
+  <string name="pref_feature_title">Commentaires et soutien</string>
   <string name="pref_googleplus_title">Rejoindre sur Google+</string>
   <string name="pref_facebook_title">\"J\'aime\" de Facebook</string>
   <string name="pref_twitter_title">Suivre sur Twitter</string>
@@ -338,8 +341,22 @@
   <string name="perm_location_description">Accéder à la position fournie par Androzic</string>
   <string name="perm_tracking_title">Récupérer trace</string>
   <string name="perm_tracking_description">Recevoir la trace fournie par Androzic</string>
+  <string name="perm_navigation_title">Initialiser la navigation</string>
+  <string name="perm_navigation_description">Démarrer/modifier la navigation fournie par Androzic</string>
   <string name="perm_read_preferences_title">Lire les préférences de Androzic</string>
   <string name="perm_read_map_data_title">Obtenir des données de la carte Androzic</string>
   <string name="perm_write_map_data_title">Ajouter des données à la carte Androzic</string>
+  <string name="showcase_panel_title">Actions rapides</string>
+  <string name="showcase_panel_description">Faire glisser ou déplacer le panneau coulissant pour accéder aux actions rapides. Les actions rapides peuvent être configurées dans les paramètres.</string>
+  <string name="showcase_follow_title">Suivi des emplacements</string>
+  <string name="showcase_follow_description">Presser l\'icône de suivi pour activer le mode de suivi. Dans ce mode la carte sera bloquée sur votre position actuelle. Alternativement vous pouvez touchez deux fois la carte pour activer et désactiver le mode de suivi.</string>
+  <string name="showcase_add_waypoint_title">Ajouter un waypoint</string>
+  <string name="showcase_add_waypoint_description">Appuyez sur l\'icône action pour ajouter rapidement un nouveau waypoint à la position actuelle du curseur.</string>
+  <string name="showcase_search_title">Recherche</string>
+  <string name="showcase_search_description">Vous pouvez taper des coordonnées spécifiques dans différents formats pour les trouver sur la carte, faire des recherche dans les noms de point de cheminement, les  itinéraire chargés et les descriptions, faire des recherches de lieux et d\'adresses via le service de géocodage de Google (Une connexion Internet est nécessaire pour que cela fonctionne).</string>
+  <string name="showcase_load_waypoints_title">Charger les waypoints</string>
+  <string name="showcase_load_waypoints_description">Touchez l\'icône action pour charger le fichier des waypoints. Les waypoints chargés sont regroupés en ensemble. Chaque fois que vous modifiez un ensemble, le fichier correspondant est automatiquement mis à jour.</string>
+  <string name="showcase_waypointset_actions_title">Action de définition d\'un waypoint</string>
+  <string name="showcase_waypointset_actions_description">Clic long sur un titre d\'ensemble de waypoints pour accéder aux actions supplémentaires.</string>
   <string name="app_eula">Ce programme est distribué sous les termes de la GNU General Public License telle que publiée par la Free Software Foundation, soit la version 3 de la License./n/n cette application est distribué dans l\'espoir qu\'il sera utile, mais sans aucune garantie ; sans même la garantie implicite de qualité marchande ou d\'adéquation à un but particulier. Voir la GNU General Public License pour plus de details./n/n tous les droits accordés en vertu de cette licence sont accordées pour la durée du droit d\'auteur sur le programme et sont irrévocables fourni que les conditions énoncées sont remplies.     Cette licence affirme explicitement votre permission illimitée pour exécuter le Program./n/n non modifiées vous n\'êtes pas tenu d\'accepter cette licence afin de recevoir ou d\'exécuter une copie du programme. Accessoire propagation d\'un travail couvert se produisant uniquement comme conséquence d\'à l\'aide de transmission to-peer pour recevoir une copie de la même manière ne nécessite pas l\'acceptation. Cependant, rien d\'autre que cette licence vous accorde la permission de propager ou de modifier tout couvert de travail. Ces actions violent le droit d\'auteur si vous n\'acceptez pas cette licence. Par conséquent, en modifiant ou en se propageant un travail couvert, vous signifiez votre acceptation de la présente licence ne so. / n/n pour une copie complète de la licence publique générale GNU voir http://www.gnu.org/licenses/gpl.html</string>
 </resources>

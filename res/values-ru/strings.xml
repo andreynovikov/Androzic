@@ -44,6 +44,7 @@
   <string name="msg_initializingview">Инициализация экрана&#8230;</string>
   <string name="msg_cleaning">Очистка&#8230;</string>
   <string name="msg_paid">Платная версия</string>
+  <string name="msg_nothing_found">Ничего не было найдено. Пожалуйста, примите во внимание что данные находятся только если они загружены в Androzic, местоположения находятся по имени только при наличии подключения к Интернету.</string>
   <string name="msg_empty_route_list">Нет доступных маршрутов. Используйте меню для создания маршрута или загрузки его из файла.</string>
   <string name="msg_newdatafolder">По моногочисленным просьбам Androzic теперь работает с папками по-другому. Вы можете свободно выбирать любую папку с картами и данными. Папка данных теперь едина для всех типов: точек, треков и маршрутов. Вы должны скопировать имеющиеся файлы данных самостоятельно в папку: ‘%s’.</string>
   <string name="err_nosdcard">SD-карта недоступна</string>
@@ -304,6 +305,8 @@
   <string name="pref_route_title">Маршруты</string>
   <string name="pref_route_preload_title">Загружать маршруты</string>
   <string name="pref_route_preload_summary">Отметьте, чтобы загружать маршруты из файлов при запуске приложения</string>
+  <string name="pref_route_preload_hidden_title">Скрывать предзагруженные маршруты</string>
+  <string name="pref_route_preload_hidden_summary">Скрыть предзагруженные маршруты до тех пор, пока они не будут просматриваться, редактироваться или по ним не будет вестись навигация</string>
   <string name="pref_route_linewidth_title">Ширина линии</string>
   <string name="pref_route_linewidth_summary">Пиксельная ширина линии маршрута</string>
   <string name="pref_route_pointwidth_title">Размер маркера</string>
@@ -326,7 +329,7 @@
   <string name="pref_donate_google_title">Пожертвовать через Google Play Store</string>
   <string name="pref_donate_paypal_title">Пожертвовать через PayPal</string>
   <string name="pref_faq_title">Часто задаваемые вопросы</string>
-  <string name="pref_feature_title">Запрос функции</string>
+  <string name="pref_feature_title">Обратная связь и поддержка</string>
   <string name="pref_googleplus_title">Присоединиться на Google+</string>
   <string name="pref_facebook_title">Рекомендовать на Facebook</string>
   <string name="pref_twitter_title">Программа в Twitter</string>
@@ -343,9 +346,23 @@
   <string name="perm_location_description">Доступ к местоположению, предоставляемому Androzic</string>
   <string name="perm_tracking_title">Получать трек</string>
   <string name="perm_tracking_description">Доступ к треку, предоставляемому Androzic</string>
+  <string name="perm_navigation_title">Инициация навигации</string>
+  <string name="perm_navigation_description">Начало/изменение навигации, предоставляемой Androzic</string>
   <string name="perm_read_preferences_title">Доступ к пользовательским настройкам Androzic</string>
   <string name="perm_read_map_data_title">Получать данные Androzic карты</string>
   <string name="perm_write_map_data_title">Добавлять данные на карту Androzic</string>
+  <string name="showcase_panel_title">Быстрые действия</string>
+  <string name="showcase_panel_description">Сдвиньте или нажмите ярлык сдвижной панели для доступа к быстрым действиям. Быстрые действия могут быть изменены в Настройках.</string>
+  <string name="showcase_follow_title">Слежение за местоположением</string>
+  <string name="showcase_follow_description">Нажмите иконку слежения, чтобы включить режим слежения. В этом режиме карта фиксируется на вашей текущей позиции. Вы так же можете дважды нажать на карту для включения и выключения режима слежения.</string>
+  <string name="showcase_add_waypoint_title">Добавление точки</string>
+  <string name="showcase_add_waypoint_description">Нажмите иконку действия, чтобы быстро добавить новую точку в текущей позиции курсора.</string>
+  <string name="showcase_search_title">Поиск</string>
+  <string name="showcase_search_description">Вы можете ввести координаты в различных форматах, чтобы найти их на карте, искать в именах и описаниях загруженных путевых точек или маршрутов, искать места и адреса с помощью службы гео-кодирования Google (в этом случае необходимо подключение к интернету).</string>
+  <string name="showcase_load_waypoints_title">Загрузка точек</string>
+  <string name="showcase_load_waypoints_description">Нажмите иконку для загрузки файла точек. Загруженные путевые точки группируются в наборы. Каждый раз, когда вы изменяете набор, соответствующий файл обновляется автоматически.</string>
+  <string name="showcase_waypointset_actions_title">Действия с наборами точек</string>
+  <string name="showcase_waypointset_actions_description">Нажмите и подержите на названии набора точек для доступа к дополнительным действям.</string>
   <string name="app_eula">This program is distributed under the terms of
 the GNU General Public License as published by the Free Software Foundation,
 either version 3 of the License./n/n

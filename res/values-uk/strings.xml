@@ -46,6 +46,7 @@
   <string name="msg_initializingview">Ініціалізація екрану...</string>
   <string name="msg_cleaning">Очистка...</string>
   <string name="msg_paid">Платна версія</string>
+  <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Не знайдено доступних маршрутів. Скористайтеся меню для створення або завантаження маршруту з файлу.</string>
   <string name="msg_newdatafolder">На численні прохання Androzic відтепер по-іншому працює з теками мап. Ви можете вільно обирати будь-яку теку для мап та даних. Тека відтепер зберігає всі типи даних: точки, треки та маршрути. Вам необхідно самостійно скопіювати файли з даними до новоствореної теки: ‘%s’.</string>
   <string name="err_nosdcard">SD-картка недоступна</string>
@@ -65,7 +66,7 @@
   <string name="sat_firstfix">GPS активний</string>
   <string name="following_enabled">Слідкування увімкнено</string>
   <string name="following_disabled">Слідкування вимкнено</string>
-  <string name="backQuit">Press Back again to quit</string>
+  <string name="backQuit">Натисніть \"Назад\" ще раз для виходу</string>
   <string name="quitQuestion">Бажаєте вийти?</string>
   <string name="removeWaypointQuestion">Видалити точку?</string>
   <string name="quit">Вийти</string>
@@ -237,7 +238,7 @@
   <string name="pref_maphideondrag_title">Приховувати об’єкти при перетягуванні</string>
   <string name="pref_maphideondrag_summary">Встановіть для приховування об’єктів при перетягуванні мапи</string>
   <string name="pref_unfollowontap_title">Припинити слідкування при перетягуванні</string>
-  <string name="pref_exit_title">Exit confirmation</string>
+  <string name="pref_exit_title">Підтвердження виходу</string>
   <string name="pref_charset_title">Кодування текстових файлів</string>
   <string name="pref_charset_summary">Кодування для мапи та текстових файлів даних. Обережно: не слід змішувати файли в кодуванні Android (UTF-8) та національних кодуваннях. Змінювати цей параметр варто лише якщо всі Ваші файли збережені у національному кодуванні. Інакше - перекодуйте всі файли в UTF-8 самостійно. Спрацює лише після перезапуску програми.</string>
   <string name="pref_orientation_title">Положення екрану</string>
@@ -301,6 +302,8 @@
   <string name="pref_route_title">Маршрути</string>
   <string name="pref_route_preload_title">Завантажувати маршрути</string>
   <string name="pref_route_preload_summary">Встановіть для завантаження маршрутів при старті програми</string>
+  <string name="pref_route_preload_hidden_title">Hide preloaded routes</string>
+  <string name="pref_route_preload_hidden_summary">Hide preloaded routes until they are viewed, edited or navigated</string>
   <string name="pref_route_linewidth_title">Ширина лінії</string>
   <string name="pref_route_linewidth_summary">Ширина лінії маршруту в пікселях</string>
   <string name="pref_route_pointwidth_title">Розмір маркера</string>
@@ -323,7 +326,7 @@
   <string name="pref_donate_google_title">Пожертва через Google Play Store</string>
   <string name="pref_donate_paypal_title">Пожертва через PayPal</string>
   <string name="pref_faq_title">F.A.Q.</string>
-  <string name="pref_feature_title">Запит функції</string>
+  <string name="pref_feature_title">Підтримка та зворотній зв’язок</string>
   <string name="pref_googleplus_title">Приєднатися на Google+</string>
   <string name="pref_facebook_title">Вподобати на Facebook</string>
   <string name="pref_twitter_title">Слідкувати на Twitter</string>
@@ -340,9 +343,23 @@
   <string name="perm_location_description">Доступ до розташування від Androzic</string>
   <string name="perm_tracking_title">Отримати трек</string>
   <string name="perm_tracking_description">Доступ до треку від Androzic</string>
+  <string name="perm_navigation_title">Ініаціація навігації</string>
+  <string name="perm_navigation_description">Почати/змінити навігацію від Androzic</string>
   <string name="perm_read_preferences_title">Доступ до користувацьких налаштувань Androzic</string>
   <string name="perm_read_map_data_title">Отримувати дані мапи Androzic</string>
   <string name="perm_write_map_data_title">Додавати дані до мапи Androzic</string>
+  <string name="showcase_panel_title">Швидкі дії</string>
+  <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
+  <string name="showcase_follow_title">Слідкувати за розташуванням</string>
+  <string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
+  <string name="showcase_add_waypoint_title">Додати точку</string>
+  <string name="showcase_add_waypoint_description">Натисніть значок дії, щоб швидко додати нову точку в поточному розташуванні курсора.</string>
+  <string name="showcase_search_title">Пошук</string>
+  <string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
+  <string name="showcase_load_waypoints_title">Завантаження точок</string>
+  <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
+  <string name="showcase_waypointset_actions_title">Дії з наборами точок</string>
+  <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

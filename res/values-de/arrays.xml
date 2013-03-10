@@ -98,16 +98,20 @@
     <item>Berechnung Sonnenaufgang/Sonnenuntergang</item>
     <item>Ursprungswert für die Drag\'n\'drop Liste</item>
     <item>Multitouch-Controller</item>
-    <item>Interface Icons</item>
-    <item>Tschechische Lokalisation</item>
-    <item>Französische Lokalisation</item>
-    <item>Finnische Lokalisation</item>
-    <item>Bulgarische Lokalisation</item>
-    <item>Deutsche Lokalisation</item>
-    <item>Türkische Lokalisation</item>
-    <item>Italienische Lokalisierung</item>
-    <item>Spanische Lokalisierung</item>
+    <item>Showcase library</item>
+    <item>Interface icons</item>
+    <item>Waypoint icons</item>
+    <item>Czech localization</item>
+    <item>French localization</item>
+    <item>Finnish localization</item>
+    <item>Bulgarian localization</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
     <item>Swedish localization</item>
+    <item>Ukrainian localization</item>
+    <item>Portuguese localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Vergrößern</item>

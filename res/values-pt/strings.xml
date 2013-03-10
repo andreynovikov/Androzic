@@ -44,6 +44,7 @@
   <string name="msg_initializingview">A iniciar vista...</string>
   <string name="msg_cleaning">A limpar...</string>
   <string name="msg_paid">Versão de doador</string>
+  <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Há rotas disponíveis. Use o menu para criar uma rota ou carregá-la de um ficheiro.</string>
   <string name="msg_newdatafolder">Por pedido popular o Androzic agora funciona, de forma diferente, com pastas . Pode selecionar livremente qualquer pasta de mapas e dados. A pasta de dados agora é unificada para todos os tipos de dados: waypoints, trilhas e rotas. Tem que copiar os seus ficheiros de dados existentes manualmente para a seguinte pasta criada automaticamente: \'%s\'.</string>
   <string name="err_nosdcard">O cartão SD não está disponível</string>
@@ -299,6 +300,8 @@
   <string name="pref_route_title">Rotas</string>
   <string name="pref_route_preload_title">Pré carregar rotas</string>
   <string name="pref_route_preload_summary">Marque para pré-carregar rotas a partir de ficheiros no arranque do programa</string>
+  <string name="pref_route_preload_hidden_title">Hide preloaded routes</string>
+  <string name="pref_route_preload_hidden_summary">Hide preloaded routes until they are viewed, edited or navigated</string>
   <string name="pref_route_linewidth_title">Largura da linha</string>
   <string name="pref_route_linewidth_summary">Pixeis de largura da linha de rota</string>
   <string name="pref_route_pointwidth_title">Tamanho do marcador</string>
@@ -321,7 +324,7 @@
   <string name="pref_donate_google_title">Doar via Google Play Store</string>
   <string name="pref_donate_paypal_title">Doar via PayPal</string>
   <string name="pref_faq_title">PERGUNTAS FREQUENTES</string>
-  <string name="pref_feature_title">Solicitar uma funcionalidade</string>
+  <string name="pref_feature_title">Feedback and support</string>
   <string name="pref_googleplus_title">Entrar no Google+</string>
   <string name="pref_facebook_title">Gosto no Facebook</string>
   <string name="pref_twitter_title">Seguir no Twitter</string>
@@ -338,8 +341,22 @@
   <string name="perm_location_description">Aceder à localização fornecida pelo Androzic</string>
   <string name="perm_tracking_title">Obter a pista</string>
   <string name="perm_tracking_description">Receber a pista fornecida pelo Androzic</string>
+  <string name="perm_navigation_title">Initiate navigation</string>
+  <string name="perm_navigation_description">Initiate/modify navigation provided by Androzic</string>
   <string name="perm_read_preferences_title">Ler as preferências de utilizador do Androzic</string>
   <string name="perm_read_map_data_title">Obter dados do mapa do Androzic</string>
   <string name="perm_write_map_data_title">Acrescentar dados no mapa Androzic</string>
+  <string name="showcase_panel_title">Quick actions</string>
+  <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
+  <string name="showcase_follow_title">Location following</string>
+  <string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
+  <string name="showcase_add_waypoint_title">Adicionar ponto de percurso</string>
+  <string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
+  <string name="showcase_search_title">Pesquisar</string>
+  <string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
+  <string name="showcase_load_waypoints_title">Load waypoints</string>
+  <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
+  <string name="showcase_waypointset_actions_title">Waypoint set actions</string>
+  <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
   <string name="app_eula">Este programa é distribuído sob os termos da GNU General Public License conforme publicada pela Free Software Foundation, tanto a versão 3 do License./n/n esta aplicação é distribuído na esperança que será útil, mas sem qualquer garantia; sem mesmo a garantia implícita de comerciabilidade ou adequação para uma finalidade específica. Veja a GNU General Public License para mais details./n/n todos os direitos concedidos sob esta licença são concedidos para o termo de direitos autorais sobre o programa e são irrevogáveis desde que as condições declarado.     Esta licença afirma explicitamente sua permissão ilimitada para executar o Program./n/n sem modificações você não é obrigado a aceitar esta licença para receber ou executar uma cópia do programa. Propagação de auxiliar de uma obra coberta que ocorre exclusivamente em consequência usando transmissão peer-to-peer para receber uma cópia da mesma forma não requer aceitação. No entanto, nada que não seja esta licença concede-lhe permissão para propagar ou modificar qualquer objecto de trabalho. Essas ações infringem o copyright se você não aceitar esta licença. Portanto, ao modificar ou propagar uma obra coberta, você indica sua aceitação desta licença para fazer assim. / n/n para a cópia completa do http://www.gnu.org/licenses/gpl.html de Veja a GNU General Public License</string>
 </resources>

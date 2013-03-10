@@ -58,7 +58,7 @@
     <item>Astronomical</item>
   </string-array>
   <string-array name="angle_units">
-    <item>true</item>
+    <item>valódi</item>
     <item>magnetic</item>
   </string-array>
   <string-array name="interval_names">
@@ -86,7 +86,7 @@
     <item>Time (minutes)</item>
   </string-array>
   <string-array name="showdistance_names">
-    <item>No</item>
+    <item>Nem</item>
     <item>Manually</item>
     <item>Always</item>
   </string-array>
@@ -98,7 +98,9 @@
     <item>Sunrise/sunset calculation</item>
     <item>Drag\'n\'drop list initial code</item>
     <item>Multitouch controller</item>
+    <item>Showcase library</item>
     <item>Interface icons</item>
+    <item>Waypoint icons</item>
     <item>Czech localization</item>
     <item>French localization</item>
     <item>Finnish localization</item>
@@ -108,6 +110,8 @@
     <item>Italian localization</item>
     <item>Spanish localization</item>
     <item>Swedish localization</item>
+    <item>Ukrainian localization</item>
+    <item>Portuguese localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zoom in</item>

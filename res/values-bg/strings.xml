@@ -44,6 +44,7 @@
   <string name="msg_initializingview">Инициализиране изгледа&#8230;</string>
   <string name="msg_cleaning">Почистване&#8230;</string>
   <string name="msg_paid">Версия за дарители</string>
+  <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Няма налични маршрути. Използвайте менюто за да създадете или заредите от файл.</string>
   <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: ‘%s’.</string>
   <string name="err_nosdcard">Недостъпна SD-карта</string>
@@ -303,6 +304,8 @@
   <string name="pref_route_title">Маршрути</string>
   <string name="pref_route_preload_title">Preload routes</string>
   <string name="pref_route_preload_summary">Mark to preload routes from files on application start</string>
+  <string name="pref_route_preload_hidden_title">Hide preloaded routes</string>
+  <string name="pref_route_preload_hidden_summary">Hide preloaded routes until they are viewed, edited or navigated</string>
   <string name="pref_route_linewidth_title">Ширина на линия</string>
   <string name="pref_route_linewidth_summary">Ширина линията в пиксели показваща маршрута</string>
   <string name="pref_route_pointwidth_title">Размер на маркера</string>
@@ -325,7 +328,7 @@
   <string name="pref_donate_google_title">Donate via Google Play Store</string>
   <string name="pref_donate_paypal_title">Donate via PayPal</string>
   <string name="pref_faq_title">F.A.Q.</string>
-  <string name="pref_feature_title">Заявка за функция</string>
+  <string name="pref_feature_title">Feedback and support</string>
   <string name="pref_googleplus_title">Join on Google+</string>
   <string name="pref_facebook_title">Харесай във Facebook</string>
   <string name="pref_twitter_title">Androzic в Twitter</string>
@@ -342,9 +345,23 @@
   <string name="perm_location_description">Access location provided by Androzic</string>
   <string name="perm_tracking_title">Get track</string>
   <string name="perm_tracking_description">Receive track provided by Androzic</string>
+  <string name="perm_navigation_title">Initiate navigation</string>
+  <string name="perm_navigation_description">Initiate/modify navigation provided by Androzic</string>
   <string name="perm_read_preferences_title">Read Androzic user preferences</string>
   <string name="perm_read_map_data_title">Get data from Androzic map</string>
   <string name="perm_write_map_data_title">Add data to Androzic map</string>
+  <string name="showcase_panel_title">Quick actions</string>
+  <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
+  <string name="showcase_follow_title">Location following</string>
+  <string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
+  <string name="showcase_add_waypoint_title">Добавяне на точка</string>
+  <string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
+  <string name="showcase_search_title">Търсене</string>
+  <string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
+  <string name="showcase_load_waypoints_title">Load waypoints</string>
+  <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
+  <string name="showcase_waypointset_actions_title">Waypoint set actions</string>
+  <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

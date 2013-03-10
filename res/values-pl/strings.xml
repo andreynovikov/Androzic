@@ -44,6 +44,7 @@
   <string name="msg_initializingview">Inicjowanie widoku...</string>
   <string name="msg_cleaning">Czyszczenie...</string>
   <string name="msg_paid">Wersja dotowana</string>
+  <string name="msg_nothing_found">Nic nie znaleziono. Proszę wziąć pod uwagę że dane są przeszukiwane tylko, jeśli zostały załadowane w Androzic, nazwane lokalizacje są przeszukiwane tylko, jeśli dostępne jest połączenie internetowe.</string>
   <string name="msg_empty_route_list">Brak dostępnych tras. Użyj menu aby stworzyć trasę lub załadować ją z pliku.</string>
   <string name="msg_newdatafolder">Ze względu na częste prośby Androzic pracuje teraz inaczej z folderami. Możesz wybrać dowolny folder na mapy i dane. Folder danych jest teraz ujednolicony dla wszystkich typów danych: punktów trasy, śladów i tras. Musisz ręcznie skopiować istniejące pliki danych do następującego folderu, utworzonego automatycznie: \'%s\'.</string>
   <string name="err_nosdcard">Karta SD niedostępna</string>
@@ -63,7 +64,7 @@
   <string name="sat_firstfix">GPS aktywny</string>
   <string name="following_enabled">Podążanie włączone</string>
   <string name="following_disabled">Podążanie wyłączone</string>
-  <string name="backQuit">Press Back again to quit</string>
+  <string name="backQuit">Naciśnij wstecz ponownie aby wyjść</string>
   <string name="quitQuestion">Czy chcesz zakończyć?</string>
   <string name="removeWaypointQuestion">Usunąć punkt trasy?</string>
   <string name="quit">Zamknij</string>
@@ -105,7 +106,7 @@
   <string name="sunrise">Wschód słońca</string>
   <string name="sunset">Zachód słońca</string>
   <string name="sensitivity">Czułość</string>
-  <string name="coarse">coarse</string>
+  <string name="coarse">szeroka</string>
   <string name="fine">dobry</string>
   <string name="algorithm">Algorytm</string>
   <string name="alg_a">Cruise</string>
@@ -239,7 +240,7 @@
   <string name="pref_maphideondrag_title">Ukrywaj obiekty podczas przeciągania</string>
   <string name="pref_maphideondrag_summary">Zaznacz aby ukrywać obiekty mapy podczas przeciągania</string>
   <string name="pref_unfollowontap_title">Zatrzymaj podążanie podczas przeciągania</string>
-  <string name="pref_exit_title">Exit confirmation</string>
+  <string name="pref_exit_title">Potwierdzenie wyjścia</string>
   <string name="pref_charset_title">Kodowanie plików tekstowych</string>
   <string name="pref_charset_summary">Zestaw znaków dla map i plików tekstowych danych. Uwaga: nie można mieszać plików w kodowaniu Androida (UTF-8) z innymi kodowaniami. Zmień to ustawienie tylko jeśli wszystkie twoje pliki są w narodowym kodowaniu. W przeciwnym wypadku ręcznie zmień kodowanie plików na UTF-8. Działa po restarcie.</string>
   <string name="pref_orientation_title">Układ ekranu</string>
@@ -303,6 +304,8 @@
   <string name="pref_route_title">Trasy</string>
   <string name="pref_route_preload_title">Ładuj trasy przy starcie</string>
   <string name="pref_route_preload_summary">Zaznacz aby załadować trasy z plików podczas startu aplikacji</string>
+  <string name="pref_route_preload_hidden_title">Ukryj wstępnie załadowane trasy</string>
+  <string name="pref_route_preload_hidden_summary">Ukryj wstępnie załadowane trasy do czasu ich przeglądania, edytowania lub nawigowania</string>
   <string name="pref_route_linewidth_title">Grubość linii</string>
   <string name="pref_route_linewidth_summary">Szerokość linii trasy</string>
   <string name="pref_route_pointwidth_title">Rozmiar znacznika</string>
@@ -325,7 +328,7 @@
   <string name="pref_donate_google_title">Dotuj przez sklep Google Play</string>
   <string name="pref_donate_paypal_title">Dotuj przez PayPal</string>
   <string name="pref_faq_title">Często zadawane pytania</string>
-  <string name="pref_feature_title">Prośba o dodanie funkcji</string>
+  <string name="pref_feature_title">Informacje i wsparcie</string>
   <string name="pref_googleplus_title">Dołącz do Google+</string>
   <string name="pref_facebook_title">Polub na Facebooku</string>
   <string name="pref_twitter_title">Śledź na Twitter</string>
@@ -342,9 +345,23 @@
   <string name="perm_location_description">Uzyskaj lokalizację podawaną przez Androzica</string>
   <string name="perm_tracking_title">Pokaż trasę</string>
   <string name="perm_tracking_description">Uzyskaj trasę podaną przez Androzica</string>
+  <string name="perm_navigation_title">Rozpocznij nawigację</string>
+  <string name="perm_navigation_description">Rozpocznij/modyfikuj nawigację z Androzic</string>
   <string name="perm_read_preferences_title">Odczytaj ustawienia użytkownika Androzica</string>
   <string name="perm_read_map_data_title">Pobierz dane z mapy Androzica</string>
   <string name="perm_write_map_data_title">Dodaj dane do mapy Androzica</string>
+  <string name="showcase_panel_title">Szybkie działania</string>
+  <string name="showcase_panel_description">Przesuń lub pociągnij uchwyt panelu aby uzyskać dostęp do szybkich akcji. Szybkie akcje mogą być skonfigurowane w ustawieniach.</string>
+  <string name="showcase_follow_title">Śledzenie lokalizacji</string>
+  <string name="showcase_follow_description">Naciśnij ikonę śledzenia aby włączyć tryb śledzenia. W tym trybie mapa będzie ustalona na twojej aktualnej pozycji. Tryb śledzenia można również włączać i wyłączać klikając dwukrotnie na mapę.</string>
+  <string name="showcase_add_waypoint_title">Dodaj punkt trasy</string>
+  <string name="showcase_add_waypoint_description">Dotknij ikony akcji, aby szybko dodać nowy punkt orientacyjny w bieżącej pozycji kursora.</string>
+  <string name="showcase_search_title">Wyszukiwanie</string>
+  <string name="showcase_search_description">Możesz wpisać współrzędne określone w różnych formatach, znaleźć je na mapie, przeszukiwać  nazwy i opisy załadowanych punktów orientacyjnych lub tras, szukać miejsc i adresów za pośrednictwem usługi geokodowania Google (połączenie internetowe jest wymagane do działania).</string>
+  <string name="showcase_load_waypoints_title">Wczytaj waypointy</string>
+  <string name="showcase_load_waypoints_description">Dotknij ikony akcji, aby załadować plik waypointów. Załadowane punkty są zgrupowane w zestaw. Po każdej zmianie zestawu, odpowiedni plik jest automatycznie aktualizowany.</string>
+  <string name="showcase_waypointset_actions_title">Akcje zbioru waypointów</string>
+  <string name="showcase_waypointset_actions_description">Długo przytrzymaj nazwę zestawu waypointów aby uzyskać dostęp do dodatkowych działań.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

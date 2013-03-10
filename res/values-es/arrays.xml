@@ -71,9 +71,9 @@
     <item>Prefiero la cuadricula de usuario</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Double press Back</item>
-    <item>Confirmation dialog</item>
-    <item>Nothing</item>
+    <item>Pulse dos veces para Atrás</item>
+    <item>Diálogo de confirmación</item>
+    <item>Nada</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Por defecto del programa</item>
@@ -98,16 +98,20 @@
     <item>Calculo del Alba/puesta</item>
     <item>Código inicial del listado de arrastrar y soltar</item>
     <item>Controlador multitouch</item>
+    <item>Muestrario</item>
     <item>Iconos de interfaz</item>
+    <item>Iconos de Waypoints</item>
     <item>Traducción al checo</item>
     <item>Traducción al francés</item>
     <item>Traducción al finés</item>
     <item>Traducción al búlgaro</item>
     <item>Traducción al alemán</item>
     <item>Traducción al turco</item>
-    <item>Traducción al Italiano</item>
-    <item>Traducción al Español</item>
+    <item>Traducción al italiano</item>
+    <item>Traducción al español</item>
     <item>Traducción al sueco</item>
+    <item>Traducción al ucraniano</item>
+    <item>Traducción al portugués</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Acercar</item>

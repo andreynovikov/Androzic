@@ -44,6 +44,7 @@
   <string name="msg_initializingview">Nézet inicializálása…</string>
   <string name="msg_cleaning">Takarítás…</string>
   <string name="msg_paid">Támogatott változat</string>
+  <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Nincsenek rendelkezésre álló útvonalak. Menü segítségével létrehozhat útvonal vagy betölthet fájlból.</string>
   <string name="msg_newdatafolder">Közkívánatra Androzic már más mappákkal is működik. Szabadon választhatsz mappát a térképeknek és adatoknak. Adatmappa most egységes az összes adattípushoz: útpontok, nyomvonalak és útvonalak. Be kell másolni a meglévő adatfájlokat manuálisan a következő automatikusan előállított mappába: ‘%s’.</string>
   <string name="err_nosdcard">SD kártya nem elérhető</string>
@@ -63,7 +64,7 @@
   <string name="sat_firstfix">GPS aktív</string>
   <string name="following_enabled">Követés engedélyezve</string>
   <string name="following_disabled">Követés letiltva</string>
-  <string name="backQuit">Press Back again to quit</string>
+  <string name="backQuit">Kilépéshez nyomd meg újra a vissza gombot</string>
   <string name="quitQuestion">Ki akarsz lépni?</string>
   <string name="removeWaypointQuestion">Törlöd az útpontot?</string>
   <string name="quit">Kilépés</string>
@@ -235,7 +236,7 @@
   <string name="pref_maphideondrag_title">Tárgyak elrejtése mozgatáskor</string>
   <string name="pref_maphideondrag_summary">Térkép objektumok elrejtése húzás közben</string>
   <string name="pref_unfollowontap_title">Állítsa le a követést mozgatáskor</string>
-  <string name="pref_exit_title">Exit confirmation</string>
+  <string name="pref_exit_title">Kilépés megerősítése</string>
   <string name="pref_charset_title">Szöveg fájl kódolása</string>
   <string name="pref_charset_summary">The character set for map and data text files. Caution: you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
   <string name="pref_orientation_title">A képernyő tájolása</string>
@@ -299,6 +300,8 @@
   <string name="pref_route_title">Útvonalak</string>
   <string name="pref_route_preload_title">Előre betöltött útvonalak</string>
   <string name="pref_route_preload_summary">Mark to preload routes from files on application start</string>
+  <string name="pref_route_preload_hidden_title">Hide preloaded routes</string>
+  <string name="pref_route_preload_hidden_summary">Hide preloaded routes until they are viewed, edited or navigated</string>
   <string name="pref_route_linewidth_title">Vonalszélesség</string>
   <string name="pref_route_linewidth_summary">Útvonal pixel szélessége</string>
   <string name="pref_route_pointwidth_title">Jel mérete</string>
@@ -321,7 +324,7 @@
   <string name="pref_donate_google_title">Támogatás a Google Play Store-on keresztül</string>
   <string name="pref_donate_paypal_title">Támogatás a PayPalon keresztül</string>
   <string name="pref_faq_title">GY.I.K.</string>
-  <string name="pref_feature_title">Funkció kérése</string>
+  <string name="pref_feature_title">Visszajelzés és támogatás</string>
   <string name="pref_googleplus_title">Csatlakozz a Google+ -hoz</string>
   <string name="pref_facebook_title">Lájkolj a Facebookon</string>
   <string name="pref_twitter_title">Kövess a Twitteren</string>
@@ -338,9 +341,23 @@
   <string name="perm_location_description">Access location provided by Androzic</string>
   <string name="perm_tracking_title">Nyomvonal követése</string>
   <string name="perm_tracking_description">Receive track provided by Androzic</string>
+  <string name="perm_navigation_title">Initiate navigation</string>
+  <string name="perm_navigation_description">Initiate/modify navigation provided by Androzic</string>
   <string name="perm_read_preferences_title">Olvasd el az Androzic felhasználói beállításokat</string>
   <string name="perm_read_map_data_title">Adatok kérése az Androzic térképről</string>
   <string name="perm_write_map_data_title">Adatok hozzáadása az Androzic térképhez</string>
+  <string name="showcase_panel_title">Quick actions</string>
+  <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
+  <string name="showcase_follow_title">Helyzet követése</string>
+  <string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
+  <string name="showcase_add_waypoint_title">Útpont hozzáadása</string>
+  <string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
+  <string name="showcase_search_title">Keresés</string>
+  <string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
+  <string name="showcase_load_waypoints_title">Útpontok betöltése</string>
+  <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
+  <string name="showcase_waypointset_actions_title">Waypoint set actions</string>
+  <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

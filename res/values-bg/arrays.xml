@@ -98,16 +98,20 @@
     <item>Изчисление на изгрев/залез</item>
     <item>Начален код \"влачи и пусни\"</item>
     <item>Мултитъч контролер</item>
-    <item>Икони</item>
-    <item>Чешка локализация</item>
-    <item>Френска локализация</item>
-    <item>Финландска локализация</item>
-    <item>Българска локализация</item>
-    <item>Немска локализация</item>
-    <item>Турска локализация</item>
-    <item>Италианска локализация</item>
-    <item>Испанска локализация</item>
+    <item>Showcase library</item>
+    <item>Interface icons</item>
+    <item>Waypoint icons</item>
+    <item>Czech localization</item>
+    <item>French localization</item>
+    <item>Finnish localization</item>
+    <item>Bulgarian localization</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
     <item>Swedish localization</item>
+    <item>Ukrainian localization</item>
+    <item>Portuguese localization</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Приближи</item>

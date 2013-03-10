@@ -44,6 +44,7 @@
   <string name="msg_initializingview">Initializing view&#8230;</string>
   <string name="msg_cleaning">Cleaning&#8230;</string>
   <string name="msg_paid">Versione per donatori</string>
+  <string name="msg_nothing_found">Nulla è stato trovato. Si fa notare che le ricerche avranno buon esito solo sui dati presenti in Androzic, le località verranno individuate solo se è disponibile la connessione Internet.</string>
   <string name="msg_empty_route_list">Nessun percorso disponibile. Utilizzare il menu per creare il percorso o caricarlo da file.</string>
   <string name="msg_newdatafolder">Su richiesta generale Androzic ora funziona con le cartelle in modo diverso. È possibile selezionare liberamente qualsiasi cartella per le mappe e dati. La cartella dati ora è unificata per tutti i tipi di dati: waypoint, tracce e rotte. È necessario copiare manualmente i file dati esistenti nella seguente cartella creata in maniera automatica: ‘%s’.</string>
   <string name="err_nosdcard">Scheda SD non disponibile</string>
@@ -63,7 +64,7 @@
   <string name="sat_firstfix">GPS attivo</string>
   <string name="following_enabled">Inseguimento abilitato</string>
   <string name="following_disabled">Inseguimento disabilitato</string>
-  <string name="backQuit">Press Back again to quit</string>
+  <string name="backQuit">Premere indietro nuovamente per uscire</string>
   <string name="quitQuestion">Vuoi uscire?</string>
   <string name="removeWaypointQuestion">Rimuovere i waypoint?</string>
   <string name="quit">Esci</string>
@@ -235,7 +236,7 @@
   <string name="pref_maphideondrag_title">Nascondi oggetti in trascinamento</string>
   <string name="pref_maphideondrag_summary">Seleziona per nascondere gli oggetti della mappa durante il trascinamento</string>
   <string name="pref_unfollowontap_title">Non seguire più il trascinamento</string>
-  <string name="pref_exit_title">Exit confirmation</string>
+  <string name="pref_exit_title">Conferma uscita</string>
   <string name="pref_charset_title">Codifica dei file di testo</string>
   <string name="pref_charset_summary">Set di caratteri per file mappe e di testo. Attenzione: non è possibile combinare file in Android nativo (UTF-8) e set di caratteri nazionali, cambiare questa impostazione solo se tutti i file sono in codifica nazionale, altrimenti ricodificare manualmente i file che non sono in codifica UTF-8. E\' attivo solo dopo il riavvio dell\'applicazione.</string>
   <string name="pref_orientation_title">Orientamento dello schermo</string>
@@ -299,6 +300,8 @@
   <string name="pref_route_title">Itinerari</string>
   <string name="pref_route_preload_title">Precarica i percorsi</string>
   <string name="pref_route_preload_summary">Seleziona per precaricare i percorsi dai file all\'avvio dell\'applicazione</string>
+  <string name="pref_route_preload_hidden_title">Hide preloaded routes</string>
+  <string name="pref_route_preload_hidden_summary">Hide preloaded routes until they are viewed, edited or navigated</string>
   <string name="pref_route_linewidth_title">Larghezza della linea</string>
   <string name="pref_route_linewidth_summary">Larghezza in pixel della linea di rotta</string>
   <string name="pref_route_pointwidth_title">Dimensioni dell\'indicatore</string>
@@ -321,7 +324,7 @@
   <string name="pref_donate_google_title">Dona tramite Google Play Store</string>
   <string name="pref_donate_paypal_title">Dona tramite PayPal</string>
   <string name="pref_faq_title">F.A.Q.</string>
-  <string name="pref_feature_title">Richiesta di una caratteristica</string>
+  <string name="pref_feature_title">Feedback e supporto</string>
   <string name="pref_googleplus_title">Iscriviti su Google+</string>
   <string name="pref_facebook_title">Like su Facebook</string>
   <string name="pref_twitter_title">Seguire su Twitter</string>
@@ -338,9 +341,23 @@
   <string name="perm_location_description">Posizione di accesso fornita da Androzic</string>
   <string name="perm_tracking_title">Ottieni la traccia</string>
   <string name="perm_tracking_description">Ricevi la traccia fornita da Androzic</string>
+  <string name="perm_navigation_title">Avvia la navigazione</string>
+  <string name="perm_navigation_description">Avvio e modifica navigazione sotto Androzic</string>
   <string name="perm_read_preferences_title">Consulta le preferenze di Androzic impostate dall\'utente</string>
   <string name="perm_read_map_data_title">Consulta i dati ricevuti dalla mappa Androzic</string>
   <string name="perm_write_map_data_title">Aggiungi dati alla mappa Androzic</string>
+  <string name="showcase_panel_title">Azioni rapide</string>
+  <string name="showcase_panel_description">Fai scorrere o trascina il gestore della barra scorrevole per accedere alla gestione semplificata. La gestione semplificata può essere configurata in impostazioni.</string>
+  <string name="showcase_follow_title">Tracciatore della posizione corrente</string>
+  <string name="showcase_follow_description">Seleziona l\'icona follow per attivare la modalità inseguimento. In questa modalità verrà individuata la mappa relativa alla tua posizione corrente. Con il doppio tap sulla mappa puoi alternativamente selezionare o deselezionare detta modalità.</string>
+  <string name="showcase_add_waypoint_title">Inserisci tappa</string>
+  <string name="showcase_add_waypoint_description">Toccare l\'icona di azione per aggiungere rapidamente un nuovo waypoint nella posizione corrente del cursore.</string>
+  <string name="showcase_search_title">Ricerca</string>
+  <string name="showcase_search_description">È possibile digitare coordinate specifiche in vari formati per trovarli sulla mappa, localizzare waypoint precaricati o identificativi di percorsi oppure relative descrizioni, ricerca di luoghi ed indirizzi tramite il servizio geocoding di Google (Per questa opzione è\' necessaria la connessione ad Internet ).</string>
+  <string name="showcase_load_waypoints_title">Carica waypoint</string>
+  <string name="showcase_load_waypoints_description">Toccare l\'icona di azione per caricare file di waypoint. I waypoint caricati sono raggruppati in set. Ogni volta che si modifica un set, il file corrispondente viene aggiornato automaticamente.</string>
+  <string name="showcase_waypointset_actions_title">Azioni relative ai set waypoint</string>
+  <string name="showcase_waypointset_actions_description">Fai un tap prolungato su un set di waypoint per accedere da ulteriori azioni.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

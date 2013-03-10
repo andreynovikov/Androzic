@@ -44,6 +44,7 @@
   <string name="msg_initializingview">Initierar \"utsikt\"...</string>
   <string name="msg_cleaning">Tar bort...</string>
   <string name="msg_paid">Donerad version</string>
+  <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Inga rutter finns. Använd menyn för att skapa rutt eller ladda det från fil.</string>
   <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: ‘%s’.</string>
   <string name="err_nosdcard">SD-kort ej tillgängligt</string>
@@ -299,6 +300,8 @@
   <string name="pref_route_title">Rutter</string>
   <string name="pref_route_preload_title">Förladda rutter</string>
   <string name="pref_route_preload_summary">Markera för att förhandsladda rutter från filer vid programstart</string>
+  <string name="pref_route_preload_hidden_title">Hide preloaded routes</string>
+  <string name="pref_route_preload_hidden_summary">Hide preloaded routes until they are viewed, edited or navigated</string>
   <string name="pref_route_linewidth_title">Linjebredd</string>
   <string name="pref_route_linewidth_summary">Pixelbredd rutt väg</string>
   <string name="pref_route_pointwidth_title">Markör storlek</string>
@@ -321,7 +324,7 @@
   <string name="pref_donate_google_title">Donera via Google butiken</string>
   <string name="pref_donate_paypal_title">Donera via PayPal</string>
   <string name="pref_faq_title">FRÅGOR OCH SVAR</string>
-  <string name="pref_feature_title">Begära en funktion</string>
+  <string name="pref_feature_title">Feedback and support</string>
   <string name="pref_googleplus_title">Följ på Google+</string>
   <string name="pref_facebook_title">Gilla på Facebook</string>
   <string name="pref_twitter_title">Följ på Twitter</string>
@@ -338,8 +341,22 @@
   <string name="perm_location_description">Plats tillhandahålls av Androzic</string>
   <string name="perm_tracking_title">Hämta kurs</string>
   <string name="perm_tracking_description">Hämta kurs tillhandahållen av Androzic</string>
+  <string name="perm_navigation_title">Initiate navigation</string>
+  <string name="perm_navigation_description">Initiate/modify navigation provided by Androzic</string>
   <string name="perm_read_preferences_title">Läs Androzics användarinställningar</string>
   <string name="perm_read_map_data_title">Hämta data från Androzic karta</string>
   <string name="perm_write_map_data_title">Lägg till data till Androzic karta</string>
+  <string name="showcase_panel_title">Quick actions</string>
+  <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
+  <string name="showcase_follow_title">Location following</string>
+  <string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
+  <string name="showcase_add_waypoint_title">Lägga till navigationsmål</string>
+  <string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
+  <string name="showcase_search_title">Sök</string>
+  <string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
+  <string name="showcase_load_waypoints_title">Load waypoints</string>
+  <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
+  <string name="showcase_waypointset_actions_title">Waypoint set actions</string>
+  <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
   <string name="app_eula">Detta program distribueras under villkoren i GNU General Public License as published by the Free Software Foundation, antingen version 3 av License./n/n detta program distribueras i hopp om att det kommer att vara användbar, men utan någon garanti; utan även den underförstådda garantin för säljbarhet eller lämplighet för en viss syfte. Se GNU General Public License för mer details./n/n alla rättigheter som beviljas enligt denna licens beviljas av skyddstiden för upphovsrätt på programmet, och är oåterkalleligt förutsatt att angivna villkor är uppfyllda.     Denna licens bekräftar uttryckligen din obegränsad behörighet att köra den oförändrad Program./n/n du inte är skyldig att acceptera licensvillkoren för att tar emot eller köra en kopia av programmet. Tillhörande förökningsmaterial av en täckt arbete sker enbart till följd av använda peer-to-peer-överföring för att få en kopia på samma sätt kräver inte godkännande. Dock inget annat än denna licens ger dig behörighet att sprida eller ändra omfattas arbete. Dessa åtgärder strider mot upphovsrätten om du inte accepterar licensvillkoren. Därför, genom att ändra eller förökningsmaterial en täckt arbete, anger du ditt godkännande av denna licens att göra meddelandet om invändningar. / n/n för fullständig kopia av GNU General Public License se http://www.gnu.org/licenses/gpl.html</string>
 </resources>

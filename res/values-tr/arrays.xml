@@ -71,9 +71,9 @@
     <item>Kullanıcı grid tercihi</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Double press Back</item>
-    <item>Confirmation dialog</item>
-    <item>Nothing</item>
+    <item>Geri düğmesine çift basma</item>
+    <item>Onay iletişim kutusu</item>
+    <item>Hiçbir şey</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Aygıt varsayılanı</item>
@@ -98,8 +98,10 @@
     <item>Gündoğumu/Günbatımı hesaplama</item>
     <item>Sürükle bırak açılan liste ilk kodu</item>
     <item>Dokunmatik ekran denetleyicisi</item>
+    <item>Showcase library</item>
     <item>Arabirim simgeleri</item>
-    <item>Çek yerelleştirme</item>
+    <item>Yer imi simgeleri</item>
+    <item>Çekçe yerelleştirme</item>
     <item>Fransızca yerelleştirme</item>
     <item>Fince yerelleştirme</item>
     <item>Bulgarca yerelleştirme</item>
@@ -107,7 +109,9 @@
     <item>Türkçe yerelleştirme</item>
     <item>İtalyanca yerelleştirme</item>
     <item>İspanyolca Yerelleştirme</item>
-    <item>Swedish localization</item>
+    <item>İsveç yerelleştirme</item>
+    <item>Ukrayna yerelleştirme</item>
+    <item>Portekizce yerelleştirme</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Yakınlaştır</item>
@@ -120,6 +124,6 @@
     <item>Otomatik Takip Et/Otomatik Takibi Bırak</item>
     <item>Konumu belirle</item>
     <item>Yer izini kaydet</item>
-    <item>Show/hide status bar</item>
+    <item>Durum çubuğunu göster/gizle</item>
   </string-array>
 </resources>

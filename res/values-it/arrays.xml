@@ -71,9 +71,9 @@
     <item>Griglia utente preferita</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Double press Back</item>
-    <item>Confirmation dialog</item>
-    <item>Nothing</item>
+    <item>Premere due volte back</item>
+    <item>Finestra di conferma</item>
+    <item>Nulla</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Impostazioni predefinite</item>
@@ -98,16 +98,20 @@
     <item>Alba / tramonto calcolo</item>
     <item>Drag\'n\'drop il codice iniziale di lista</item>
     <item>Controller di multitouch</item>
-    <item>Interfaccia icone</item>
-    <item>Localizzazione ceco</item>
-    <item>Localizzazione francese</item>
-    <item>Localizzazione finlandese</item>
-    <item>Traduzione in bulgaro</item>
-    <item>Localizzazione in tedesco</item>
-    <item>Localizzazione in turco</item>
-    <item>Traduzione in italiano</item>
-    <item>Traduzione in spagnolo</item>
-    <item>Localizzazione in Svedese</item>
+    <item>Showcase library</item>
+    <item>Icone di interfaccia</item>
+    <item>Icone waypoint</item>
+    <item>Traduzione in Ceco</item>
+    <item>Traduzione in Francese</item>
+    <item>Traduzione in Finlandese</item>
+    <item>Traduzione in Bulgaro</item>
+    <item>Traduzione in Tedesco</item>
+    <item>Traduzione in Turco</item>
+    <item>Traduzione in Italiano</item>
+    <item>Traduzione in Spagnolo</item>
+    <item>Traduzione in Svedese</item>
+    <item>Traduzione in Ucraino</item>
+    <item>Traduzione in Portoghese</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Zoom avanti</item>

@@ -44,6 +44,7 @@
   <string name="msg_initializingview">﻿Inicializuji zobrazení&#8230;</string>
   <string name="msg_cleaning">Čištění&#8230;</string>
   <string name="msg_paid">Dárcovská verze</string>
+  <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Nejsou k dispozici žádné trasy. Použij menu k jejich vytvoření nebo načtení ze souboru.</string>
   <string name="msg_newdatafolder">Na základě častého požadavku Androzic nyní funguje se složkami jinak. Můžete svobodně vybrat libovolnou složku pro mapy a data. Složka dat je nyní jednotná pro všechny datové soubory:, průjezdní body a trasy. Musíte ručně zkopírovat existující datové soubory do následující složky vytvořené automaticky: \'%s\'.</string>
   <string name="err_nosdcard">Karta SD nepřístupná</string>
@@ -299,6 +300,8 @@
   <string name="pref_route_title">Routy</string>
   <string name="pref_route_preload_title">Přednastavení trasy</string>
   <string name="pref_route_preload_summary">Mark to preload routes from files on application start</string>
+  <string name="pref_route_preload_hidden_title">Hide preloaded routes</string>
+  <string name="pref_route_preload_hidden_summary">Hide preloaded routes until they are viewed, edited or navigated</string>
   <string name="pref_route_linewidth_title">Šířka linie</string>
   <string name="pref_route_linewidth_summary">Šířka linie routy v pixlech</string>
   <string name="pref_route_pointwidth_title">Velikost bodu</string>
@@ -321,7 +324,7 @@
   <string name="pref_donate_google_title">Přispět přes obchod Google</string>
   <string name="pref_donate_paypal_title">Přispět přes PayPal</string>
   <string name="pref_faq_title">Otázky</string>
-  <string name="pref_feature_title">Žádost o rozšíření</string>
+  <string name="pref_feature_title">Feedback and support</string>
   <string name="pref_googleplus_title">Připojte se na Google+</string>
   <string name="pref_facebook_title">Like! na Facebooku</string>
   <string name="pref_twitter_title">Následuj mě na Twitteru</string>
@@ -338,9 +341,23 @@
   <string name="perm_location_description">Access location provided by Androzic</string>
   <string name="perm_tracking_title">Get track</string>
   <string name="perm_tracking_description">Receive track provided by Androzic</string>
+  <string name="perm_navigation_title">Initiate navigation</string>
+  <string name="perm_navigation_description">Initiate/modify navigation provided by Androzic</string>
   <string name="perm_read_preferences_title">Čtení uživatelské předvolby</string>
   <string name="perm_read_map_data_title">Získat data z mapy</string>
   <string name="perm_write_map_data_title">Přidání dat do mapy</string>
+  <string name="showcase_panel_title">Quick actions</string>
+  <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
+  <string name="showcase_follow_title">Location following</string>
+  <string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
+  <string name="showcase_add_waypoint_title">Přidej bod</string>
+  <string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
+  <string name="showcase_search_title">Hledat</string>
+  <string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
+  <string name="showcase_load_waypoints_title">Load waypoints</string>
+  <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
+  <string name="showcase_waypointset_actions_title">Waypoint set actions</string>
+  <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

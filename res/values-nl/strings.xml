@@ -44,6 +44,7 @@
   <string name="msg_initializingview">Activeren beeld</string>
   <string name="msg_cleaning">Opschonen</string>
   <string name="msg_paid">Donatie versie</string>
+  <string name="msg_nothing_found">Niets werd gevonden. Neem in aanmerking dat gegevens alleen als het wordt geladen in Androzic, benoemde locaties worden doorzocht als Internet-verbinding beschikbaar is.</string>
   <string name="msg_empty_route_list">Geen routes beschikbaar. Gebruik menu om de route te maken of te laden uit bestand.</string>
   <string name="msg_newdatafolder">Op veler verzoek werkt Androzic nu anders met mappen. U kunt nu elke map van kaarten en gegevens selecteren. Datamap is nu uniform voor alle gegevenstypen: waypoints, tracks en routes. U moet uw bestaande gegevensbestanden handmatig kopiëren naar de volgende map van de autocreated: \'%s\'.</string>
   <string name="err_nosdcard">SD-kaart niet beschikbaar</string>
@@ -63,7 +64,7 @@
   <string name="sat_firstfix">GPS-actief</string>
   <string name="following_enabled">Volgen ingeschakeld</string>
   <string name="following_disabled">Volgen uitgeschakeld</string>
-  <string name="backQuit">Press Back again to quit</string>
+  <string name="backQuit">Druk opnieuw op terug om te stoppen</string>
   <string name="quitQuestion">Wilt u stoppen?</string>
   <string name="removeWaypointQuestion">Verwijderen waypoint?</string>
   <string name="quit">Stoppen</string>
@@ -235,7 +236,7 @@
   <string name="pref_maphideondrag_title">Verberg objecten bij slepen</string>
   <string name="pref_maphideondrag_summary">Markeer om kaartobjecten te verbergen bij slepen</string>
   <string name="pref_unfollowontap_title">Stop volgen bij slepen</string>
-  <string name="pref_exit_title">Exit confirmation</string>
+  <string name="pref_exit_title">Bevestig stoppen</string>
   <string name="pref_charset_title">Tekstcodering bestand</string>
   <string name="pref_charset_summary">De tekenset voor kaart en gegevens tekstbestanden. Let op: u kunt bestanden in Android native (UTF-8) en nationale tekensets, verandering deze instelling alleen als al uw bestanden in nationale codering, anders handmatig recode de bestanden die niet in UTF-8-codering niet mengen. Neemt invloed op alleen nadat de toepassing opnieuw hebt gestart.</string>
   <string name="pref_orientation_title">Schermoriëntatie</string>
@@ -299,6 +300,8 @@
   <string name="pref_route_title">Routes</string>
   <string name="pref_route_preload_title">Preload routes</string>
   <string name="pref_route_preload_summary">Markeer om vooraf laden routes van bestanden bij opstarten</string>
+  <string name="pref_route_preload_hidden_title">Voorgeladen routes verbergen</string>
+  <string name="pref_route_preload_hidden_summary">Voorgeladen routes verbergen totdat ze worden bekeken, bewerkt of genavigeerd</string>
   <string name="pref_route_linewidth_title">Lijnbreedte</string>
   <string name="pref_route_linewidth_summary">Pixel breedte van de route lijn</string>
   <string name="pref_route_pointwidth_title">Grootte markering</string>
@@ -321,7 +324,7 @@
   <string name="pref_donate_google_title">Doneren via Google Play winkel</string>
   <string name="pref_donate_paypal_title">Doneren via PayPal</string>
   <string name="pref_faq_title">FAQ</string>
-  <string name="pref_feature_title">Verzoek een functie</string>
+  <string name="pref_feature_title">Feedback en ondersteuning</string>
   <string name="pref_googleplus_title">Join op Google+</string>
   <string name="pref_facebook_title">Zoals op Facebook</string>
   <string name="pref_twitter_title">Volg op Twitter</string>
@@ -338,9 +341,23 @@
   <string name="perm_location_description">Toegangslocatie geboden door Androzic</string>
   <string name="perm_tracking_title">Track krijgen</string>
   <string name="perm_tracking_description">Ontvangen track geboden door Androzic</string>
+  <string name="perm_navigation_title">Navigatie starten</string>
+  <string name="perm_navigation_description">Geïnitieerde/wijzigen navigatie geboden door Androzic</string>
   <string name="perm_read_preferences_title">Lees Androzic gebruikersvoorkeuren</string>
   <string name="perm_read_map_data_title">Gegevens ophalen uit Androzic kaart</string>
   <string name="perm_write_map_data_title">Gegevens toevoegen aan Androzic kaart</string>
+  <string name="showcase_panel_title">Snelle acties</string>
+  <string name="showcase_panel_description">Schuif of sleep glijdend paneel voor toegang tot snelle acties. Snelle acties kunnen worden geconfigureerd in de instellingen.</string>
+  <string name="showcase_follow_title">De volgende locatie</string>
+  <string name="showcase_follow_description">Pers Volg pictogram na modus inschakelen. In deze modus zal de kaart op uw huidige positie worden bevestigd. Als alternatief kunt u dubbele klik op de kaart om te schakelen na modus in- en uitschakelen.</string>
+  <string name="showcase_add_waypoint_title">Waypoint toevoegen</string>
+  <string name="showcase_add_waypoint_description">Tik op de actie pictogram als u een nieuwe waypoint snel wilt toevoegen op de huidige cursorpositie.</string>
+  <string name="showcase_search_title">Zoeken</string>
+  <string name="showcase_search_description">U kunt specifieke coördinaten typen in verschillende formaten om ze te vinden op kaart, doorzoeken geladen waypoint of route namen en beschrijvingen, zoeken naar plaatsen en adressen via Google geocoding service (Internet-verbinding vereist).</string>
+  <string name="showcase_load_waypoints_title">Laden van waypoints</string>
+  <string name="showcase_load_waypoints_description">Tik op de actie pictogram om waypoint file te laden. Geladen waypoints zijn gegroepeerd in een set. Telkens wanneer die u een reeks wijzigt wordt bijbehorende bestand automatisch bijgewerkt.</string>
+  <string name="showcase_waypointset_actions_title">Waypoint instellen acties</string>
+  <string name="showcase_waypointset_actions_description">Lange klik op een waypoint titel voor toegang tot aanvullende acties instellen.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

@@ -71,9 +71,9 @@
     <item>Voorkeur gebruikers raster</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Double press Back</item>
-    <item>Confirmation dialog</item>
-    <item>Nothing</item>
+    <item>Dubbele tik op Back</item>
+    <item>Dialoogvenster voor bevestiging</item>
+    <item>Niets</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Apparaat standaard</item>
@@ -98,8 +98,10 @@
     <item>Zonsopgang / zonsondergang calculatie</item>
     <item>Drag\'n\'drop lijst initiële code</item>
     <item>Multitouch controller</item>
+    <item>Showcase bibliotheek</item>
     <item>Interface iconen</item>
-    <item>Tsjechisch lokalisatie</item>
+    <item>Waypoint pictogrammen</item>
+    <item>Tsjechische lokalisatie</item>
     <item>Franse lokalisatie</item>
     <item>Finse lokalisatie</item>
     <item>Bulgaarse lokalisatie</item>
@@ -108,6 +110,8 @@
     <item>Italiaanse lokalisatie</item>
     <item>Spaanse lokalisatie</item>
     <item>Zweedse lokalisatie</item>
+    <item>Oekraïense lokalisatie</item>
+    <item>Portugese lokalisatie</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Inzoomen</item>
