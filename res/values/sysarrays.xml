@@ -95,6 +95,7 @@
         <item>tr</item>
         <item>pt</item>
         <item>sv</item>
+        <item>sr</item>
         <item>zh</item>
     </string-array>
     <string-array name="localization_names">
@@ -113,6 +114,7 @@
         <item>Türk</item>
         <item>Português</item>
         <item>Svenska</item>
+        <item>Српски</item>
         <item>中文 (简体)</item>
     </string-array>
     <string-array name="orientation_values">
