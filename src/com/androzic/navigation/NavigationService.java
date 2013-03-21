@@ -211,7 +211,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 	{
 		if (locationService != null)
 		{
-			locationService.unregisterCallback(locationListener);
+			locationService.unregisterLocationCallback(locationListener);
 			unbindService(locationConnection);
 			locationService = null;
 		}
@@ -572,7 +572,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 		public void onServiceConnected(ComponentName className, IBinder service)
 		{
 			locationService = (ILocationService) service;
-			locationService.registerCallback(locationListener);
+			locationService.registerLocationCallback(locationListener);
 			Log.i(TAG, "Location service connected");
 		}
 

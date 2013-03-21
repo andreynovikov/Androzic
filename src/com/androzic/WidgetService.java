@@ -20,8 +20,8 @@
 
 package com.androzic;
 
-import com.androzic.track.ITrackingCallback;
-import com.androzic.track.ITrackingRemoteService;
+import com.androzic.location.ITrackingCallback;
+import com.androzic.location.ITrackingRemoteService;
 import com.androzic.util.StringFormatter;
 
 import android.app.PendingIntent;

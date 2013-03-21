@@ -30,13 +30,13 @@ import android.preference.PreferenceManager;
 
 import com.androzic.R;
 import com.androzic.data.Track;
-import com.androzic.track.ITrackingListener;
-import com.androzic.track.ITrackingService;
-import com.androzic.track.TrackingService;
+import com.androzic.location.ILocationService;
+import com.androzic.location.ITrackingListener;
+import com.androzic.location.LocationService;
 
 public class CurrentTrackOverlay extends TrackOverlay
 {
-	private ITrackingService trackingService = null;
+	private ILocationService trackingService = null;
 	private boolean isBound = false;
 
     public CurrentTrackOverlay(final Activity mapActivity)
@@ -53,7 +53,7 @@ public class CurrentTrackOverlay extends TrackOverlay
 	{
 		unbind();
 		super.setMapContext(activity);
-        isBound = context.getApplicationContext().bindService(new Intent(context.getApplicationContext(), TrackingService.class), trackingConnection, 0);
+        isBound = context.getApplicationContext().bindService(new Intent(context.getApplicationContext(), LocationService.class), trackingConnection, 0);
 	}
 
     @Override
@@ -82,7 +82,7 @@ public class CurrentTrackOverlay extends TrackOverlay
     	{
     		if (trackingService != null)
     		{
-               	trackingService.unregisterCallback(trackingListener);
+               	trackingService.unregisterTrackingCallback(trackingListener);
     		}
 
     		context.getApplicationContext().unbindService(trackingConnection);
@@ -101,8 +101,8 @@ public class CurrentTrackOverlay extends TrackOverlay
     {
         public void onServiceConnected(ComponentName className, IBinder service)
         {
-            trackingService = (ITrackingService) service;
-            trackingService.registerCallback(trackingListener);
+            trackingService = (ILocationService) service;
+            trackingService.registerTrackingCallback(trackingListener);
         }
 
         public void onServiceDisconnected(ComponentName className)

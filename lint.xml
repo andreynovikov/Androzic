@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="BackButton" severity="informational" />
+    <issue id="ExtraTranslation" severity="error" />
+    <issue id="FieldGetter" severity="informational" />
+    <issue id="IconExpectedSize" severity="warning" />
+    <issue id="MissingTranslation" severity="error" />
+    <issue id="TypographyQuotes" severity="informational" />
+    <issue id="UnusedIds" severity="warning" />
+</lint>

@@ -115,10 +115,8 @@ import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
 import com.androzic.route.RouteList;
 import com.androzic.route.RouteStart;
-import com.androzic.track.ITrackingService;
 import com.androzic.track.TrackFileList;
 import com.androzic.track.TrackList;
-import com.androzic.track.TrackingService;
 import com.androzic.util.Astro;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.OziExplorerFiles;
@@ -218,7 +216,6 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	private long mapObjectSelected = -1;
 
 	private ILocationService locationService = null;
-	private ITrackingService trackingService = null;
 	public NavigationService navigationService = null;
 
 	private Location lastKnownLocation;
@@ -564,13 +561,12 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		}
 
 		bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
-		bindService(new Intent(this, TrackingService.class), trackingConnection, BIND_AUTO_CREATE);
 		bindService(new Intent(this, NavigationService.class), navigationConnection, BIND_AUTO_CREATE);
 
 		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATUS));
 		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
 		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_LOCATING_STATUS));
-		registerReceiver(broadcastReceiver, new IntentFilter(TrackingService.BROADCAST_TRACKING_STATUS));
+		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_TRACKING_STATUS));
 
 		if (application.hasEnsureVisible())
 		{
@@ -635,11 +631,10 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		}
 		if (locationService != null)
 		{
-			locationService.unregisterCallback(locationListener);
+			locationService.unregisterLocationCallback(locationListener);
 			locationService = null;
 		}
 		unbindService(locationConnection);
-		unbindService(trackingConnection);
 	}
 
 	@Override
@@ -754,7 +749,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 					}
 				});
 			}
-			else if (action.equals(TrackingService.BROADCAST_TRACKING_STATUS))
+			else if (action.equals(LocationService.BROADCAST_TRACKING_STATUS))
 			{
 				updateMapButtons();
 			}
@@ -767,25 +762,11 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		}
 	};
 
-	private ServiceConnection trackingConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder binder)
-		{
-			trackingService = (ITrackingService) binder;
-			Log.d(TAG, "Tracking service connected");
-		}
-
-		public void onServiceDisconnected(ComponentName className)
-		{
-			trackingService = null;
-			Log.d(TAG, "Tracking service disconnected");
-		}
-	};
-
 	private ServiceConnection locationConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder binder)
 		{
 			locationService = (ILocationService) binder;
-			locationService.registerCallback(locationListener);
+			locationService.registerLocationCallback(locationListener);
 			Log.d(TAG, "Location service connected");
 		}
 
@@ -1024,7 +1005,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 							aib.setImageDrawable(getResources().getDrawable(isLocating ? R.drawable.pin_map_no : R.drawable.pin_map));
 							break;
 						case R.id.tracking:
-							boolean isTracking = trackingService != null && trackingService.isTracking();
+							boolean isTracking = locationService != null && locationService.isTracking();
 							aib.setImageDrawable(getResources().getDrawable(isTracking ? R.drawable.doc_delete : R.drawable.doc_edit));
 							break;
 					}
@@ -2173,7 +2154,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 			}
 			case R.id.tracking:
 			{
-				boolean isTracking = trackingService != null && trackingService.isTracking();
+				boolean isTracking = locationService != null && locationService.isTracking();
 				application.enableTracking(!isTracking);
 				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 				editor.putBoolean(getString(R.string.lc_track), !isTracking);

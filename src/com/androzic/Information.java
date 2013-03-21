@@ -105,7 +105,7 @@ public class Information extends Activity
 		super.onPause();
 		if (locationService != null)
 		{
-			locationService.unregisterCallback(locationListener);
+			locationService.unregisterLocationCallback(locationListener);
 			unbindService(locationConnection);
 			locationService = null;
 		}
@@ -117,7 +117,7 @@ public class Information extends Activity
 		public void onServiceConnected(ComponentName name, IBinder service)
 		{
 			locationService = (ILocationService) service;
-			locationService.registerCallback(locationListener);
+			locationService.registerLocationCallback(locationListener);
 		}
 
 		public void onServiceDisconnected(ComponentName className)

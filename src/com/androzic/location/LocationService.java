@@ -20,16 +20,28 @@
 
 package com.androzic.location;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.Color;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.GpsStatus.NmeaListener;
@@ -45,11 +57,15 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.androzic.Androzic;
 import com.androzic.MapActivity;
 import com.androzic.R;
+import com.androzic.util.OziExplorerFiles;
+import com.androzic.util.TDateTime;
 
 public class LocationService extends BaseLocationService implements LocationListener, NmeaListener, GpsStatus.Listener, OnSharedPreferenceChangeListener
 {
@@ -65,14 +81,16 @@ public class LocationService extends BaseLocationService implements LocationList
 	 */
 	public static final String DISABLE_LOCATIONS = "disableLocations";
 
+	public static final String ENABLE_TRACK = "enableTrack";
+	public static final String DISABLE_TRACK = "disableTrack";
+
+	public static final String BROADCAST_TRACKING_STATUS = "com.androzic.trackingStatusChanged";
+
 	private boolean locationsEnabled = false;
 	private boolean useNetwork = true;
 	private int gpsLocationTimeout = 120000;
 
 	private LocationManager locationManager = null;
-
-	private Notification notification;
-	private PendingIntent contentIntent;
 
 	private int gpsStatus = GPS_OFF;
 
@@ -93,9 +111,29 @@ public class LocationService extends BaseLocationService implements LocationList
 	private float HDOP = Float.NaN;
 	private float VDOP = Float.NaN;
 
+	private BufferedWriter trackWriter = null;
+	private boolean needsHeader = false;
+	private boolean trackingEnabled = false;
+	private long errorTime = 0;
+
+	private Location lastWritenLocation = null;
+	private Location lastLocation = null;
+	private double distanceFromLastWriting = 0;
+	private long timeFromLastWriting = 0;
+
+	private long minTime = 2000; // 2 seconds (default)
+	private long maxTime = 300000; // 5 minutes
+	private int minDistance = 3; // 3 meters (default)
+	private int color = Color.RED;
+	private int fileInterval;
+
 	private final Binder binder = new LocalBinder();
-	private final RemoteCallbackList<ILocationCallback> remoteCallbacks = new RemoteCallbackList<ILocationCallback>();
-	private final Set<ILocationListener> callbacks = new HashSet<ILocationListener>();
+	private final RemoteCallbackList<ILocationCallback> locationRemoteCallbacks = new RemoteCallbackList<ILocationCallback>();
+	private final Set<ILocationListener> locationCallbacks = new HashSet<ILocationListener>();
+	private final RemoteCallbackList<ITrackingCallback> trackingRemoteCallbacks = new RemoteCallbackList<ITrackingCallback>();
+	private final Set<ITrackingListener> trackingCallbacks = new HashSet<ITrackingListener>();
+
+	private final static DecimalFormat coordFormat = new DecimalFormat("* ###0.000000", new DecimalFormatSymbols(Locale.ENGLISH));
 
 	@Override
 	public void onCreate()
@@ -105,15 +143,16 @@ public class LocationService extends BaseLocationService implements LocationList
 		lastKnownLocation = new Location("unknown");
 
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		// Location preferences
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_usenetwork));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_gpstimeout));
-		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+		// Tracking preferences
+		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_currentcolor));
+		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_mintime));
+		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_mindistance));
+		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_currentinterval));
 
-		notification = new Notification();
-		notification.when = 0;
-		contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK), 0);
-		notification.icon = R.drawable.ic_stat_location;
-		notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_loc_short), getText(R.string.notif_loc_started), contentIntent);
+		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
 		Log.i(TAG, "Service started");
 	}
@@ -127,17 +166,38 @@ public class LocationService extends BaseLocationService implements LocationList
 			{
 				locationsEnabled = true;
 				connect();
-				startForeground(NOTIFICATION_ID, notification);
 				sendBroadcast(new Intent(BROADCAST_LOCATING_STATUS));
+				if (trackingEnabled)
+				{
+					sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
+				}
 			}
 			if (intent.getAction().equals(DISABLE_LOCATIONS) && locationsEnabled)
 			{
 				locationsEnabled = false;
-				stopForeground(true);
 				disconnect();
 				updateProvider(LocationManager.GPS_PROVIDER, false);
 				updateProvider(LocationManager.NETWORK_PROVIDER, false);
 				sendBroadcast(new Intent(BROADCAST_LOCATING_STATUS));
+				closeFile();
+				if (trackingEnabled)
+					sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
+			}
+			if (intent.getAction().equals(ENABLE_TRACK) && !trackingEnabled)
+			{
+				errorTime = 0;
+				trackingEnabled = true;
+				isContinous = false;
+				sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
+				updateNotification();
+			}
+			if (intent.getAction().equals(DISABLE_TRACK) && trackingEnabled)
+			{
+				trackingEnabled = false;
+				closeFile();
+				errorTime = 0;
+				sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
+				updateNotification();
 			}
 		}
 		return START_REDELIVER_INTENT | START_STICKY;
@@ -146,25 +206,25 @@ public class LocationService extends BaseLocationService implements LocationList
 	@Override
 	public void onDestroy()
 	{
-		disconnect();
-		
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		disconnect();
+		closeFile();
 		super.onDestroy();
 		Log.i(TAG, "Service stopped");
 	}
 
-	private final ILocationRemoteService.Stub remoteBinder = new ILocationRemoteService.Stub() {
+	private final ILocationRemoteService.Stub locationRemoteBinder = new ILocationRemoteService.Stub() {
 		public void registerCallback(ILocationCallback cb)
 		{
 			Log.i(TAG, "Register callback");
 			if (cb != null)
-				remoteCallbacks.register(cb);
+				locationRemoteCallbacks.register(cb);
 		}
 
 		public void unregisterCallback(ILocationCallback cb)
 		{
 			if (cb != null)
-				remoteCallbacks.unregister(cb);
+				locationRemoteCallbacks.unregister(cb);
 		}
 
 		public boolean isLocating()
@@ -173,12 +233,31 @@ public class LocationService extends BaseLocationService implements LocationList
 		}
 	};
 
+	private final ITrackingRemoteService.Stub trackingRemoteBinder = new ITrackingRemoteService.Stub() {
+		public void registerCallback(ITrackingCallback cb)
+		{
+			Log.i(TAG, "Register callback");
+			if (cb != null)
+				trackingRemoteCallbacks.register(cb);
+		}
+
+		public void unregisterCallback(ITrackingCallback cb)
+		{
+			if (cb != null)
+				trackingRemoteCallbacks.unregister(cb);
+		}
+	};
+
 	@Override
 	public IBinder onBind(Intent intent)
 	{
 		if (ANDROZIC_LOCATION_SERVICE.equals(intent.getAction()) || ILocationRemoteService.class.getName().equals(intent.getAction()))
 		{
-			return remoteBinder;
+			return locationRemoteBinder;
+		}
+		if ("com.androzic.tracking".equals(intent.getAction()) || ITrackingRemoteService.class.getName().equals(intent.getAction()))
+		{
+			return trackingRemoteBinder;
 		}
 		else
 		{
@@ -193,9 +272,49 @@ public class LocationService extends BaseLocationService implements LocationList
 		{
 			useNetwork = sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_loc_usenetwork));
 		}
-		if (getString(R.string.pref_loc_gpstimeout).equals(key))
+		else if (getString(R.string.pref_loc_gpstimeout).equals(key))
 		{
 			gpsLocationTimeout = 1000 * sharedPreferences.getInt(key, getResources().getInteger(R.integer.def_loc_gpstimeout));
+		}
+		else if (getString(R.string.pref_tracking_currentcolor).equals(key))
+		{
+			color = sharedPreferences.getInt(key, getResources().getColor(R.color.currenttrack));
+		}
+		else if (getString(R.string.pref_tracking_mintime).equals(key))
+		{
+			try
+			{
+				minTime = Integer.parseInt(sharedPreferences.getString(key, "500"));
+			}
+			catch (NumberFormatException e)
+			{
+			}
+		}
+		else if (getString(R.string.pref_tracking_mindistance).equals(key))
+		{
+			try
+			{
+				minDistance = Integer.parseInt(sharedPreferences.getString(key, "5"));
+			}
+			catch (NumberFormatException e)
+			{
+			}
+		}
+		else if (getString(R.string.pref_tracking_currentinterval).equals(key))
+		{
+			try
+			{
+				fileInterval = Integer.parseInt(sharedPreferences.getString(key, "0")) * 3600000;
+			}
+			catch (NumberFormatException e)
+			{
+				fileInterval = 0;
+			}
+			closeFile();
+		}
+		else if (getString(R.string.pref_folder_data).equals(key))
+		{
+			closeFile();
 		}
 	}
 
@@ -233,6 +352,7 @@ public class LocationService extends BaseLocationService implements LocationList
 			{
 				Log.d(TAG, "Cannot set gps provider, likely no gps on device");
 			}
+			startForeground(NOTIFICATION_ID, getNotification());
 		}
 	}
 
@@ -244,34 +364,238 @@ public class LocationService extends BaseLocationService implements LocationList
 			locationManager.removeUpdates(this);
 			locationManager.removeGpsStatusListener(this);
 			locationManager = null;
+			stopForeground(true);
 		}
 	}
 
-	private void setNotification(int status)
-	{/*
-	 * if (status != gpsStatus)
-	 * {
-	 * switch (status)
-	 * {
-	 * case LocationService.GPS_OK:
-	 * notification.icon = R.drawable.status_icon_ok;
-	 * notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_ok), contentIntent);
-	 * break;
-	 * case LocationService.GPS_SEARCHING:
-	 * notification.icon = R.drawable.status_icon_searching;
-	 * notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_searching), contentIntent);
-	 * break;
-	 * case LocationService.GPS_OFF:
-	 * notification.icon = R.drawable.status_icon_off;
-	 * notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_ongoing_short), getText(R.string.notif_ongoing_off), contentIntent);
-	 * }
-	 * notificationManager.notify(ANDROZIC_NOTIFICATION_ID, notification);
-	 * gpsStatus = status;
-	 * }
-	 */
+	private Notification getNotification()
+	{
+		int msgId = R.string.notif_loc_started;
+		int ntfId = R.drawable.ic_stat_locating;
+		if (trackingEnabled)
+		{
+			msgId = R.string.notif_trk_started;
+			ntfId = R.drawable.ic_stat_tracking;
+		}
+		if (gpsStatus != LocationService.GPS_OK)
+		{
+			msgId = R.string.notif_loc_waiting;
+			ntfId = R.drawable.ic_stat_waiting;
+		}
+		if (gpsStatus == LocationService.GPS_OFF)
+		{
+			ntfId = R.drawable.ic_stat_off;
+		}
+		if (errorTime > 0)
+		{
+			msgId = R.string.notif_trk_failure;
+			ntfId = R.drawable.ic_stat_failure;
+		}
+
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setWhen(errorTime);
+		builder.setSmallIcon(ntfId);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+		builder.setContentIntent(contentIntent);
+		builder.setContentTitle(getText(R.string.notif_loc_short));
+		builder.setContentText(getText(msgId));
+		builder.setOngoing(true);
+
+		Notification notification = builder.getNotification();
+		return notification;
 	}
 
-	void updateLocation()
+	private void updateNotification()
+	{
+		if (locationManager != null)
+		{
+			NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+			notificationManager.notify(NOTIFICATION_ID, getNotification());
+		}
+	}
+
+	private void closeFile()
+	{
+		if (trackWriter != null)
+		{
+			try
+			{
+				trackWriter.close();
+			}
+			catch (Exception e)
+			{
+				Log.e(TAG, "closeFile", e);
+				errorTime = System.currentTimeMillis();
+				updateNotification();
+			}
+			trackWriter = null;
+		}
+	}
+
+	private void createFile(long time)
+	{
+		closeFile();
+		try
+		{
+			Androzic application = Androzic.getApplication();
+			if (application.dataPath == null)
+				return;
+			File dir = new File(application.dataPath);
+			if (!dir.exists())
+				dir.mkdirs();
+			String addon = "";
+			SimpleDateFormat formatter = new SimpleDateFormat("_yyyy-MM-dd_");
+			String dateString = formatter.format(new Date(time));
+			if (fileInterval == 24 * 3600000)
+			{
+				addon = dateString + "daily";
+			}
+			else if (fileInterval == 168 * 3600000)
+			{
+				addon = dateString + "weekly";
+			}
+			File file = new File(dir, "myTrack" + addon + ".plt");
+			if (!file.exists())
+			{
+				file.createNewFile();
+				needsHeader = true;
+			}
+			if (file.canWrite())
+			{
+				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+				editor.putString(getString(R.string.trk_current), file.getName());
+				editor.commit();
+				trackWriter = new BufferedWriter(new FileWriter(file, true));
+				if (needsHeader)
+				{
+					trackWriter.write("OziExplorer Track Point File Version 2.1\n" + "WGS 84\n" + "Altitude is in Feet\n" + "Reserved 3\n" +
+					// Field 1 : always zero (0)
+					// Field 2 : width of track plot line on screen - 1 or 2 are usually the best
+					// Field 3 : track color (RGB)
+					// Field 4 : track description (no commas allowed)
+					// Field 5 : track skip value - reduces number of track points plotted, usually set to 1
+					// Field 6 : track type - 0 = normal , 10 = closed polygon , 20 = Alarm Zone
+					// Field 7 : track fill style - 0 =bsSolid; 1 =bsClear; 2 =bsBdiagonal; 3 =bsFdiagonal; 4 =bsCross;
+					// 5 =bsDiagCross; 6 =bsHorizontal; 7 =bsVertical;
+					// Field 8 : track fill color (RGB)
+							"0,2," + OziExplorerFiles.rgb2bgr(color) + ",Androzic Current Track " + addon + " ,0,0\n" + "0\n");
+					needsHeader = false;
+				}
+			}
+			else
+			{
+				errorTime = System.currentTimeMillis();
+				updateNotification();
+				return;
+			}
+		}
+		catch (IOException e)
+		{
+			Log.e(TAG, "createFile", e);
+			errorTime = System.currentTimeMillis();
+			updateNotification();
+			return;
+		}
+	}
+
+	public void addPoint(boolean continous, double latitude, double longitude, double altitude, float speed, long time)
+	{
+		long interval = fileInterval > 0 ? time % fileInterval : -1;
+		if (interval == 0 || trackWriter == null)
+		{
+			createFile(time);
+		}
+		try
+		{
+			// Field 1 : Latitude - decimal degrees.
+			// Field 2 : Longitude - decimal degrees.
+			// Field 3 : Code - 0 if normal, 1 if break in track line
+			// Field 4 : Altitude in feet (-777 if not valid)
+			// Field 5 : Date - see Date Format below, if blank a preset date will be used
+			// Field 6 : Date as a string
+			// Field 7 : Time as a string
+			// Note that OziExplorer reads the Date/Time from field 5, the date and time in fields 6 & 7 are ignored.
+
+			// -27.350436, 153.055540,1,-777,36169.6307194, 09-Jan-99, 3:08:14
+
+			trackWriter.write(coordFormat.format(latitude) + "," + coordFormat.format(longitude) + ",");
+			if (continous)
+				trackWriter.write("0");
+			else
+				trackWriter.write("1");
+			trackWriter.write("," + String.valueOf(Math.round(altitude * 3.2808399)));
+			trackWriter.write("," + String.valueOf(TDateTime.toDateTime(time)));
+			trackWriter.write("\n");
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "addPoint", e);
+			errorTime = System.currentTimeMillis();
+			updateNotification();
+			closeFile();
+		}
+	}
+
+	private void writeLocation(final Location loc, final boolean continous)
+	{
+		Log.d(TAG, "Fix needs writing");
+		lastWritenLocation = loc;
+		distanceFromLastWriting = 0;
+		addPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getTime());
+
+		for (ITrackingListener callback : trackingCallbacks)
+		{
+			callback.onNewPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getBearing(), loc.getTime());
+		}
+
+		final int n = trackingRemoteCallbacks.beginBroadcast();
+		for (int i = 0; i < n; i++)
+		{
+			final ITrackingCallback callback = trackingRemoteCallbacks.getBroadcastItem(i);
+			try
+			{
+				callback.onNewPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getBearing(), loc.getTime());
+			}
+			catch (RemoteException e)
+			{
+				Log.e(TAG, "Point broadcast error", e);
+			}
+		}
+		trackingRemoteCallbacks.finishBroadcast();
+	}
+
+	private void writeTrack(Location loc, boolean continous, boolean geoid, float smoothspeed, float avgspeed)
+	{
+		boolean needsWrite = false;
+		if (lastLocation != null)
+		{
+			distanceFromLastWriting += loc.distanceTo(lastLocation);
+		}
+		if (lastWritenLocation != null)
+			timeFromLastWriting = loc.getTime() - lastWritenLocation.getTime();
+
+		if (lastLocation == null || lastWritenLocation == null || !isContinous || timeFromLastWriting > maxTime || distanceFromLastWriting > minDistance && timeFromLastWriting > minTime)
+		{
+			needsWrite = true;
+		}
+
+		lastLocation = loc;
+
+		if (needsWrite)
+		{
+			writeLocation(loc, isContinous);
+			isContinous = continous;
+		}
+	}
+
+	private void tearTrack()
+	{
+		if (lastLocation != null && (lastWritenLocation == null || !lastLocation.toString().equals(lastWritenLocation.toString())))
+			writeLocation(lastLocation, isContinous);
+		isContinous = false;
+	}
+
+	private void updateLocation()
 	{
 		final Location location = lastKnownLocation;
 		final boolean continous = isContinous;
@@ -280,7 +604,18 @@ public class LocationService extends BaseLocationService implements LocationList
 		final float avgspeed = avgSpeed;
 
 		final Handler handler = new Handler();
-		for (final ILocationListener callback : callbacks)
+
+		if (trackingEnabled)
+		{
+			handler.post(new Runnable() {
+				@Override
+				public void run()
+				{
+					writeTrack(location, continous, geoid, smoothspeed, avgspeed);
+				}
+			});
+		}
+		for (final ILocationListener callback : locationCallbacks)
 		{
 			handler.post(new Runnable() {
 				@Override
@@ -290,10 +625,10 @@ public class LocationService extends BaseLocationService implements LocationList
 				}
 			});
 		}
-		final int n = remoteCallbacks.beginBroadcast();
+		final int n = locationRemoteCallbacks.beginBroadcast();
 		for (int i = 0; i < n; i++)
 		{
-			final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+			final ILocationCallback callback = locationRemoteCallbacks.getBroadcastItem(i);
 			try
 			{
 				callback.onLocationChanged(location, continous, geoid, smoothspeed, avgspeed);
@@ -303,20 +638,22 @@ public class LocationService extends BaseLocationService implements LocationList
 				Log.e(TAG, "Location broadcast error", e);
 			}
 		}
-		remoteCallbacks.finishBroadcast();
-		Log.d(TAG, "Location dispatched: " + (callbacks.size() + n));
+		locationRemoteCallbacks.finishBroadcast();
+		Log.d(TAG, "Location dispatched: " + (locationCallbacks.size() + n));
 	}
 
-	void updateLocation(final ILocationListener callback)
+	private void updateLocation(final ILocationListener callback)
 	{
 		if (!"unknown".equals(lastKnownLocation.getProvider()))
 			callback.onLocationChanged(lastKnownLocation, isContinous, !Float.isNaN(nmeaGeoidHeight), smoothSpeed, avgSpeed);
 	}
 
-	void updateProvider(final String provider, final boolean enabled)
+	private void updateProvider(final String provider, final boolean enabled)
 	{
+		if (LocationManager.GPS_PROVIDER.equals(provider))
+			updateNotification();
 		final Handler handler = new Handler();
-		for (final ILocationListener callback : callbacks)
+		for (final ILocationListener callback : locationCallbacks)
 		{
 			handler.post(new Runnable() {
 				@Override
@@ -329,10 +666,10 @@ public class LocationService extends BaseLocationService implements LocationList
 				}
 			});
 		}
-		final int n = remoteCallbacks.beginBroadcast();
+		final int n = locationRemoteCallbacks.beginBroadcast();
 		for (int i = 0; i < n; i++)
 		{
-			final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+			final ILocationCallback callback = locationRemoteCallbacks.getBroadcastItem(i);
 			try
 			{
 				if (enabled)
@@ -345,11 +682,11 @@ public class LocationService extends BaseLocationService implements LocationList
 				Log.e(TAG, "Provider broadcast error", e);
 			}
 		}
-		remoteCallbacks.finishBroadcast();
-		Log.d(TAG, "Provider status dispatched: " + (callbacks.size() + n));
+		locationRemoteCallbacks.finishBroadcast();
+		Log.d(TAG, "Provider status dispatched: " + (locationCallbacks.size() + n));
 	}
 
-	void updateProvider(final ILocationListener callback)
+	private void updateProvider(final ILocationListener callback)
 	{
 		if (gpsStatus == GPS_OFF)
 			callback.onProviderDisabled(LocationManager.GPS_PROVIDER);
@@ -357,12 +694,12 @@ public class LocationService extends BaseLocationService implements LocationList
 			callback.onProviderEnabled(LocationManager.GPS_PROVIDER);
 	}
 
-	void updateGpsStatus(final int status, final int fsats, final int tsats)
+	private void updateGpsStatus(final int status, final int fsats, final int tsats)
 	{
 		gpsStatus = status;
-		setNotification(status);
+		updateNotification();
 		final Handler handler = new Handler();
-		for (final ILocationListener callback : callbacks)
+		for (final ILocationListener callback : locationCallbacks)
 		{
 			handler.post(new Runnable() {
 				@Override
@@ -372,10 +709,10 @@ public class LocationService extends BaseLocationService implements LocationList
 				}
 			});
 		}
-		final int n = remoteCallbacks.beginBroadcast();
+		final int n = locationRemoteCallbacks.beginBroadcast();
 		for (int i = 0; i < n; i++)
 		{
-			final ILocationCallback callback = remoteCallbacks.getBroadcastItem(i);
+			final ILocationCallback callback = locationRemoteCallbacks.getBroadcastItem(i);
 			try
 			{
 				callback.onGpsStatusChanged(LocationManager.GPS_PROVIDER, status, fsats, tsats);
@@ -385,8 +722,8 @@ public class LocationService extends BaseLocationService implements LocationList
 				Log.e(TAG, "Status broadcast error", e);
 			}
 		}
-		remoteCallbacks.finishBroadcast();
-		Log.d(TAG, "GPS status dispatched: " + (callbacks.size() + n));
+		locationRemoteCallbacks.finishBroadcast();
+		Log.d(TAG, "GPS status dispatched: " + (locationCallbacks.size() + n));
 	}
 
 	@Override
@@ -594,16 +931,12 @@ public class LocationService extends BaseLocationService implements LocationList
 	@Override
 	public void onProviderDisabled(String provider)
 	{
-		if (LocationManager.GPS_PROVIDER.equals(provider))
-			setNotification(GPS_OFF);
 		updateProvider(provider, false);
 	}
 
 	@Override
 	public void onProviderEnabled(String provider)
 	{
-		if (LocationManager.GPS_PROVIDER.equals(provider))
-			setNotification(GPS_SEARCHING);
 		updateProvider(provider, true);
 	}
 
@@ -616,7 +949,8 @@ public class LocationService extends BaseLocationService implements LocationList
 			{
 				case LocationProvider.TEMPORARILY_UNAVAILABLE:
 				case LocationProvider.OUT_OF_SERVICE:
-					isContinous = false;
+					tearTrack();
+					updateNotification();
 					break;
 			}
 		}
@@ -635,7 +969,7 @@ public class LocationService extends BaseLocationService implements LocationList
 				isContinous = false;
 				break;
 			case GpsStatus.GPS_EVENT_STOPPED:
-				isContinous = false;
+				tearTrack();
 				updateGpsStatus(GPS_OFF, 0, 0);
 				updateProvider(LocationManager.GPS_PROVIDER, false);
 				break;
@@ -659,7 +993,7 @@ public class LocationService extends BaseLocationService implements LocationList
 				}
 				else
 				{
-					isContinous = false;
+					tearTrack();
 					updateGpsStatus(GPS_SEARCHING, fSats, tSats);
 				}
 				break;
@@ -669,23 +1003,41 @@ public class LocationService extends BaseLocationService implements LocationList
 	public class LocalBinder extends Binder implements ILocationService
 	{
 		@Override
-		public void registerCallback(ILocationListener callback)
+		public void registerLocationCallback(ILocationListener callback)
 		{
 			updateProvider(callback);
 			updateLocation(callback);
-			callbacks.add(callback);
+			locationCallbacks.add(callback);
 		}
 
 		@Override
-		public void unregisterCallback(ILocationListener callback)
+		public void unregisterLocationCallback(ILocationListener callback)
 		{
-			callbacks.remove(callback);
+			locationCallbacks.remove(callback);
+		}
+
+		@Override
+		public void registerTrackingCallback(com.androzic.location.ITrackingListener callback)
+		{
+			trackingCallbacks.add(callback);
+		}
+
+		@Override
+		public void unregisterTrackingCallback(com.androzic.location.ITrackingListener callback)
+		{
+			trackingCallbacks.remove(callback);
 		}
 
 		@Override
 		public boolean isLocating()
 		{
 			return locationsEnabled;
+		}
+
+		@Override
+		public boolean isTracking()
+		{
+			return trackingEnabled;
 		}
 
 		@Override

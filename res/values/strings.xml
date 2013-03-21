@@ -52,7 +52,6 @@
     <string name="err_nosdcard">SD card unavailable</string>
     <string name="err_nofile">No such file</string>
     <string name="err_write">Unable to write file</string>
-    <string name="err_currentlog">Can not write current log</string>
     <string name="err_noconnection">Network connection error</string>
     <string name="err_wrongformat">Wrong file format</string>
     <string name="err_read">Can not read file</string>
@@ -344,11 +343,12 @@
 	<string name="pref_twitter_title">Follow on Twitter</string>
 	<string name="pref_uri_summary">Press to follow a link to web site</string>
 	<string name="pref_credits_title">Credits</string>
-		
+
 	<string name="notif_loc_short">Locating</string>
+	<string name="notif_loc_waiting">Androzic is waiting for location</string>
 	<string name="notif_loc_started">Androzic is obtaining your location</string>
-	<string name="notif_trk_short">Tracking</string>
 	<string name="notif_trk_started">Androzic is tracking your movement</string>
+	<string name="notif_trk_failure">Androzic has problem with tracking</string>
 	<string name="notif_nav_short">Navigating</string>
 	<string name="notif_nav_started">Androzic is navigating you</string>
 	<string name="notif_nav_to">Androzic is navigating to %s</string>

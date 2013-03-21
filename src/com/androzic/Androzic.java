@@ -89,7 +89,6 @@ import com.androzic.overlay.RouteOverlay;
 import com.androzic.overlay.ScaleOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.overlay.WaypointsOverlay;
-import com.androzic.track.TrackingService;
 import com.androzic.util.Astro.Zenith;
 import com.androzic.util.CSV;
 import com.androzic.util.CoordinateParser;
@@ -1466,7 +1465,6 @@ public class Androzic extends BaseApplication
 		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
 		editor.commit();			
 		
-		stopService(new Intent(this, TrackingService.class));
 		stopService(new Intent(this, NavigationService.class));
 		stopService(new Intent(this, LocationService.class));
 		
@@ -1488,8 +1486,8 @@ public class Androzic extends BaseApplication
 
 	public void enableTracking(boolean enable)
 	{
-		String action = enable ? TrackingService.ENABLE_TRACK : TrackingService.DISABLE_TRACK;
-		startService(new Intent(this, TrackingService.class).setAction(action));
+		String action = enable ? LocationService.ENABLE_TRACK : LocationService.DISABLE_TRACK;
+		startService(new Intent(this, LocationService.class).setAction(action));
 	}
 	
 	public void initialize(MapState mapState)
