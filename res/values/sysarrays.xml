@@ -55,11 +55,6 @@
         <item>0</item>
         <item>1</item>
     </string-array>
-    <string-array name="interval_values">
-        <item>0</item>
-        <item>24</item>
-        <item>168</item>
-    </string-array>
     <string-array name="grid_values">
         <item>0</item>
         <item>1</item>

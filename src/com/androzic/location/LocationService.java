@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2013 Andrey Novikov <http://andreynovikov.info/>
  * 
  * This file is part of Androzic application.
  * 
@@ -20,28 +20,23 @@
 
 package com.androzic.location;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Set;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Color;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.GpsStatus.NmeaListener;
@@ -64,8 +59,8 @@ import android.widget.Toast;
 import com.androzic.Androzic;
 import com.androzic.MapActivity;
 import com.androzic.R;
-import com.androzic.util.OziExplorerFiles;
-import com.androzic.util.TDateTime;
+import com.androzic.Splash;
+import com.androzic.data.Track;
 
 public class LocationService extends BaseLocationService implements LocationListener, NmeaListener, GpsStatus.Listener, OnSharedPreferenceChangeListener
 {
@@ -111,8 +106,7 @@ public class LocationService extends BaseLocationService implements LocationList
 	private float HDOP = Float.NaN;
 	private float VDOP = Float.NaN;
 
-	private BufferedWriter trackWriter = null;
-	private boolean needsHeader = false;
+	private SQLiteDatabase trackDB = null;
 	private boolean trackingEnabled = false;
 	private long errorTime = 0;
 
@@ -124,16 +118,12 @@ public class LocationService extends BaseLocationService implements LocationList
 	private long minTime = 2000; // 2 seconds (default)
 	private long maxTime = 300000; // 5 minutes
 	private int minDistance = 3; // 3 meters (default)
-	private int color = Color.RED;
-	private int fileInterval;
 
 	private final Binder binder = new LocalBinder();
 	private final RemoteCallbackList<ILocationCallback> locationRemoteCallbacks = new RemoteCallbackList<ILocationCallback>();
 	private final Set<ILocationListener> locationCallbacks = new HashSet<ILocationListener>();
 	private final RemoteCallbackList<ITrackingCallback> trackingRemoteCallbacks = new RemoteCallbackList<ITrackingCallback>();
 	private final Set<ITrackingListener> trackingCallbacks = new HashSet<ITrackingListener>();
-
-	private final static DecimalFormat coordFormat = new DecimalFormat("* ###0.000000", new DecimalFormatSymbols(Locale.ENGLISH));
 
 	@Override
 	public void onCreate()
@@ -147,10 +137,8 @@ public class LocationService extends BaseLocationService implements LocationList
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_usenetwork));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_gpstimeout));
 		// Tracking preferences
-		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_currentcolor));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_mintime));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_mindistance));
-		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_currentinterval));
 
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
@@ -160,56 +148,59 @@ public class LocationService extends BaseLocationService implements LocationList
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
-		if (intent != null && intent.getAction() != null)
+		if (intent == null || intent.getAction() == null)
+			return 0;
+		
+		if (intent.getAction().equals(ENABLE_LOCATIONS) && !locationsEnabled)
 		{
-			if (intent.getAction().equals(ENABLE_LOCATIONS) && !locationsEnabled)
+			locationsEnabled = true;
+			connect();
+			sendBroadcast(new Intent(BROADCAST_LOCATING_STATUS));
+			if (trackingEnabled)
 			{
-				locationsEnabled = true;
-				connect();
-				sendBroadcast(new Intent(BROADCAST_LOCATING_STATUS));
-				if (trackingEnabled)
-				{
-					sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
-				}
-			}
-			if (intent.getAction().equals(DISABLE_LOCATIONS) && locationsEnabled)
-			{
-				locationsEnabled = false;
-				disconnect();
-				updateProvider(LocationManager.GPS_PROVIDER, false);
-				updateProvider(LocationManager.NETWORK_PROVIDER, false);
-				sendBroadcast(new Intent(BROADCAST_LOCATING_STATUS));
-				closeFile();
-				if (trackingEnabled)
-					sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
-			}
-			if (intent.getAction().equals(ENABLE_TRACK) && !trackingEnabled)
-			{
-				errorTime = 0;
-				trackingEnabled = true;
-				isContinous = false;
 				sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
-				updateNotification();
-			}
-			if (intent.getAction().equals(DISABLE_TRACK) && trackingEnabled)
-			{
-				trackingEnabled = false;
-				closeFile();
-				errorTime = 0;
-				sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
-				updateNotification();
 			}
 		}
+		if (intent.getAction().equals(DISABLE_LOCATIONS) && locationsEnabled)
+		{
+			locationsEnabled = false;
+			disconnect();
+			updateProvider(LocationManager.GPS_PROVIDER, false);
+			updateProvider(LocationManager.NETWORK_PROVIDER, false);
+			sendBroadcast(new Intent(BROADCAST_LOCATING_STATUS));
+			if (trackingEnabled)
+			{
+				closeDatabase();
+				sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
+			}
+		}
+		if (intent.getAction().equals(ENABLE_TRACK) && !trackingEnabled)
+		{
+			errorTime = 0;
+			trackingEnabled = true;
+			isContinous = false;
+			openDatabase();
+			sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
+		}
+		if (intent.getAction().equals(DISABLE_TRACK) && trackingEnabled)
+		{
+			trackingEnabled = false;
+			closeDatabase();
+			errorTime = 0;
+			sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
+		}
+		updateNotification();
+
 		return START_REDELIVER_INTENT | START_STICKY;
 	}
 
 	@Override
 	public void onDestroy()
 	{
+		super.onDestroy();
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 		disconnect();
-		closeFile();
-		super.onDestroy();
+		closeDatabase();
 		Log.i(TAG, "Service stopped");
 	}
 
@@ -276,10 +267,6 @@ public class LocationService extends BaseLocationService implements LocationList
 		{
 			gpsLocationTimeout = 1000 * sharedPreferences.getInt(key, getResources().getInteger(R.integer.def_loc_gpstimeout));
 		}
-		else if (getString(R.string.pref_tracking_currentcolor).equals(key))
-		{
-			color = sharedPreferences.getInt(key, getResources().getColor(R.color.currenttrack));
-		}
 		else if (getString(R.string.pref_tracking_mintime).equals(key))
 		{
 			try
@@ -300,21 +287,10 @@ public class LocationService extends BaseLocationService implements LocationList
 			{
 			}
 		}
-		else if (getString(R.string.pref_tracking_currentinterval).equals(key))
-		{
-			try
-			{
-				fileInterval = Integer.parseInt(sharedPreferences.getString(key, "0")) * 3600000;
-			}
-			catch (NumberFormatException e)
-			{
-				fileInterval = 0;
-			}
-			closeFile();
-		}
 		else if (getString(R.string.pref_folder_data).equals(key))
 		{
-			closeFile();
+			closeDatabase();
+			openDatabase();
 		}
 	}
 
@@ -395,7 +371,11 @@ public class LocationService extends BaseLocationService implements LocationList
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 		builder.setWhen(errorTime);
 		builder.setSmallIcon(ntfId);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		intent.setComponent(new ComponentName(getApplicationContext(), Splash.class));
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);		
+		PendingIntent contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, intent, 0);
 		builder.setContentIntent(contentIntent);
 		builder.setContentTitle(getText(R.string.notif_loc_short));
 		builder.setContentText(getText(msgId));
@@ -414,125 +394,73 @@ public class LocationService extends BaseLocationService implements LocationList
 		}
 	}
 
-	private void closeFile()
+	private void openDatabase()
 	{
-		if (trackWriter != null)
+		Androzic application = Androzic.getApplication();
+		if (application.dataPath == null)
 		{
-			try
-			{
-				trackWriter.close();
-			}
-			catch (Exception e)
-			{
-				Log.e(TAG, "closeFile", e);
-				errorTime = System.currentTimeMillis();
-				updateNotification();
-			}
-			trackWriter = null;
-		}
-	}
-
-	private void createFile(long time)
-	{
-		closeFile();
-		try
-		{
-			Androzic application = Androzic.getApplication();
-			if (application.dataPath == null)
-				return;
-			File dir = new File(application.dataPath);
-			if (!dir.exists())
-				dir.mkdirs();
-			String addon = "";
-			SimpleDateFormat formatter = new SimpleDateFormat("_yyyy-MM-dd_");
-			String dateString = formatter.format(new Date(time));
-			if (fileInterval == 24 * 3600000)
-			{
-				addon = dateString + "daily";
-			}
-			else if (fileInterval == 168 * 3600000)
-			{
-				addon = dateString + "weekly";
-			}
-			File file = new File(dir, "myTrack" + addon + ".plt");
-			if (!file.exists())
-			{
-				file.createNewFile();
-				needsHeader = true;
-			}
-			if (file.canWrite())
-			{
-				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-				editor.putString(getString(R.string.trk_current), file.getName());
-				editor.commit();
-				trackWriter = new BufferedWriter(new FileWriter(file, true));
-				if (needsHeader)
-				{
-					trackWriter.write("OziExplorer Track Point File Version 2.1\n" + "WGS 84\n" + "Altitude is in Feet\n" + "Reserved 3\n" +
-					// Field 1 : always zero (0)
-					// Field 2 : width of track plot line on screen - 1 or 2 are usually the best
-					// Field 3 : track color (RGB)
-					// Field 4 : track description (no commas allowed)
-					// Field 5 : track skip value - reduces number of track points plotted, usually set to 1
-					// Field 6 : track type - 0 = normal , 10 = closed polygon , 20 = Alarm Zone
-					// Field 7 : track fill style - 0 =bsSolid; 1 =bsClear; 2 =bsBdiagonal; 3 =bsFdiagonal; 4 =bsCross;
-					// 5 =bsDiagCross; 6 =bsHorizontal; 7 =bsVertical;
-					// Field 8 : track fill color (RGB)
-							"0,2," + OziExplorerFiles.rgb2bgr(color) + ",Androzic Current Track " + addon + " ,0,0\n" + "0\n");
-					needsHeader = false;
-				}
-			}
-			else
-			{
-				errorTime = System.currentTimeMillis();
-				updateNotification();
-				return;
-			}
-		}
-		catch (IOException e)
-		{
-			Log.e(TAG, "createFile", e);
 			errorTime = System.currentTimeMillis();
 			updateNotification();
 			return;
+		}
+		File dir = new File(application.dataPath);
+		if (!dir.exists() && !dir.mkdirs())
+		{
+			errorTime = System.currentTimeMillis();
+			updateNotification();
+			return;
+		}
+		File path = new File(dir, "myTrack.db");
+		try
+		{
+			trackDB = SQLiteDatabase.openDatabase(path.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+			Cursor cursor = trackDB.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name = 'track'", null);
+		    if (cursor.getCount() == 0)
+		    {
+				trackDB.execSQL("CREATE TABLE track (_id INTEGER PRIMARY KEY, latitude REAL, longitude REAL, code INTEGER, altitude REAL, datetime INTEGER);");
+		    }
+            cursor.close();
+		}
+		catch (SQLiteException e)
+		{
+			trackDB = null;
+			Log.e(TAG, "openDatabase", e);
+			errorTime = System.currentTimeMillis();
+			updateNotification();
+		}
+	}
+
+	private void closeDatabase()
+	{
+		if (trackDB != null)
+		{
+			trackDB.close();
+			trackDB = null;
 		}
 	}
 
 	public void addPoint(boolean continous, double latitude, double longitude, double altitude, float speed, long time)
 	{
-		long interval = fileInterval > 0 ? time % fileInterval : -1;
-		if (interval == 0 || trackWriter == null)
+		if (trackDB == null)
 		{
-			createFile(time);
+			openDatabase();
+			if (trackDB == null)
+				return;
 		}
-		try
-		{
-			// Field 1 : Latitude - decimal degrees.
-			// Field 2 : Longitude - decimal degrees.
-			// Field 3 : Code - 0 if normal, 1 if break in track line
-			// Field 4 : Altitude in feet (-777 if not valid)
-			// Field 5 : Date - see Date Format below, if blank a preset date will be used
-			// Field 6 : Date as a string
-			// Field 7 : Time as a string
-			// Note that OziExplorer reads the Date/Time from field 5, the date and time in fields 6 & 7 are ignored.
+		
+		ContentValues values = new ContentValues();
+		values.put("latitude", latitude);
+		values.put("longitude", longitude);
+		values.put("code", continous ? 0 : 1);
+		values.put("altitude", altitude);
+		values.put("datetime", time);
 
-			// -27.350436, 153.055540,1,-777,36169.6307194, 09-Jan-99, 3:08:14
-
-			trackWriter.write(coordFormat.format(latitude) + "," + coordFormat.format(longitude) + ",");
-			if (continous)
-				trackWriter.write("0");
-			else
-				trackWriter.write("1");
-			trackWriter.write("," + String.valueOf(Math.round(altitude * 3.2808399)));
-			trackWriter.write("," + String.valueOf(TDateTime.toDateTime(time)));
-			trackWriter.write("\n");
-		}
-		catch (Exception e)
+		if (trackDB.insert("track", null, values) < 0)
 		{
-			Log.e(TAG, "addPoint", e);
+			Log.e(TAG, "addPoint");
 			errorTime = System.currentTimeMillis();
 			updateNotification();
-			closeFile();
+			closeDatabase();
 		}
 	}
 

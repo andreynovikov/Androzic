@@ -1,21 +1,21 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
- *
+ * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * 
  * This file is part of Androzic application.
- *
+ * 
  * Androzic is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ * 
  * Androzic is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ * 
  * You should have received a copy of the GNU General Public License
- * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.androzic;
@@ -35,10 +35,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
-import android.content.SharedPreferences.Editor;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -49,6 +51,7 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,6 +61,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.androzic.data.Route;
+import com.androzic.data.Track;
 import com.androzic.overlay.CurrentTrackOverlay;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.FileList;
@@ -67,7 +71,7 @@ import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.RouteFilenameFilter;
 
 public class Splash extends Activity implements OnClickListener
-{	
+{
 	private static final int MSG_FINISH = 1;
 	private static final int MSG_ERROR = 2;
 	private static final int MSG_STATUS = 3;
@@ -97,7 +101,7 @@ public class Splash extends Activity implements OnClickListener
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
+
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 		{
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -108,7 +112,7 @@ public class Splash extends Activity implements OnClickListener
 			if (actionBar != null)
 				actionBar.hide();
 		}
-		
+
 		application = (Androzic) getApplication();
 
 		PreferenceManager.setDefaultValues(this, R.xml.pref_behavior, true);
@@ -123,10 +127,10 @@ public class Splash extends Activity implements OnClickListener
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, true);
 
 		setContentView(R.layout.act_splash);
-		
+
 		if (application.isPaid)
 		{
-			findViewById(R.id.paid).setVisibility(View.VISIBLE);			
+			findViewById(R.id.paid).setVisibility(View.VISIBLE);
 		}
 
 		progress = (ProgressBar) findViewById(R.id.progress);
@@ -143,18 +147,18 @@ public class Splash extends Activity implements OnClickListener
 		gotit.setOnClickListener(this);
 		quit = (Button) findViewById(R.id.quit);
 		quit.setOnClickListener(this);
-	
+
 		wait = true;
-		
+
 		showEula();
-		
-		if (! application.mapsInited)
+
+		if (!application.mapsInited)
 		{
 			new InitializationThread(progressHandler).start();
 		}
 		else
 		{
-			progressHandler.sendEmptyMessage(MSG_FINISH);			
+			progressHandler.sendEmptyMessage(MSG_FINISH);
 		}
 	}
 
@@ -167,31 +171,28 @@ public class Splash extends Activity implements OnClickListener
 			final SpannableString message = new SpannableString(Html.fromHtml(getString(R.string.app_eula).replace("/n", "<br/>")));
 			Linkify.addLinks(message, Linkify.WEB_URLS);
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(this)
-				.setTitle(getString(R.string.app_name))
-				.setIcon(R.drawable.icon)
-				.setMessage(message)
-				.setPositiveButton(android.R.string.ok, new Dialog.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i)
-					{
-						prefs.edit().putBoolean(getString(R.string.app_eulaaccepted), true).commit();
-						wait = false;
-						dialogInterface.dismiss();
-					}})
-				.setOnKeyListener(new OnKeyListener() {
-					@Override
-					public boolean onKey(DialogInterface dialoginterface, int keyCode, KeyEvent event)
-					{
-						return ! (keyCode == KeyEvent.KEYCODE_HOME);
-					}})
-				.setCancelable(false);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(getString(R.string.app_name)).setIcon(R.drawable.icon).setMessage(message)
+					.setPositiveButton(android.R.string.ok, new Dialog.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i)
+						{
+							prefs.edit().putBoolean(getString(R.string.app_eulaaccepted), true).commit();
+							wait = false;
+							dialogInterface.dismiss();
+						}
+					}).setOnKeyListener(new OnKeyListener() {
+						@Override
+						public boolean onKey(DialogInterface dialoginterface, int keyCode, KeyEvent event)
+						{
+							return !(keyCode == KeyEvent.KEYCODE_HOME);
+						}
+					}).setCancelable(false);
 
 			AlertDialog d = builder.create();
-			
+
 			d.show();
-		    // Make the textview clickable. Must be called after show()
-		    ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+			// Make the textview clickable. Must be called after show()
+			((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
 		}
 		else
 		{
@@ -262,7 +263,7 @@ public class Splash extends Activity implements OnClickListener
 					e.printStackTrace();
 				}
 			}
-			
+
 			total = 0;
 
 			Message msg = mHandler.obtainMessage(MSG_STATUS);
@@ -298,14 +299,14 @@ public class Splash extends Activity implements OnClickListener
 					return;
 				}
 			}
-			
+
 			// check maps folder existence
 			File mapdir = new File(settings.getString(getString(R.string.pref_folder_map), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_map)));
 			String oldmap = settings.getString(getString(R.string.pref_folder_map_old), null);
 			if (oldmap != null)
 			{
 				File oldmapdir = new File(root, oldmap);
-				if (! oldmapdir.equals(mapdir))
+				if (!oldmapdir.equals(mapdir))
 				{
 					mapdir = oldmapdir;
 					Editor editor = settings.edit();
@@ -320,7 +321,8 @@ public class Splash extends Activity implements OnClickListener
 			}
 
 			// check data folder existence
-			File datadir = new File(settings.getString(getString(R.string.pref_folder_data), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_data)));
+			File datadir = new File(
+					settings.getString(getString(R.string.pref_folder_data), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_data)));
 			if (!datadir.exists())
 			{
 				// check if there was an old data structure
@@ -334,7 +336,7 @@ public class Splash extends Activity implements OnClickListener
 					b.putString("message", getString(R.string.msg_newdatafolder, datadir.getAbsolutePath()));
 					msg.setData(b);
 					mHandler.sendMessage(msg);
-					
+
 					while (wait)
 					{
 						try
@@ -351,19 +353,20 @@ public class Splash extends Activity implements OnClickListener
 			}
 
 			// check icons folder existence
-			File iconsdir = new File(settings.getString(getString(R.string.pref_folder_icon), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_icon)));
+			File iconsdir = new File(settings.getString(getString(R.string.pref_folder_icon),
+					Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_icon)));
 			if (!iconsdir.exists())
 			{
 				iconsdir.mkdirs();
-				application.copyAssets("icons", iconsdir);				
+				application.copyAssets("icons", iconsdir);
 			}
-			
+
 			// initialize paths
 			application.setRootPath(root.getAbsolutePath());
 			application.setMapPath(mapdir.getAbsolutePath());
 			application.setDataPath(Androzic.PATH_DATA, datadir.getAbsolutePath());
 			application.setDataPath(Androzic.PATH_ICONS, iconsdir.getAbsolutePath());
-			
+
 			// initialize data
 			application.installData();
 
@@ -386,23 +389,35 @@ public class Splash extends Activity implements OnClickListener
 				application.currentTrackOverlay = new CurrentTrackOverlay(Splash.this);
 				if (settings.getBoolean(getString(R.string.pref_tracking_currentload), resources.getBoolean(R.bool.def_tracking_currentload)))
 				{
-					String name = settings.getString(getString(R.string.trk_current), "myTrack.plt");
-
-					File trkFile = new File(application.dataPath, name);
-					if (trkFile.exists() && trkFile.canRead())
+					int length = Integer.parseInt(settings.getString(getString(R.string.pref_tracking_currentlength), getString(R.string.def_tracking_currentlength)));
+					// TODO Move this to proper class
+					File path = new File(application.dataPath, "myTrack.db");
+					try
 					{
-						try
+						SQLiteDatabase trackDB = SQLiteDatabase.openDatabase(path.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+						Cursor cursor = trackDB.rawQuery("SELECT * FROM track ORDER BY _id DESC LIMIT " + length, null);
+						if (cursor.getCount() > 0)
 						{
-							application.currentTrackOverlay.setTrack(OziExplorerFiles.loadTrackFromFile(trkFile, application.charset, Integer.parseInt(settings.getString(getString(R.string.pref_tracking_currentlength), getString(R.string.def_tracking_currentlength)))));
+							Track track = new Track();
+							for (boolean hasItem = cursor.moveToFirst(); hasItem; hasItem = cursor.moveToNext())
+							{
+								double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
+								double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
+								double altitude = cursor.getDouble(cursor.getColumnIndex("altitude"));
+								double speed = 0; // cursor.getDouble(cursor.getColumnIndex("speed"));
+								int code = cursor.getInt(cursor.getColumnIndex("code"));
+								long time = cursor.getLong(cursor.getColumnIndex("datetime"));
+								track.addTrackPoint(code == 0, latitude, longitude, altitude, speed, time);
+							}
+							track.show = true;
+							application.currentTrackOverlay.setTrack(track);
 						}
-						catch (IllegalArgumentException e)
-						{
-							e.printStackTrace();
-						}
-						catch (IOException e)
-						{
-							e.printStackTrace();
-						}
+						cursor.close();
+						trackDB.close();
+					}
+					catch (Exception e)
+					{
+						Log.e("Splash", "Read track tail", e);
 					}
 				}
 			}
@@ -413,7 +428,7 @@ public class Splash extends Activity implements OnClickListener
 				List<File> files = FileList.getFileListing(new File(application.dataPath), new RouteFilenameFilter());
 				for (File file : files)
 				{
-				    List<Route> routes = null;
+					List<Route> routes = null;
 					try
 					{
 						String lc = file.getName().toLowerCase();
@@ -432,7 +447,7 @@ public class Splash extends Activity implements OnClickListener
 						application.addRoutes(routes);
 						for (Route route : routes)
 						{
-							route.show = ! hide;
+							route.show = !hide;
 							RouteOverlay newRoute = new RouteOverlay(Splash.this, route);
 							application.routeOverlays.add(newRoute);
 						}
@@ -460,7 +475,7 @@ public class Splash extends Activity implements OnClickListener
 				b.putString("message", getString(R.string.nomaps_explained, application.getMapPath()));
 				msg.setData(b);
 				mHandler.sendMessage(msg);
-				
+
 				while (wait)
 				{
 					try
@@ -472,7 +487,7 @@ public class Splash extends Activity implements OnClickListener
 						e.printStackTrace();
 					}
 				}
-				
+
 				if (result == RES_YES)
 				{
 					try
@@ -484,21 +499,21 @@ public class Splash extends Activity implements OnClickListener
 						c.setDoOutput(true);
 						c.connect();
 						FileOutputStream f = new FileOutputStream(new File(application.getMapPath(), "world.ozf2"));
-		
+
 						InputStream in = c.getInputStream();
-		
+
 						msg = mHandler.obtainMessage(MSG_STATUS);
 						b = new Bundle();
 						b.putString("message", getString(R.string.msg_loadingimagefile));
 						msg.setData(b);
 						mHandler.sendMessage(msg);
-		
+
 						byte[] buffer = new byte[1024];
 						int len = 0;
 						while ((len = in.read(buffer)) > 0)
 						{
 							f.write(buffer, 0, len);
-		
+
 							total += len;
 							msg = mHandler.obtainMessage(MSG_PROGRESS);
 							b = new Bundle();
@@ -507,29 +522,29 @@ public class Splash extends Activity implements OnClickListener
 							mHandler.sendMessage(msg);
 						}
 						f.close();
-		
+
 						msg = mHandler.obtainMessage(MSG_STATUS);
 						b = new Bundle();
 						b.putString("message", getString(R.string.msg_loadingmapfile));
 						msg.setData(b);
 						mHandler.sendMessage(msg);
-		
-						//u = new URL("http://androzic.googlecode.com/files/world.map");
+
+						// u = new URL("http://androzic.googlecode.com/files/world.map");
 						u = new URL("https://docs.google.com/uc?export=download&id=0Bxnm5oGXU2cjWllteG4tSDBxekU");
 						c = (HttpURLConnection) u.openConnection();
 						c.setRequestMethod("GET");
 						c.setDoOutput(true);
 						c.connect();
 						f = new FileOutputStream(new File(application.getMapPath(), "world.map"));
-		
+
 						in = c.getInputStream();
-		
+
 						buffer = new byte[1024];
 						len = 0;
 						while ((len = in.read(buffer)) > 0)
 						{
 							f.write(buffer, 0, len);
-		
+
 							total += len;
 							msg = mHandler.obtainMessage(MSG_PROGRESS);
 							b = new Bundle();
@@ -567,9 +582,9 @@ public class Splash extends Activity implements OnClickListener
 				b = new Bundle();
 				b.putInt("total", total);
 				msg.setData(b);
-				mHandler.sendMessage(msg);				
+				mHandler.sendMessage(msg);
 			}
-			
+
 			msg = mHandler.obtainMessage(MSG_STATUS);
 			b = new Bundle();
 			b.putString("message", getString(R.string.msg_initializingmaps));
@@ -584,7 +599,7 @@ public class Splash extends Activity implements OnClickListener
 			b = new Bundle();
 			b.putInt("total", total);
 			msg.setData(b);
-			mHandler.sendMessage(msg);			
+			mHandler.sendMessage(msg);
 
 			msg = mHandler.obtainMessage(MSG_STATUS);
 			b = new Bundle();
@@ -600,7 +615,7 @@ public class Splash extends Activity implements OnClickListener
 			b = new Bundle();
 			b.putInt("total", total);
 			msg.setData(b);
-			mHandler.sendMessage(msg);			
+			mHandler.sendMessage(msg);
 
 			msg = mHandler.obtainMessage(MSG_STATUS);
 			b = new Bundle();
@@ -616,8 +631,8 @@ public class Splash extends Activity implements OnClickListener
 			b = new Bundle();
 			b.putInt("total", total);
 			msg.setData(b);
-			mHandler.sendMessage(msg);			
-			
+			mHandler.sendMessage(msg);
+
 			mHandler.sendEmptyMessage(MSG_FINISH);
 		}
 	}
