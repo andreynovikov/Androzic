@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="ScrollLayout">
+        <attr name="labelerClass" format="string" />
+        <attr name="labelerFormat" format="string" />
+        <attr name="childWidth" format="dimension" />
+        <attr name="childHeight" format="dimension" />
+    </declare-styleable>
     <declare-styleable name="ImageMultiChoiceListPreference">
         <attr name="entryImages" format="reference" />
     </declare-styleable>
@@ -17,12 +23,10 @@
         </attr>
     </declare-styleable>
     <declare-styleable name="Panel">
-
         <!-- Defines panel animation duration in ms. -->
         <attr name="animationDuration" format="integer" />
         <!-- Defines panel position on the screen. -->
         <attr name="position">
-
             <!-- Panel placed at top of the screen. -->
             <enum name="top" value="0" />
             <!-- Panel placed at bottom of the screen. -->
@@ -46,7 +50,6 @@
         <attr name="closedHandle" format="reference|color" />
     </declare-styleable>
     <declare-styleable name="Switcher">
-
         <!-- Defines switcher animation duration in ms. -->
         <attr name="animationDuration" />
         <!-- Defines switcher idle timeout in ms. -->
@@ -56,5 +59,4 @@
         <!-- Defines opened handle (drawable). -->
         <attr name="increaseButton" format="reference" />
     </declare-styleable>
-
 </resources>
