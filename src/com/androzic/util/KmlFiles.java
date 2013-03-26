@@ -20,10 +20,16 @@
 
 package com.androzic.util;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -32,10 +38,14 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xmlpull.v1.XmlSerializer;
+
+import android.util.Xml;
 
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
+import com.androzic.data.Track.TrackPoint;
 
 /**
  * Helper class to read and write KML files.
@@ -43,9 +53,11 @@ import com.androzic.data.Waypoint;
  * @author Andrey Novikov
  */
 public class KmlFiles
-{	
+{
+	public static final String KML_NAMESPACE = "http://www.opengis.net/kml/2.2";
+
 	/**
-	 * Loads waypoints from file
+	 * Loads waypoints from file.
 	 * 
 	 * @param file valid <code>File</code> with waypoints
 	 * @return <code>List</code> of <code>Waypoint</code>s
@@ -67,7 +79,7 @@ public class KmlFiles
 	}
 
 	/**
-	 * Loads tracks from file
+	 * Loads tracks from file.
 	 * 
 	 * @param file valid <code>File</code> with tracks
 	 * @return <code>List</code> of <code>Track</code>s
@@ -84,12 +96,114 @@ public class KmlFiles
 
 		parser = factory.newSAXParser();
 		parser.parse(file, new KmlParser(file.getName(), null, tracks));
-		
+	
 		return tracks;
 	}
 
 	/**
-	 * Loads routes from file
+	 * Saves track to file.
+	 * 
+	 * @param file valid <code>File</code>
+	 * @param track <code>Track</code> object containing the list of track points to save
+	 * @throws IOException
+	 */
+	public static void saveTrackToFile(final File file, final Track track) throws IOException
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+		XmlSerializer serializer = Xml.newSerializer();
+		serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false)));
+		serializer.setOutput(writer);
+		serializer.startDocument("UTF-8", null);
+		serializer.setPrefix("", KML_NAMESPACE);
+		serializer.startTag(KML_NAMESPACE, "kml");
+		serializer.startTag(KML_NAMESPACE, "Document");
+		serializer.startTag(KML_NAMESPACE, "Style");
+		serializer.attribute("", "id", "trackStyle");
+		serializer.startTag(KML_NAMESPACE, "LineStyle");
+		serializer.startTag(KML_NAMESPACE, "color");
+		serializer.text(String.format("%08X", track.color));
+		serializer.endTag(KML_NAMESPACE, "color");
+		serializer.startTag(KML_NAMESPACE, "width");
+		serializer.text(String.valueOf(track.width));
+		serializer.endTag(KML_NAMESPACE, "width");
+		serializer.endTag(KML_NAMESPACE, "LineStyle");
+		serializer.endTag(KML_NAMESPACE, "Style");
+		serializer.startTag(KML_NAMESPACE, "Folder");
+		serializer.startTag(KML_NAMESPACE, "name");
+		serializer.text(track.name);
+		serializer.endTag(KML_NAMESPACE, "name");
+		serializer.startTag(KML_NAMESPACE, "open");
+		serializer.text("0");
+		serializer.endTag(KML_NAMESPACE, "open");
+		serializer.startTag(KML_NAMESPACE, "TimeSpan");
+		serializer.startTag(KML_NAMESPACE, "begin");
+		serializer.text(sdf.format(new Date(track.getPoint(0).time)));
+		serializer.endTag(KML_NAMESPACE, "begin");
+		serializer.startTag(KML_NAMESPACE, "end");
+		serializer.text(sdf.format(new Date(track.getLastPoint().time)));
+		serializer.endTag(KML_NAMESPACE, "end");
+		serializer.endTag(KML_NAMESPACE, "TimeSpan");
+		serializer.startTag(KML_NAMESPACE, "Style");
+		serializer.startTag(KML_NAMESPACE, "ListStyle");
+		serializer.startTag(KML_NAMESPACE, "listItemType");
+		serializer.text("checkHideChildren");
+		serializer.endTag(KML_NAMESPACE, "listItemType");
+		serializer.endTag(KML_NAMESPACE, "ListStyle");
+		serializer.endTag(KML_NAMESPACE, "Style");
+		
+		int part = 1;
+		boolean first = true;
+		startTrackPart(serializer, part, track.name);
+		List<TrackPoint> trackPoints = track.getPoints();
+		synchronized (trackPoints)
+		{
+			for (TrackPoint tp : trackPoints)
+			{
+				if (!tp.continous && !first)
+				{
+					stopTrackPart(serializer);
+					part++;
+					startTrackPart(serializer, part, track.name);
+				}
+				serializer.text(String.format("%f,%f,%f ", tp.longitude, tp.latitude, tp.elevation));
+				first = false;
+			}
+		}
+		stopTrackPart(serializer);
+		serializer.endTag(KML_NAMESPACE, "Folder");
+		serializer.endTag(KML_NAMESPACE, "Document");
+		serializer.endTag(KML_NAMESPACE, "kml");
+		serializer.endDocument();
+		serializer.flush();
+		writer.close();
+	}
+
+	private static void startTrackPart(XmlSerializer serializer, int part, String name) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		serializer.startTag(KML_NAMESPACE, "Placemark");
+		serializer.startTag(KML_NAMESPACE, "name");
+		serializer.text(String.format("Part %d - %s", part, name));
+		serializer.endTag(KML_NAMESPACE, "name");
+		serializer.startTag(KML_NAMESPACE, "styleUrl");
+		serializer.text("#trackStyle");
+		serializer.endTag(KML_NAMESPACE, "styleUrl");
+		serializer.startTag(KML_NAMESPACE, "LineString");
+		serializer.startTag(KML_NAMESPACE, "tessellate");
+		serializer.text("1");
+		serializer.endTag(KML_NAMESPACE, "tessellate");
+		serializer.startTag(KML_NAMESPACE, "coordinates");
+	}
+
+	private static void stopTrackPart(XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		serializer.endTag(KML_NAMESPACE, "coordinates");
+		serializer.endTag(KML_NAMESPACE, "LineString");
+		serializer.endTag(KML_NAMESPACE, "Placemark");
+	}
+
+	/**
+	 * Loads routes from file.
 	 * 
 	 * @param file valid <code>File</code> with routes
 	 * @return <code>List</code> of <code>Route</code>s

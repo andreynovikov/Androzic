@@ -356,6 +356,7 @@ public class OziExplorerFiles
 	 * Saves track to file.
 	 * 
 	 * @param file valid <code>File</code>
+	 * @param charset the string describing the desired character encoding
 	 * @param track <code>Track</code> object containing the list of track points to save
 	 * @throws IOException
 	 */

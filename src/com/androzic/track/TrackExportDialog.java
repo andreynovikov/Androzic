@@ -1,24 +1,35 @@
 package com.androzic.track;
 
+import java.io.File;
 import java.util.Calendar;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
+import com.androzic.util.FileUtils;
+import com.androzic.util.KmlFiles;
+import com.androzic.util.OziExplorerFiles;
 import com.googlecode.android.widgets.DateSlider.SliderContainer;
 
 @SuppressLint("ValidFragment")
@@ -43,6 +54,7 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 	public TrackExportDialog(Track track)
 	{
 		this.track = track;
+		setRetainInstance(true);
 	}
 
 	@Override
@@ -93,13 +105,7 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 			}
 		});
 		saveButton = (Button) view.findViewById(R.id.save_button);
-		saveButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v)
-			{
-				dialog.cancel();
-			}
-		});
+		saveButton.setOnClickListener(saveOnClickListener);
 		
 		validName = false;
 		validDates = fromTime.compareTo(tillTime) <= 0;
@@ -109,6 +115,91 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 		dialog.setCanceledOnTouchOutside(false);
 		return view;
 	}
+
+	private OnClickListener saveOnClickListener = new OnClickListener()
+	{
+        public void onClick(View v)
+        {
+			Androzic application = Androzic.getApplication();
+			
+    		String name = nameText.getText().toString();
+			String format = formatSpinner.getItemAtPosition(formatSpinner.getSelectedItemPosition()).toString();
+    		String filename = FileUtils.sanitizeFilename(name) + format;
+    		
+    		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(application);
+    		track.name = name;
+    		track.width = prefs.getInt(application.getString(R.string.pref_tracking_linewidth), application.getResources().getColor(R.integer.def_track_linewidth));
+    		// TODO Make color selectable
+    		track.color = prefs.getInt(application.getString(R.string.pref_tracking_currentcolor), application.getResources().getColor(R.color.currenttrack));
+
+    		List<Track.TrackPoint> points = track.getPoints();
+
+    		Calendar startTime = fromSliderContainer.getTime();
+    		startTime.set(Calendar.HOUR_OF_DAY, 0);
+    		startTime.set(Calendar.MINUTE, 0);
+    		startTime.set(Calendar.SECOND, 0);
+    		startTime.set(Calendar.MILLISECOND, 0);
+    		long start = startTime.getTimeInMillis();
+    		Calendar endTime = tillSliderContainer.getTime();
+    		endTime.set(Calendar.HOUR_OF_DAY, 23);
+    		endTime.set(Calendar.MINUTE, 59);
+    		endTime.set(Calendar.SECOND, 59);
+    		endTime.set(Calendar.MILLISECOND, 999);
+    		long end = endTime.getTimeInMillis();
+
+    		int sp = 0;
+    		int ep = points.size();
+    		for (int i = 0; i < ep; i++)
+    		{
+    			Track.TrackPoint point = points.get(i);
+    			if (point.time < start)
+    			{
+    				sp = i;
+    				continue;
+    			}
+    			if (point.time > end)
+    			{
+    				ep = i;
+    			}
+    		}
+    		if (ep < points.size())
+    			track.cutAfter(ep - 1);
+    		if (sp > 0)
+    			track.cutBefore(sp + 1);
+    		try
+    		{
+    			File dir = new File(application.dataPath);
+    			if (! dir.exists())
+    				dir.mkdirs();
+    			File file = new File(dir, filename);
+    			if (! file.exists())
+    			{
+    				file.createNewFile();
+    			}
+    			if (file.canWrite())
+    			{
+    				if (".plt".equals(format))
+    				{
+    					OziExplorerFiles.saveTrackToFile(file, application.charset, track);
+    				}
+    				else if (".kml".equals(format))
+    				{
+    					KmlFiles.saveTrackToFile(file, track);
+    				}
+    				else if (".gpx".equals(format))
+    				{
+    					//GpxFiles.saveTrackToFile(file, track);
+    				}
+    			}
+    			dismiss();
+    		}
+    		catch (Exception e)
+    		{
+    			Toast.makeText(application, R.string.err_write, Toast.LENGTH_LONG).show();
+    			Log.e("TrackExport", e.toString(), e);
+    		}
+        }
+    };
 
 	private void updateSaveButton()
 	{
