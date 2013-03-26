@@ -74,6 +74,11 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="track_types">
+        <item>.plt</item>
+        <item>.kml</item>
+        <item>.gpx</item>
+    </string-array>
     <string-array name="localization_values">
         <item></item>
         <item>en</item>

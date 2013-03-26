@@ -1,5 +1,7 @@
 package com.androzic.location;
 
+import com.androzic.data.Track;
+
 public interface ILocationService
 {
 	void registerLocationCallback(ILocationListener callback);
@@ -10,4 +12,6 @@ public interface ILocationService
 	boolean isTracking();
 	float getHDOP();
 	float getVDOP();
+	Track getTrack();
+	void clearTrack();
 }

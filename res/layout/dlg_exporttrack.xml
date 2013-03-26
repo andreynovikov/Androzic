@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.androzic"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        style="@style/ContentLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_gravity="top"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <EditText
+                    android:id="@+id/name_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/name"
+                    android:inputType="text" />
+
+                <Spinner
+                    android:id="@+id/format_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:entries="@array/track_types"
+                    android:prompt="@string/format" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/FieldLabelWithVerticalPadding"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/from_date" />
+
+            <com.googlecode.android.widgets.DateSlider.SliderContainer
+                android:id="@+id/fromSliderContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <com.googlecode.android.widgets.DateSlider.ScrollLayout
+                    style="@style/Scroller"
+                    app:childWidth="90dp"
+                    app:labelerClass="com.googlecode.android.widgets.DateSlider.labeler.MonthYearLabeler"
+                    app:labelerFormat="%tb %tY" />
+
+                <com.googlecode.android.widgets.DateSlider.ScrollLayout
+                    style="@style/Scroller"
+                    app:childWidth="45dp"
+                    app:labelerClass="com.googlecode.android.widgets.DateSlider.labeler.DayDateLabeler"
+                    app:labelerFormat="%td %ta" />
+            </com.googlecode.android.widgets.DateSlider.SliderContainer>
+
+            <TextView
+                style="@style/FieldLabelWithVerticalPadding"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/till_date" />
+
+            <com.googlecode.android.widgets.DateSlider.SliderContainer
+                android:id="@+id/tillSliderContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <com.googlecode.android.widgets.DateSlider.ScrollLayout
+                    style="@style/Scroller"
+                    app:childWidth="90dp"
+                    app:labelerClass="com.googlecode.android.widgets.DateSlider.labeler.MonthYearLabeler"
+                    app:labelerFormat="%tb %tY" />
+
+                <com.googlecode.android.widgets.DateSlider.ScrollLayout
+                    style="@style/Scroller"
+                    app:childWidth="45dp"
+                    app:labelerClass="com.googlecode.android.widgets.DateSlider.labeler.DayDateLabeler"
+                    app:labelerFormat="%td %ta" />
+            </com.googlecode.android.widgets.DateSlider.SliderContainer>
+        </LinearLayout>
+    </ScrollView>
+
+    <include layout="@layout/inc_savebuttonbar" />
+
+</LinearLayout>

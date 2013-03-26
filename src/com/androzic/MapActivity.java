@@ -71,13 +71,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.util.Pair;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -92,6 +89,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
@@ -115,6 +117,7 @@ import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
 import com.androzic.route.RouteList;
 import com.androzic.route.RouteStart;
+import com.androzic.track.TrackExportDialog;
 import com.androzic.track.TrackFileList;
 import com.androzic.track.TrackList;
 import com.androzic.util.Astro;
@@ -130,7 +133,7 @@ import com.github.espiandev.showcaseview.ShowcaseView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 
-public class MapActivity extends Activity implements View.OnClickListener, OnSharedPreferenceChangeListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener, ShowcaseView.OnShowcaseEventListener
+public class MapActivity extends SherlockFragmentActivity implements View.OnClickListener, OnSharedPreferenceChangeListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener, ShowcaseView.OnShowcaseEventListener
 {
 	private static final String TAG = "MapActivity";
 
@@ -1578,7 +1581,7 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
-		MenuInflater inflater = getMenuInflater();
+		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.options_menu, menu);
 
 		// add plugins
@@ -1608,7 +1611,8 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 
 		menu.findItem(R.id.menuManageWaypoints).setEnabled(wpt);
 		menu.findItem(R.id.menuManageTracks).setEnabled(application.hasTracks());
-		menu.findItem(R.id.menuClearTrackTail).setEnabled(application.currentTrackOverlay != null);
+		menu.findItem(R.id.menuExportCurrentTrack).setEnabled(application.currentTrackOverlay != null);
+		menu.findItem(R.id.menuClearCurrentTrack).setEnabled(application.currentTrackOverlay != null);
 		menu.findItem(R.id.menuManageRoutes).setVisible(!nvr);
 		menu.findItem(R.id.menuStartNavigation).setVisible(!nvr);
 		menu.findItem(R.id.menuStartNavigation).setEnabled(rts);
@@ -1660,9 +1664,21 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 			case R.id.menuLoadTrack:
 				startActivityForResult(new Intent(this, TrackFileList.class), RESULT_LOAD_TRACK);
 				return true;
-			case R.id.menuClearTrackTail:
-				if (application.currentTrackOverlay != null)
-					application.currentTrackOverlay.clear();
+			case R.id.menuExportCurrentTrack:
+		        FragmentManager fm = getSupportFragmentManager();
+		        TrackExportDialog trackExportDialog = new TrackExportDialog(locationService.getTrack());
+		        trackExportDialog.show(fm, "track_export");
+				return true;
+			case R.id.menuClearCurrentTrack:
+				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.warning).setMessage(R.string.msg_clearcurrenttrack).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						if (application.currentTrackOverlay != null)
+							application.currentTrackOverlay.clear();
+						locationService.clearTrack();
+					}
+				}).setNegativeButton(R.string.no, null).show();
 				return true;
 			case R.id.menuManageRoutes:
 				startActivityForResult(new Intent(this, RouteList.class).putExtra("MODE", RouteList.MODE_MANAGE), RESULT_MANAGE_ROUTES);
@@ -2328,8 +2344,8 @@ public class MapActivity extends Activity implements View.OnClickListener, OnSha
 		}
 	}
 
-	@Override
-	public Object onRetainNonConfigurationInstance()
+	// FIXME Remove this method
+	public Object onRetainNonConfigurationInstanceX()
 	{
 		Log.e(TAG, "onRetainNonConfigurationInstance()");
 		MapState mapState = new MapState();

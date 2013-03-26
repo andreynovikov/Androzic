@@ -116,9 +116,13 @@
                 android:icon="@drawable/ic_action_import"
                 android:title="@string/menu_load"/>
             <item
-                android:id="@+id/menuClearTrackTail"
+                android:id="@+id/menuExportCurrentTrack"
+                android:icon="@drawable/ic_action_export"
+                android:title="@string/menu_exportcurrenttrack"/>
+            <item
+                android:id="@+id/menuClearCurrentTrack"
                 android:icon="@drawable/ic_action_trash"
-                android:title="@string/menu_cleartail"/>
+                android:title="@string/menu_clearcurrenttrack"/>
         </menu>
     </item>
     <item

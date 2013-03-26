@@ -150,7 +150,7 @@ public class LocationService extends BaseLocationService implements LocationList
 	{
 		if (intent == null || intent.getAction() == null)
 			return 0;
-		
+
 		if (intent.getAction().equals(ENABLE_LOCATIONS) && !locationsEnabled)
 		{
 			locationsEnabled = true;
@@ -374,7 +374,7 @@ public class LocationService extends BaseLocationService implements LocationList
 		Intent intent = new Intent(Intent.ACTION_MAIN);
 		intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		intent.setComponent(new ComponentName(getApplicationContext(), Splash.class));
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);		
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, intent, 0);
 		builder.setContentIntent(contentIntent);
 		builder.setContentTitle(getText(R.string.notif_loc_short));
@@ -415,11 +415,11 @@ public class LocationService extends BaseLocationService implements LocationList
 		{
 			trackDB = SQLiteDatabase.openDatabase(path.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 			Cursor cursor = trackDB.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name = 'track'", null);
-		    if (cursor.getCount() == 0)
-		    {
-				trackDB.execSQL("CREATE TABLE track (_id INTEGER PRIMARY KEY, latitude REAL, longitude REAL, code INTEGER, altitude REAL, datetime INTEGER);");
-		    }
-            cursor.close();
+			if (cursor.getCount() == 0)
+			{
+				trackDB.execSQL("CREATE TABLE track (_id INTEGER PRIMARY KEY, latitude REAL, longitude REAL, code INTEGER, altitude REAL, datetime INTEGER)");
+			}
+			cursor.close();
 		}
 		catch (SQLiteException e)
 		{
@@ -439,6 +439,36 @@ public class LocationService extends BaseLocationService implements LocationList
 		}
 	}
 
+	public Track getTrack()
+	{
+		if (trackDB == null)
+			openDatabase();
+		Track track = new Track();
+		if (trackDB == null)
+			return track;
+		Cursor cursor = trackDB.rawQuery("SELECT * FROM track ORDER BY _id", null);
+		for (boolean hasItem = cursor.moveToFirst(); hasItem; hasItem = cursor.moveToNext())
+		{
+			double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
+			double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
+			double altitude = cursor.getDouble(cursor.getColumnIndex("altitude"));
+			double speed = 0; // cursor.getDouble(cursor.getColumnIndex("speed"));
+			int code = cursor.getInt(cursor.getColumnIndex("code"));
+			long time = cursor.getLong(cursor.getColumnIndex("datetime"));
+			track.addTrackPoint(code == 0, latitude, longitude, altitude, speed, time);
+		}
+		cursor.close();
+		return track;
+	}
+
+	public void clearTrack()
+	{
+		if (trackDB == null)
+			openDatabase();
+		if (trackDB != null)
+			trackDB.execSQL("DELETE FROM track");
+	}
+
 	public void addPoint(boolean continous, double latitude, double longitude, double altitude, float speed, long time)
 	{
 		if (trackDB == null)
@@ -447,7 +477,7 @@ public class LocationService extends BaseLocationService implements LocationList
 			if (trackDB == null)
 				return;
 		}
-		
+
 		ContentValues values = new ContentValues();
 		values.put("latitude", latitude);
 		values.put("longitude", longitude);
@@ -978,6 +1008,18 @@ public class LocationService extends BaseLocationService implements LocationList
 		public float getVDOP()
 		{
 			return VDOP;
+		}
+
+		@Override
+		public Track getTrack()
+		{
+			return LocationService.this.getTrack();
+		}
+
+		@Override
+		public void clearTrack()
+		{
+			LocationService.this.clearTrack();
 		}
 	}
 }
