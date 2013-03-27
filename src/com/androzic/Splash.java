@@ -64,11 +64,11 @@ import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.overlay.CurrentTrackOverlay;
 import com.androzic.overlay.RouteOverlay;
+import com.androzic.util.AutoloadedRouteFilenameFilter;
 import com.androzic.util.FileList;
 import com.androzic.util.GpxFiles;
 import com.androzic.util.KmlFiles;
 import com.androzic.util.OziExplorerFiles;
-import com.androzic.util.RouteFilenameFilter;
 
 public class Splash extends Activity implements OnClickListener
 {
@@ -425,7 +425,7 @@ public class Splash extends Activity implements OnClickListener
 			if (settings.getBoolean(getString(R.string.pref_route_preload), resources.getBoolean(R.bool.def_route_preload)))
 			{
 				boolean hide = settings.getBoolean(getString(R.string.pref_route_preload_hidden), resources.getBoolean(R.bool.def_route_preload_hidden));
-				List<File> files = FileList.getFileListing(new File(application.dataPath), new RouteFilenameFilter());
+				List<File> files = FileList.getFileListing(new File(application.dataPath), new AutoloadedRouteFilenameFilter());
 				for (File file : files)
 				{
 					List<Route> routes = null;
