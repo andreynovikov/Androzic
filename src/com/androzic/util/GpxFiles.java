@@ -20,12 +20,16 @@
 
 package com.androzic.util;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,9 +39,14 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xmlpull.v1.XmlSerializer;
 
+import android.util.Xml;
+
+import com.androzic.Androzic;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
+import com.androzic.data.Track.TrackPoint;
 import com.androzic.data.Waypoint;
 
 /**
@@ -46,7 +55,9 @@ import com.androzic.data.Waypoint;
  * @author Andrey Novikov
  */
 public class GpxFiles
-{	
+{
+	public static final String GPX_NAMESPACE = "http://www.topografix.com/GPX/1/1";
+
 	/**
 	 * Loads waypoints from file
 	 * 
@@ -97,6 +108,64 @@ public class GpxFiles
 	}
 
 	/**
+	 * Saves track to file.
+	 * 
+	 * @param file valid <code>File</code>
+	 * @param track <code>Track</code> object containing the list of track points to save
+	 * @throws IOException
+	 */
+	public static void saveTrackToFile(final File file, final Track track) throws IOException
+	{
+		XmlSerializer serializer = Xml.newSerializer();
+		serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false)));
+		serializer.setOutput(writer);
+		serializer.startDocument("UTF-8", null);
+		serializer.setPrefix("", GPX_NAMESPACE);
+		serializer.startTag(GPX_NAMESPACE, GpxParser.GPX);
+		serializer.attribute("", "creator", "Androzic http://androzic.com");
+		serializer.startTag(GPX_NAMESPACE, GpxParser.TRK);
+		serializer.startTag(GPX_NAMESPACE, GpxParser.NAME);
+		serializer.text(track.name);
+		serializer.endTag(GPX_NAMESPACE, GpxParser.NAME);
+		serializer.startTag(GPX_NAMESPACE, GpxParser.SRC);
+		serializer.text(Androzic.getDeviceName());
+		serializer.endTag(GPX_NAMESPACE, GpxParser.SRC);
+		
+		boolean first = true;
+		serializer.startTag(GPX_NAMESPACE, GpxParser.TRKSEG);
+		List<TrackPoint> trackPoints = track.getPoints();
+		synchronized (trackPoints)
+		{
+			for (TrackPoint tp : trackPoints)
+			{
+				if (!tp.continous && !first)
+				{
+					serializer.endTag(GPX_NAMESPACE, GpxParser.TRKSEG);
+					serializer.startTag(GPX_NAMESPACE, GpxParser.TRKSEG);
+				}
+				serializer.startTag(GPX_NAMESPACE, GpxParser.TRKPT);
+				serializer.attribute("", GpxParser.LAT, String.valueOf(tp.latitude));
+				serializer.attribute("", GpxParser.LON, String.valueOf(tp.longitude));
+				serializer.startTag(GPX_NAMESPACE, GpxParser.ELE);
+				serializer.text(String.valueOf(tp.elevation));
+				serializer.endTag(GPX_NAMESPACE, GpxParser.ELE);
+				serializer.startTag(GPX_NAMESPACE, GpxParser.TIME);
+				serializer.text(GpxParser.trktime.format(new Date(tp.time)));
+				serializer.endTag(GPX_NAMESPACE, GpxParser.TIME);
+				serializer.endTag(GPX_NAMESPACE, GpxParser.TRKPT);
+				first = false;
+			}
+		}
+		serializer.endTag(GPX_NAMESPACE, GpxParser.TRKSEG);
+		serializer.endTag(GPX_NAMESPACE, GpxParser.TRK);
+		serializer.endTag(GPX_NAMESPACE, GpxParser.GPX);
+		serializer.endDocument();
+		serializer.flush();
+		writer.close();
+	}
+
+	/**
 	 * Loads routes from file
 	 * 
 	 * @param file valid <code>File</code> with routes
@@ -131,20 +200,22 @@ public class GpxFiles
  */
 class GpxParser extends DefaultHandler
 {
-	private static final String LAT = "lat";
-	private static final String LON = "lon";
-	private static final String NAME = "name";
-	private static final String DESC = "desc";
-	private static final String ELE = "ele";
-	private static final String TIME = "time";
-	private static final String WPT = "wpt";
-	private static final String RTE = "rte";
-	private static final String RTEPT = "rtept";
-	private static final String TRK = "trk";
-	private static final String TRKSEG = "trkseg";
-	private static final String TRKPT = "trkpt";
+	static final String GPX = "gpx";
+	static final String LAT = "lat";
+	static final String LON = "lon";
+	static final String NAME = "name";
+	static final String DESC = "desc";
+	static final String SRC = "src";
+	static final String ELE = "ele";
+	static final String TIME = "time";
+	static final String WPT = "wpt";
+	static final String RTE = "rte";
+	static final String RTEPT = "rtept";
+	static final String TRK = "trk";
+	static final String TRKSEG = "trkseg";
+	static final String TRKPT = "trkpt";
 	
-	private static final DateFormat trktime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	static final DateFormat trktime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	private StringBuilder builder;
 	
