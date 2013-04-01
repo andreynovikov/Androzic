@@ -28,6 +28,7 @@ import java.util.Date;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
+import com.androzic.util.FileUtils;
 import com.androzic.util.OziExplorerFiles;
 
 import android.app.Activity;
@@ -81,9 +82,7 @@ public class TrackSave extends Activity
 	{
         public void onClick(View v)
         {
-    		String fname = filename.getText().toString();
-    		fname = fname.replace("../", "");
-    		fname = fname.replace("/", "");
+    		String fname = FileUtils.sanitizeFilename(filename.getText().toString());
     		if ("".equals(fname))
     			return;
     		
