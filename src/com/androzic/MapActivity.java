@@ -45,7 +45,6 @@ import org.miscwidgets.interpolator.ExpoInterpolator;
 import org.miscwidgets.widget.Panel;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -118,7 +117,6 @@ import com.androzic.route.RouteEdit;
 import com.androzic.route.RouteList;
 import com.androzic.route.RouteStart;
 import com.androzic.track.TrackExportDialog;
-import com.androzic.track.TrackFileList;
 import com.androzic.track.TrackList;
 import com.androzic.util.Astro;
 import com.androzic.util.CoordinateParser;
@@ -137,7 +135,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 {
 	private static final String TAG = "MapActivity";
 
-	private static final int RESULT_LOAD_TRACK = 0x100;
 	private static final int RESULT_MANAGE_WAYPOINTS = 0x200;
 	private static final int RESULT_LOAD_WAYPOINTS = 0x300;
 	private static final int RESULT_SAVE_WAYPOINT = 0x400;
@@ -1610,7 +1607,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		boolean nvr = navigationService != null && navigationService.isNavigatingViaRoute();
 
 		menu.findItem(R.id.menuManageWaypoints).setEnabled(wpt);
-		menu.findItem(R.id.menuManageTracks).setEnabled(application.hasTracks());
 		menu.findItem(R.id.menuExportCurrentTrack).setEnabled(application.currentTrackOverlay != null);
 		menu.findItem(R.id.menuClearCurrentTrack).setEnabled(application.currentTrackOverlay != null);
 		menu.findItem(R.id.menuManageRoutes).setVisible(!nvr);
@@ -1660,9 +1656,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				return true;
 			case R.id.menuManageTracks:
 				startActivityForResult(new Intent(this, TrackList.class), RESULT_MANAGE_TRACKS);
-				return true;
-			case R.id.menuLoadTrack:
-				startActivityForResult(new Intent(this, TrackFileList.class), RESULT_LOAD_TRACK);
 				return true;
 			case R.id.menuExportCurrentTrack:
 		        FragmentManager fm = getSupportFragmentManager();
@@ -1836,21 +1829,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 
 		switch (requestCode)
 		{
-			case RESULT_LOAD_TRACK:
-			{
-				if (resultCode == RESULT_OK)
-				{
-					Bundle extras = data.getExtras();
-					int[] index = extras.getIntArray("index");
-					for (int i : index)
-					{
-						Track track = application.getTrack(i);
-						TrackOverlay newTrack = new TrackOverlay(this, track);
-						application.fileTrackOverlays.add(newTrack);
-					}
-				}
-				break;
-			}
 			case RESULT_SHOW_WAYPOINT:
 				if (resultCode == RESULT_OK)
 				{

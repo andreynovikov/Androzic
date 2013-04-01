@@ -112,10 +112,6 @@
                 android:icon="@drawable/ic_action_list_2"
                 android:title="@string/menu_manage"/>
             <item
-                android:id="@+id/menuLoadTrack"
-                android:icon="@drawable/ic_action_import"
-                android:title="@string/menu_load"/>
-            <item
                 android:id="@+id/menuExportCurrentTrack"
                 android:icon="@drawable/ic_action_export"
                 android:title="@string/menu_exportcurrenttrack"/>
