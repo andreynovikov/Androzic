@@ -334,21 +334,19 @@ public class RouteList extends ListActivity
 			}
 			Route route = getItem(position);
 			TextView text = (TextView) v.findViewById(R.id.name);
-			if (text != null)
-			{
-				text.setText(route.name);
-			}
+			text.setText(route.name);
 			String distance = StringFormatter.distanceH(route.distance);
 			text = (TextView) v.findViewById(R.id.distance);
-			if (text != null)
-			{
-				text.setText(distance);
-			}
+			text.setText(distance);
 			text = (TextView) v.findViewById(R.id.filename);
-			if (text != null && route.filepath != null)
+			if (route.filepath != null)
 			{
 				String filepath = route.filepath.startsWith(application.dataPath) ? route.filepath.substring(application.dataPath.length() + 1, route.filepath.length()): route.filepath;
 				text.setText(filepath);
+			}
+			else
+			{
+				text.setText("");
 			}
 			ImageView icon = (ImageView) v.findViewById(R.id.icon);
 			Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity),(int) (40 * mDensity), Config.ARGB_8888);
