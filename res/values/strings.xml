@@ -136,6 +136,7 @@
 	<string name="from_date">Starting from</string>
 	<string name="till_date">Ending at</string>
 	<string name="format">Format</string>
+	<string name="skip_single_locations">Skip single locations</string>
 		    
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>

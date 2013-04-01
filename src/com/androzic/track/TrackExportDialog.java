@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -29,6 +31,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
+import com.androzic.ui.ColorButton;
 import com.androzic.util.FileUtils;
 import com.androzic.util.GpxFiles;
 import com.androzic.util.KmlFiles;
@@ -40,6 +43,8 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 {
 	private EditText nameText;
 	private Spinner formatSpinner;
+	private CheckBox skip;
+	private ColorButton color;
 	private SliderContainer fromSliderContainer;
 	private SliderContainer tillSliderContainer;
 	private Button saveButton;
@@ -63,12 +68,18 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
 		View view = inflater.inflate(R.layout.dlg_exporttrack, container);
 
 		nameText = (EditText) view.findViewById(R.id.name_text);
 		nameText.setFilters(new InputFilter[] { filter });
 		nameText.addTextChangedListener(this);
 		formatSpinner = (Spinner) view.findViewById(R.id.format_spinner);
+
+		skip = (CheckBox) view.findViewById(R.id.skip_check);
+        color = (ColorButton) view.findViewById(R.id.color_button);
+        color.setColor(prefs.getInt(getString(R.string.pref_tracking_currentcolor), getResources().getColor(R.color.currenttrack)), Color.RED);
 
 		Track.TrackPoint start = track.getPoint(0);
 		Calendar startTime = Calendar.getInstance();
@@ -134,15 +145,16 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 			new Thread(new Runnable() {
 				public void run()
 				{
+	        		boolean skipSingles = skip.isChecked();
+	        		
 					String name = nameText.getText().toString();
 					String format = formatSpinner.getItemAtPosition(formatSpinner.getSelectedItemPosition()).toString();
 					String filename = FileUtils.sanitizeFilename(name) + format;
 
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(application);
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 					track.name = name;
-					track.width = prefs.getInt(application.getString(R.string.pref_tracking_linewidth), application.getResources().getColor(R.integer.def_track_linewidth));
-					// TODO Make color selectable
-					track.color = prefs.getInt(application.getString(R.string.pref_tracking_currentcolor), application.getResources().getColor(R.color.currenttrack));
+					track.width = prefs.getInt(getString(R.string.pref_tracking_linewidth), getResources().getColor(R.integer.def_track_linewidth));
+	        		track.color = color.getColor();
 
 					List<Track.TrackPoint> points = track.getPoints();
 
@@ -178,6 +190,21 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 						track.cutAfter(ep - 1);
 					if (sp > 0)
 						track.cutBefore(sp + 1);
+
+					if (skipSingles)
+					{
+						Track.TrackPoint pp = track.getLastPoint();
+						for (int i = points.size() - 2; i > 0; i--)
+						{
+							Track.TrackPoint cp = points.get(i);
+							if (!pp.continous && !cp.continous)
+							{
+								track.removePoint(i + 1);
+							}
+							pp = cp;
+						}
+					}
+
 					try
 					{
 						File dir = new File(application.dataPath);
