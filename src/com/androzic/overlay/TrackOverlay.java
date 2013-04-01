@@ -20,9 +20,9 @@
 
 package com.androzic.overlay;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -50,7 +50,7 @@ public class TrackOverlay extends MapOverlay
 		super(mapActivity);
 
 		track = new Track();
-		points = new WeakHashMap<TrackPoint, int[]>();
+		points = new HashMap<TrackPoint, int[]>();
 
 		paint = new Paint();
 		paint.setAntiAlias(true);
@@ -110,7 +110,15 @@ public class TrackOverlay extends MapOverlay
 	@Override
 	public void onMapChanged()
 	{
-		points.clear();
+//		points.clear();
+		List<TrackPoint> trackpoints = track.getPoints();
+		synchronized (trackpoints)
+		{
+			for (TrackPoint tp : trackpoints)
+			{
+				tp.dirty = true;
+			}
+		}
 	}
 
 	@Override
@@ -123,42 +131,74 @@ public class TrackOverlay extends MapOverlay
 
 		final int[] cxy = mapView.mapCenterXY;
 
+		int w2 = mapView.getWidth() / 2;
+		int h2 = mapView.getHeight() / 2;
+		int left = cxy[0] - w2;
+		int right = cxy[0] + w2;
+		int top = cxy[1] - h2;
+		int bottom = cxy[1] + h2;
+
 		final Path path = new Path();
-		int i = 0;
+		boolean first = true;
+		boolean skipped = false;
 		int lastX = 0, lastY = 0;
 		List<TrackPoint> trackpoints = track.getPoints();
 		synchronized (trackpoints)
 		{
 			for (TrackPoint tp : trackpoints)
 			{
-				int[] xy = null;
+				int[] xy = new int[2];
+				if (tp.dirty)
+				{
+					xy = application.getXYbyLatLon(tp.latitude, tp.longitude);
+					tp.x = xy[0];
+					tp.y = xy[1];
+					tp.dirty = false;
+				}
+				else
+				{
+					xy[0] = tp.x;
+					xy[1] = tp.y;
+				}
+				/*
 				xy = points.get(tp);
 				if (xy == null)
 				{
 					xy = application.getXYbyLatLon(tp.latitude, tp.longitude);
 					points.put(tp, xy);
 				}
+				*/
 
-				if (i == 0)
+				if (first)
 				{
 					path.setLastPoint(xy[0] - cxy[0], xy[1] - cxy[1]);
 					lastX = xy[0];
 					lastY = xy[1];
+					first = false;
+					continue;
 				}
-				else
+				if ((lastX == xy[0] && lastY == xy[1]) ||
+					lastX < left && cxy[0] < left ||
+					lastX > right && cxy[0] > right ||
+					lastY < top && cxy[1] < top ||
+					lastY > bottom && cxy[1] > bottom)
 				{
-					if (Math.abs(lastX - xy[0]) > 2 || Math.abs(lastY - xy[1]) > 2)
-					{
-
-						if (tp.continous)
-							path.lineTo(xy[0] - cxy[0], xy[1] - cxy[1]);
-						else
-							path.moveTo(xy[0] - cxy[0], xy[1] - cxy[1]);
-						lastX = xy[0];
-						lastY = xy[1];
-					}
+					lastX = xy[0];
+					lastY = xy[1];
+					skipped = true;
+					continue;
 				}
-				i++;
+				if (skipped)
+				{
+					path.moveTo(lastX - cxy[0], lastY - cxy[1]);
+					skipped = false;
+				}
+				if (tp.continous)
+					path.lineTo(xy[0] - cxy[0], xy[1] - cxy[1]);
+				else
+					path.moveTo(xy[0] - cxy[0], xy[1] - cxy[1]);
+				lastX = xy[0];
+				lastY = xy[1];
 			}
 		}
 		c.drawPath(path, paint);
