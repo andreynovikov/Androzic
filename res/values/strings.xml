@@ -96,6 +96,7 @@
 	<string name="altitude">Altitude</string>
 	<string name="proximity">Proximity</string>
 	<string name="accuracy">Accuracy</string>
+	<string name="line_width">Line width</string>
 	<string name="filename">File name</string>
 	<string name="coordformat">Coordinates format</string>
 	<string name="direction">Select direction</string>
@@ -301,6 +302,8 @@
 	<string name="pref_tracking_mintime_summary">Minimum time in milliseconds that should pass before another track point is acquired</string>
 	<string name="pref_tracking_mindistance_title">Minimum distance</string>
 	<string name="pref_tracking_mindistance_summary">Minimum distance in meters that should go before another track point is acquired</string>
+	<string name="pref_tracking_linewidth_title">Line width</string>
+	<string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
 	<string name="pref_tracking_currentload_title">Load current track</string>
 	<string name="pref_tracking_currentload_summary">Mark to load current track tail at next application start</string>
 	<string name="pref_tracking_currentlength_title">Current track length</string>

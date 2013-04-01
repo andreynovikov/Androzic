@@ -29,6 +29,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -65,7 +66,10 @@ public class RouteProperties extends Activity
         show.setChecked(route.show);
         color = (ColorButton) findViewById(R.id.color_button);
         color.setColor(route.lineColor, getResources().getColor(R.color.routeline));
-		
+
+		ViewGroup width = (ViewGroup) findViewById(R.id.width_layout);
+		width.setVisibility(View.GONE);
+
 	    Button save = (Button) findViewById(R.id.done_button);
 	    save.setOnClickListener(saveOnClickListener);
 

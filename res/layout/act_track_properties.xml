@@ -5,16 +5,16 @@
     android:orientation="vertical" >
 
     <ScrollView
+        style="@style/ContentLayout"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="0dip"
         android:layout_gravity="top"
         android:layout_weight="1" >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dip" >
+            android:orientation="vertical" >
 
             <TextView
                 android:layout_width="fill_parent"
@@ -59,18 +59,51 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="6dip"
-                android:text="@string/color"
-                android:textStyle="bold" />
-
-            <com.androzic.ui.ColorButton
-                android:id="@+id/color_button"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/change" />
+                android:orientation="horizontal"
+                android:paddingTop="6dip" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingRight="18dip" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="6dip"
+                        android:text="@string/color"
+                        android:textStyle="bold" />
+
+                    <com.androzic.ui.ColorButton
+                        android:id="@+id/color_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/change" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/width_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="6dip"
+                        android:text="@string/line_width"
+                        android:textStyle="bold" />
+
+                    <Spinner
+                        android:id="@+id/width_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

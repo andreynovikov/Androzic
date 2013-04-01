@@ -20,6 +20,9 @@
 
 package com.androzic.track;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
@@ -27,10 +30,13 @@ import com.androzic.ui.ColorButton;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +48,7 @@ public class TrackProperties extends Activity
 	//private TextView description;
 	private CheckBox show;
 	private ColorButton color;
+	private Spinner width;
 	
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -65,6 +72,26 @@ public class TrackProperties extends Activity
         color = (ColorButton) findViewById(R.id.color_button);
         color.setColor(track.color, getResources().getColor(R.color.currenttrack));
 		
+        int sel = -1;
+        List<String> widths = new ArrayList<String>(30);
+        for (int i = 1; i <= 30; i++)
+        {
+        	widths.add(String.format("   %d    ", i));
+        	if (track.width == i)
+        		sel = i - 1;
+        }
+        if (sel == -1)
+        {
+        	widths.add(String.valueOf(track.width));
+        	sel = widths.size() - 1;
+        }
+        
+        width = (Spinner) findViewById(R.id.width_spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, widths);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        width.setAdapter(adapter);
+        width.setSelection(sel);
+        
 	    Button save = (Button) findViewById(R.id.done_button);
 	    save.setOnClickListener(saveOnClickListener);
 
@@ -82,24 +109,16 @@ public class TrackProperties extends Activity
         		//track.description = description.getText().toString();
         		track.show = show.isChecked();
         		track.color = color.getColor();
+        		String w = (String) width.getItemAtPosition(width.getSelectedItemPosition());
+        		track.width = Integer.valueOf(w.trim());
     			setResult(Activity.RESULT_OK);
         		finish();
         	}
         	catch (Exception e)
         	{
+        		Log.e("TrackProperties", "Track save error", e);
     			Toast.makeText(getBaseContext(), "Error saving track", Toast.LENGTH_LONG).show();        		
         	}
         }
     };
-
-	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		track = null;
-		name = null;
-		show = null;
-		color = null;
-	}
-
 }

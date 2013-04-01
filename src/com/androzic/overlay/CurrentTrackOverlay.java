@@ -61,13 +61,11 @@ public class CurrentTrackOverlay extends TrackOverlay
 	{
     	this.track.clear();
 		this.track = track;
-		points.clear();
 	}
 
 	public void clear()
 	{
 		track.clear();
-		points.clear();
 	}
 
 	public void onBeforeDestroy()

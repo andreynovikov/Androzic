@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2013 Andrey Novikov <http://andreynovikov.info/>
  * 
  * This file is part of Androzic application.
  * 
@@ -20,9 +20,7 @@
 
 package com.androzic.overlay;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -41,22 +39,20 @@ public class TrackOverlay extends MapOverlay
 {
 	Paint paint;
 	Track track;
-	Map<TrackPoint, int[]> points;
 
-	private boolean privateProperties = false;
+	private boolean preserveWidth = false;
+	private boolean preserveColor = false;
 
 	public TrackOverlay(final Activity mapActivity)
 	{
 		super(mapActivity);
 
 		track = new Track();
-		points = new HashMap<TrackPoint, int[]>();
 
 		paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setStrokeWidth(3);
 		paint.setStyle(Paint.Style.STROKE);
-		paint.setColor(context.getResources().getColor(R.color.currenttrack));
 
 		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
 
@@ -68,10 +64,19 @@ public class TrackOverlay extends MapOverlay
 		this(mapActivity);
 
 		track = aTrack;
+		if (track.width > 0)
+		{
+			paint.setStrokeWidth(track.width);
+			preserveWidth = true;
+		}
+		else
+		{
+			track.width = (int) paint.getStrokeWidth();
+		}
 		if (track.color != -1)
 		{
 			paint.setColor(track.color);
-			privateProperties = true;
+			preserveColor = true;
 		}
 		else
 		{
@@ -81,10 +86,15 @@ public class TrackOverlay extends MapOverlay
 
 	public void onTrackPropertiesChanged()
 	{
+		if (paint.getStrokeWidth() != track.width)
+		{
+			paint.setStrokeWidth(track.width);
+			preserveWidth = true;
+		}
 		if (paint.getColor() != track.color)
 		{
 			paint.setColor(track.color);
-			privateProperties = true;
+			preserveColor = true;
 		}
 	}
 
@@ -92,7 +102,6 @@ public class TrackOverlay extends MapOverlay
 	{
 		this.track = track;
 		onTrackPropertiesChanged();
-		points.clear();
 	}
 
 	public Track getTrack()
@@ -101,16 +110,8 @@ public class TrackOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onBeforeDestroy()
-	{
-		super.onBeforeDestroy();
-		points.clear();
-	}
-
-	@Override
 	public void onMapChanged()
 	{
-//		points.clear();
 		List<TrackPoint> trackpoints = track.getPoints();
 		synchronized (trackpoints)
 		{
@@ -212,12 +213,10 @@ public class TrackOverlay extends MapOverlay
 	@Override
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
-		// TODO has to go to preferences
-		if (!privateProperties)
-		{
-			paint.setStrokeWidth(Integer.parseInt(settings.getString(context.getString(R.string.pref_tracking_linewidth), "3")));
+		if (!preserveWidth)
+			paint.setStrokeWidth(settings.getInt(context.getString(R.string.pref_tracking_linewidth), context.getResources().getInteger(R.integer.def_track_linewidth)));
+		if (!preserveColor)
 			paint.setColor(settings.getInt(context.getString(R.string.pref_tracking_currentcolor), context.getResources().getColor(R.color.currenttrack)));
-		}
 	}
 
 }
