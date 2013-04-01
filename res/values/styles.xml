@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="SherlockTheme" parent="@style/Theme.Sherlock">
+        <item name="horizontalPadding">6dip</item>
+    </style>
+    <style name="SherlockDialog" parent="@style/Theme.Sherlock.Dialog">
+        <item name="horizontalPadding">6dip</item>
+    </style>
     <style name="Scroller">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>

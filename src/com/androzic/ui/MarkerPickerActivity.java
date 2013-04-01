@@ -27,10 +27,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -46,7 +46,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
-public class MarkerPickerActivity extends Activity implements OnItemClickListener, OnItemLongClickListener
+public class MarkerPickerActivity extends SherlockActivity implements OnItemClickListener, OnItemLongClickListener
 {
 	private GridView grid;
 	private List<String> names;
@@ -102,7 +102,7 @@ public class MarkerPickerActivity extends Activity implements OnItemClickListene
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		setResult(Activity.RESULT_OK, new Intent().putExtra("icon", names.get(position)));
+		setResult(RESULT_OK, new Intent().putExtra("icon", names.get(position)));
 		finish();
 	}
 

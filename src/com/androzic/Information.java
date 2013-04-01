@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -42,13 +41,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
 import com.androzic.util.Astro;
 import com.androzic.util.StringFormatter;
 
-public class Information extends Activity
+public class Information extends SherlockActivity
 {
 	private ILocationService locationService = null;
 	private TextView satsValue;

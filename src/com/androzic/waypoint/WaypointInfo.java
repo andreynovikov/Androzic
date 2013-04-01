@@ -28,7 +28,6 @@ import java.io.File;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
@@ -43,20 +42,21 @@ import android.text.format.DateFormat;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Window;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class WaypointInfo extends Activity implements OnClickListener
+public class WaypointInfo extends SherlockActivity implements OnClickListener
 {
 	private Waypoint waypoint;
 	int index;
@@ -172,7 +172,7 @@ public class WaypointInfo extends Activity implements OnClickListener
 	@Override
     public void onClick(View v)
     {
-		setResult(Activity.RESULT_OK, new Intent().putExtra("index", index).putExtra("action", v.getId()));
+		setResult(RESULT_OK, new Intent().putExtra("index", index).putExtra("action", v.getId()));
    		finish();
     }
 

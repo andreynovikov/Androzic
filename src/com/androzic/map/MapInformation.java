@@ -22,14 +22,14 @@ package com.androzic.map;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 
-public class MapInformation extends Activity
+public class MapInformation extends SherlockActivity
 {
 	private TextView information;
 

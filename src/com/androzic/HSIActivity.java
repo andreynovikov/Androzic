@@ -20,7 +20,6 @@
 
 package com.androzic;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -34,10 +33,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Window;
 import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
@@ -45,7 +45,7 @@ import com.androzic.navigation.NavigationService;
 import com.androzic.ui.view.HSIView;
 import com.androzic.util.StringFormatter;
 
-public class HSIActivity extends Activity
+public class HSIActivity extends SherlockActivity
 {
 	private ILocationService locationService = null;
     private NavigationService navigationService;

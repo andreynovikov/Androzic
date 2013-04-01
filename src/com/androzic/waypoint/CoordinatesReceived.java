@@ -20,20 +20,20 @@
 
 package com.androzic.waypoint;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Window;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class CoordinatesReceived extends Activity implements OnClickListener
+public class CoordinatesReceived extends SherlockActivity implements OnClickListener
 {
     private double lat, lon;
 	

@@ -20,12 +20,12 @@
 
 package com.androzic.route;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.ui.ColorButton;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,7 +35,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class RouteProperties extends Activity
+public class RouteProperties extends SherlockActivity
 {
 	private Route route;
 	
@@ -87,7 +87,7 @@ public class RouteProperties extends Activity
         		//route.description = description.getText().toString();
         		route.show = show.isChecked();
         		route.lineColor = color.getColor();
-    			setResult(Activity.RESULT_OK);
+    			setResult(RESULT_OK);
         		finish();
         	}
         	catch (Exception e)

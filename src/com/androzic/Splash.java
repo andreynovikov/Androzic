@@ -29,8 +29,6 @@ import java.net.URL;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -41,7 +39,6 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -55,11 +52,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Window;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.overlay.CurrentTrackOverlay;
@@ -70,7 +68,7 @@ import com.androzic.util.GpxFiles;
 import com.androzic.util.KmlFiles;
 import com.androzic.util.OziExplorerFiles;
 
-public class Splash extends Activity implements OnClickListener
+public class Splash extends SherlockActivity implements OnClickListener
 {
 	private static final int MSG_FINISH = 1;
 	private static final int MSG_ERROR = 2;
@@ -102,16 +100,7 @@ public class Splash extends Activity implements OnClickListener
 	{
 		super.onCreate(savedInstanceState);
 
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-		{
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-		}
-		else
-		{
-			ActionBar actionBar = getActionBar();
-			if (actionBar != null)
-				actionBar.hide();
-		}
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		application = (Androzic) getApplication();
 

@@ -20,6 +20,7 @@
 
 package com.androzic.route;
 
+import com.actionbarsherlock.app.SherlockListActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
@@ -27,8 +28,6 @@ import com.androzic.data.Waypoint;
 import com.androzic.waypoint.WaypointProperties;
 
 import android.os.Bundle;
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,7 +43,7 @@ import com.ericharlow.DragNDrop.DragNDropListView;
 import com.ericharlow.DragNDrop.DropListener;
 import com.ericharlow.DragNDrop.RemoveListener;
 
-public class RouteEdit extends ListActivity implements DropListener, OnClickListener, RemoveListener, DragListener
+public class RouteEdit extends SherlockListActivity implements DropListener, OnClickListener, RemoveListener, DragListener
 {
 	private Route route;
 	private int index;
@@ -99,7 +98,7 @@ public class RouteEdit extends ListActivity implements DropListener, OnClickList
 	@Override
 	public void onClick(View v)
 	{
-		setResult(Activity.RESULT_OK);
+		setResult(RESULT_OK);
 		finish();
 	}
 

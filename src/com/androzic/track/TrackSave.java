@@ -25,13 +25,13 @@ import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
 import com.androzic.util.FileUtils;
 import com.androzic.util.OziExplorerFiles;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -41,7 +41,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class TrackSave extends Activity
+public class TrackSave extends SherlockActivity
 {
 	private TextView filename;
 	private Track track;

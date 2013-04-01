@@ -29,9 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Environment;
@@ -41,10 +39,11 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockListActivity;
 import com.androzic.R;
 import com.androzic.util.FileList;
 
-public abstract class FileListActivity extends ListActivity
+public abstract class FileListActivity extends SherlockListActivity
 {
 	List<File> files = null;
 	List<Map<String, String>> fileData = new ArrayList<Map<String, String>>();
@@ -143,7 +142,7 @@ public abstract class FileListActivity extends ListActivity
 		if (!file.exists())
 		{
 			Toast.makeText(this, R.string.err_nofile, Toast.LENGTH_LONG).show();
-			this.setResult(Activity.RESULT_CANCELED);
+			this.setResult(RESULT_CANCELED);
 			finish();
 		}
 

@@ -27,22 +27,22 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import android.app.Activity;
-import android.app.ListActivity;
+import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-public class MapList extends ListActivity
+public class MapList extends SherlockListActivity
 {
 	List<com.androzic.map.Map> maps;
 	List<Map<String, String>> mapData = new ArrayList<Map<String, String>>();
@@ -129,14 +129,14 @@ public class MapList extends ListActivity
 	protected void onListItemClick(ListView l, View v, int position, long id) 
 	{
 		super.onListItemClick(l, v, position, id);
-		setResult(Activity.RESULT_OK, new Intent().putExtra("id", maps.get(position).id));
+		setResult(RESULT_OK, new Intent().putExtra("id", maps.get(position).id));
 		finish();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
-		MenuInflater inflater = getMenuInflater();
+		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.maplist_menu, menu);
 		return true;
 	}

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -52,6 +51,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
@@ -63,7 +63,7 @@ import com.jhlabs.map.GeodeticPosition;
 import com.jhlabs.map.ReferenceException;
 import com.jhlabs.map.UTMReference;
 
-public class WaypointProperties extends Activity implements OnItemSelectedListener
+public class WaypointProperties extends SherlockActivity implements OnItemSelectedListener
 {
 	private Waypoint waypoint;
 
@@ -266,7 +266,7 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == 0 && resultCode == Activity.RESULT_OK)
+		if (requestCode == 0 && resultCode == RESULT_OK)
 		{
 			iconValue = data.getStringExtra("icon");
 			ImageButton icon = (ImageButton) findViewById(R.id.icon_button);
@@ -400,11 +400,11 @@ public class WaypointProperties extends Activity implements OnItemSelectedListen
 
 				if (index != -1)
 				{
-					setResult(Activity.RESULT_OK, new Intent().putExtra("index", index));
+					setResult(RESULT_OK, new Intent().putExtra("index", index));
 				}
 				else
 				{
-					setResult(Activity.RESULT_OK);
+					setResult(RESULT_OK);
 				}
 				finish();
 			}

@@ -20,13 +20,13 @@
 
 package com.androzic.route;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
 import com.androzic.navigation.NavigationService;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -35,7 +35,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-public class RouteStart extends Activity
+public class RouteStart extends SherlockActivity
 {
     private Route route;
 	private RadioButton forward;
@@ -57,7 +57,7 @@ public class RouteStart extends Activity
 		if (route.length() < 2)
 		{
 			Toast.makeText(getBaseContext(), R.string.err_shortroute, Toast.LENGTH_LONG).show();
-			setResult(Activity.RESULT_CANCELED);
+			setResult(RESULT_CANCELED);
     		finish();
     		return;
 		}
@@ -85,7 +85,7 @@ public class RouteStart extends Activity
         	route.show = true;
         	int dir = forward.isChecked() ? NavigationService.DIRECTION_FORWARD : NavigationService.DIRECTION_REVERSE;
 			startService(new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra("index", index).putExtra("direction", dir));
-			setResult(Activity.RESULT_OK);
+			setResult(RESULT_OK);
     		finish();
         }
     };

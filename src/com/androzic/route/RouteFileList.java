@@ -29,7 +29,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import android.app.Activity;
 import android.content.Intent;
 
 import com.androzic.Androzic;
@@ -84,11 +83,11 @@ public class RouteFileList extends FileListActivity
 					index[i] = application.addRoute(route);
 					i++;
 				}
-				setResult(Activity.RESULT_OK, new Intent().putExtra("index", index));
+				setResult(RESULT_OK, new Intent().putExtra("index", index));
 			}
 			else
 			{
-				setResult(Activity.RESULT_CANCELED, new Intent());
+				setResult(RESULT_CANCELED, new Intent());
 			}
 			finish();
 		}

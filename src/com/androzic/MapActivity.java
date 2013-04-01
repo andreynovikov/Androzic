@@ -78,7 +78,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
@@ -93,6 +92,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.actionbarsherlock.view.Window;
 import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
@@ -284,11 +284,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		settings.registerOnSharedPreferenceChangeListener(this);
 		Resources resources = getResources();
 
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-		{
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-		}
-		else if (settings.getBoolean(getString(R.string.pref_hideactionbar), resources.getBoolean(R.bool.def_hideactionbar)))
+		if (settings.getBoolean(getString(R.string.pref_hideactionbar), resources.getBoolean(R.bool.def_hideactionbar)))
 		{
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 		}
@@ -2403,7 +2399,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		else if (getString(R.string.pref_wakelock).equals(key))
 		{
 			keepScreenOn = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_wakelock));
-			Window wnd = getWindow();
+			android.view.Window wnd = getWindow();
 			if (wnd != null)
 			{
 				if (keepScreenOn)

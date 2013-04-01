@@ -23,12 +23,12 @@ package com.androzic.track;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
 import com.androzic.ui.ColorButton;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +40,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class TrackProperties extends Activity
+public class TrackProperties extends SherlockActivity
 {
 	private Track track;
 	
@@ -111,7 +111,7 @@ public class TrackProperties extends Activity
         		track.color = color.getColor();
         		String w = (String) width.getItemAtPosition(width.getSelectedItemPosition());
         		track.width = Integer.valueOf(w.trim());
-    			setResult(Activity.RESULT_OK);
+    			setResult(RESULT_OK);
         		finish();
         	}
         	catch (Exception e)

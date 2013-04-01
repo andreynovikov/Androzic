@@ -27,8 +27,6 @@ import java.util.concurrent.Executors;
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,9 +42,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -55,13 +50,17 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.util.StringFormatter;
 
-public class TrackList extends ListActivity
+public class TrackList extends SherlockListActivity
 {
 	private static final int RESULT_LOAD_TRACK = 1;
 
@@ -127,7 +126,7 @@ public class TrackList extends ListActivity
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
-		MenuInflater inflater = getMenuInflater();
+		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.tracklist_menu, menu);
 		return true;
 	}
@@ -195,7 +194,7 @@ public class TrackList extends ListActivity
 					startActivity(new Intent(TrackList.this, TrackProperties.class).putExtra("INDEX", position));
 					break;
 				case qaTrackEdit:
-					setResult(Activity.RESULT_OK, new Intent().putExtra("index", position));
+					setResult(RESULT_OK, new Intent().putExtra("index", position));
 					finish();
 					break;
 				case qaTrackToRoute:

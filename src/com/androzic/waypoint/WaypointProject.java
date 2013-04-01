@@ -25,13 +25,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.hardware.GeomagneticField;
 import android.os.Bundle;
@@ -43,7 +43,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class WaypointProject extends Activity
+public class WaypointProject extends SherlockActivity
 {
 	List<Waypoint> waypoints = null;
 	
@@ -140,7 +140,7 @@ public class WaypointProject extends Activity
         		waypoint.longitude = prj[1];
         		waypoint.date = Calendar.getInstance().getTime();
         		application.addWaypoint(waypoint);
-    			setResult(Activity.RESULT_OK, new Intent().putExtra("index", application.getWaypointIndex(waypoint)));
+    			setResult(RESULT_OK, new Intent().putExtra("index", application.getWaypointIndex(waypoint)));
         		finish();
         	}
         	catch (Exception e)

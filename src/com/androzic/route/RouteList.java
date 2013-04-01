@@ -26,8 +26,6 @@ import java.util.concurrent.Executors;
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,9 +41,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -54,13 +49,17 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.StringFormatter;
 
-public class RouteList extends ListActivity
+public class RouteList extends SherlockListActivity
 {
 	private static final int RESULT_START_ROUTE = 1;
 	private static final int RESULT_LOAD_ROUTE = 2;
@@ -140,7 +139,7 @@ public class RouteList extends ListActivity
 	{
 		if (mode == MODE_MANAGE)
 		{
-			MenuInflater inflater = getMenuInflater();
+			MenuInflater inflater = getSupportMenuInflater();
 			inflater.inflate(R.menu.routelist_menu, menu);
 		}
 		return true;
@@ -156,7 +155,7 @@ public class RouteList extends ListActivity
 				Route route = new Route("New route", "", true);
 				application.addRoute(route);
 				int position = application.getRouteIndex(route);
-				setResult(Activity.RESULT_OK, new Intent().putExtra("index", position));
+				setResult(RESULT_OK, new Intent().putExtra("index", position));
 				finish();
 				return true;
 			case R.id.menuLoadRoute:
@@ -240,7 +239,7 @@ public class RouteList extends ListActivity
 					break;
 				case qaRouteEdit:
 					route.show = true;
-					setResult(Activity.RESULT_OK, new Intent().putExtra("index", position));
+					setResult(RESULT_OK, new Intent().putExtra("index", position));
 					finish();
 					break;
 				case qaRouteSave:
