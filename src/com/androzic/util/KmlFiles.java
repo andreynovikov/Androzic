@@ -350,7 +350,7 @@ class KmlParser extends DefaultHandler
 					String[] coords = point.split(",");
 					if (coords.length == 3)
 					{
-						track.addTrackPoint(continous, Double.parseDouble(coords[1].trim()), Double.parseDouble(coords[0].trim()), Double.parseDouble(coords[2].trim()), 0.0, 0);
+						track.addPoint(continous, Double.parseDouble(coords[1].trim()), Double.parseDouble(coords[0].trim()), Double.parseDouble(coords[2].trim()), 0.0, 0.0, 0.0, 0);
 						continous = true;
 					}
 				}

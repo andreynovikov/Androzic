@@ -57,7 +57,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.androzic.Androzic;
-import com.androzic.MapActivity;
 import com.androzic.R;
 import com.androzic.Splash;
 import com.androzic.data.Track;
@@ -108,6 +107,7 @@ public class LocationService extends BaseLocationService implements LocationList
 
 	private SQLiteDatabase trackDB = null;
 	private boolean trackingEnabled = false;
+	private String errorMsg = "";
 	private long errorTime = 0;
 
 	private Location lastWritenLocation = null;
@@ -176,6 +176,7 @@ public class LocationService extends BaseLocationService implements LocationList
 		}
 		if (intent.getAction().equals(ENABLE_TRACK) && !trackingEnabled)
 		{
+			errorMsg = "";
 			errorTime = 0;
 			trackingEnabled = true;
 			isContinous = false;
@@ -186,6 +187,7 @@ public class LocationService extends BaseLocationService implements LocationList
 		{
 			trackingEnabled = false;
 			closeDatabase();
+			errorMsg = "";
 			errorTime = 0;
 			sendBroadcast(new Intent(BROADCAST_TRACKING_STATUS));
 		}
@@ -378,7 +380,10 @@ public class LocationService extends BaseLocationService implements LocationList
 		PendingIntent contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, intent, 0);
 		builder.setContentIntent(contentIntent);
 		builder.setContentTitle(getText(R.string.notif_loc_short));
-		builder.setContentText(getText(msgId));
+		if (errorTime > 0)
+			builder.setContentText(errorMsg);
+		else
+			builder.setContentText(getText(msgId));
 		builder.setOngoing(true);
 
 		Notification notification = builder.getNotification();
@@ -399,6 +404,8 @@ public class LocationService extends BaseLocationService implements LocationList
 		Androzic application = Androzic.getApplication();
 		if (application.dataPath == null)
 		{
+			Log.e(TAG, "Data path is null");
+			errorMsg = "Data path is null";
 			errorTime = System.currentTimeMillis();
 			updateNotification();
 			return;
@@ -406,6 +413,8 @@ public class LocationService extends BaseLocationService implements LocationList
 		File dir = new File(application.dataPath);
 		if (!dir.exists() && !dir.mkdirs())
 		{
+			Log.e(TAG, "Failed to create data folder");
+			errorMsg = "Failed to create data folder";
 			errorTime = System.currentTimeMillis();
 			updateNotification();
 			return;
@@ -417,7 +426,7 @@ public class LocationService extends BaseLocationService implements LocationList
 			Cursor cursor = trackDB.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name = 'track'", null);
 			if (cursor.getCount() == 0)
 			{
-				trackDB.execSQL("CREATE TABLE track (_id INTEGER PRIMARY KEY, latitude REAL, longitude REAL, code INTEGER, altitude REAL, datetime INTEGER)");
+				trackDB.execSQL("CREATE TABLE track (_id INTEGER PRIMARY KEY, latitude REAL, longitude REAL, code INTEGER, elevation REAL, speed REAL, track REAL, accuracy REAL, datetime INTEGER)");
 			}
 			cursor.close();
 		}
@@ -425,6 +434,7 @@ public class LocationService extends BaseLocationService implements LocationList
 		{
 			trackDB = null;
 			Log.e(TAG, "openDatabase", e);
+			errorMsg = "Failed to open DB";
 			errorTime = System.currentTimeMillis();
 			updateNotification();
 		}
@@ -451,11 +461,13 @@ public class LocationService extends BaseLocationService implements LocationList
 		{
 			double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
 			double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
-			double altitude = cursor.getDouble(cursor.getColumnIndex("altitude"));
-			double speed = 0; // cursor.getDouble(cursor.getColumnIndex("speed"));
+			double elevation = cursor.getDouble(cursor.getColumnIndex("elevation"));
+			double speed = cursor.getDouble(cursor.getColumnIndex("speed"));
+			double bearing = cursor.getDouble(cursor.getColumnIndex("track"));
+			double accuracy = cursor.getDouble(cursor.getColumnIndex("accuracy"));
 			int code = cursor.getInt(cursor.getColumnIndex("code"));
 			long time = cursor.getLong(cursor.getColumnIndex("datetime"));
-			track.addTrackPoint(code == 0, latitude, longitude, altitude, speed, time);
+			track.addPoint(code == 0, latitude, longitude, elevation, speed, bearing, accuracy, time);
 		}
 		cursor.close();
 		return track;
@@ -469,7 +481,7 @@ public class LocationService extends BaseLocationService implements LocationList
 			trackDB.execSQL("DELETE FROM track");
 	}
 
-	public void addPoint(boolean continous, double latitude, double longitude, double altitude, float speed, long time)
+	public void addPoint(boolean continous, double latitude, double longitude, double elevation, float speed, float bearing, float accuracy, long time)
 	{
 		if (trackDB == null)
 		{
@@ -482,12 +494,16 @@ public class LocationService extends BaseLocationService implements LocationList
 		values.put("latitude", latitude);
 		values.put("longitude", longitude);
 		values.put("code", continous ? 0 : 1);
-		values.put("altitude", altitude);
+		values.put("elevation", elevation);
+		values.put("speed", speed);
+		values.put("track", bearing);
+		values.put("accuracy", accuracy);
 		values.put("datetime", time);
 
 		if (trackDB.insert("track", null, values) < 0)
 		{
 			Log.e(TAG, "addPoint");
+			errorMsg = "addPoint";
 			errorTime = System.currentTimeMillis();
 			updateNotification();
 			closeDatabase();
@@ -499,11 +515,11 @@ public class LocationService extends BaseLocationService implements LocationList
 		Log.d(TAG, "Fix needs writing");
 		lastWritenLocation = loc;
 		distanceFromLastWriting = 0;
-		addPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getTime());
+		addPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getBearing(), loc.getAccuracy(), loc.getTime());
 
 		for (ITrackingListener callback : trackingCallbacks)
 		{
-			callback.onNewPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getBearing(), loc.getTime());
+			callback.onNewPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getBearing(), loc.getAccuracy(), loc.getTime());
 		}
 
 		final int n = trackingRemoteCallbacks.beginBroadcast();
@@ -512,7 +528,7 @@ public class LocationService extends BaseLocationService implements LocationList
 			final ITrackingCallback callback = trackingRemoteCallbacks.getBroadcastItem(i);
 			try
 			{
-				callback.onNewPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getBearing(), loc.getTime());
+				callback.onNewPoint(continous, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(), loc.getSpeed(), loc.getBearing(), loc.getAccuracy(), loc.getTime());
 			}
 			catch (RemoteException e)
 			{

@@ -193,7 +193,7 @@ public class WidgetService extends Service
 	private ITrackingCallback callback = new ITrackingCallback.Stub()
 	{
 		@Override
-		public void onNewPoint(boolean continous, double lat, double lon, double elev, double speed, double track, long time) throws RemoteException
+		public void onNewPoint(boolean continous, double lat, double lon, double elev, double speed, double track, double accuracy, long time) throws RemoteException
 		{
 			Log.d("ANDROZIC", "WidgetService: track point arrived");
 			latitude = lat;

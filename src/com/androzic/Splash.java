@@ -403,11 +403,13 @@ public class Splash extends Activity implements OnClickListener
 							{
 								double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
 								double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
-								double altitude = cursor.getDouble(cursor.getColumnIndex("altitude"));
-								double speed = 0; // cursor.getDouble(cursor.getColumnIndex("speed"));
+								double altitude = cursor.getDouble(cursor.getColumnIndex("elevation"));
+								double speed = cursor.getDouble(cursor.getColumnIndex("speed"));
+								double bearing = cursor.getDouble(cursor.getColumnIndex("track"));
+								double accuracy = cursor.getDouble(cursor.getColumnIndex("accuracy"));
 								int code = cursor.getInt(cursor.getColumnIndex("code"));
 								long time = cursor.getLong(cursor.getColumnIndex("datetime"));
-								track.addTrackPoint(code == 0, latitude, longitude, altitude, speed, time);
+								track.addPoint(code == 0, latitude, longitude, altitude, speed, bearing, accuracy, time);
 							}
 							track.show = true;
 							application.currentTrackOverlay.setTrack(track);

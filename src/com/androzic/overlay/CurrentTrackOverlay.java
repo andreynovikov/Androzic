@@ -111,9 +111,9 @@ public class CurrentTrackOverlay extends TrackOverlay
     
     private ITrackingListener trackingListener = new ITrackingListener()
     {
-        public void onNewPoint(boolean continous, double lat, double lon, double elev, double speed, double trk, long time)
+        public void onNewPoint(boolean continous, double lat, double lon, double elev, double speed, double trk, double accuracy, long time)
         {
-        	track.addTrackPoint(continous, lat, lon, elev, speed, time);
+        	track.addPoint(continous, lat, lon, elev, speed, trk, accuracy, time);
         }
     };
 

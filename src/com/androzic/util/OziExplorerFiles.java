@@ -340,7 +340,7 @@ public class OziExplorerFiles
 			long time = fields.length > 4 ? TDateTime.fromDateTime(Double.parseDouble(fields[4])): 0L;
 			double elevation = fields.length > 3 ? Double.parseDouble(fields[3]) * 0.3048: 0;
 			if (fields.length >= 3)
-				track.addTrackPoint("0".equals(fields[2]) ? true : false, Double.parseDouble(fields[0]), Double.parseDouble(fields[1]), elevation, 0.0, time);
+				track.addPoint("0".equals(fields[2]) ? true : false, Double.parseDouble(fields[0]), Double.parseDouble(fields[1]), elevation, 0.0, 0.0, 0.0, time);
 	    }
 		reader.close();
 		

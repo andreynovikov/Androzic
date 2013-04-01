@@ -284,7 +284,7 @@ class GpxParser extends DefaultHandler
 		// <trkpt>
 		if (localName.equalsIgnoreCase(TRKPT) && track != null)
 		{
-			track.addTrackPoint(continous, Double.parseDouble(attributes.getValue(LAT)), Double.parseDouble(attributes.getValue(LON)), 0.0, 0.0, 0);
+			track.addPoint(continous, Double.parseDouble(attributes.getValue(LAT)), Double.parseDouble(attributes.getValue(LON)), 0.0, 0.0, 0.0, 0.0, 0);
 			trkpt = track.getLastPoint();
 			continous = true;
 		}
