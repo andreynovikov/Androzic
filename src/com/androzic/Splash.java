@@ -264,8 +264,8 @@ public class Splash extends SherlockActivity implements OnClickListener
 			Resources resources = getResources();
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(Splash.this);
 
+			// start location service
 			application.enableLocating(settings.getBoolean(getString(R.string.lc_locate), true));
-			application.enableTracking(settings.getBoolean(getString(R.string.lc_track), true));
 
 			// set root folder and check if it has to be created
 			String rootPath = settings.getString(getString(R.string.pref_folder_root), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_prefix));
@@ -358,6 +358,9 @@ public class Splash extends SherlockActivity implements OnClickListener
 
 			// initialize data
 			application.installData();
+
+			// start tracking service
+			application.enableTracking(settings.getBoolean(getString(R.string.lc_track), true));
 
 			// read default waypoints
 			File wptFile = new File(application.dataPath, "myWaypoints.wpt");
