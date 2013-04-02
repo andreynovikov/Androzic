@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -132,6 +133,12 @@ public class Androzic extends BaseApplication
 	private List<Track> tracks = new ArrayList<Track>();
 	private List<Route> routes = new ArrayList<Route>();
 
+	// Map activity state
+	protected Route editingRoute = null;
+	protected Track editingTrack = null;
+	protected Stack<Waypoint> routeEditingWaypoints = null;
+	
+	// Plugins
 	private AbstractMap<String, Intent> pluginPreferences = new HashMap<String, Intent>();
 	private AbstractMap<String, Pair<Drawable, Intent>> pluginViews = new HashMap<String, Pair<Drawable, Intent>>();
 	
@@ -1490,57 +1497,6 @@ public class Androzic extends BaseApplication
 		startService(new Intent(this, LocationService.class).setAction(action));
 	}
 	
-	public void initialize(MapState mapState)
-	{
-		waypoints.addAll(mapState.waypoints);
-		tracks.addAll(mapState.tracks);
-		routes.addAll(mapState.routes);
-		for (Track track : tracks)
-		{
-			track.removed = false;
-		}
-		for (Route route : routes)
-		{
-			route.removed = false;
-		}
-		
-		locale = mapState.locale;
-		dataPath = mapState.dataPath;
-		iconPath = mapState.iconPath;
-		rootPath = mapState.rootPath;
-		mapPath = mapState.mapPath;
-		mapsInited = mapState.mapsInited;
-		
-		maps = mapState.maps;
-		currentMap = mapState.currentMap;
-		onlineMaps = mapState.onlineMaps;
-		onlineMap = mapState.onlineMap;
-		suitableMaps = mapState.suitableMaps;
-		memmsg = mapState.memmsg;
-		initGrids();
-	}
-
-	public void onRetainNonConfigurationInstance(MapState mapState)
-	{
-		mapState.waypoints.addAll(waypoints);
-		mapState.tracks.addAll(tracks);
-		mapState.routes.addAll(routes);
-
-		mapState.locale = locale;
-		mapState.dataPath = dataPath;
-		mapState.iconPath = iconPath;
-		mapState.rootPath = rootPath;
-		mapState.mapPath = mapPath;
-		mapState.mapsInited = mapsInited;
-		
-		mapState.maps = maps;
-		mapState.currentMap = currentMap;
-		mapState.onlineMaps.addAll(onlineMaps);
-		mapState.onlineMap = onlineMap;
-		mapState.suitableMaps.addAll(suitableMaps);
-		mapState.memmsg = memmsg;
-	}
-
 	public void setRootPath(String path)
 	{
 		rootPath = path;

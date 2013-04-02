@@ -207,10 +207,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 	protected ExecutorService executorThread = Executors.newSingleThreadExecutor();
 	private FinishHandler finishHandler;
 
-	protected Route editingRoute = null;
-	protected Track editingTrack = null;
-	protected Stack<Waypoint> routeEditingWaypoints = null;
-
 	private int waypointSelected = -1;
 	private int routeSelected = -1;
 	private long mapObjectSelected = -1;
@@ -254,27 +250,13 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		// FIXME Should find a better place for this
 		application.mapObjectsOverlay = new MapObjectsOverlay(this);
 
-		final MapState mapState = (MapState) getLastNonConfigurationInstance();
-		if (mapState != null)
+		// check if called after crash
+		if (!application.mapsInited)
 		{
-			Log.e(TAG, "has MapState");
-			// application.initialize(mapState);
-
-			editingTrack = mapState.editingTrack;
-			editingRoute = mapState.editingRoute;
-			routeEditingWaypoints = mapState.routeEditingWaypoints;
-		}
-		else
-		{
-			Log.e(TAG, "no MapState");
-			// check if called after crash
-			if (!application.mapsInited)
-			{
-				restarting = true;
-				startActivity(new Intent(this, Splash.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
-				finish();
-				return;
-			}
+			restarting = true;
+			startActivity(new Intent(this, Splash.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
+			finish();
+			return;
 		}
 
 		application.setMapActivity(this);
@@ -361,67 +343,44 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		dimView = new RelativeLayout(this);
 
 		String navWpt = settings.getString(getString(R.string.nav_wpt), "");
-		if (!"".equals(navWpt))
+		if (!"".equals(navWpt) && savedInstanceState == null)
 		{
-			try
-			{
-				long id = settings.getLong(getString(R.string.nav_wpt_idx), 0);
-				Intent intent = null;
-				if (id > 0 && mapState != null)
-				{
-					intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT_WITH_ID);
-					intent.putExtra(NavigationService.EXTRA_ID, id);
-				}
-				else if (id == 0)
-				{
-					intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
-					intent.putExtra(NavigationService.EXTRA_NAME, navWpt);
-					intent.putExtra(NavigationService.EXTRA_LATITUDE, (double) settings.getFloat(getString(R.string.nav_wpt_lat), 0));
-					intent.putExtra(NavigationService.EXTRA_LONGITUDE, (double) settings.getFloat(getString(R.string.nav_wpt_lon), 0));
-					intent.putExtra(NavigationService.EXTRA_PROXIMITY, settings.getInt(getString(R.string.nav_wpt_prx), 0));
-				}
-				if (intent != null)
-					startService(intent);
-			}
-			catch (Exception e)
-			{
-			}
+			Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+			intent.putExtra(NavigationService.EXTRA_NAME, navWpt);
+			intent.putExtra(NavigationService.EXTRA_LATITUDE, (double) settings.getFloat(getString(R.string.nav_wpt_lat), 0));
+			intent.putExtra(NavigationService.EXTRA_LONGITUDE, (double) settings.getFloat(getString(R.string.nav_wpt_lon), 0));
+			intent.putExtra(NavigationService.EXTRA_PROXIMITY, settings.getInt(getString(R.string.nav_wpt_prx), 0));
+			startService(intent);
 		}
 
 		String navRoute = settings.getString(getString(R.string.nav_route), "");
-		if (!"".equals(navRoute) && (mapState != null || settings.getBoolean(getString(R.string.pref_navigation_loadlast), getResources().getBoolean(R.bool.def_navigation_loadlast))))
+		if (!"".equals(navRoute) && settings.getBoolean(getString(R.string.pref_navigation_loadlast), getResources().getBoolean(R.bool.def_navigation_loadlast)) && savedInstanceState == null)
 		{
 			int ndir = settings.getInt(getString(R.string.nav_route_dir), 0);
 			int nwpt = settings.getInt(getString(R.string.nav_route_wpt), -1);
 			try
 			{
 				int rt = -1;
-				if (mapState == null)
+				Route route = application.getRouteByFile(navRoute);
+				if (route != null)
 				{
-					Route route = application.getRouteByFile(navRoute);
-					if (route != null)
-					{
-						route.show = true;
-						rt = application.getRouteIndex(route);
-					}
-					else
-					{
-						File rtf = new File(navRoute);
-						// FIXME It's bad - it can be not a first route in a file
-						route = OziExplorerFiles.loadRoutesFromFile(rtf, application.charset).get(0);
-						rt = application.addRoute(route);
-					}
-					RouteOverlay newRoute = new RouteOverlay(this, route);
-					application.routeOverlays.add(newRoute);
+					route.show = true;
+					rt = application.getRouteIndex(route);
 				}
 				else
 				{
-					rt = settings.getInt(getString(R.string.nav_route_idx), -1);
+					File rtf = new File(navRoute);
+					// FIXME It's bad - it can be not a first route in a file
+					route = OziExplorerFiles.loadRoutesFromFile(rtf, application.charset).get(0);
+					rt = application.addRoute(route);
 				}
+				RouteOverlay newRoute = new RouteOverlay(this, route);
+				application.routeOverlays.add(newRoute);
 				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt).putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, ndir).putExtra(NavigationService.EXTRA_ROUTE_START, nwpt));
 			}
 			catch (Exception e)
 			{
+				Log.e(TAG, "Failed to start navigation", e);
 			}
 		}
 
@@ -522,10 +481,10 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 
 		// prepare views
 		customizeLayout(settings);
-		findViewById(R.id.editroute).setVisibility(editingRoute != null ? View.VISIBLE : View.GONE);
-		if (editingTrack != null)
+		findViewById(R.id.editroute).setVisibility(application.editingRoute != null ? View.VISIBLE : View.GONE);
+		if (application.editingTrack != null)
 		{
-			startEditTrack(editingTrack);
+			startEditTrack(application.editingTrack);
 		}
 		updateGPSStatus();
 		updateNavigationStatus();
@@ -612,7 +571,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 			{
 				MapObject wpt = navigationService.navWaypoint;
 				editor.putString(getString(R.string.nav_wpt), wpt.name);
-				editor.putLong(getString(R.string.nav_wpt_idx), wpt._id);
 				editor.putInt(getString(R.string.nav_wpt_prx), wpt.proximity);
 				editor.putFloat(getString(R.string.nav_wpt_lat), (float) wpt.latitude);
 				editor.putFloat(getString(R.string.nav_wpt_lon), (float) wpt.longitude);
@@ -1083,7 +1041,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 
 	protected void updateGPSStatus()
 	{
-		int v = map.isMoving() && editingRoute == null && editingTrack == null ? View.VISIBLE : View.GONE;
+		int v = map.isMoving() && application.editingRoute == null && application.editingTrack == null ? View.VISIBLE : View.GONE;
 		View view = findViewById(R.id.movinginfo);
 		if (view.getVisibility() != v)
 		{
@@ -1420,11 +1378,11 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 	private void startEditTrack(Track track)
 	{
 		setFollowing(false);
-		editingTrack = track;
-		editingTrack.editing = true;
-		int n = editingTrack.getPoints().size() - 1;
-		int p = editingTrack.editingPos >= 0 ? editingTrack.editingPos : n;
-		editingTrack.editingPos = p;
+		application.editingTrack = track;
+		application.editingTrack.editing = true;
+		int n = application.editingTrack.getPoints().size() - 1;
+		int p = application.editingTrack.editingPos >= 0 ? application.editingTrack.editingPos : n;
+		application.editingTrack.editingPos = p;
 		trackBar.setMax(n);
 		trackBar.setProgress(0);
 		trackBar.setProgress(p);
@@ -1444,8 +1402,8 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 	private void startEditRoute(Route route)
 	{
 		setFollowing(false);
-		editingRoute = route;
-		editingRoute.editing = true;
+		application.editingRoute = route;
+		application.editingRoute.editing = true;
 
 		boolean newroute = true;
 		for (Iterator<RouteOverlay> iter = application.routeOverlays.iterator(); iter.hasNext();)
@@ -1459,12 +1417,12 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		}
 		if (newroute)
 		{
-			RouteOverlay newRoute = new RouteOverlay(this, editingRoute);
+			RouteOverlay newRoute = new RouteOverlay(this, application.editingRoute);
 			application.routeOverlays.add(newRoute);
 		}
 		findViewById(R.id.editroute).setVisibility(View.VISIBLE);
 		updateGPSStatus();
-		routeEditingWaypoints = new Stack<Waypoint>();
+		application.routeEditingWaypoints = new Stack<Waypoint>();
 		if (showDistance > 0)
 			application.distanceOverlay.setEnabled(false);
 		updateMapViewArea();
@@ -1472,7 +1430,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 
 	public void setFollowing(boolean follow)
 	{
-		if (editingRoute == null && editingTrack == null)
+		if (application.editingRoute == null && application.editingTrack == null)
 		{
 			if (showDistance > 0 && application.distanceOverlay != null)
 			{
@@ -1523,7 +1481,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 	{
 		try
 		{
-			if (editingRoute != null)
+			if (application.editingRoute != null)
 			{
 				routeSelected = -1;
 				waypointSelected = index;
@@ -1545,7 +1503,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 
 	public boolean routeWaypointTapped(int route, int index, int x, int y)
 	{
-		if (editingRoute != null && editingRoute == application.getRoute(route))
+		if (application.editingRoute != null && application.editingRoute == application.getRoute(route))
 		{
 			startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index).putExtra("ROUTE", route + 1), RESULT_EDIT_ROUTE);
 			return true;
@@ -1594,7 +1552,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu)
 	{
-		if (editingRoute != null || editingTrack != null)
+		if (application.editingRoute != null || application.editingTrack != null)
 			return false;
 
 		boolean wpt = application.hasWaypoints();
@@ -1782,7 +1740,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 			switch (actionId)
 			{
 				case qaAddWaypointToRoute:
-					routeEditingWaypoints.push(editingRoute.addWaypoint(wpt.name, wpt.latitude, wpt.longitude));
+					application.routeEditingWaypoints.push(application.editingRoute.addWaypoint(wpt.name, wpt.latitude, wpt.longitude));
 					map.invalidate();
 					break;
 			}
@@ -2166,49 +2124,49 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				isFullscreen = !isFullscreen;
 				break;
 			case R.id.cutbefore:
-				editingTrack.cutBefore(trackBar.getProgress());
-				int nb = editingTrack.getPoints().size() - 1;
+				application.editingTrack.cutBefore(trackBar.getProgress());
+				int nb = application.editingTrack.getPoints().size() - 1;
 				trackBar.setMax(nb);
 				trackBar.setProgress(0);
 				break;
 			case R.id.cutafter:
-				editingTrack.cutAfter(trackBar.getProgress());
-				int na = editingTrack.getPoints().size() - 1;
+				application.editingTrack.cutAfter(trackBar.getProgress());
+				int na = application.editingTrack.getPoints().size() - 1;
 				trackBar.setMax(na);
 				trackBar.setProgress(0);
 				trackBar.setProgress(na);
 				break;
 			case R.id.addpoint:
 				double[] aloc = application.getMapCenter();
-				routeEditingWaypoints.push(editingRoute.addWaypoint("RWPT" + editingRoute.length(), aloc[0], aloc[1]));
+				application.routeEditingWaypoints.push(application.editingRoute.addWaypoint("RWPT" + application.editingRoute.length(), aloc[0], aloc[1]));
 				break;
 			case R.id.insertpoint:
 				double[] iloc = application.getMapCenter();
-				routeEditingWaypoints.push(editingRoute.insertWaypoint("RWPT" + editingRoute.length(), iloc[0], iloc[1]));
+				application.routeEditingWaypoints.push(application.editingRoute.insertWaypoint("RWPT" + application.editingRoute.length(), iloc[0], iloc[1]));
 				break;
 			case R.id.removepoint:
-				if (!routeEditingWaypoints.empty())
+				if (!application.routeEditingWaypoints.empty())
 				{
-					editingRoute.removeWaypoint(routeEditingWaypoints.pop());
+					application.editingRoute.removeWaypoint(application.routeEditingWaypoints.pop());
 				}
 				break;
 			case R.id.orderpoints:
-				startActivityForResult(new Intent(this, RouteEdit.class).putExtra("INDEX", application.getRouteIndex(editingRoute)), RESULT_EDIT_ROUTE);
+				startActivityForResult(new Intent(this, RouteEdit.class).putExtra("INDEX", application.getRouteIndex(application.editingRoute)), RESULT_EDIT_ROUTE);
 				break;
 			case R.id.finishedit:
-				if ("New route".equals(editingRoute.name))
+				if ("New route".equals(application.editingRoute.name))
 				{
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
-					editingRoute.name = formatter.format(new Date());
+					application.editingRoute.name = formatter.format(new Date());
 				}
-				editingRoute.editing = false;
+				application.editingRoute.editing = false;
 				for (Iterator<RouteOverlay> iter = application.routeOverlays.iterator(); iter.hasNext();)
 				{
 					RouteOverlay ro = iter.next();
 					ro.onRoutePropertiesChanged();
 				}
-				editingRoute = null;
-				routeEditingWaypoints = null;
+				application.editingRoute = null;
+				application.routeEditingWaypoints = null;
 				findViewById(R.id.editroute).setVisibility(View.GONE);
 				updateGPSStatus();
 				if (showDistance == 2)
@@ -2219,9 +2177,9 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				map.requestFocus();
 				break;
 			case R.id.finishtrackedit:
-				editingTrack.editing = false;
-				editingTrack.editingPos = -1;
-				editingTrack = null;
+				application.editingTrack.editing = false;
+				application.editingTrack.editingPos = -1;
+				application.editingTrack = null;
 				findViewById(R.id.edittrack).setVisibility(View.GONE);
 				findViewById(R.id.trackdetails).setVisibility(View.GONE);
 				updateGPSStatus();
@@ -2244,9 +2202,9 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 			case R.id.trackbar:
 				if (fromUser)
 				{
-					editingTrack.editingPos = progress;
+					application.editingTrack.editingPos = progress;
 				}
-				Track.TrackPoint tp = editingTrack.getPoint(progress);
+				Track.TrackPoint tp = application.editingTrack.getPoint(progress);
 				double ele = tp.elevation * elevationFactor;
 				((TextView) findViewById(R.id.tp_number)).setText("#" + (progress + 1));
 				// FIXME Need UTM support here
@@ -2316,27 +2274,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		{
 			outState.putDoubleArray("distAncor", application.distanceOverlay.getAncor());
 		}
-	}
-
-	// FIXME Remove this method
-	public Object onRetainNonConfigurationInstanceX()
-	{
-		Log.e(TAG, "onRetainNonConfigurationInstance()");
-		MapState mapState = new MapState();
-
-		// application.onRetainNonConfigurationInstance(mapState);
-
-		mapState.editingTrack = editingTrack;
-		mapState.editingRoute = editingRoute;
-		mapState.routeEditingWaypoints = routeEditingWaypoints;
-
-		/*
-		 * if (application.currentTrackOverlay != null)
-		 * {
-		 * mapState.currentTrack = application.currentTrackOverlay.getTrack();
-		 * }
-		 */
-		return mapState;
 	}
 
 	@Override
