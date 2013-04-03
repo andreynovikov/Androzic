@@ -1616,6 +1616,20 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		        TrackExportDialog trackExportDialog = new TrackExportDialog(locationService.getTrack());
 		        trackExportDialog.show(fm, "track_export");
 				return true;
+			case R.id.menuExpandCurrentTrack:
+				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.warning).setMessage(R.string.msg_expandcurrenttrack).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						if (application.currentTrackOverlay != null)
+						{
+							Track track = locationService.getTrack();
+							track.show = true;
+							application.currentTrackOverlay.setTrack(track);
+						}
+					}
+				}).setNegativeButton(R.string.no, null).show();
+				return true;
 			case R.id.menuClearCurrentTrack:
 				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.warning).setMessage(R.string.msg_clearcurrenttrack).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override

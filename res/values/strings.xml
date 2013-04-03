@@ -50,6 +50,7 @@
     <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
     <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
     <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: &#8216;%s&#8217;.</string>
+    <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
     <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
 
     <string name="err_nosdcard">SD card unavailable</string>
@@ -161,6 +162,7 @@
 	<string name="menu_new_waypoint">New waypoint</string>
     <string name="menu_waypoints">Waypoints</string>
     <string name="menu_exportcurrenttrack">Export current track</string>
+    <string name="menu_expandcurrenttrack">Show full current track</string>
     <string name="menu_clearcurrenttrack">Clear current track</string>
     <string name="menu_navigation">Navigation</string>
     <string name="menu_stopnavigation">Stop navigating</string>

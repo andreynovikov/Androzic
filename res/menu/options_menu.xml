@@ -116,6 +116,10 @@
                 android:icon="@drawable/ic_action_export"
                 android:title="@string/menu_exportcurrenttrack"/>
             <item
+                android:id="@+id/menuExpandCurrentTrack"
+                android:icon="@drawable/ic_action_show"
+                android:title="@string/menu_expandcurrenttrack"/>
+            <item
                 android:id="@+id/menuClearCurrentTrack"
                 android:icon="@drawable/ic_action_trash"
                 android:title="@string/menu_clearcurrenttrack"/>
