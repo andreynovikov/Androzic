@@ -391,7 +391,7 @@ public class Splash extends SherlockActivity implements OnClickListener
 						if (cursor.getCount() > 0)
 						{
 							Track track = new Track();
-							for (boolean hasItem = cursor.moveToFirst(); hasItem; hasItem = cursor.moveToNext())
+							for (boolean hasItem = cursor.moveToLast(); hasItem; hasItem = cursor.moveToPrevious())
 							{
 								double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
 								double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
