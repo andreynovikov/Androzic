@@ -161,14 +161,6 @@ public class TrackOverlay extends MapOverlay
 					xy[0] = tp.x;
 					xy[1] = tp.y;
 				}
-				/*
-				xy = points.get(tp);
-				if (xy == null)
-				{
-					xy = application.getXYbyLatLon(tp.latitude, tp.longitude);
-					points.put(tp, xy);
-				}
-				*/
 
 				if (first)
 				{

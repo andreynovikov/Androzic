@@ -59,7 +59,7 @@ public class CurrentTrackOverlay extends TrackOverlay
     @Override
 	public void setTrack(Track track)
 	{
-    	this.track.clear();
+    	clear();
 		this.track = track;
 	}
 
