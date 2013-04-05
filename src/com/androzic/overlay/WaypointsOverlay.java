@@ -61,7 +61,7 @@ public class WaypointsOverlay extends MapObjectsOverlay
 				int[] pointXY = application.getXYbyLatLon(wpt.latitude, wpt.longitude);
 				if (mapTap.contains(pointXY[0], pointXY[1]) && context instanceof MapActivity)
 				{
-					return ((MapActivity) context).waypointTapped(i, (int) e.getX(), (int) e.getY());
+					return ((MapActivity) context).waypointTapped(wpt, (int) e.getX(), (int) e.getY());
 				}
 			}
 		}

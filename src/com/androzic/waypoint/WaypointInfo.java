@@ -28,27 +28,31 @@ import java.io.File;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.view.Window;
 import com.androzic.Androzic;
 import com.androzic.R;
@@ -56,28 +60,110 @@ import com.androzic.data.Waypoint;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class WaypointInfo extends SherlockActivity implements OnClickListener
+public class WaypointInfo extends SherlockDialogFragment implements OnClickListener
 {
 	private Waypoint waypoint;
-	int index;
-	
-    @SuppressLint("NewApi")
-	@Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        
-		requestWindowFeature(Window.FEATURE_LEFT_ICON);
-		setContentView(R.layout.act_waypoint_info);
+	private Drawable icon;
+	private OnWaypointActionListener waypointActionsCallback;
 
-        index = getIntent().getExtras().getInt("INDEX");
-        double lat = getIntent().getExtras().getDouble("lat");
-        double lon = getIntent().getExtras().getDouble("lon");
+	public WaypointInfo()
+	{
+		setRetainInstance(true);
+	}
+	
+	public void setWaypoint(Waypoint waypoint)
+	{
+		this.waypoint = waypoint;
+		icon = null;
+	}
+
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState)
+	{
+		Dialog dialog = super.onCreateDialog(savedInstanceState);
+		dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+		return dialog;
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		View view = inflater.inflate(R.layout.act_waypoint_info, container);
+	    ((ImageButton) view.findViewById(R.id.navigate_button)).setOnClickListener(this);
+	    ((ImageButton) view.findViewById(R.id.edit_button)).setOnClickListener(this);
+	    ((ImageButton) view.findViewById(R.id.share_button)).setOnClickListener(this);
+	    ((ImageButton) view.findViewById(R.id.remove_button)).setOnClickListener(this);
+	    return view;
+    }
+
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try
+		{
+			waypointActionsCallback = (OnWaypointActionListener) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement OnWaypointActionListener");
+		}
+	}
+
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+		Bundle args = getArguments();
+		if (args != null)
+		{
+			double lat = args.getDouble("lat");
+	        double lon = args.getDouble("lon");
+	        updateWaypointInfo(lat, lon);
+		}
+	}
+
+	@Override
+	public void onDestroyView()
+	{
+		if (getDialog() != null && getRetainInstance())
+			getDialog().setDismissMessage(null);
+		super.onDestroyView();
+	}
+
+	@Override
+    public void onClick(View v)
+    {
+		switch (v.getId())
+		{
+			case R.id.navigate_button:
+				waypointActionsCallback.onWaypointNavigate(waypoint);
+				break;
+			case R.id.edit_button:
+				waypointActionsCallback.onWaypointEdit(waypoint);
+				break;
+			case R.id.share_button:
+				waypointActionsCallback.onWaypointShare(waypoint);
+				break;
+			case R.id.remove_button:
+				waypointActionsCallback.onWaypointRemove(waypoint);
+				break;
+		}
+		dismiss();
+    }
+	
+	@SuppressLint("NewApi")
+	private void updateWaypointInfo(double lat, double lon)
+	{
         
-		Androzic application = (Androzic) getApplication();
-		waypoint = application.getWaypoint(index);
+		Androzic application = Androzic.getApplication();
+		Activity activity = getActivity();
+		Dialog dialog = getDialog();
+		View view = getView();
 		
-		setTitle(waypoint.name);
 		if (waypoint.drawImage)
 		{
 			BitmapFactory.Options options = new BitmapFactory.Options();
@@ -86,19 +172,11 @@ public class WaypointInfo extends SherlockActivity implements OnClickListener
 			if (b != null)
 			{
 				b.setDensity(Bitmap.DENSITY_NONE);
-				setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(getResources(), b));
+				icon = new BitmapDrawable(getResources(), b);
 			}
-			else
-			{
-				setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_map);
-			}
-		}
-		else
-		{
-			setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_map);
 		}
 
-		WebView description = (WebView) findViewById(R.id.description);
+		WebView description = (WebView) view.findViewById(R.id.description);
 		
 		if ("".equals(waypoint.description))
 		{
@@ -110,7 +188,7 @@ public class WaypointInfo extends SherlockActivity implements OnClickListener
 			try
 			{
 				TypedValue tv = new TypedValue();
-				Theme theme = getTheme();
+				Theme theme = activity.getTheme();
 				Resources resources = getResources();
 				theme.resolveAttribute(android.R.attr.textColorSecondary, tv, true);
 				int secondaryColor = resources.getColor(tv.resourceId);
@@ -144,43 +222,30 @@ public class WaypointInfo extends SherlockActivity implements OnClickListener
 		}
 
 		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
-		((TextView) findViewById(R.id.coordinates)).setText(coords);
+		((TextView) view.findViewById(R.id.coordinates)).setText(coords);
 		
 		if (waypoint.altitude != Integer.MIN_VALUE)
 		{
 			String altitude = String.format(Locale.getDefault(), "%d %s", waypoint.altitude, getResources().getStringArray(R.array.distance_abbrs_short)[2]);
-			((TextView) findViewById(R.id.altitude)).setText(altitude);
+			((TextView) view.findViewById(R.id.altitude)).setText(altitude);
 		}
 		
 		double dist = Geo.distance(lat, lon, waypoint.latitude, waypoint.longitude);
 		double bearing = Geo.bearing(lat, lon, waypoint.latitude, waypoint.longitude);
 		bearing = application.fixDeclination(bearing);
 		String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.bearingH(bearing);
-		((TextView) findViewById(R.id.distance)).setText(distance);
+		((TextView) view.findViewById(R.id.distance)).setText(distance);
 
 		if (waypoint.date != null)
-			((TextView) findViewById(R.id.date)).setText(DateFormat.getDateFormat(this).format(waypoint.date)+" "+DateFormat.getTimeFormat(this).format(waypoint.date));
+			((TextView) view.findViewById(R.id.date)).setText(DateFormat.getDateFormat(activity).format(waypoint.date)+" "+DateFormat.getTimeFormat(activity).format(waypoint.date));
 		else
-			((TextView) findViewById(R.id.date)).setVisibility(View.GONE);
-			
-	    ((ImageButton) findViewById(R.id.navigate_button)).setOnClickListener(this);
-	    ((ImageButton) findViewById(R.id.edit_button)).setOnClickListener(this);
-	    ((ImageButton) findViewById(R.id.share_button)).setOnClickListener(this);
-	    ((ImageButton) findViewById(R.id.remove_button)).setOnClickListener(this);
-    }
-
-	@Override
-    public void onClick(View v)
-    {
-		setResult(RESULT_OK, new Intent().putExtra("index", index).putExtra("action", v.getId()));
-   		finish();
-    }
-
-	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		waypoint = null;
+			((TextView) view.findViewById(R.id.date)).setVisibility(View.GONE);
+		
+		if (icon != null)
+			dialog.setFeatureDrawable(Window.FEATURE_LEFT_ICON, icon);
+		else
+			dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_map);
+		
+		dialog.setTitle(waypoint.name);
 	}
-
 }

@@ -122,6 +122,7 @@ import com.androzic.util.Astro;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
+import com.androzic.waypoint.OnWaypointActionListener;
 import com.androzic.waypoint.WaypointFileList;
 import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
@@ -131,7 +132,7 @@ import com.github.espiandev.showcaseview.ShowcaseView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 
-public class MapActivity extends SherlockFragmentActivity implements View.OnClickListener, OnSharedPreferenceChangeListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener, ShowcaseView.OnShowcaseEventListener
+public class MapActivity extends SherlockFragmentActivity implements View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener, ShowcaseView.OnShowcaseEventListener
 {
 	private static final String TAG = "MapActivity";
 
@@ -143,7 +144,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 	private static final int RESULT_MANAGE_ROUTES = 0x900;
 	private static final int RESULT_EDIT_ROUTE = 0x110;
 	private static final int RESULT_LOAD_MAP_ATPOSITION = 0x120;
-	private static final int RESULT_SHOW_WAYPOINT = 0x130;
 	private static final int RESULT_SAVE_WAYPOINTS = 0x140;
 
 	private static final int qaAddWaypointToRoute = 1;
@@ -1477,21 +1477,30 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		dimView.setBackgroundColor(color);
 	}
 
-	public boolean waypointTapped(int index, int x, int y)
+	public boolean waypointTapped(Waypoint waypoint, int x, int y)
 	{
 		try
 		{
 			if (application.editingRoute != null)
 			{
 				routeSelected = -1;
-				waypointSelected = index;
+				waypointSelected = application.getWaypointIndex(waypoint);
 				wptQuickAction.show(map, x, y);
 				return true;
 			}
 			else
 			{
 				Location loc = application.getLocationAsLocation();
-				startActivityForResult(new Intent(this, WaypointInfo.class).putExtra("INDEX", index).putExtra("lat", loc.getLatitude()).putExtra("lon", loc.getLongitude()), RESULT_SHOW_WAYPOINT);
+		        FragmentManager fm = getSupportFragmentManager();
+		        WaypointInfo waypointInfo = (WaypointInfo) fm.findFragmentByTag("waypoint_info");
+		        if (waypointInfo == null)
+		        	waypointInfo = new WaypointInfo();
+		        waypointInfo.setWaypoint(waypoint);
+				Bundle args = new Bundle();
+				args.putDouble("lat", loc.getLatitude());
+				args.putDouble("lon", loc.getLongitude());
+				waypointInfo.setArguments(args);
+				waypointInfo.show(fm, "waypoint_info");
 				return true;
 			}
 		}
@@ -1797,53 +1806,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 
 		switch (requestCode)
 		{
-			case RESULT_SHOW_WAYPOINT:
-				if (resultCode == RESULT_OK)
-				{
-					Bundle extras = data.getExtras();
-					final int index = extras.getInt("index");
-					int action = extras.getInt("action");
-					switch (action)
-					{
-						case R.id.navigate_button:
-							Waypoint wpt = application.getWaypoint(index);
-							Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
-							intent.putExtra(NavigationService.EXTRA_NAME, wpt.name);
-							intent.putExtra(NavigationService.EXTRA_LATITUDE, wpt.latitude);
-							intent.putExtra(NavigationService.EXTRA_LONGITUDE, wpt.longitude);
-							intent.putExtra(NavigationService.EXTRA_PROXIMITY, wpt.proximity);
-							startService(intent);
-							break;
-						case R.id.edit_button:
-							startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index), RESULT_SAVE_WAYPOINT);
-							break;
-						case R.id.share_button:
-							Waypoint waypoint = application.getWaypoint(index);
-							Intent i = new Intent(android.content.Intent.ACTION_SEND);
-							i.setType("text/plain");
-							i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
-							String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
-							i.putExtra(Intent.EXTRA_TEXT, waypoint.name + " @ " + coords);
-							startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
-							break;
-						case R.id.remove_button:
-							new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.removeWaypointQuestion)
-									.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-										@Override
-										public void onClick(DialogInterface dialog, int which)
-										{
-											WaypointSet wptset = application.getWaypoint(index).set;
-											application.removeWaypoint(index);
-											application.saveWaypoints(wptset);
-											map.invalidate();
-										}
-
-									}).setNegativeButton(R.string.no, null).show();
-							break;
-					}
-				}
-				break;
 			case RESULT_MANAGE_WAYPOINTS:
 			{
 				application.waypointsOverlay.clearBitmapCache();
@@ -2206,6 +2168,53 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				map.requestFocus();
 				break;
 		}
+	}
+
+	@Override
+	public void onWaypointNavigate(final Waypoint waypoint)
+	{
+		Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+		intent.putExtra(NavigationService.EXTRA_NAME, waypoint.name);
+		intent.putExtra(NavigationService.EXTRA_LATITUDE, waypoint.latitude);
+		intent.putExtra(NavigationService.EXTRA_LONGITUDE, waypoint.longitude);
+		intent.putExtra(NavigationService.EXTRA_PROXIMITY, waypoint.proximity);
+		startService(intent);
+	}
+
+	@Override
+	public void onWaypointEdit(final Waypoint waypoint)
+	{
+		int index = application.getWaypointIndex(waypoint);
+		startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index), RESULT_SAVE_WAYPOINT);
+	}
+
+	@Override
+	public void onWaypointShare(final Waypoint waypoint)
+	{
+		Intent i = new Intent(android.content.Intent.ACTION_SEND);
+		i.setType("text/plain");
+		i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
+		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
+		i.putExtra(Intent.EXTRA_TEXT, waypoint.name + " @ " + coords);
+		startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
+	}
+
+	@Override
+	public void onWaypointRemove(final Waypoint waypoint)
+	{
+		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.removeWaypointQuestion)
+		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				WaypointSet wptset = waypoint.set;
+				application.removeWaypoint(waypoint);
+				application.saveWaypoints(wptset);
+				map.invalidate();
+			}
+
+		}).setNegativeButton(R.string.no, null).show();
 	}
 
 	@Override
