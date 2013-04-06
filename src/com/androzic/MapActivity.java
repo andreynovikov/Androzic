@@ -1510,6 +1510,19 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		}
 	}
 
+	/**
+	 * Performs action on a tapped route waypoint.
+	 * 
+	 * @param route
+	 *            route index
+	 * @param index
+	 *            waypoint index inside route
+	 * @param x
+	 *            view X coordinate
+	 * @param y
+	 *            view Y coordinate
+	 * @return true if any action was performed
+	 */
 	public boolean routeWaypointTapped(int route, int index, int x, int y)
 	{
 		if (application.editingRoute != null && application.editingRoute == application.getRoute(route))
@@ -1527,8 +1540,8 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		else
 		{
 			startActivity(new Intent(this, RouteDetails.class).putExtra("INDEX", route));
+			return true;
 		}
-		return false;
 	}
 
 	public boolean mapObjectTapped(long id, int x, int y)

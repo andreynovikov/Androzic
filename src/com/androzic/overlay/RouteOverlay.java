@@ -177,6 +177,9 @@ public class RouteOverlay extends MapOverlay
 	@Override
 	public boolean onSingleTap(MotionEvent e, Rect mapTap, MapView mapView)
 	{
+		if (! route.show)
+			return false;
+
 		Androzic application = (Androzic) context.getApplication();
 
 		List<Waypoint> waypoints = route.getWaypoints();
