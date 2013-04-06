@@ -28,8 +28,10 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -40,12 +42,14 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xmlpull.v1.XmlSerializer;
 
+import android.graphics.Color;
+import android.util.Log;
 import android.util.Xml;
 
 import com.androzic.data.Route;
 import com.androzic.data.Track;
-import com.androzic.data.Waypoint;
 import com.androzic.data.Track.TrackPoint;
+import com.androzic.data.Waypoint;
 
 /**
  * Helper class to read and write KML files.
@@ -116,41 +120,41 @@ public class KmlFiles
 		serializer.setOutput(writer);
 		serializer.startDocument("UTF-8", null);
 		serializer.setPrefix("", KML_NAMESPACE);
-		serializer.startTag(KML_NAMESPACE, "kml");
-		serializer.startTag(KML_NAMESPACE, "Document");
-		serializer.startTag(KML_NAMESPACE, "Style");
-		serializer.attribute("", "id", "trackStyle");
-		serializer.startTag(KML_NAMESPACE, "LineStyle");
-		serializer.startTag(KML_NAMESPACE, "color");
-		serializer.text(String.format("%08X", track.color));
-		serializer.endTag(KML_NAMESPACE, "color");
-		serializer.startTag(KML_NAMESPACE, "width");
+		serializer.startTag(KML_NAMESPACE, KmlParser.KML);
+		serializer.startTag(KML_NAMESPACE, KmlParser.DOCUMENT);
+		serializer.startTag(KML_NAMESPACE, KmlParser.STYLE);
+		serializer.attribute("", KmlParser.ID, "trackStyle");
+		serializer.startTag(KML_NAMESPACE, KmlParser.LINESTYLE);
+		serializer.startTag(KML_NAMESPACE, KmlParser.COLOR);
+		serializer.text(String.format("%08X", KmlParser.reverseColor(track.color)));
+		serializer.endTag(KML_NAMESPACE, KmlParser.COLOR);
+		serializer.startTag(KML_NAMESPACE, KmlParser.WIDTH);
 		serializer.text(String.valueOf(track.width));
-		serializer.endTag(KML_NAMESPACE, "width");
-		serializer.endTag(KML_NAMESPACE, "LineStyle");
-		serializer.endTag(KML_NAMESPACE, "Style");
-		serializer.startTag(KML_NAMESPACE, "Folder");
-		serializer.startTag(KML_NAMESPACE, "name");
+		serializer.endTag(KML_NAMESPACE, KmlParser.WIDTH);
+		serializer.endTag(KML_NAMESPACE, KmlParser.LINESTYLE);
+		serializer.endTag(KML_NAMESPACE, KmlParser.STYLE);
+		serializer.startTag(KML_NAMESPACE, KmlParser.FOLDER);
+		serializer.startTag(KML_NAMESPACE, KmlParser.NAME);
 		serializer.text(track.name);
-		serializer.endTag(KML_NAMESPACE, "name");
-		serializer.startTag(KML_NAMESPACE, "open");
+		serializer.endTag(KML_NAMESPACE, KmlParser.NAME);
+		serializer.startTag(KML_NAMESPACE, KmlParser.OPEN);
 		serializer.text("0");
-		serializer.endTag(KML_NAMESPACE, "open");
-		serializer.startTag(KML_NAMESPACE, "TimeSpan");
-		serializer.startTag(KML_NAMESPACE, "begin");
+		serializer.endTag(KML_NAMESPACE, KmlParser.OPEN);
+		serializer.startTag(KML_NAMESPACE, KmlParser.TIMESPAN);
+		serializer.startTag(KML_NAMESPACE, KmlParser.BEGIN);
 		serializer.text(sdf.format(new Date(track.getPoint(0).time)));
-		serializer.endTag(KML_NAMESPACE, "begin");
-		serializer.startTag(KML_NAMESPACE, "end");
+		serializer.endTag(KML_NAMESPACE, KmlParser.BEGIN);
+		serializer.startTag(KML_NAMESPACE, KmlParser.END);
 		serializer.text(sdf.format(new Date(track.getLastPoint().time)));
-		serializer.endTag(KML_NAMESPACE, "end");
-		serializer.endTag(KML_NAMESPACE, "TimeSpan");
-		serializer.startTag(KML_NAMESPACE, "Style");
-		serializer.startTag(KML_NAMESPACE, "ListStyle");
-		serializer.startTag(KML_NAMESPACE, "listItemType");
+		serializer.endTag(KML_NAMESPACE, KmlParser.END);
+		serializer.endTag(KML_NAMESPACE, KmlParser.TIMESPAN);
+		serializer.startTag(KML_NAMESPACE, KmlParser.STYLE);
+		serializer.startTag(KML_NAMESPACE, KmlParser.LISTSTYLE);
+		serializer.startTag(KML_NAMESPACE, KmlParser.LISTITEMTYPE);
 		serializer.text("checkHideChildren");
-		serializer.endTag(KML_NAMESPACE, "listItemType");
-		serializer.endTag(KML_NAMESPACE, "ListStyle");
-		serializer.endTag(KML_NAMESPACE, "Style");
+		serializer.endTag(KML_NAMESPACE, KmlParser.LISTITEMTYPE);
+		serializer.endTag(KML_NAMESPACE, KmlParser.LISTSTYLE);
+		serializer.endTag(KML_NAMESPACE, KmlParser.STYLE);
 		
 		int part = 1;
 		boolean first = true;
@@ -171,9 +175,9 @@ public class KmlFiles
 			}
 		}
 		stopTrackPart(serializer);
-		serializer.endTag(KML_NAMESPACE, "Folder");
-		serializer.endTag(KML_NAMESPACE, "Document");
-		serializer.endTag(KML_NAMESPACE, "kml");
+		serializer.endTag(KML_NAMESPACE, KmlParser.FOLDER);
+		serializer.endTag(KML_NAMESPACE, KmlParser.DOCUMENT);
+		serializer.endTag(KML_NAMESPACE, KmlParser.KML);
 		serializer.endDocument();
 		serializer.flush();
 		writer.close();
@@ -181,25 +185,25 @@ public class KmlFiles
 
 	private static void startTrackPart(XmlSerializer serializer, int part, String name) throws IllegalArgumentException, IllegalStateException, IOException
 	{
-		serializer.startTag(KML_NAMESPACE, "Placemark");
-		serializer.startTag(KML_NAMESPACE, "name");
+		serializer.startTag(KML_NAMESPACE, KmlParser.PLACEMARK);
+		serializer.startTag(KML_NAMESPACE, KmlParser.NAME);
 		serializer.text(String.format("Part %d - %s", part, name));
-		serializer.endTag(KML_NAMESPACE, "name");
-		serializer.startTag(KML_NAMESPACE, "styleUrl");
+		serializer.endTag(KML_NAMESPACE, KmlParser.NAME);
+		serializer.startTag(KML_NAMESPACE, KmlParser.STYLEURL);
 		serializer.text("#trackStyle");
-		serializer.endTag(KML_NAMESPACE, "styleUrl");
-		serializer.startTag(KML_NAMESPACE, "LineString");
-		serializer.startTag(KML_NAMESPACE, "tessellate");
+		serializer.endTag(KML_NAMESPACE, KmlParser.STYLEURL);
+		serializer.startTag(KML_NAMESPACE, KmlParser.LINESTRING);
+		serializer.startTag(KML_NAMESPACE, KmlParser.TESSELLATE);
 		serializer.text("1");
-		serializer.endTag(KML_NAMESPACE, "tessellate");
-		serializer.startTag(KML_NAMESPACE, "coordinates");
+		serializer.endTag(KML_NAMESPACE, KmlParser.TESSELLATE);
+		serializer.startTag(KML_NAMESPACE, KmlParser.COORDINATES);
 	}
 
 	private static void stopTrackPart(XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException
 	{
-		serializer.endTag(KML_NAMESPACE, "coordinates");
-		serializer.endTag(KML_NAMESPACE, "LineString");
-		serializer.endTag(KML_NAMESPACE, "Placemark");
+		serializer.endTag(KML_NAMESPACE, KmlParser.COORDINATES);
+		serializer.endTag(KML_NAMESPACE, KmlParser.LINESTRING);
+		serializer.endTag(KML_NAMESPACE, KmlParser.PLACEMARK);
 	}
 
 	/**
@@ -239,15 +243,35 @@ public class KmlFiles
  */
 class KmlParser extends DefaultHandler
 {
-	private static final String PLACEMARK = "Placemark";
-	private static final String POINT = "Point";
-	private static final String LINESTRING = "LineString";
-	private static final String NAME = "name";
-	private static final String COORDINATES = "coordinates";
-	private static final String DESCRIPTION = "description";
+	static final String TAG = "KmlFiles";
+	
+	static final String KML = "kml";
+	static final String ID = "id";
+	static final String DOCUMENT = "Document";
+	static final String FOLDER = "Folder";
+	static final String OPEN = "open";
+	static final String TIMESPAN = "TimeSpan";
+	static final String BEGIN = "begin";
+	static final String END = "end";
+	static final String PLACEMARK = "Placemark";
+	static final String POINT = "Point";
+	static final String LINESTRING = "LineString";
+	static final String TESSELLATE = "tessellate";
+	static final String NAME = "name";
+	static final String COORDINATES = "coordinates";
+	static final String DESCRIPTION = "description";
+	static final String STYLE = "Style";
+	static final String LINESTYLE = "LineStyle";
+	static final String LISTSTYLE = "ListStyle";
+	static final String STYLEURL = "styleUrl";
+	static final String COLOR = "color";
+	static final String WIDTH = "width";
+	static final String LISTITEMTYPE = "listItemType";
 
 	private StringBuilder builder;
 	
+	private Map<String, Style> styles;
+	private Style style;
 	private List<Waypoint> waypoints;
 	private Waypoint waypoint;
 	private boolean ispoint;
@@ -265,6 +289,7 @@ class KmlParser extends DefaultHandler
 		this.filename = filename;
 		ispoint = false;
 		istrack = false;
+		styles = new HashMap<String, Style>();
 	}
 
 	@Override
@@ -291,6 +316,15 @@ class KmlParser extends DefaultHandler
 		else if (localName.equalsIgnoreCase(LINESTRING))
 		{
 			istrack = true;
+		}
+		else if (localName.equalsIgnoreCase(STYLE))
+		{
+			style = new Style();
+			style.id = attributes.getValue(ID);
+		}
+		else if (localName.equalsIgnoreCase(LINESTYLE))
+		{
+			style.lineStyle = new LineStyle();
 		}
 	}
 
@@ -356,5 +390,98 @@ class KmlParser extends DefaultHandler
 				}
 			}
 		}
+		else if (localName.equalsIgnoreCase(STYLEURL))
+		{
+			// TODO Only local styles are currently accepted
+			String id = builder.toString().trim();
+			try
+			{
+				id = id.substring(id.indexOf("#") + 1);
+			}
+			catch (IndexOutOfBoundsException e)
+			{
+				Log.e(TAG, "StyleURL error", e);
+			}
+			Style s = styles.get(id);
+			if (track != null && s != null)
+				setTrackStyle(track, s);
+		}
+		else if (localName.equalsIgnoreCase(STYLE))
+		{
+			if (style != null)
+			{
+				if (style.id != null)
+					styles.put(style.id, style);
+				else if (track != null)
+					setTrackStyle(track, style);
+				style = null;
+			}
+		}
+		else if (localName.equalsIgnoreCase(COLOR))
+		{
+			if (style != null && style.lineStyle != null)
+			{
+				try
+				{
+					style.lineStyle.color = reverseColor((int) Long.parseLong(builder.toString().trim(), 16));
+				}
+				catch (NumberFormatException e)
+				{
+					style.lineStyle.color = Color.RED;
+					Log.e(TAG, "Color format error", e);
+				}
+			}
+		}
+		else if (localName.equalsIgnoreCase(WIDTH))
+		{
+			if (style != null && style.lineStyle != null)
+			{
+				try
+				{
+					style.lineStyle.width = Integer.parseInt(builder.toString().trim());
+				}
+				catch (NumberFormatException e)
+				{
+					style.lineStyle.width = 1;
+					Log.e(TAG, "Width format error", e);
+				}
+			}
+		}
+	}
+	
+	private void setTrackStyle(Track trk, Style stl)
+	{
+		if (stl.lineStyle != null)
+		{
+			trk.color = stl.lineStyle.color;
+			trk.width = stl.lineStyle.width;
+		}
+	}
+	
+	/**
+	 * Converts ARGB to ABGR and vice versa
+	 */
+	static int reverseColor(int color)
+	{
+		Log.e(TAG, String.format("CB %8X", color));
+		int c = ((color & 0x00FF0000) >>> 16) | ((color & 0x000000FF) << 16) | (color & 0xFF00FF00);
+		Log.e(TAG, String.format("CA %8X", c));
+		return ((color & 0x00FF0000) >>> 16) | ((color & 0x000000FF) << 16) | (color & 0xFF00FF00);
+	}
+
+	class Style
+	{
+		String id;
+		LineStyle lineStyle;
+	}
+	
+	class ColorStyle
+	{
+		int color;
+	}
+
+	class LineStyle extends ColorStyle
+	{
+		int width;
 	}
 }
