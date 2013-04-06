@@ -78,8 +78,8 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 		formatSpinner = (Spinner) view.findViewById(R.id.format_spinner);
 
 		skip = (CheckBox) view.findViewById(R.id.skip_check);
-        color = (ColorButton) view.findViewById(R.id.color_button);
-        color.setColor(prefs.getInt(getString(R.string.pref_tracking_currentcolor), getResources().getColor(R.color.currenttrack)), Color.RED);
+		color = (ColorButton) view.findViewById(R.id.color_button);
+		color.setColor(prefs.getInt(getString(R.string.pref_tracking_currentcolor), getResources().getColor(R.color.currenttrack)), Color.RED);
 
 		Track.TrackPoint start = track.getPoint(0);
 		Calendar startTime = Calendar.getInstance();
@@ -130,6 +130,14 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 		return view;
 	}
 
+	@Override
+	public void onDestroyView()
+	{
+		if (getDialog() != null && getRetainInstance())
+			getDialog().setDismissMessage(null);
+		super.onDestroyView();
+	}
+
 	private OnClickListener saveOnClickListener = new OnClickListener() {
 		public void onClick(View v)
 		{
@@ -145,8 +153,8 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 			new Thread(new Runnable() {
 				public void run()
 				{
-	        		boolean skipSingles = skip.isChecked();
-	        		
+					boolean skipSingles = skip.isChecked();
+
 					String name = nameText.getText().toString();
 					String format = formatSpinner.getItemAtPosition(formatSpinner.getSelectedItemPosition()).toString();
 					String filename = FileUtils.sanitizeFilename(name) + format;
@@ -154,7 +162,7 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 					track.name = name;
 					track.width = prefs.getInt(getString(R.string.pref_tracking_linewidth), getResources().getColor(R.integer.def_track_linewidth));
-	        		track.color = color.getColor();
+					track.color = color.getColor();
 
 					List<Track.TrackPoint> points = track.getPoints();
 
@@ -194,7 +202,7 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 					if (skipSingles)
 					{
 						Track.TrackPoint pp = track.getLastPoint();
-						for (int i = points.size() - 2; i > 0; i--)
+						for (int i = points.size() - 2; i >= 0; i--)
 						{
 							Track.TrackPoint cp = points.get(i);
 							if (!pp.continous && !cp.continous)
@@ -203,6 +211,18 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 							}
 							pp = cp;
 						}
+					}
+					
+					if (track.getPoints().size() < 2)
+					{
+						activity.runOnUiThread(new Runnable() {
+							public void run()
+							{
+								Toast.makeText(activity, R.string.msg_emptytracksegment, Toast.LENGTH_LONG).show();
+							}
+						});
+						pd.dismiss();
+						return;
 					}
 
 					try
@@ -235,12 +255,11 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 					catch (Exception e)
 					{
 						Log.e("TrackExport", e.toString(), e);
-						activity.runOnUiThread(new Runnable() 
-						{
-							public void run() 
-					        {
+						activity.runOnUiThread(new Runnable() {
+							public void run()
+							{
 								Toast.makeText(activity, R.string.err_write, Toast.LENGTH_LONG).show();
-					        }
+							}
 						});
 					}
 					pd.dismiss();
