@@ -22,15 +22,6 @@ package com.androzic.track;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.actionbarsherlock.app.SherlockActivity;
-import com.androzic.Androzic;
-import com.androzic.R;
-import com.androzic.data.Track;
-import com.androzic.util.FileUtils;
-import com.androzic.util.OziExplorerFiles;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -40,6 +31,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.androzic.Androzic;
+import com.androzic.R;
+import com.androzic.data.Track;
+import com.androzic.util.FileUtils;
+import com.androzic.util.OziExplorerFiles;
 
 public class TrackSave extends SherlockActivity
 {
@@ -66,9 +64,7 @@ public class TrackSave extends SherlockActivity
 		}
 		else
 		{
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
-			String dateString = formatter.format(new Date());
-			filename.setText(dateString+".plt");
+			filename.setText(FileUtils.sanitizeFilename(track.name) + ".plt");
 		}
 		
 	    Button save = (Button) findViewById(R.id.save_button);
