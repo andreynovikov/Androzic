@@ -990,40 +990,38 @@ public class Androzic extends BaseApplication
 	{
 		mapCenter[0] = lat;
 		mapCenter[1] = lon;
-		return updateLocationInfo(findbest);
+		return updateLocationMaps(findbest);
 	}
-		
-	public boolean updateLocationInfo(boolean findbest)
+
+	/**
+	 * Updates available map list for current location
+	 * 
+	 * @param findbest
+	 *            Look for better map in current location
+	 * @return true if current map was changed
+	 */
+	public boolean updateLocationMaps(boolean findbest)
 	{
 		if (maps == null)
 			return false;
 		
-		suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
-		boolean mapchanged = true;
-		
-		if (! findbest && currentMap != null)
-		{
-			if (currentMap.coversLatLon(mapCenter[0], mapCenter[1]))
-			{
-				mapchanged = false;
-			}
-		}
+		boolean covers = currentMap != null && currentMap.coversLatLon(mapCenter[0], mapCenter[1]);
 
-		if (mapchanged)
-		{
-			Map newMap = null;
-			if (suitableMaps.size() > 0)
-			{
-				newMap = suitableMaps.get(0);
-			}
-			if (newMap == null)
-			{
-				newMap = MockMap.getMap(mapCenter[0], mapCenter[1]);
-			}
-			mapchanged = setMap(newMap);
-		}
+		suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
+
+		if (covers && !findbest)
+			return false;
 		
-		return mapchanged;
+		Map newMap = null;
+		if (suitableMaps.size() > 0)
+		{
+			newMap = suitableMaps.get(0);
+		}
+		if (newMap == null)
+		{
+			newMap = MockMap.getMap(mapCenter[0], mapCenter[1]);
+		}
+		return setMap(newMap);
 	}
 	
 	public boolean scrollMap(int dx, int dy)

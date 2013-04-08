@@ -532,7 +532,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		}
 		else
 		{
-			application.updateLocationInfo(map.isBestMapEnabled());
+			application.updateLocationMaps(map.isBestMapEnabled());
 		}
 		updateMapViewArea();
 		map.updateMapInfo();
