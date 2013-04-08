@@ -71,9 +71,9 @@
     <item>偏爱用户网格</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Double press Back</item>
-    <item>Confirmation dialog</item>
-    <item>Nothing</item>
+    <item>双击返回</item>
+    <item>确认对话框</item>
+    <item>没有什么</item>
   </string-array>
   <string-array name="orientation_names">
     <item>设备默认</item>
@@ -98,20 +98,20 @@
     <item>日出/日落计算</item>
     <item>下拉列表初始代码</item>
     <item>多点触摸控制器</item>
-    <item>Showcase library</item>
-    <item>Interface icons</item>
-    <item>Waypoint icons</item>
-    <item>Czech localization</item>
-    <item>French localization</item>
-    <item>Finnish localization</item>
-    <item>Bulgarian localization</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
-    <item>Italian localization</item>
-    <item>Spanish localization</item>
-    <item>Swedish localization</item>
-    <item>Ukrainian localization</item>
-    <item>Portuguese localization</item>
+    <item>展示库</item>
+    <item>界面图标</item>
+    <item>航点图标</item>
+    <item>捷克语翻译</item>
+    <item>法语翻译</item>
+    <item>芬兰语翻译</item>
+    <item>保加利亚语翻译</item>
+    <item>德语翻译</item>
+    <item>土耳其语翻译</item>
+    <item>意大利语翻译</item>
+    <item>西班牙语翻译</item>
+    <item>瑞典语翻译</item>
+    <item>乌克兰语翻译</item>
+    <item>葡萄牙语翻译</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>放大</item>
@@ -124,6 +124,6 @@
     <item>停止跟踪/跟踪</item>
     <item>获取位置</item>
     <item>记录航迹</item>
-    <item>Show/hide status bar</item>
+    <item>显示/隐藏状态栏</item>
   </string-array>
 </resources>

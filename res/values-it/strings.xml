@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Carico traccia da file</string>
   <string name="savetrack_name">Salva traccia su file</string>
   <string name="track2route_name">Converti la traccia in percorso</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Apri la finestra di creazione waypoint</string>
   <string name="managewaypoints_name">Waypoints</string>
   <string name="waypointproperties_name">Modifica waypoint</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Versione per donatori</string>
   <string name="msg_nothing_found">Nulla è stato trovato. Si fa notare che le ricerche avranno buon esito solo sui dati presenti in Androzic, le località verranno individuate solo se è disponibile la connessione Internet.</string>
   <string name="msg_empty_route_list">Nessun percorso disponibile. Utilizzare il menu per creare il percorso o caricarlo da file.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">Su richiesta generale Androzic ora funziona con le cartelle in modo diverso. È possibile selezionare liberamente qualsiasi cartella per le mappe e dati. La cartella dati ora è unificata per tutti i tipi di dati: waypoint, tracce e rotte. È necessario copiare manualmente i file dati esistenti nella seguente cartella creata in maniera automatica: ‘%s’.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">Scheda SD non disponibile</string>
   <string name="err_nofile">Nessun file</string>
   <string name="err_write">Impossibile scrivere il file</string>
-  <string name="err_currentlog">Impossibile registrare la traccia corrente</string>
   <string name="err_noconnection">Errore di connessione di rete</string>
   <string name="err_wrongformat">Formato di file sbagliato</string>
   <string name="err_read">Impossibile leggere il file</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Altitudine</string>
   <string name="proximity">Prossimità</string>
   <string name="accuracy">Precisione</string>
+  <string name="line_width">Larghezza della linea</string>
   <string name="filename">Nome del file</string>
   <string name="coordformat">Coordinate formato</string>
   <string name="direction">Selezionare la direzione</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Avanzata</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Mappa indice errore</string>
   <string name="nomaps">No mappe trovati</string>
   <string name="nomaps_explained">La cartella mappe \'%s\' è vuota. Scaricare e installare la mappa del mondo (250 KB)?</string>
@@ -141,7 +150,9 @@
   <string name="menu_tracks">Tracce</string>
   <string name="menu_new_waypoint">Nuovo waypoint</string>
   <string name="menu_waypoints">Waypoints</string>
-  <string name="menu_cleartail">Cancella la traccia memorizzata</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Navigazione</string>
   <string name="menu_stopnavigation">Interrompi la navigazione</string>
   <string name="menu_navigate">Naviga</string>
@@ -281,7 +292,8 @@
   <string name="pref_tracking_mintime_summary">Minimo tempo in millisecondi che deve trascorrere prima che un altro punto di traccia venga acquisito</string>
   <string name="pref_tracking_mindistance_title">Distanza minima</string>
   <string name="pref_tracking_mindistance_summary">Minima distanza in metri prima che un altro punto di traccia venga acquisito</string>
-  <string name="pref_tracking_currentinterval_title">Nuovo file relativo alla traccia corrente</string>
+  <string name="pref_tracking_linewidth_title">Larghezza della linea</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Carica la traccia corrente</string>
   <string name="pref_tracking_currentload_summary">Seleziona per caricare la registrazione della traccia corrente al successivo avvio dell\'applicazione</string>
   <string name="pref_tracking_currentlength_title">Lunghezza della traccia corrente</string>
@@ -331,9 +343,10 @@
   <string name="pref_uri_summary">Premere per essere indirizzati ad un link del sito</string>
   <string name="pref_credits_title">Crediti</string>
   <string name="notif_loc_short">Localizzazione</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic sta rilevando la tua posizione</string>
-  <string name="notif_trk_short">Rilevamento</string>
   <string name="notif_trk_started">Androzic sta registrando il vostro movimento</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Navigazione</string>
   <string name="notif_nav_started">Androzic ti sta navigando</string>
   <string name="notif_nav_to">Androzic sta navigando verso %s</string>
@@ -346,6 +359,7 @@
   <string name="perm_read_preferences_title">Consulta le preferenze di Androzic impostate dall\'utente</string>
   <string name="perm_read_map_data_title">Consulta i dati ricevuti dalla mappa Androzic</string>
   <string name="perm_write_map_data_title">Aggiungi dati alla mappa Androzic</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Azioni rapide</string>
   <string name="showcase_panel_description">Fai scorrere o trascina il gestore della barra scorrevole per accedere alla gestione semplificata. La gestione semplificata può essere configurata in impostazioni.</string>
   <string name="showcase_follow_title">Tracciatore della posizione corrente</string>

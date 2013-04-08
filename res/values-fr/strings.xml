@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Charger fichier trace</string>
   <string name="savetrack_name">Enregistrer fichier trace</string>
   <string name="track2route_name">Convertir la trace en une route</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Ouvrir ensemble de waypoints</string>
   <string name="managewaypoints_name">Waypoints</string>
   <string name="waypointproperties_name">Editer un waypoint</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Version donateur</string>
   <string name="msg_nothing_found">Rien n\'a été trouvé. Veuillez tenir compte que les données sont recherchées seulement si elles sont chargées dans Androzic, les nom des emplacements sont recherchés uniquement si une connexion Internet est disponible.</string>
   <string name="msg_empty_route_list">Aucun itinéraire disponible. Utilisez le menu pour créer un itinéraire ou le charger depuis un fichier.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">À la demande générale Androzic fonctionne maintenant différemment avec les dossiers. Vous pouvez sélectionner librement n\'importe quel dossier pour stocker cartes et données. Le dossier de données est désormais unifié pour tous les types de données : waypoints, traces et routes. Si vous avez des fichiers de données existants, vous devez copier ces fichiers vers le dossier suivant : «%s» (il est créé automatiquement).</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">Carte SD indisponible</string>
   <string name="err_nofile">Fichier non trouvé</string>
   <string name="err_write">Impossible d\'écrire dans le fichier</string>
-  <string name="err_currentlog">Impossible d\'écrire le log courant</string>
   <string name="err_noconnection">Probléme de connexion réseau</string>
   <string name="err_wrongformat">Mauvais format de fichier</string>
   <string name="err_read">Impossible de lire le fichier</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Altitude</string>
   <string name="proximity">Proximité</string>
   <string name="accuracy">Précision</string>
+  <string name="line_width">Largeur de ligne</string>
   <string name="filename">Nom de fichier</string>
   <string name="coordformat">Format des coordonnées</string>
   <string name="direction">Choisir la destination</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Avancé</string>
   <string name="hdop">Précision horizontale</string>
   <string name="vdop">Précision verticale</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Erreur d’indexation des cartes</string>
   <string name="nomaps">Pas de cartes trouv�es</string>
   <string name="nomaps_explained">Le dossier des cartes «%s» est vide. Télécharger et installer la carte du monde (250 Ko)?</string>
@@ -141,7 +150,9 @@
   <string name="menu_tracks">Traces</string>
   <string name="menu_new_waypoint">Nouveau waypoint</string>
   <string name="menu_waypoints">Waypoints</string>
-  <string name="menu_cleartail">Effacer la queue de la trace</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Navigation</string>
   <string name="menu_stopnavigation">Arrêter la navigation</string>
   <string name="menu_navigate">Naviguer</string>
@@ -281,7 +292,8 @@
   <string name="pref_tracking_mintime_summary">Temps minimum, en millisecondes, qui doit s\'écouler avant qu\'un autre point de track ne soit acquis.</string>
   <string name="pref_tracking_mindistance_title">Distance minimum </string>
   <string name="pref_tracking_mindistance_summary">Distance minimum en mètre devant être parcourue avant qu\'un autre point ne soit acquis.</string>
-  <string name="pref_tracking_currentinterval_title">Nouveau fichier de trace courante </string>
+  <string name="pref_tracking_linewidth_title">Largeur de ligne</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Charger la trace actuelle</string>
   <string name="pref_tracking_currentload_summary">Marquer pour charger la fin de la trace en cours lors du prochain démarrage de l\'application</string>
   <string name="pref_tracking_currentlength_title">Longueur trace courante</string>
@@ -331,9 +343,10 @@
   <string name="pref_uri_summary">Cliquez pour vous rendre sur le site Internet</string>
   <string name="pref_credits_title">Crédits</string>
   <string name="notif_loc_short">﻿Localisation</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">﻿Androzic récupère votre position</string>
-  <string name="notif_trk_short">Suivi</string>
   <string name="notif_trk_started">Androzic suit vos déplacements</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Navigation en cours</string>
   <string name="notif_nav_started">﻿Androzic vous guide</string>
   <string name="notif_nav_to">Androzic vous guide vers %s</string>
@@ -346,6 +359,7 @@
   <string name="perm_read_preferences_title">Lire les préférences de Androzic</string>
   <string name="perm_read_map_data_title">Obtenir des données de la carte Androzic</string>
   <string name="perm_write_map_data_title">Ajouter des données à la carte Androzic</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Actions rapides</string>
   <string name="showcase_panel_description">Faire glisser ou déplacer le panneau coulissant pour accéder aux actions rapides. Les actions rapides peuvent être configurées dans les paramètres.</string>
   <string name="showcase_follow_title">Suivi des emplacements</string>

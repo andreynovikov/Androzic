@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Track aus Datei laden</string>
   <string name="savetrack_name">Track in Datei speichern</string>
   <string name="track2route_name">Track zu Route konvertieren</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Öffne Wegpunkt-Set</string>
   <string name="managewaypoints_name">Wegpunkte</string>
   <string name="waypointproperties_name">Wegpunkt bearbeiten</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Spenden Version</string>
   <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Keine Routen verfügbar. Geh ins Menü, um Routen zu erstellen.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">Auf vielfachen Wunsch funktioniert Androzic jetzt mit Ordnern anders. Sie können einen beliebigen Ordner für Karten und Daten frei wählen. Datenordner ist nun einheitlich für alle Datentypen: Wegpunkte, Tracks und Routen. Sie müssen Ihre vorhandenen Dateien manuell in die folgenden automatisch erstellten Ordner kopieren: \'%s\'.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">SD-Karte nicht verfügbar</string>
   <string name="err_nofile">Datei nicht gefunden</string>
   <string name="err_write">Kann Datei nicht schreiben</string>
-  <string name="err_currentlog">Aktuelles Protokoll kann nicht geschrieben werden</string>
   <string name="err_noconnection">Netzwerkverbindungsfehler</string>
   <string name="err_wrongformat">Falsches Dateiformat</string>
   <string name="err_read">Datei kann nicht gelesen werden</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Höhe</string>
   <string name="proximity">Annäherung</string>
   <string name="accuracy">Genauigkeit</string>
+  <string name="line_width">Linienstärke</string>
   <string name="filename">Dateiname</string>
   <string name="coordformat">Koordinaten-Format</string>
   <string name="direction">Wählen Sie die Richtung</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Erweitert</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Karten-Index Fehler</string>
   <string name="nomaps">Keine Karten gefunden</string>
   <string name="nomaps_explained">Kartenordner \'%s\' ist leer. Weltkarte herunterladen und installieren  (250 KB)?</string>
@@ -141,7 +150,9 @@
   <string name="menu_tracks">Tracks</string>
   <string name="menu_new_waypoint">Neuer Wegpunkt</string>
   <string name="menu_waypoints">Wegpunkte</string>
-  <string name="menu_cleartail">Track-tail löschen</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Navigation</string>
   <string name="menu_stopnavigation">Navigation beenden</string>
   <string name="menu_navigate">Navigieren</string>
@@ -281,7 +292,8 @@
   <string name="pref_tracking_mintime_summary">Minimale Zeitspanne in Millisekunden, bevor ein neuer Track-Punkt aufgezeichnet werden soll</string>
   <string name="pref_tracking_mindistance_title">Minimaler Abstand</string>
   <string name="pref_tracking_mindistance_summary">Minimale Abstand in Metern, bevor ein neuer Track-Punkt aufgezeichnet werden soll</string>
-  <string name="pref_tracking_currentinterval_title">Neue Track-Datei erstellen</string>
+  <string name="pref_tracking_linewidth_title">Linienstärke</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Aktuellen Track laden</string>
   <string name="pref_tracking_currentload_summary">Markieren um den aktuellen Track beim nächsten Anwendungsstart zu laden</string>
   <string name="pref_tracking_currentlength_title">Aktuelle Track-Länge</string>
@@ -331,9 +343,10 @@
   <string name="pref_uri_summary">Öffnet Link zur Webseite in Ihrem Browser...</string>
   <string name="pref_credits_title">Impressum</string>
   <string name="notif_loc_short">Ortung</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic bestimmt Deine Position</string>
-  <string name="notif_trk_short">Tracking</string>
   <string name="notif_trk_started">Androzic verfolgt Ihre Bewegung (Tracking)</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Navigiere</string>
   <string name="notif_nav_started">Androzic navigiert Dich</string>
   <string name="notif_nav_to">Androzic navigiert nach %s</string>
@@ -346,6 +359,7 @@
   <string name="perm_read_preferences_title">Read Androzic user preferences</string>
   <string name="perm_read_map_data_title">Get data from Androzic map</string>
   <string name="perm_write_map_data_title">Add data to Androzic map</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Quick actions</string>
   <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
   <string name="showcase_follow_title">Location following</string>

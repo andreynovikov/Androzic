@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Lataa jälki tiedostosta</string>
   <string name="savetrack_name">Talleta jälki tiedostoon</string>
   <string name="track2route_name">Muunna jälki reitiksi</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Avaa reittipistesarja</string>
   <string name="managewaypoints_name">Reittipisteet</string>
   <string name="waypointproperties_name">Editoi reittipistettä</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Lahjaversio</string>
   <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Reittejä ei ole käytettävissä. Valikon avulla voit luoda reitin tai ladata tiedoston.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">Yleisön toivomuksesta Androzic toimii nyt kansioiden osalta eri tavalla. Voit vapaasti valita minkä tahansa kansion kartoille ja tiedostoille. Data-kansio on nyt yhtenäinen kaikille tietotyypeille: reittipisteet, jäljet ja reitit. Sinun täytyy kopioida olemassa olevat tiedostot manuaalisesti seuraavaan kansioon: ‘%s’.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">SD korttia ei ole</string>
   <string name="err_nofile">Ei tiedostoa</string>
   <string name="err_write">Ei voi kirjoittaa tiedostoon</string>
-  <string name="err_currentlog">Lokia ei voi kirjoittaa</string>
   <string name="err_noconnection">Verkon yhteysvirhe</string>
   <string name="err_wrongformat">Väärä tiedostomuoto</string>
   <string name="err_read">Tiedostoa ei voi lukea</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Korkeus</string>
   <string name="proximity">Läheisyys</string>
   <string name="accuracy">Tarkkuus</string>
+  <string name="line_width">Viivan leveys</string>
   <string name="filename">Tiedostonimi</string>
   <string name="coordformat">Koordinaattien muoto</string>
   <string name="direction">Valitse suunta</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Lisäasetukset</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Kartan indeksointivirhe</string>
   <string name="nomaps">Karttoja ei löydy</string>
   <string name="nomaps_explained">Karttakansio \'%s\' on tyhjä. lataa ja asenna maailmankartta (207KB)?</string>
@@ -143,7 +152,9 @@
   <string name="menu_tracks">Jäljet</string>
   <string name="menu_new_waypoint">Uusi reittipiste</string>
   <string name="menu_waypoints">Reittipisteet</string>
-  <string name="menu_cleartail">Poista jälki</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Navigointi</string>
   <string name="menu_stopnavigation">Pysäytä navigointi</string>
   <string name="menu_navigate">Navigoi</string>
@@ -283,7 +294,8 @@
   <string name="pref_tracking_mintime_summary">Jälkipisteiden keräilyvälin minimiaika millisekunneissa</string>
   <string name="pref_tracking_mindistance_title">Minimietäisyys</string>
   <string name="pref_tracking_mindistance_summary">Jälkipisteiden keräilyvälin minimietäisyys metreissä</string>
-  <string name="pref_tracking_currentinterval_title">Uusi jälkitiedosto</string>
+  <string name="pref_tracking_linewidth_title">Viivan leveys</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Lataa nykyinen jälki</string>
   <string name="pref_tracking_currentload_summary">Merkkaa, nykyinen jälki latautuu ohjelman seuraavassa käynnistyksessä</string>
   <string name="pref_tracking_currentlength_title">Jäljen pituus</string>
@@ -333,9 +345,10 @@
   <string name="pref_uri_summary">Paina seurataksesi linkkiä nettisivulle</string>
   <string name="pref_credits_title">Credits</string>
   <string name="notif_loc_short">Paikallistaa</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic hakee sijaintiasi</string>
-  <string name="notif_trk_short">Seuranta</string>
   <string name="notif_trk_started">Androzic seuraa likettäsi</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Navigointi</string>
   <string name="notif_nav_started">Androzic navigoi sinua</string>
   <string name="notif_nav_to">Androzic navigoi %s</string>
@@ -348,6 +361,7 @@
   <string name="perm_read_preferences_title">Lue Androzic Käyttäjäasetukset</string>
   <string name="perm_read_map_data_title">Nouda tieto Androzic kartasta</string>
   <string name="perm_write_map_data_title">Lisää tietoja Androzic karttaan</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Quick actions</string>
   <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
   <string name="showcase_follow_title">Location following</string>

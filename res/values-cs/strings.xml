@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Nahraj trek ze souboru</string>
   <string name="savetrack_name">Ulož trek do souboru</string>
   <string name="track2route_name">Převeď trek na routu</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Otevřít sadu navigačních bodů</string>
   <string name="managewaypoints_name">Navigační body</string>
   <string name="waypointproperties_name">Oprav bod</string>
@@ -44,13 +45,16 @@
   <string name="msg_initializingview">﻿Inicializuji zobrazení&#8230;</string>
   <string name="msg_cleaning">Čištění&#8230;</string>
   <string name="msg_paid">Dárcovská verze</string>
-  <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
+  <string name="msg_nothing_found">Nic nebylo nalezeno. Berte v úvahu, že data jsou prohledána pouze pokud jsou načtena v Androzic, pojmenovaná umístění budou vyhledány pouze v případě, že je k dispozici připojení k Internetu.</string>
   <string name="msg_empty_route_list">Nejsou k dispozici žádné trasy. Použij menu k jejich vytvoření nebo načtení ze souboru.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">Na základě častého požadavku Androzic nyní funguje se složkami jinak. Můžete svobodně vybrat libovolnou složku pro mapy a data. Složka dat je nyní jednotná pro všechny datové soubory:, průjezdní body a trasy. Musíte ručně zkopírovat existující datové soubory do následující složky vytvořené automaticky: \'%s\'.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">Karta SD nepřístupná</string>
   <string name="err_nofile">Soubor nenalezen</string>
   <string name="err_write">Nelze zapsat soubor</string>
-  <string name="err_currentlog">Nemohu zapsat aktuální log</string>
   <string name="err_noconnection">Chyba sítě</string>
   <string name="err_wrongformat">Špatný formát souboru</string>
   <string name="err_read">Nemohu číst ze souboru</string>
@@ -64,7 +68,7 @@
   <string name="sat_firstfix">GPS aktivní</string>
   <string name="following_enabled">Následování zapnuto</string>
   <string name="following_disabled">Následování vypnuto</string>
-  <string name="backQuit">Press Back again to quit</string>
+  <string name="backQuit">Stiskni znovu pro ukončení</string>
   <string name="quitQuestion">Opravdu ukončit?</string>
   <string name="removeWaypointQuestion">Odstranit bod?</string>
   <string name="quit">Konec</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Nadmořská výška</string>
   <string name="proximity">Vzdálenost</string>
   <string name="accuracy">Přesnost</string>
+  <string name="line_width">Šířka linie</string>
   <string name="filename">Jméno souboru</string>
   <string name="coordformat">Formát souřadnic</string>
   <string name="direction">Zvol směr</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Pokročilé</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Chyba v mapovém indexu</string>
   <string name="nomaps">Mapy nenalezeny</string>
   <string name="nomaps_explained">Mapový adresář \'%s\' je prázdný. Stáhnout a instalovat mapu světa (250KB)?</string>
@@ -141,7 +150,9 @@
   <string name="menu_tracks">Treky</string>
   <string name="menu_new_waypoint">Nový traťový bod</string>
   <string name="menu_waypoints">Body</string>
-  <string name="menu_cleartail">Smaž stopu treku</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Navigace</string>
   <string name="menu_stopnavigation">Zastav navigaci</string>
   <string name="menu_navigate">Naviguj</string>
@@ -236,7 +247,7 @@
   <string name="pref_maphideondrag_title">Skryj při přesunu</string>
   <string name="pref_maphideondrag_summary">Označ, mapové objekty při přesunu jsou skryty</string>
   <string name="pref_unfollowontap_title">Při přesunu netrasuj</string>
-  <string name="pref_exit_title">Exit confirmation</string>
+  <string name="pref_exit_title">Potvrzení ukončení</string>
   <string name="pref_charset_title">Text file encoding</string>
   <string name="pref_charset_summary">The character set for map and data text files. Caution: you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
   <string name="pref_orientation_title">Orientace obrazovky</string>
@@ -281,7 +292,8 @@
   <string name="pref_tracking_mintime_summary">Nejkratší čas v milisekundách pro záznam dalšího bodu treku</string>
   <string name="pref_tracking_mindistance_title">Nejkratší vzdálenost</string>
   <string name="pref_tracking_mindistance_summary">Nejkratší vzdálenost v metrech pro záznam dalšího bodu treku</string>
-  <string name="pref_tracking_currentinterval_title">Nový soubor aktuálního treku</string>
+  <string name="pref_tracking_linewidth_title">Šířka linie</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Nahraj poslední trek</string>
   <string name="pref_tracking_currentload_summary">Označ, nahraje poslední aktuální trek při startu programu</string>
   <string name="pref_tracking_currentlength_title">Délka treku</string>
@@ -331,9 +343,10 @@
   <string name="pref_uri_summary">Zmáčkni pro pokračování na stránky projektu</string>
   <string name="pref_credits_title">Zásluhy</string>
   <string name="notif_loc_short">Hledám</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic získává polohu</string>
-  <string name="notif_trk_short">Sleduji</string>
   <string name="notif_trk_started">Androzic zaznamenává váš pohyb</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Niviguji</string>
   <string name="notif_nav_started">Adrozic tě naviguje</string>
   <string name="notif_nav_to">Androzic naviguje k %s</string>
@@ -346,7 +359,8 @@
   <string name="perm_read_preferences_title">Čtení uživatelské předvolby</string>
   <string name="perm_read_map_data_title">Získat data z mapy</string>
   <string name="perm_write_map_data_title">Přidání dat do mapy</string>
-  <string name="showcase_panel_title">Quick actions</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
+  <string name="showcase_panel_title">Rychlá akce</string>
   <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
   <string name="showcase_follow_title">Location following</string>
   <string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>

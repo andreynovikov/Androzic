@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Nyomvonal betöltése fájlból</string>
   <string name="savetrack_name">Nyomvonal mentése fájlba</string>
   <string name="track2route_name">Nyomvonal konvertálása útvonallá</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Útpontok megnyitása</string>
   <string name="managewaypoints_name">Útpontok</string>
   <string name="waypointproperties_name">Útpont szerkesztése</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Támogatott változat</string>
   <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Nincsenek rendelkezésre álló útvonalak. Menü segítségével létrehozhat útvonal vagy betölthet fájlból.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">Közkívánatra Androzic már más mappákkal is működik. Szabadon választhatsz mappát a térképeknek és adatoknak. Adatmappa most egységes az összes adattípushoz: útpontok, nyomvonalak és útvonalak. Be kell másolni a meglévő adatfájlokat manuálisan a következő automatikusan előállított mappába: ‘%s’.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">SD kártya nem elérhető</string>
   <string name="err_nofile">Nincs ilyen fájl</string>
   <string name="err_write">Nem lehet írni a fájlt</string>
-  <string name="err_currentlog">Nem lehet írni az aktuális adatokat</string>
   <string name="err_noconnection">Hálózati kapcsolat hiba</string>
   <string name="err_wrongformat">Hibás fájlformátum</string>
   <string name="err_read">Nem lehet olvasni fájlt</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Magasság</string>
   <string name="proximity">Közelítőleg</string>
   <string name="accuracy">Pontosság</string>
+  <string name="line_width">Vonalszélesség</string>
   <string name="filename">Fájlnév</string>
   <string name="coordformat">Koordináták formátuma</string>
   <string name="direction">Válasszon irányt</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Haladó</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Térkép indexelési hiba</string>
   <string name="nomaps">Nem találom a térképet</string>
   <string name="nomaps_explained">A \'%s\' térkép könyvtár üres. Letöltsem és telepítsem a Világtérképet (250KB)?</string>
@@ -141,7 +150,9 @@
   <string name="menu_tracks">Nyomvonalak</string>
   <string name="menu_new_waypoint">Új útpont</string>
   <string name="menu_waypoints">Útpontok</string>
-  <string name="menu_cleartail">Töröld az eddigi nyomvonalat</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Navigáció</string>
   <string name="menu_stopnavigation">Navigáció leállítása</string>
   <string name="menu_navigate">Navigálj</string>
@@ -281,7 +292,8 @@
   <string name="pref_tracking_mintime_summary">Minimum idő milliszekundumban, aminek el kell telni a következő nyomvonal pont rögzítése között</string>
   <string name="pref_tracking_mindistance_title">Minimális távolság</string>
   <string name="pref_tracking_mindistance_summary">Minimális távolság méterben, a következő nyomvonal pont rögzítése között</string>
-  <string name="pref_tracking_currentinterval_title">Új aktuális nyomvonal fájl</string>
+  <string name="pref_tracking_linewidth_title">Vonalszélesség</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Aktuális nyomvonal betöltése</string>
   <string name="pref_tracking_currentload_summary">Az aktuális nyomvonal betöltése a következő indításkor</string>
   <string name="pref_tracking_currentlength_title">Aktuális nyomvonal hossza</string>
@@ -331,9 +343,10 @@
   <string name="pref_uri_summary">Nyomd meg a hivatkozás követéséhez a webhelyre</string>
   <string name="pref_credits_title">Kreditek</string>
   <string name="notif_loc_short">Helyzetmeghatározás</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic keresi a helyzeted</string>
-  <string name="notif_trk_short">Nyomvonal követés</string>
   <string name="notif_trk_started">Az Androzic rögzíti a mozgásod  nyomvonalát</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Navigáció</string>
   <string name="notif_nav_started">Az Androzic navigál</string>
   <string name="notif_nav_to">Androzic navigáció: %s</string>
@@ -346,6 +359,7 @@
   <string name="perm_read_preferences_title">Olvasd el az Androzic felhasználói beállításokat</string>
   <string name="perm_read_map_data_title">Adatok kérése az Androzic térképről</string>
   <string name="perm_write_map_data_title">Adatok hozzáadása az Androzic térképhez</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Quick actions</string>
   <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
   <string name="showcase_follow_title">Helyzet követése</string>

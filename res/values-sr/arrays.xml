@@ -71,7 +71,7 @@
     <item>Daj prednost korisničkoj mreži</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Dupli pritisak za nazad</item>
+    <item>Dupli dodir za nazad</item>
     <item>Dijalog za potvrdu</item>
     <item>Ništa</item>
   </string-array>
@@ -92,26 +92,26 @@
   </string-array>
   <string-array name="credit_merits">
     <item>Podrška za Ozf2 i ozfx3 mape</item>
-    <item>Slika aplikacije</item>
+    <item>Ikona aplikacije</item>
     <item>Početni kod za birač boja</item>
     <item>Početni kod za postavke polja traženja</item>
     <item>Računanje izlaska/zalaska sunca</item>
-    <item>Prevuci i pistavi spisak početnog koda</item>
+    <item>Prevuci i postavi spisak početnog koda</item>
     <item>Kontrola višestrukih dodira</item>
     <item>Biblioteka prikaza</item>
-    <item>Slike interfejsa</item>
-    <item>Slike orjentira</item>
-    <item>Czech localization</item>
-    <item>French localization</item>
-    <item>Finnish localization</item>
-    <item>Bulgarian localization</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
-    <item>Italian localization</item>
-    <item>Spanish localization</item>
-    <item>Swedish localization</item>
-    <item>Ukrainian localization</item>
-    <item>Portuguese localization</item>
+    <item>Ikone interfejsa</item>
+    <item>Ikone orijentira</item>
+    <item>Lokalizacija na Češki</item>
+    <item>Lokalizacija na Francuski</item>
+    <item>Lokalizacija na Finski</item>
+    <item>Lokalizacija na Bugarski</item>
+    <item>Lokalizacija na Njemački</item>
+    <item>Lokalizacija na Turski</item>
+    <item>Lokalizacija na Italijanski</item>
+    <item>Lokalizacija na Španski</item>
+    <item>Lokalizacija na Švedski</item>
+    <item>Lokalizacija na Ukrainski</item>
+    <item>Lokalizacija na Portugalski</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Uvećaj</item>
@@ -119,7 +119,7 @@
     <item>Veća razmjera mape</item>
     <item>Manja razmjera mape</item>
     <item>Mape na kursoru</item>
-    <item>Uredi orjentire</item>
+    <item>Uredi orijentire</item>
     <item>Prikaži informacije</item>
     <item>Prati/ne prati</item>
     <item>Pribavi lokaciju</item>

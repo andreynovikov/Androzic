@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Cargar track desde archivo</string>
   <string name="savetrack_name">Grabar track a un archivo</string>
   <string name="track2route_name">Convertir track a ruta</string>
+  <string name="exporttrack_name">Exportar track</string>
   <string name="loadwaypoints_name">Conjunto de waypoint abierto</string>
   <string name="managewaypoints_name">Waypoints</string>
   <string name="waypointproperties_name">Editar waypoint</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Versión de donación</string>
   <string name="msg_nothing_found">No se encontró nada. Tenga en cuenta que los datos se buscan sólo si estuvieran cargados en Androzic, las ubicaciones se buscan sólo si la conexión a Internet está disponible.</string>
   <string name="msg_empty_route_list">No hay rutas disponibles. Utilice el menú para crear la ruta o cargar desde archivo.</string>
+  <string name="msg_empty_track_list">No hay tracks disponible. Use el menú para cargar un track desde un archivo.</string>
   <string name="msg_newdatafolder">Por petición popular Androzic ahora funciona con carpetas de forma diferente. Puede elegir libremente cualquier carpeta para mapas y datos. La carpeta de datos se ha unificado para todo tipo de datos: waypoints, tracks y rutas. Tiene que copiar manualmente los archivos de datos existentes en la siguiente carpeta creada automáticamente: \'%s\'.</string>
+  <string name="msg_expandcurrenttrack">Si no ha borrado el track actual durante mucho tiempo esto puede disminuir significativamente el rendimiento. ¿Proceder?</string>
+  <string name="msg_clearcurrenttrack">Esto borrará todo su historial de movimiento, ¿está seguro?</string>
+  <string name="msg_emptytracksegment">El segmento del track seleccionado está vacío, nada que guardar</string>
   <string name="err_nosdcard">Tarjeta SD no disponible</string>
   <string name="err_nofile">Archivo no valido</string>
   <string name="err_write">No se ha podido escribir el archivo</string>
-  <string name="err_currentlog">No se puede escribir el actual fichero LOG</string>
   <string name="err_noconnection">Error de conexión de la red</string>
   <string name="err_wrongformat">Formato de archivo no válido</string>
   <string name="err_read">No se puede leer archivo</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Altitud</string>
   <string name="proximity">Proximidad</string>
   <string name="accuracy">Precisión</string>
+  <string name="line_width">Ancho de linea</string>
   <string name="filename">Nombre de archivo</string>
   <string name="coordformat">Formaro de coordenadas</string>
   <string name="direction">Seleccioanr dirección</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Avanzada</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Comenzando a partir de</string>
+  <string name="till_date">Terminando en</string>
+  <string name="format">Formato</string>
+  <string name="skip_single_locations">Saltar ubicaciones simples</string>
   <string name="badmaps">Indice de error de mapas</string>
   <string name="nomaps">No se encontraron mapas</string>
   <string name="nomaps_explained">La carpeta de mapas \'%s\' está vacía. ¿Descargar e instalar el mapa del mundo (250KB)?</string>
@@ -145,7 +154,9 @@
   <string name="menu_tracks">Tracks</string>
   <string name="menu_new_waypoint">Nuevo waypoint</string>
   <string name="menu_waypoints">Waypoints</string>
-  <string name="menu_cleartail">Borrar cola del track</string>
+  <string name="menu_exportcurrenttrack">Exportar track actual</string>
+  <string name="menu_expandcurrenttrack">Mostrar el track actual completo</string>
+  <string name="menu_clearcurrenttrack">Borrar el track actual</string>
   <string name="menu_navigation">Navigacion</string>
   <string name="menu_stopnavigation">Parar navigacion</string>
   <string name="menu_navigate">Navegar</string>
@@ -285,7 +296,8 @@
   <string name="pref_tracking_mintime_summary">Tiempo minimo en milisegundos que deberia pasar antes de que se adquiera otro punto del track</string>
   <string name="pref_tracking_mindistance_title">Distancia minima</string>
   <string name="pref_tracking_mindistance_summary">Distancia minima en metros a recorrer antes de que se adquiera otro punto del track</string>
-  <string name="pref_tracking_currentinterval_title">Nuevo archivo de track actual</string>
+  <string name="pref_tracking_linewidth_title">Ancho de linea</string>
+  <string name="pref_tracking_linewidth_summary">Anchura en píxeles de la línea del track</string>
   <string name="pref_tracking_currentload_title">Cargar track actual</string>
   <string name="pref_tracking_currentload_summary">Marcar para cargar el track actual la proxima vez que se inicie la aplicacion</string>
   <string name="pref_tracking_currentlength_title">Longitud del track actual</string>
@@ -335,9 +347,10 @@
   <string name="pref_uri_summary">Pulsa pra seguir un enlace a una pagina web</string>
   <string name="pref_credits_title">Creditos</string>
   <string name="notif_loc_short">Localizando</string>
+  <string name="notif_loc_waiting">Androzic está esperando una ubicación</string>
   <string name="notif_loc_started">Androzic está obteniendo su ubicación</string>
-  <string name="notif_trk_short">Seguimiento</string>
   <string name="notif_trk_started">Androzic esta registrando tu movimiento</string>
+  <string name="notif_trk_failure">Androzic tiene un problema con el seguimiento</string>
   <string name="notif_nav_short">Navegación</string>
   <string name="notif_nav_started">Androzic te está navegando</string>
   <string name="notif_nav_to">Androzic está navegando a %s</string>
@@ -350,6 +363,7 @@
   <string name="perm_read_preferences_title">Leer Androzic las preferencias del usuario</string>
   <string name="perm_read_map_data_title">Obtener datos del mapa de Androzic</string>
   <string name="perm_write_map_data_title">Agregar datos al mapa de Androzic</string>
+  <string name="faquri">http://androzic.com/wiki/es/FAQ</string>
   <string name="showcase_panel_title">Acciones rápidas</string>
   <string name="showcase_panel_description">Deslice o arrastre el controlador de panel deslizante para acceder a acciones rápidas. Las acciones rápidas pueden configurarse en configuración.</string>
   <string name="showcase_follow_title">Siguiendo ubicación</string>
@@ -362,23 +376,11 @@
   <string name="showcase_load_waypoints_description">Toque el icono de acción para cargar un archivo de waypoints. Los waypoints cargados se agrupan en un conjunto. Cada vez que modifica un conjunto el archivo correspondiente se actualiza automáticamente.</string>
   <string name="showcase_waypointset_actions_title">Acciones del conjunto de waypoints</string>
   <string name="showcase_waypointset_actions_description">Una pulsación larga sobre un waypoint hace que a través del título se acceda a acciones adicionales.</string>
-  <string name="app_eula">This program is distributed under the terms of
-	the GNU General Public License as published by the Free Software Foundation,
-	either version 3 of the License./n/n
-    This application is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details./n/n
-    All rights granted under this License are granted for the term of copyright
-    on the Program, and are irrevocable provided the stated conditions are met.
-    This License explicitly affirms your unlimited permission to run the unmodified
-    Program./n/n
-    You are not required to accept this License in order to receive or run a copy of
-    the Program. Ancillary propagation of a covered work occurring solely as
-    a consequence of using peer-to-peer transmission to receive a copy likewise does
-    not require acceptance. However, nothing other than this License grants you
-    permission to propagate or modify any covered work. These actions infringe
-    copyright if you do not accept this License. Therefore, by modifying or propagating
-    a covered work, you indicate your acceptance of this License to do so./n/n
-    For full copy of the GNU General Public License see http://www.gnu.org/licenses/gpl.html</string>
+  <string name="app_eula">Este programa se distribuye bajo los términos de
+la GNU General Public License publicada por la Free Software Foundation, ya sea la versión 3 de la Licencia./n/n
+Esta aplicación se distribuye con la esperanza de que sea útil, pero SIN NINGUNA GARANTÍA, incluso sin la garantía implícita de O IDONEIDAD PARA UN PROPÓSITO PARTICULAR. Véase el GNU General Public License para más detalles./n/n
+Todos los derechos concedidos en virtud de esta licencia se concede por el plazo del copyright
+en el Programa, y son irrevocables siempre que las condiciones establecidas se cumplen. Esta Licencia afirma explícitamente su permiso ilimitado para ejecutar el modificado Programa./n/n
+Usted no está obligado a aceptar esta licencia con el fin de recibir o ejecutar una copia de el Programa. La distribución de un trabajo amparado surgida simplemente como consecuencia del uso de peer-to-peer de transmisión para recibir una copia del mismo modo lo hace no requiere aceptación. Sin embargo, otra cosa que esta licencia le otorga permiso para distribuir o modificar cualquier trabajo amparado. Estas acciones infringen el los derechos de autor si no acepta esta Licencia. Por lo tanto, al modificar o propagar un trabajo amparado, usted indica su aceptación de esta Licencia para poder hacerlo./n/n
+Para una copia completa de la Licencia Pública General de GNU ver http://www.gnu.org/licenses/gpl.html</string>
 </resources>

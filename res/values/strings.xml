@@ -375,7 +375,9 @@
 	<string name="perm_read_preferences_title">Read Androzic user preferences</string>
 	<string name="perm_read_map_data_title">Get data from Androzic map</string>
 	<string name="perm_write_map_data_title">Add data to Androzic map</string>
-	
+
+	<string name="faquri">http://androzic.com/wiki/en/FAQ</string>
+
 	<string name="showcase_panel_title">Quick actions</string>
 	<string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
 	<string name="showcase_follow_title">Location following</string>

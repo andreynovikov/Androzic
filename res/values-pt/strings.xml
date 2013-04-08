@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Carregar pista a partir de ficheiro</string>
   <string name="savetrack_name">Guardar pista para ficheiro</string>
   <string name="track2route_name">Converter a faixa para rotear</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Abrir conjunto de ponto de percurso</string>
   <string name="managewaypoints_name">Pontos de percurso</string>
   <string name="waypointproperties_name">Editar ponto de percurso</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Versão de doador</string>
   <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Há rotas disponíveis. Use o menu para criar uma rota ou carregá-la de um ficheiro.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">Por pedido popular o Androzic agora funciona, de forma diferente, com pastas . Pode selecionar livremente qualquer pasta de mapas e dados. A pasta de dados agora é unificada para todos os tipos de dados: waypoints, trilhas e rotas. Tem que copiar os seus ficheiros de dados existentes manualmente para a seguinte pasta criada automaticamente: \'%s\'.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">O cartão SD não está disponível</string>
   <string name="err_nofile">Esse ficheiro não existe</string>
   <string name="err_write">Não é possível gravar ficheiro</string>
-  <string name="err_currentlog">Não posso escrever o log atual</string>
   <string name="err_noconnection">Erro de ligação de rede</string>
   <string name="err_wrongformat">Formato de ficheiro incorreto</string>
   <string name="err_read">Não é possível ler ficheiro</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Altitude</string>
   <string name="proximity">Proximidade</string>
   <string name="accuracy">Precisão</string>
+  <string name="line_width">Largura da linha</string>
   <string name="filename">Nome do arquivo</string>
   <string name="coordformat">Formato de coordenadas</string>
   <string name="direction">Selecione a direção</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Avançado</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Erro de índice de mapa</string>
   <string name="nomaps">Não foram encontrados mapas</string>
   <string name="nomaps_explained">Pasta de mapas \'%s\' está vazia. Quer descarregar e instalar o mapa mundial (250KB)?</string>
@@ -141,7 +150,9 @@
   <string name="menu_tracks">Pista</string>
   <string name="menu_new_waypoint">Novo ponto de percurso</string>
   <string name="menu_waypoints">Pontos de percurso</string>
-  <string name="menu_cleartail">Limpar rasto da pista</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Navegação</string>
   <string name="menu_stopnavigation">Parar navegação</string>
   <string name="menu_navigate">Navegar</string>
@@ -281,7 +292,8 @@
   <string name="pref_tracking_mintime_summary">Mínimo tempo em milissegundos que deve decorrer antes que um outro ponto de controle é adquirido</string>
   <string name="pref_tracking_mindistance_title">Distância mínima</string>
   <string name="pref_tracking_mindistance_summary">Distância mínima em metros que deve ir antes que outro ponto de controle é adquirido</string>
-  <string name="pref_tracking_currentinterval_title">Novo arquivo de pista atual</string>
+  <string name="pref_tracking_linewidth_title">Largura da linha</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Carregar a pista atual</string>
   <string name="pref_tracking_currentload_summary">Marcar para carregar rasto de pista na próxima inicialização da aplicação</string>
   <string name="pref_tracking_currentlength_title">Comprimento da pista atual</string>
@@ -331,9 +343,10 @@
   <string name="pref_uri_summary">Pressione para seguir um link para web site</string>
   <string name="pref_credits_title">Créditos</string>
   <string name="notif_loc_short">A localizar</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic esta a obter a sua localização</string>
-  <string name="notif_trk_short">Rastreando</string>
   <string name="notif_trk_started">Androzic está a controlar o seu movimento</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">A navegar</string>
   <string name="notif_nav_started">Androzic está navegando você</string>
   <string name="notif_nav_to">Androzic a navegar para %s</string>
@@ -346,6 +359,7 @@
   <string name="perm_read_preferences_title">Ler as preferências de utilizador do Androzic</string>
   <string name="perm_read_map_data_title">Obter dados do mapa do Androzic</string>
   <string name="perm_write_map_data_title">Acrescentar dados no mapa Androzic</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Quick actions</string>
   <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
   <string name="showcase_follow_title">Location following</string>

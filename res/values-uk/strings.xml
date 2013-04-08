@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Завантажити трек з файлу</string>
   <string name="savetrack_name">Зберегти трек в файл</string>
   <string name="track2route_name">Конвертувати трек в маршрут</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Відкрити набір точок</string>
   <string name="managewaypoints_name">Точки</string>
   <string name="waypointproperties_name">Редагувати точки</string>
@@ -48,11 +49,14 @@
   <string name="msg_paid">Платна версія</string>
   <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Не знайдено доступних маршрутів. Скористайтеся меню для створення або завантаження маршруту з файлу.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">На численні прохання Androzic відтепер по-іншому працює з теками мап. Ви можете вільно обирати будь-яку теку для мап та даних. Тека відтепер зберігає всі типи даних: точки, треки та маршрути. Вам необхідно самостійно скопіювати файли з даними до новоствореної теки: ‘%s’.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">SD-картка недоступна</string>
   <string name="err_nofile">Файл не знайдено</string>
   <string name="err_write">Неможливо записати файл</string>
-  <string name="err_currentlog">Неможливо записати лог</string>
   <string name="err_noconnection">Проблема з підключенням до мережі</string>
   <string name="err_wrongformat">Невірний формат файлу</string>
   <string name="err_read">Неможливо прочитати файл</string>
@@ -91,6 +95,7 @@
   <string name="altitude">Висота</string>
   <string name="proximity">Наближення</string>
   <string name="accuracy">Точність</string>
+  <string name="line_width">Ширина лінії</string>
   <string name="filename">Ім\'я файлу</string>
   <string name="coordformat">Формат кооринат</string>
   <string name="direction">Обрати напрямок</string>
@@ -128,6 +133,10 @@
   <string name="advanced">Розширені</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Помилка індексування мапи</string>
   <string name="nomaps">Не знайдено жодної мапи</string>
   <string name="nomaps_explained">Тека мап ‘%s’ пуста. Звантажити та встановити карту світу (250KB)?</string>
@@ -143,7 +152,9 @@
   <string name="menu_tracks">Треки</string>
   <string name="menu_new_waypoint">Нова точка</string>
   <string name="menu_waypoints">Точки</string>
-  <string name="menu_cleartail">Очистити поточний трек</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Навігація</string>
   <string name="menu_stopnavigation">Припинити навігацію</string>
   <string name="menu_navigate">Рухатися до точки</string>
@@ -283,7 +294,8 @@
   <string name="pref_tracking_mintime_summary">Мінімальний інтервал в мілісекундах до створення наступної точки треку</string>
   <string name="pref_tracking_mindistance_title">Мінімальна відстань</string>
   <string name="pref_tracking_mindistance_summary">Мінімальна відстань в метрах до створення наступної точки</string>
-  <string name="pref_tracking_currentinterval_title">Новий файл поточного треку</string>
+  <string name="pref_tracking_linewidth_title">Ширина лінії</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Завантажувати поточний трек</string>
   <string name="pref_tracking_currentload_summary">Встановіть для завантаження поточного треку при наступному старті програми</string>
   <string name="pref_tracking_currentlength_title">Довжина поточного треку</string>
@@ -333,9 +345,10 @@
   <string name="pref_uri_summary">Натисніть щоб перейти на сайт</string>
   <string name="pref_credits_title">Подяки</string>
   <string name="notif_loc_short">Слідкувати</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic отримує розташування</string>
-  <string name="notif_trk_short">Запис трека</string>
   <string name="notif_trk_started">Androzic записує трек</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Навігація</string>
   <string name="notif_nav_started">Androzic веде Вас до мети</string>
   <string name="notif_nav_to">Androzic веде Вас до %s</string>
@@ -348,6 +361,7 @@
   <string name="perm_read_preferences_title">Доступ до користувацьких налаштувань Androzic</string>
   <string name="perm_read_map_data_title">Отримувати дані мапи Androzic</string>
   <string name="perm_write_map_data_title">Додавати дані до мапи Androzic</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Швидкі дії</string>
   <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
   <string name="showcase_follow_title">Слідкувати за розташуванням</string>

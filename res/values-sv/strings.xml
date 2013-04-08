@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Ladda spår från fil</string>
   <string name="savetrack_name">Spara spår till fil</string>
   <string name="track2route_name">Konvertera spår till rutt</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Öppna navigationsändamålsinställning</string>
   <string name="managewaypoints_name">Waypoint/navigationsmål</string>
   <string name="waypointproperties_name">Redigera navigationsmål</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Donerad version</string>
   <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Inga rutter finns. Använd menyn för att skapa rutt eller ladda det från fil.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: ‘%s’.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">SD-kort ej tillgängligt</string>
   <string name="err_nofile">Ingen fil</string>
   <string name="err_write">Det gick inte att skriva filen</string>
-  <string name="err_currentlog">Kan inte skriva aktuell logg</string>
   <string name="err_noconnection">Nätverket anslutningsfel</string>
   <string name="err_wrongformat">Fel filformat</string>
   <string name="err_read">Kan inte läsa filen</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Höjd</string>
   <string name="proximity">Närhet</string>
   <string name="accuracy">Noggrannhet</string>
+  <string name="line_width">Linjebredd</string>
   <string name="filename">Filnamn</string>
   <string name="coordformat">Koordinatformat</string>
   <string name="direction">Välj riktning</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Avancerad</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Karta index fel</string>
   <string name="nomaps">Inga kartor funna</string>
   <string name="nomaps_explained">Map folder ‘%s’ is empty. Download and install world map (250KB)?</string>
@@ -141,7 +150,9 @@
   <string name="menu_tracks">Spår</string>
   <string name="menu_new_waypoint">Nytt navigationsmål</string>
   <string name="menu_waypoints">Navigationsmål</string>
-  <string name="menu_cleartail">Radera gammal spårningsrutt</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Navigering</string>
   <string name="menu_stopnavigation">Stoppa navigering</string>
   <string name="menu_navigate">Navigera</string>
@@ -281,7 +292,8 @@
   <string name="pref_tracking_mintime_summary">Minsta tid i millisekunder som bör passera innan en annan spår punkt fås</string>
   <string name="pref_tracking_mindistance_title">Minsta avstånd</string>
   <string name="pref_tracking_mindistance_summary">Minsta avstånd i meter som bör gå innan en annan spår punkt har fåtts</string>
-  <string name="pref_tracking_currentinterval_title">Ny spår fil</string>
+  <string name="pref_tracking_linewidth_title">Linjebredd</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Ladda aktuellt spår</string>
   <string name="pref_tracking_currentload_summary">Markera för att ladda nuvarande spårsvans vid nästa programstart</string>
   <string name="pref_tracking_currentlength_title">Aktuell spårlängd</string>
@@ -331,9 +343,10 @@
   <string name="pref_uri_summary">Tryck för att följa en länk till webbplats</string>
   <string name="pref_credits_title">Cred</string>
   <string name="notif_loc_short">Söker</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic söker efter din plats</string>
-  <string name="notif_trk_short">Spårning</string>
   <string name="notif_trk_started">Androzic spårar din kurs</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Navigerar</string>
   <string name="notif_nav_started">Androzic navigerar dig</string>
   <string name="notif_nav_to">Androzic navigerar till %s</string>
@@ -346,6 +359,7 @@
   <string name="perm_read_preferences_title">Läs Androzics användarinställningar</string>
   <string name="perm_read_map_data_title">Hämta data från Androzic karta</string>
   <string name="perm_write_map_data_title">Lägg till data till Androzic karta</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Quick actions</string>
   <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
   <string name="showcase_follow_title">Location following</string>

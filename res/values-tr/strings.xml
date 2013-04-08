@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Dosyadan iz yükle</string>
   <string name="savetrack_name">İzi dosyaya kaydet</string>
   <string name="track2route_name">İzi rotaya dönüştür</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Yer imi grubunu aç</string>
   <string name="managewaypoints_name">Yer imleri</string>
   <string name="waypointproperties_name">Yer imini düzenle</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Bağış yapılmış sürüm</string>
   <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
   <string name="msg_empty_route_list">Kullanılabilir rota bulunamadı. Rota oluşturmak veya dosya yüklemek için menüyü kullanın.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: ‘%s’.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">SD kart kullanılamaz</string>
   <string name="err_nofile">Böyle bir dosya yok</string>
   <string name="err_write">Dosya yazılamıyor</string>
-  <string name="err_currentlog">Geçerli günlüğe yazılamıyor</string>
   <string name="err_noconnection">Ağ bağlantı hatası</string>
   <string name="err_wrongformat">Yanlış dosya biçimi</string>
   <string name="err_read">Dosya okunamıyor</string>
@@ -89,6 +93,7 @@
   <string name="altitude">İrtifa</string>
   <string name="proximity">Yakınlık</string>
   <string name="accuracy">Doğruluk</string>
+  <string name="line_width">Çizgi genişliği</string>
   <string name="filename">Dosya adı</string>
   <string name="coordformat">Koordinatları biçimi</string>
   <string name="direction">Yön seçin</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Gelişmiş</string>
   <string name="hdop">Yatay sapma</string>
   <string name="vdop">Dikey sapma</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Harita dizin-indeks hatası</string>
   <string name="nomaps">Hiç harita bulunamadı</string>
   <string name="nomaps_explained">Harita klasörü %s boştur. Dünya Haritası (250 KB)karşıdan yüklensin mi ?</string>
@@ -141,7 +150,9 @@
   <string name="menu_tracks">İzler</string>
   <string name="menu_new_waypoint">Yeni yer imi</string>
   <string name="menu_waypoints">Yer imleri</string>
-  <string name="menu_cleartail">İz çizgisini temizle</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Rota Seyrüseferi</string>
   <string name="menu_stopnavigation">Seyrüseferi durdur</string>
   <string name="menu_navigate">Git</string>
@@ -281,7 +292,8 @@
   <string name="pref_tracking_mintime_summary">Başka bir iz noktası kaydetmeden önce milisaniye cinsinden geçmesi gereken minimum süre</string>
   <string name="pref_tracking_mindistance_title">Minimum mesafe</string>
   <string name="pref_tracking_mindistance_summary">Yeni bir iz noktası kaydı yapılana kadar geçilecek metre cinsinden minimum mesafe</string>
-  <string name="pref_tracking_currentinterval_title">Yeni geçerli iz dosyası</string>
+  <string name="pref_tracking_linewidth_title">Çizgi genişliği</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Geçerli izi yükle</string>
   <string name="pref_tracking_currentload_summary">Geçerli iz çizgisini sonraki uygulama başlangıcında yüklemek için işaretleyin</string>
   <string name="pref_tracking_currentlength_title">Geçerli iz uzunluğu</string>
@@ -331,9 +343,10 @@
   <string name="pref_uri_summary">Web sitesine gitmek için tıklayın</string>
   <string name="pref_credits_title">Emeği Geçenler</string>
   <string name="notif_loc_short">Konum belirleniyor</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic konumunuzu belirliyor</string>
-  <string name="notif_trk_short">İzleme başladı</string>
   <string name="notif_trk_started">Androzic hareketinizi takip etmeye başladı</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Seyrüsefer başladı</string>
   <string name="notif_nav_started">Androzic seyrüsefere başladı</string>
   <string name="notif_nav_to">Androzic şu konuma gidiyor: %s</string>
@@ -346,6 +359,7 @@
   <string name="perm_read_preferences_title">Androzic kullanıcı tercihlerini oku</string>
   <string name="perm_read_map_data_title">Androzic harita verilerini al</string>
   <string name="perm_write_map_data_title">Androzic haritaya veri ekle</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Hızlı işlemler</string>
   <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
   <string name="showcase_follow_title">Konum takip ediliyor</string>

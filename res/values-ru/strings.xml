@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Загрузка трека из файла</string>
   <string name="savetrack_name">Сохранение трека в файл</string>
   <string name="track2route_name">Конвертирование трека в маршрут</string>
+  <string name="exporttrack_name">Экспортировать трек</string>
   <string name="loadwaypoints_name">Открыть набор точек</string>
   <string name="managewaypoints_name">Точки</string>
   <string name="waypointproperties_name">Свойства точки</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Платная версия</string>
   <string name="msg_nothing_found">Ничего не было найдено. Пожалуйста, примите во внимание что данные находятся только если они загружены в Androzic, местоположения находятся по имени только при наличии подключения к Интернету.</string>
   <string name="msg_empty_route_list">Нет доступных маршрутов. Используйте меню для создания маршрута или загрузки его из файла.</string>
+  <string name="msg_empty_track_list">Нет доступных треков. Используйте меню для загрузки трека из файла.</string>
   <string name="msg_newdatafolder">По моногочисленным просьбам Androzic теперь работает с папками по-другому. Вы можете свободно выбирать любую папку с картами и данными. Папка данных теперь едина для всех типов: точек, треков и маршрутов. Вы должны скопировать имеющиеся файлы данных самостоятельно в папку: ‘%s’.</string>
+  <string name="msg_expandcurrenttrack">Если вы долгое время не очищали ваш текущий трек, то данная операция может значительно ухудшить производительность. Продолжить?</string>
+  <string name="msg_clearcurrenttrack">Будет очищена вся история перемещений, вы уверены?</string>
+  <string name="msg_emptytracksegment">Выбранный отрезок трека пустой, ничего сохранять</string>
   <string name="err_nosdcard">SD-карта недоступна</string>
   <string name="err_nofile">Нет такого файла</string>
   <string name="err_write">Не удается записать файл</string>
-  <string name="err_currentlog">Невозможно сохранить текущий трек</string>
   <string name="err_noconnection">Проблема соединения с сетью</string>
   <string name="err_wrongformat">Неправильный формат файла</string>
   <string name="err_read">Ошибка чтения файла</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Высота</string>
   <string name="proximity">Близость</string>
   <string name="accuracy">Точность</string>
+  <string name="line_width">Ширина линии</string>
   <string name="filename">Имя файла</string>
   <string name="coordformat">Формат координат</string>
   <string name="direction">Выберите направление</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Расширенные</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Начиная с</string>
+  <string name="till_date">Заканчивая в</string>
+  <string name="format">Формат</string>
+  <string name="skip_single_locations">Пропускать одиночные местоположения</string>
   <string name="badmaps">Ошибка индексирования карт</string>
   <string name="nomaps">Карт не найдено</string>
   <string name="nomaps_explained">Папка с картами «%s» пустая. Загрузить и установить карту мира (250KB)?</string>
@@ -146,7 +155,9 @@
   <string name="menu_tracks">Треки</string>
   <string name="menu_new_waypoint">Новая точка</string>
   <string name="menu_waypoints">Точки</string>
-  <string name="menu_cleartail">Очистить текущий трек</string>
+  <string name="menu_exportcurrenttrack">Экспортировать текущий трек</string>
+  <string name="menu_expandcurrenttrack">Показать полный текущий трек</string>
+  <string name="menu_clearcurrenttrack">Очистить текущий трек</string>
   <string name="menu_navigation">Навигация</string>
   <string name="menu_stopnavigation">Прекратить навигацию</string>
   <string name="menu_navigate">Двигаться к точке</string>
@@ -286,7 +297,8 @@
   <string name="pref_tracking_mintime_summary">Минимальное время в милисекундах, которое должно пройти до формирования следующей точки трека</string>
   <string name="pref_tracking_mindistance_title">Минимальное расстояние</string>
   <string name="pref_tracking_mindistance_summary">Минимальное расстояние в метрах, которое должно пройти до формирования следующей точки трека</string>
-  <string name="pref_tracking_currentinterval_title">Новый текущий трек</string>
+  <string name="pref_tracking_linewidth_title">Ширина линии</string>
+  <string name="pref_tracking_linewidth_summary">Ширина линии трека в пикселях</string>
   <string name="pref_tracking_currentload_title">Загружать текущий трек</string>
   <string name="pref_tracking_currentload_summary">Отметьте, чтобы загружать текущий трек при следующем запуске приложения</string>
   <string name="pref_tracking_currentlength_title">Длина текущего трека</string>
@@ -336,9 +348,10 @@
   <string name="pref_uri_summary">Нажмите, чтобы перейти на веб-сайт</string>
   <string name="pref_credits_title">Благодарности</string>
   <string name="notif_loc_short">Слежение</string>
+  <string name="notif_loc_waiting">Androzic ждет получение местоположения</string>
   <string name="notif_loc_started">Androzic получает ваше местоположение</string>
-  <string name="notif_trk_short">Запись трека</string>
   <string name="notif_trk_started">Androzic отслеживает ваше перемещение</string>
+  <string name="notif_trk_failure">Androzic имеет проблему с отслеживанием</string>
   <string name="notif_nav_short">Навигация</string>
   <string name="notif_nav_started">Androzic ведёт вас к цели</string>
   <string name="notif_nav_to">Androzic ведёт вас в точку %s</string>
@@ -351,6 +364,7 @@
   <string name="perm_read_preferences_title">Доступ к пользовательским настройкам Androzic</string>
   <string name="perm_read_map_data_title">Получать данные Androzic карты</string>
   <string name="perm_write_map_data_title">Добавлять данные на карту Androzic</string>
+  <string name="faquri">http://androzic.com/wiki/ru/FAQ</string>
   <string name="showcase_panel_title">Быстрые действия</string>
   <string name="showcase_panel_description">Сдвиньте или нажмите ярлык сдвижной панели для доступа к быстрым действиям. Быстрые действия могут быть изменены в Настройках.</string>
   <string name="showcase_follow_title">Слежение за местоположением</string>

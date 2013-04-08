@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Wczytaj ślad z pliku</string>
   <string name="savetrack_name">Zapisz ślad do pliku</string>
   <string name="track2route_name">Konwertuj ślad do trasy</string>
+  <string name="exporttrack_name">Eksportuj trasę</string>
   <string name="loadwaypoints_name">Otwórz zbiór punktów trasy</string>
   <string name="managewaypoints_name">Punkty trasy</string>
   <string name="waypointproperties_name">Edyt punkt trasy</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Wersja dotowana</string>
   <string name="msg_nothing_found">Nic nie znaleziono. Proszę wziąć pod uwagę że dane są przeszukiwane tylko, jeśli zostały załadowane w Androzic, nazwane lokalizacje są przeszukiwane tylko, jeśli dostępne jest połączenie internetowe.</string>
   <string name="msg_empty_route_list">Brak dostępnych tras. Użyj menu aby stworzyć trasę lub załadować ją z pliku.</string>
+  <string name="msg_empty_track_list">Brak dostępnych tras. Użyj menu aby załadować trasę z pliku.</string>
   <string name="msg_newdatafolder">Ze względu na częste prośby Androzic pracuje teraz inaczej z folderami. Możesz wybrać dowolny folder na mapy i dane. Folder danych jest teraz ujednolicony dla wszystkich typów danych: punktów trasy, śladów i tras. Musisz ręcznie skopiować istniejące pliki danych do następującego folderu, utworzonego automatycznie: \'%s\'.</string>
+  <string name="msg_expandcurrenttrack">Jeżeli nie kasowałeś swojej trasy przez długi czas może to znacznie obniżyć wydajność. Kontynuować?</string>
+  <string name="msg_clearcurrenttrack">Usuniesz całą historię przemieszczania, czy jesteś pewny?</string>
+  <string name="msg_emptytracksegment">Wybrany fragment trasy jest pusty, nie ma nic do zapisania</string>
   <string name="err_nosdcard">Karta SD niedostępna</string>
   <string name="err_nofile">Nie ma takiego pliku</string>
   <string name="err_write">Nie można zapisać pliku</string>
-  <string name="err_currentlog">Nie można zapisać bieżącego dziennika</string>
   <string name="err_noconnection">Błąd połączenia z siecią</string>
   <string name="err_wrongformat">Zły format pliku</string>
   <string name="err_read">Nie można odczytać pliku</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Wysokość</string>
   <string name="proximity">Odległość</string>
   <string name="accuracy">Dokładność</string>
+  <string name="line_width">Grubość linii</string>
   <string name="filename">Nazwa pliku</string>
   <string name="coordformat">Format współrzędnych</string>
   <string name="direction">Wybierz kierunek</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Zaawansowane</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Począwszy od</string>
+  <string name="till_date">Koniec</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Pomiń pojedyncze lokalizacje</string>
   <string name="badmaps">Błąd indeksu mapy</string>
   <string name="nomaps">Nie znaleziono map</string>
   <string name="nomaps_explained">Folder map \'%s\' jest pusty. Pobrać i zainstalować mapę świata (250KB)?</string>
@@ -145,7 +154,9 @@
   <string name="menu_tracks">Ślady</string>
   <string name="menu_new_waypoint">Nowy punkt trasy</string>
   <string name="menu_waypoints">Punkty trasy</string>
-  <string name="menu_cleartail">Wyczyść końcówkę śladu</string>
+  <string name="menu_exportcurrenttrack">Eksportuj aktualną trasę</string>
+  <string name="menu_expandcurrenttrack">Pokaż całą aktualną trasę</string>
+  <string name="menu_clearcurrenttrack">Wyczyść aktualną trasę</string>
   <string name="menu_navigation">Nawigacja</string>
   <string name="menu_stopnavigation">Zatrzymaj nawigację</string>
   <string name="menu_navigate">Nawiguj</string>
@@ -285,7 +296,8 @@
   <string name="pref_tracking_mintime_summary">Minimalny czas w milisekundach, który powinien upłynąć zanim kolejna lokalizacja zostanie zapisana</string>
   <string name="pref_tracking_mindistance_title">Minimalna odległość</string>
   <string name="pref_tracking_mindistance_summary">Minimalny dystans w metrach, który powinien zostać przebyty zanim kolejna lokalizacja zostanie zapisana</string>
-  <string name="pref_tracking_currentinterval_title">Nowy plik bieżącego śladu</string>
+  <string name="pref_tracking_linewidth_title">Grubość linii</string>
+  <string name="pref_tracking_linewidth_summary">Szerokość linii trasy w pikselach</string>
   <string name="pref_tracking_currentload_title">Wczytaj bieżący ślad</string>
   <string name="pref_tracking_currentload_summary">Zaznacz aby załadować końcówkę bieżącego śladu podczas następnego startu aplikacji</string>
   <string name="pref_tracking_currentlength_title">Długość bieżącego śladu</string>
@@ -335,9 +347,10 @@
   <string name="pref_uri_summary">Naciśnij aby przejść do witryny sieci web</string>
   <string name="pref_credits_title">Informacje o autorach</string>
   <string name="notif_loc_short">Lokalizowanie</string>
+  <string name="notif_loc_waiting">Androzic czeka na lokalizację</string>
   <string name="notif_loc_started">Androzic ustala twoją lokalizację</string>
-  <string name="notif_trk_short">Śledzenie</string>
   <string name="notif_trk_started">Androzic śledzi twoje położenie</string>
+  <string name="notif_trk_failure">Androzic ma problem ze śledzeniem</string>
   <string name="notif_nav_short">Nawigacja</string>
   <string name="notif_nav_started">Androzic prowadzi do celu</string>
   <string name="notif_nav_to">Androzic prowadzi cię do %s</string>
@@ -350,6 +363,7 @@
   <string name="perm_read_preferences_title">Odczytaj ustawienia użytkownika Androzica</string>
   <string name="perm_read_map_data_title">Pobierz dane z mapy Androzica</string>
   <string name="perm_write_map_data_title">Dodaj dane do mapy Androzica</string>
+  <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
   <string name="showcase_panel_title">Szybkie działania</string>
   <string name="showcase_panel_description">Przesuń lub pociągnij uchwyt panelu aby uzyskać dostęp do szybkich akcji. Szybkie akcje mogą być skonfigurowane w ustawieniach.</string>
   <string name="showcase_follow_title">Śledzenie lokalizacji</string>

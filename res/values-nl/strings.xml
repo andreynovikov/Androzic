@@ -7,6 +7,7 @@
   <string name="loadtrack_name">Laad track van bestand</string>
   <string name="savetrack_name">Track opslaan naar bestand</string>
   <string name="track2route_name">Zet track om naar route</string>
+  <string name="exporttrack_name">Export track</string>
   <string name="loadwaypoints_name">Open waypoint set</string>
   <string name="managewaypoints_name">Waypoints</string>
   <string name="waypointproperties_name">Waypoint bewerken</string>
@@ -46,11 +47,14 @@
   <string name="msg_paid">Donatie versie</string>
   <string name="msg_nothing_found">Niets werd gevonden. Neem in aanmerking dat gegevens alleen als het wordt geladen in Androzic, benoemde locaties worden doorzocht als Internet-verbinding beschikbaar is.</string>
   <string name="msg_empty_route_list">Geen routes beschikbaar. Gebruik menu om de route te maken of te laden uit bestand.</string>
+  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">Op veler verzoek werkt Androzic nu anders met mappen. U kunt nu elke map van kaarten en gegevens selecteren. Datamap is nu uniform voor alle gegevenstypen: waypoints, tracks en routes. U moet uw bestaande gegevensbestanden handmatig kopiëren naar de volgende map van de autocreated: \'%s\'.</string>
+  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
+  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="err_nosdcard">SD-kaart niet beschikbaar</string>
   <string name="err_nofile">Onbekend bestand</string>
   <string name="err_write">Kan bestand niet schrijven</string>
-  <string name="err_currentlog">Kan huidige log niet schrijven</string>
   <string name="err_noconnection">Netwerk verbindingsfout</string>
   <string name="err_wrongformat">Verkeerde bestandsformaat</string>
   <string name="err_read">Kan bestand niet lezen</string>
@@ -89,6 +93,7 @@
   <string name="altitude">Hoogte</string>
   <string name="proximity">Nabijheid</string>
   <string name="accuracy">Nauwkeurigheid</string>
+  <string name="line_width">Lijnbreedte</string>
   <string name="filename">Bestandsnaam</string>
   <string name="coordformat">Coördinaten-formaat</string>
   <string name="direction">Selecteer richting</string>
@@ -126,6 +131,10 @@
   <string name="advanced">Geavanceerd</string>
   <string name="hdop">HDOP</string>
   <string name="vdop">VDOP</string>
+  <string name="from_date">Starting from</string>
+  <string name="till_date">Ending at</string>
+  <string name="format">Format</string>
+  <string name="skip_single_locations">Skip single locations</string>
   <string name="badmaps">Kaart index fout</string>
   <string name="nomaps">Geen kaarten gevonden</string>
   <string name="nomaps_explained">Kaart-map \'%s\' is leeg. Downloaden en installeren van de kaart van de wereld (250 KB)?</string>
@@ -141,7 +150,9 @@
   <string name="menu_tracks">Tracks</string>
   <string name="menu_new_waypoint">Nieuwe waypoint</string>
   <string name="menu_waypoints">Waypoints</string>
-  <string name="menu_cleartail">Wis track einde</string>
+  <string name="menu_exportcurrenttrack">Export current track</string>
+  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_clearcurrenttrack">Clear current track</string>
   <string name="menu_navigation">Navigatie</string>
   <string name="menu_stopnavigation">Stop navigeren</string>
   <string name="menu_navigate">Navigeren</string>
@@ -281,7 +292,8 @@
   <string name="pref_tracking_mintime_summary">Minimale tijd in milliseconden dat verstrijken moet voordat een ander track punt wordt verkregen</string>
   <string name="pref_tracking_mindistance_title">Minimale afstand</string>
   <string name="pref_tracking_mindistance_summary">Minimale afstand in meters die moet worden afgelegd voordat een ander track punt wordt verkregen</string>
-  <string name="pref_tracking_currentinterval_title">Nieuwe huidige track bestand</string>
+  <string name="pref_tracking_linewidth_title">Lijnbreedte</string>
+  <string name="pref_tracking_linewidth_summary">Pixel width of the track line</string>
   <string name="pref_tracking_currentload_title">Laad huidige track</string>
   <string name="pref_tracking_currentload_summary">Markeer voor het laden van de huidige track einde na programma start</string>
   <string name="pref_tracking_currentlength_title">Huidige track lengte</string>
@@ -331,9 +343,10 @@
   <string name="pref_uri_summary">Druk naar website link te gaan</string>
   <string name="pref_credits_title">Credits</string>
   <string name="notif_loc_short">Zoeken</string>
+  <string name="notif_loc_waiting">Androzic is waiting for location</string>
   <string name="notif_loc_started">Androzic zoekt uw locatie</string>
-  <string name="notif_trk_short">Volgen</string>
   <string name="notif_trk_started">Androzic volgt uw bewegingen</string>
+  <string name="notif_trk_failure">Androzic has problem with tracking</string>
   <string name="notif_nav_short">Navigeren</string>
   <string name="notif_nav_started">Androzic navigeert u</string>
   <string name="notif_nav_to">Androzic navigeert naar %s</string>
@@ -346,6 +359,7 @@
   <string name="perm_read_preferences_title">Lees Androzic gebruikersvoorkeuren</string>
   <string name="perm_read_map_data_title">Gegevens ophalen uit Androzic kaart</string>
   <string name="perm_write_map_data_title">Gegevens toevoegen aan Androzic kaart</string>
+  <string name="faquri">http://androzic.com/wiki/nl/FAQ</string>
   <string name="showcase_panel_title">Snelle acties</string>
   <string name="showcase_panel_description">Schuif of sleep glijdend paneel voor toegang tot snelle acties. Snelle acties kunnen worden geconfigureerd in de instellingen.</string>
   <string name="showcase_follow_title">De volgende locatie</string>
