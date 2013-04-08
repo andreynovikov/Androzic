@@ -35,6 +35,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.location.GpsSatellite;
@@ -65,6 +66,7 @@ public class LocationService extends BaseLocationService implements LocationList
 {
 	private static final String TAG = "Location";
 	private static final int NOTIFICATION_ID = 24161;
+	private static final boolean DEBUG_ERRORS = false;
 
 	/**
 	 * Intent action to enable locating
@@ -380,7 +382,7 @@ public class LocationService extends BaseLocationService implements LocationList
 		PendingIntent contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, intent, 0);
 		builder.setContentIntent(contentIntent);
 		builder.setContentTitle(getText(R.string.notif_loc_short));
-		if (errorTime > 0)
+		if (errorTime > 0 && DEBUG_ERRORS)
 			builder.setContentText(errorMsg);
 		else
 			builder.setContentText(getText(msgId));
@@ -451,13 +453,19 @@ public class LocationService extends BaseLocationService implements LocationList
 
 	public Track getTrack()
 	{
+		return getTrack(0);
+	}
+	
+	public Track getTrack(long limit)
+	{
 		if (trackDB == null)
 			openDatabase();
 		Track track = new Track();
 		if (trackDB == null)
 			return track;
-		Cursor cursor = trackDB.rawQuery("SELECT * FROM track ORDER BY _id", null);
-		for (boolean hasItem = cursor.moveToFirst(); hasItem; hasItem = cursor.moveToNext())
+		String limitStr = limit > 0 ? " LIMIT " + limit : "";
+		Cursor cursor = trackDB.rawQuery("SELECT * FROM track ORDER BY _id DESC" + limitStr, null);
+		for (boolean hasItem = cursor.moveToLast(); hasItem; hasItem = cursor.moveToPrevious())
 		{
 			double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
 			double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
@@ -500,10 +508,14 @@ public class LocationService extends BaseLocationService implements LocationList
 		values.put("accuracy", accuracy);
 		values.put("datetime", time);
 
-		if (trackDB.insert("track", null, values) < 0)
+		try
 		{
-			Log.e(TAG, "addPoint");
-			errorMsg = "addPoint";
+			trackDB.insertOrThrow("track", null, values);
+		}
+		catch (SQLException e)
+		{
+			Log.e(TAG, "addPoint", e);
+			errorMsg = e.getMessage();
 			errorTime = System.currentTimeMillis();
 			updateNotification();
 			closeDatabase();
