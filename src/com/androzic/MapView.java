@@ -126,6 +126,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private Androzic application;
 
+	private SurfaceHolder cachedHolder;
 	private DrawingThread drawingThread;
 	private Object lock = new Object();
 
@@ -193,7 +194,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
-		Log.e(TAG, "surfaceChanged(" + width + "," + height + ")");
+		Log.i(TAG, "surfaceChanged(" + width + "," + height + ")");
 		synchronized (lock)
 		{
 			setLookAhead(lookAheadPst);
@@ -203,14 +204,17 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
+		Log.i(TAG, "surfaceCreated(" + holder + ")");
 		drawingThread = new DrawingThread(holder, this);
 		drawingThread.setRunning(true);
 		drawingThread.start();
+		cachedHolder = null;
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
+		Log.i(TAG, "surfaceDestroyed(" + holder + ")");
 		boolean retry = true;
 		drawingThread.setRunning(false);
 		while (retry)
@@ -224,6 +228,34 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			{
 			}
 		}
+	}
+
+	/**
+	 * Pauses map drawing
+	 */
+	public void pause()
+	{
+		if (cachedHolder != null)
+			return;
+		cachedHolder = drawingThread.surfaceHolder;
+		surfaceDestroyed(cachedHolder);
+	}
+
+	/**
+	 * Resumes map drawing
+	 */
+	public void resume()
+	{
+		if (cachedHolder != null)
+			surfaceCreated(cachedHolder);
+	}
+
+	/**
+	 * Checks if map drawing is paused
+	 */
+	public boolean isPaused()
+	{
+		return cachedHolder != null;
 	}
 
 	class DrawingThread extends Thread
@@ -416,6 +448,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		calculateVectorLength();
 	}
 
+	/**
+	 * Clears current location from map.
+	 */
 	public void clearLocation()
 	{
 		setFollowingThroughContext(false);

@@ -522,6 +522,8 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
 		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_LOCATING_STATUS));
 		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_TRACKING_STATUS));
+		registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+		registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
 
 		if (application.hasEnsureVisible())
 		{
@@ -535,6 +537,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 			application.updateLocationMaps(map.isBestMapEnabled());
 		}
 		updateMapViewArea();
+		map.resume();
 		map.updateMapInfo();
 		map.update();
 		map.requestFocus();
@@ -549,6 +552,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		Log.e(TAG, "onPause()");
 
 		unregisterReceiver(broadcastReceiver);
+		map.pause();
 
 		// save active route
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
@@ -712,6 +716,17 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				updateMapButtons();
 				if (locationService != null && !locationService.isLocating())
 					map.clearLocation();
+			}
+			// In fact this is not needed on modern devices through activity is always
+			// paused when the screen is turned off. But we will keep it, may be there
+			// exist some devices (ROMs) that do not pause activities.
+			else if (action.equals(Intent.ACTION_SCREEN_OFF))
+			{
+				map.pause();
+			}
+			else if (action.equals(Intent.ACTION_SCREEN_ON))
+			{
+				map.resume();
 			}
 		}
 	};
