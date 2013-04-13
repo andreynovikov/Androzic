@@ -529,12 +529,12 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		{
 			setFollowing(false);
 			double[] loc = application.getEnsureVisible();
-			application.setMapCenter(loc[0], loc[1], false);
+			application.setMapCenter(loc[0], loc[1], true, false);
 			application.clearEnsureVisible();
 		}
 		else
 		{
-			application.updateLocationMaps(map.isBestMapEnabled());
+			application.updateLocationMaps(true, map.isBestMapEnabled());
 		}
 		updateMapViewArea();
 		map.resume();
@@ -958,14 +958,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 					aib.setVisibility(View.VISIBLE);
 					switch (id)
 					{
-						case R.id.nextmap:
-							aib.setEnabled(application.getPrevMap() != 0);
-							aib.setColorFilter(aib.isEnabled() ? null : disable);
-							break;
-						case R.id.prevmap:
-							aib.setEnabled(application.getNextMap() != 0);
-							aib.setColorFilter(aib.isEnabled() ? null : disable);
-							break;
 						case R.id.follow:
 							aib.setImageDrawable(getResources().getDrawable(map.isFollowing() ? R.drawable.cursor_drag_arrow : R.drawable.target));
 							break;
@@ -999,7 +991,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				public void run()
 				{
 					coordinates.setText(pos);
-					updateMapButtons();
 				}
 			});
 		}
@@ -1022,7 +1013,6 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 					currentFile.setText("-no map-");
 				}
 
-				updateMapButtons();
 				updateZoomInfo();
 			}
 		});
@@ -1748,7 +1738,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 						double c[] = CoordinateParser.parse(q);
 						if (!Double.isNaN(c[0]) && !Double.isNaN(c[1]))
 						{
-							boolean mapChanged = application.setMapCenter(c[0], c[1], false);
+							boolean mapChanged = application.setMapCenter(c[0], c[1], true, false);
 							if (mapChanged)
 								map.updateMapInfo();
 							map.update();
@@ -2263,7 +2253,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				((TextView) findViewById(R.id.tp_longitude)).setText(StringFormatter.coordinate(application.coordinateFormat, tp.longitude));
 				((TextView) findViewById(R.id.tp_elevation)).setText(String.valueOf(Math.round(ele)) + " " + elevationAbbr);
 				((TextView) findViewById(R.id.tp_time)).setText(SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT).format(new Date(tp.time)));
-				boolean mapChanged = application.setMapCenter(tp.latitude, tp.longitude, false);
+				boolean mapChanged = application.setMapCenter(tp.latitude, tp.longitude, false, false);
 				if (mapChanged)
 					map.updateMapInfo();
 				map.update();

@@ -432,12 +432,12 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				boolean newMap = false;
 				if (bestMapEnabled && bestMapInterval > 0 && lastLocationMillis - lastBestMap >= bestMapInterval)
 				{
-					newMap = application.setMapCenter(currentLocation[0], currentLocation[1], loadBestMap);
+					newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false, loadBestMap);
 					lastBestMap = lastLocationMillis;
 				}
 				else
 				{
-					newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false);
+					newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false, false);
 					if (newMap)
 						loadBestMap = bestMapEnabled;
 				}
@@ -616,7 +616,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				if (follow)
 				{
 					Toast.makeText(getContext(), R.string.following_enabled, Toast.LENGTH_SHORT).show();
-					boolean newMap = application.setMapCenter(currentLocation[0], currentLocation[1], false);
+					boolean newMap = application.setMapCenter(currentLocation[0], currentLocation[1], true, false);
 					if (newMap)
 						updateMapInfo();
 				}

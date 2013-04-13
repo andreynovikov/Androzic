@@ -970,11 +970,11 @@ public class Androzic extends BaseApplication
 		if (loc != null)
 		{
 			coordinate = CoordinateParser.parse(loc);
-			setMapCenter(coordinate[0], coordinate[1], true);
+			setMapCenter(coordinate[0], coordinate[1], true, true);
 		}
 		if (coordinate == null)
 		{
-			setMapCenter(0, 0, true);
+			setMapCenter(0, 0, true, true);
 		}
 	}
 	
@@ -986,11 +986,11 @@ public class Androzic extends BaseApplication
 		return res;
 	}
 	
-	public boolean setMapCenter(double lat, double lon, boolean findbest)
+	public boolean setMapCenter(double lat, double lon, boolean reindex, boolean findbest)
 	{
 		mapCenter[0] = lat;
 		mapCenter[1] = lon;
-		return updateLocationMaps(findbest);
+		return updateLocationMaps(reindex, findbest);
 	}
 
 	/**
@@ -998,20 +998,22 @@ public class Androzic extends BaseApplication
 	 * 
 	 * @param findbest
 	 *            Look for better map in current location
+	 * @param findbest2 
 	 * @return true if current map was changed
 	 */
-	public boolean updateLocationMaps(boolean findbest)
+	public boolean updateLocationMaps(boolean reindex, boolean findbest)
 	{
 		if (maps == null)
 			return false;
 		
 		boolean covers = currentMap != null && currentMap.coversLatLon(mapCenter[0], mapCenter[1]);
 
-		suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
+		if (reindex || findbest)
+			suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
 
 		if (covers && !findbest)
 			return false;
-		
+
 		Map newMap = null;
 		if (suitableMaps.size() > 0)
 		{
@@ -1039,7 +1041,7 @@ public class Androzic extends BaseApplication
 			if (ll[1] > 180.0) ll[1] = 180.0;
 			if (ll[1] < -180.0) ll[1] = -180.0;
 			
-			return setMapCenter(ll[0], ll[1], false);
+			return setMapCenter(ll[0], ll[1], false, false);
 		}
 		return false;
 	}
