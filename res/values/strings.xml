@@ -293,6 +293,7 @@
 	<string name="pref_unitcoordinate_title">Coordinates</string>
 	<string name="pref_unitangle_title">Declination</string>
 	<string name="pref_unitsunrise_title">Sunrise/Sunset</string>
+	<string name="pref_unitprecision_title">Extra precision</string>
 	<string name="pref_grid_title">Grids</string>
 	<string name="pref_grid_mapshow_title">Show map grids</string>
 	<string name="pref_grid_usershow_title">Show custom grid</string>

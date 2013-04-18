@@ -151,6 +151,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 	private static final int qaNavigateToMapObject = 2;
 
 	// main preferences
+	protected String precisionFormat = "%.0f";
 	protected double speedFactor;
 	protected String speedAbbr;
 	protected double elevationFactor;
@@ -386,6 +387,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 
 		// set activity preferences
 		onSharedPreferenceChanged(settings, getString(R.string.pref_exit));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
 		// set map preferences
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
@@ -1144,8 +1146,8 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		double vmg = navigationService.navVMG * speedFactor;
 		int ete = navigationService.navETE;
 
-		String[] dist = StringFormatter.distanceC(distance);
-		String extra = String.valueOf(Math.round(vmg)) + " " + speedAbbr + " | " + StringFormatter.timeH(ete);
+		String[] dist = StringFormatter.distanceC(distance, precisionFormat);
+		String extra = String.format(precisionFormat, vmg) + " " + speedAbbr + " | " + StringFormatter.timeH(ete);
 
 		String trnsym = "";
 		if (turn > 0)
@@ -1219,7 +1221,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		double s = location.getSpeed() * speedFactor;
 		double e = location.getAltitude() * elevationFactor;
 		double track = application.fixDeclination(location.getBearing());
-		speedValue.setText(String.valueOf(Math.round(s)));
+		speedValue.setText(String.format(precisionFormat, s));
 		trackValue.setText(String.valueOf(Math.round(track)));
 		elevationValue.setText(String.valueOf(Math.round(e)));
 		// TODO set separate color
@@ -2390,6 +2392,11 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		{
 			exitConfirmation = Integer.parseInt(sharedPreferences.getString(key, "0"));
 			secondBack = false;
+		}
+		else if (getString(R.string.pref_unitprecision).equals(key))
+		{
+			boolean precision = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_unitprecision));
+			precisionFormat = precision ? "%.1f" : "%.0f";
 		}
 		// map preferences
 		else if (getString(R.string.pref_cursorcolor).equals(key))
