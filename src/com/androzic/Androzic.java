@@ -1747,7 +1747,7 @@ public class Androzic extends BaseApplication
 		{
 			try
 			{
-				customCursor = new BitmapDrawable(cursor.getAbsolutePath());
+				customCursor = new BitmapDrawable(getResources(), cursor.getAbsolutePath());
 			}
 			catch (Exception e)
 			{
