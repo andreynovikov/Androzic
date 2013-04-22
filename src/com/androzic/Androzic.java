@@ -1149,43 +1149,22 @@ public class Androzic extends BaseApplication
 		return maps.getMaps(loc[0], loc[1]);
 	}
 	
-	public int getNextMap()
+	public boolean nextMap()
 	{
+		updateLocationMaps(true, false);
+		int id = 0;
 		if (currentMap != null)
 		{
 			int pos = suitableMaps.indexOf(currentMap);
 			if (pos >= 0 && pos < suitableMaps.size()-1)
 			{
-				return suitableMaps.get(pos+1).id;
+				id = suitableMaps.get(pos+1).id;
 			}
 		}
 		else if (suitableMaps.size() > 0)
 		{
-			return suitableMaps.get(suitableMaps.size()-1).id;
+			id = suitableMaps.get(suitableMaps.size()-1).id;
 		}
-		return 0;
-	}
-
-	public int getPrevMap()
-	{
-		if (currentMap != null)
-		{
-			int pos = suitableMaps.indexOf(currentMap);
-			if (pos > 0)
-			{
-				return suitableMaps.get(pos-1).id;
-			}
-		}
-		else if (suitableMaps.size() > 0)
-		{
-			return suitableMaps.get(0).id;
-		}
-		return 0;
-	}
-	
-	public boolean nextMap()
-	{
-		int id = getNextMap();
 		if (id != 0)
 			return selectMap(id);
 		else
@@ -1194,7 +1173,20 @@ public class Androzic extends BaseApplication
 
 	public boolean prevMap()
 	{
-		int id = getPrevMap();
+		updateLocationMaps(true, false);
+		int id = 0;
+		if (currentMap != null)
+		{
+			int pos = suitableMaps.indexOf(currentMap);
+			if (pos > 0)
+			{
+				id = suitableMaps.get(pos-1).id;
+			}
+		}
+		else if (suitableMaps.size() > 0)
+		{
+			id = suitableMaps.get(0).id;
+		}
 		if (id != 0)
 			return selectMap(id);
 		else
