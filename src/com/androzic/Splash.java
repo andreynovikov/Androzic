@@ -346,8 +346,17 @@ public class Splash extends SherlockActivity implements OnClickListener
 					Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_icon)));
 			if (!iconsdir.exists())
 			{
-				iconsdir.mkdirs();
-				application.copyAssets("icons", iconsdir);
+				try
+				{
+					iconsdir.mkdirs();
+					File nomedia = new File(iconsdir, ".nomedia");
+					nomedia.createNewFile();
+					application.copyAssets("icons", iconsdir);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 
 			// initialize paths
