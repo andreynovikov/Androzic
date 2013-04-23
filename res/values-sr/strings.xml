@@ -47,11 +47,11 @@
   <string name="msg_paid">Donirana verzija</string>
   <string name="msg_nothing_found">Ništa nije nađeno.Molimo uzmite u obzir da se podaci mogu tražiti samo ako su učitani u Androzic, imenovane lokacije mogu se tražiti samo ako je dostupna internet konekcija.</string>
   <string name="msg_empty_route_list">Nema dostupnih ruta. Koristite meni da kreirate rutu ili je učitate iz fajla.</string>
-  <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
+  <string name="msg_empty_track_list">Nema dostupnih staza. Koristite meni da učitate staze iz fajla.</string>
   <string name="msg_newdatafolder">Prema popularnom zahtjevu Androzic sada drugačije radi sa folderima. Sada slobodno možete izabrati bilo koji folder za mape i podatke. Folder za podatke je sada ujedinjen za sve tipove podataka: orijentire, staze i rute. Morate ručno da iskopirate postojeće podatke u automatski kreiran folder:‘%s’.</string>
-  <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
+  <string name="msg_expandcurrenttrack">Ako nijeste brisali trenutnu stazu za dugo vrijeme to može značajno da smanji performanse. Nastaviti?</string>
   <string name="msg_clearcurrenttrack">Ovo će itbrisatu svu istoriju praćenja, da li ste sigurni?</string>
-  <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
+  <string name="msg_emptytracksegment">Označite segment staze ako je prazan, nema ništa za čuvanje</string>
   <string name="err_nosdcard">SD kartica je nedostupna</string>
   <string name="err_nofile">Nema takvog fajla</string>
   <string name="err_write">Nemoguće upisati fajl</string>
@@ -151,7 +151,7 @@
   <string name="menu_new_waypoint">Novi orijentir</string>
   <string name="menu_waypoints">Orijentiri</string>
   <string name="menu_exportcurrenttrack">Eksportovati trenutnu stazu</string>
-  <string name="menu_expandcurrenttrack">Show full current track</string>
+  <string name="menu_expandcurrenttrack">Prikaži cijelu trenutnu stazu</string>
   <string name="menu_clearcurrenttrack">Izbrisati trenutnu stazu</string>
   <string name="menu_navigation">Orijentisanje</string>
   <string name="menu_stopnavigation">Zaustavi orijentisanje</string>
@@ -280,6 +280,7 @@
   <string name="pref_unitcoordinate_title">Koordinate</string>
   <string name="pref_unitangle_title">Odstupanje</string>
   <string name="pref_unitsunrise_title">Izlazak/Zalazak Sunca</string>
+  <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Mreže</string>
   <string name="pref_grid_mapshow_title">Prikaži mreže na mapi</string>
   <string name="pref_grid_usershow_title">Prikaži podešene mreže</string>

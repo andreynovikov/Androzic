@@ -284,6 +284,7 @@
   <string name="pref_unitcoordinate_title">Координаты</string>
   <string name="pref_unitangle_title">Склонение</string>
   <string name="pref_unitsunrise_title">Восход/закат</string>
+  <string name="pref_unitprecision_title">Повышенная точность</string>
   <string name="pref_grid_title">Сетки</string>
   <string name="pref_grid_mapshow_title">Показывать сетки карты</string>
   <string name="pref_grid_usershow_title">Показывать пользовательскую сетку</string>

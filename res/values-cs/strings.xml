@@ -279,6 +279,7 @@
   <string name="pref_unitcoordinate_title">Formát jednotek</string>
   <string name="pref_unitangle_title">Deklinace</string>
   <string name="pref_unitsunrise_title">Východ/Západ sl.</string>
+  <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Mřížka</string>
   <string name="pref_grid_mapshow_title">Zobrazí mapovou mříž</string>
   <string name="pref_grid_usershow_title">Zobraz vlastní mříž</string>

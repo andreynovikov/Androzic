@@ -279,6 +279,7 @@
   <string name="pref_unitcoordinate_title">Koordinater</string>
   <string name="pref_unitangle_title">Deklination</string>
   <string name="pref_unitsunrise_title">Soluppgång/solnedgång</string>
+  <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Stödraster</string>
   <string name="pref_grid_mapshow_title">Visa karta stödraster</string>
   <string name="pref_grid_usershow_title">Visa anpassat rutnät</string>

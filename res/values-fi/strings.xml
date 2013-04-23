@@ -45,7 +45,7 @@
   <string name="msg_initializingview">Alustaa näytön&#8230;</string>
   <string name="msg_cleaning">Pyyhkii&#8230;</string>
   <string name="msg_paid">Lahjaversio</string>
-  <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
+  <string name="msg_nothing_found">Mitään ei löytynyt. Ota huomioon, että tiedot haetaan vain jos ne on ladattu Androzic:in, nimettyjä vain, jos Internet-yhteys on käytettävissä.</string>
   <string name="msg_empty_route_list">Reittejä ei ole käytettävissä. Valikon avulla voit luoda reitin tai ladata tiedoston.</string>
   <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
   <string name="msg_newdatafolder">Yleisön toivomuksesta Androzic toimii nyt kansioiden osalta eri tavalla. Voit vapaasti valita minkä tahansa kansion kartoille ja tiedostoille. Data-kansio on nyt yhtenäinen kaikille tietotyypeille: reittipisteet, jäljet ja reitit. Sinun täytyy kopioida olemassa olevat tiedostot manuaalisesti seuraavaan kansioon: ‘%s’.</string>
@@ -68,7 +68,7 @@
   <string name="sat_firstfix">GPS aktivoitunut</string>
   <string name="following_enabled">Seuranta päällä</string>
   <string name="following_disabled">Seuranta pois</string>
-  <string name="backQuit">Press Back again to quit</string>
+  <string name="backQuit">Paina takaisin uudestaan, niin ohjelma lopetetaan</string>
   <string name="quitQuestion">Haluatko lopettaa?</string>
   <string name="removeWaypointQuestion">Poista reittipiste?</string>
   <string name="quit">Lopetus</string>
@@ -249,7 +249,7 @@
   <string name="pref_maphideondrag_title">Karttakohteiden peitto karttaa siirrettäessä </string>
   <string name="pref_maphideondrag_summary">Merkkaa, karttakohteet peitetään siirron aikana</string>
   <string name="pref_unfollowontap_title">Lopeta seuranta karttaa siirrettäessä</string>
-  <string name="pref_exit_title">Exit confirmation</string>
+  <string name="pref_exit_title">Poistumis vahvistus</string>
   <string name="pref_charset_title">Tekstitiedoston enkoodaus</string>
   <string name="pref_charset_summary">Merkistö kartta-ja tekstitiedostoille. Varoitus: et voi sekoittaa Android natiiveja (UTF-8) ja kansallisia merkistöjä, muuta tätä asetusta vain, jos kaikki tiedostot ovat kansallista koodausta, muuten joudut manuaalisesti muuttamaan tiedostoja, jotka eivät ole UTF-8-koodausta. Vaikuttaa vasta, kun sovellus uudelleen käynnistetään.</string>
   <string name="pref_orientation_title">Näytön suunta</string>
@@ -281,6 +281,7 @@
   <string name="pref_unitcoordinate_title">Koordinaatit</string>
   <string name="pref_unitangle_title">Poikkeama</string>
   <string name="pref_unitsunrise_title">Auringon nousu/lasku</string>
+  <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Ruudustot, Grids</string>
   <string name="pref_grid_mapshow_title">Näytä karttaruudusto</string>
   <string name="pref_grid_usershow_title">Näytä omavalintainen ruudusto</string>
@@ -314,8 +315,8 @@
   <string name="pref_route_title">Reitit</string>
   <string name="pref_route_preload_title">Lataa reitit valmiiksi</string>
   <string name="pref_route_preload_summary">Merkitse esiladatut reitit tiedostosta</string>
-  <string name="pref_route_preload_hidden_title">Hide preloaded routes</string>
-  <string name="pref_route_preload_hidden_summary">Hide preloaded routes until they are viewed, edited or navigated</string>
+  <string name="pref_route_preload_hidden_title">Piilota esiladatut reitit</string>
+  <string name="pref_route_preload_hidden_summary">Piilota tallennetut reitit, kunnes niitä on tarkasteltu, muokattu tai käytetty</string>
   <string name="pref_route_linewidth_title">Viivan leveys</string>
   <string name="pref_route_linewidth_summary">Reittiviivan pikselileveys</string>
   <string name="pref_route_pointwidth_title">Markkerin koko</string>
@@ -338,7 +339,7 @@
   <string name="pref_donate_google_title">Lahjoita Google Play Store:ssa</string>
   <string name="pref_donate_paypal_title">Lahjoita PayPalin kautta</string>
   <string name="pref_faq_title">U.K.K.</string>
-  <string name="pref_feature_title">Feedback and support</string>
+  <string name="pref_feature_title">Palaute ja tuki</string>
   <string name="pref_googleplus_title">Liity Google+ ryhmään</string>
   <string name="pref_facebook_title">Tykkää Facebookissa</string>
   <string name="pref_twitter_title">Seuraa Twitterillä</string>
@@ -356,23 +357,23 @@
   <string name="perm_location_description">Androzicin antama sijainti</string>
   <string name="perm_tracking_title">Hae jälki</string>
   <string name="perm_tracking_description">Androzicin antama jälki</string>
-  <string name="perm_navigation_title">Initiate navigation</string>
-  <string name="perm_navigation_description">Initiate/modify navigation provided by Androzic</string>
+  <string name="perm_navigation_title">Käynnistää navigoinnin</string>
+  <string name="perm_navigation_description">Aloittaa/Muokkaa Androzic:n tuottamaa navigointia</string>
   <string name="perm_read_preferences_title">Lue Androzic Käyttäjäasetukset</string>
   <string name="perm_read_map_data_title">Nouda tieto Androzic kartasta</string>
   <string name="perm_write_map_data_title">Lisää tietoja Androzic karttaan</string>
   <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
-  <string name="showcase_panel_title">Quick actions</string>
-  <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
-  <string name="showcase_follow_title">Location following</string>
-  <string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
+  <string name="showcase_panel_title">Pika toiminnot</string>
+  <string name="showcase_panel_description">Työnnä tai vedä liukuvaa paneelia päästäksesi pika toimintoihin. Pika toimintoja voidaan määrittää asetuksista.</string>
+  <string name="showcase_follow_title">Sijainnin seuranta</string>
+  <string name="showcase_follow_description">Paina seuraa ikonia salliaksesi seuranta tilan. Tässä tilassa kartta on keskitetty nykyiseen sijaintiisi. Vaihtoehtoisesti voit kaksois napauttaa näyttöä saurannan päälle ja pois kytkemiseksi.</string>
   <string name="showcase_add_waypoint_title">Lisää reittipiste</string>
-  <string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
+  <string name="showcase_add_waypoint_description">Napauta toiminta-ikonia nopeasti lisätäksesi uuden reittipisteen nykyiseen sijaintiisi.</string>
   <string name="showcase_search_title">Haku</string>
   <string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
-  <string name="showcase_load_waypoints_title">Load waypoints</string>
+  <string name="showcase_load_waypoints_title">Lataa reittipisteet</string>
   <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
-  <string name="showcase_waypointset_actions_title">Waypoint set actions</string>
+  <string name="showcase_waypointset_actions_title">Reittipisteen asetus toiminta</string>
   <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,

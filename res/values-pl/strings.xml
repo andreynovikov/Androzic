@@ -283,6 +283,7 @@
   <string name="pref_unitcoordinate_title">Współrzędne</string>
   <string name="pref_unitangle_title">Deklinacja</string>
   <string name="pref_unitsunrise_title">Wschód/Zachód Słońca</string>
+  <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Siatki</string>
   <string name="pref_grid_mapshow_title">Pokaż siatkę mapy</string>
   <string name="pref_grid_usershow_title">Pokaż własną siatkę</string>

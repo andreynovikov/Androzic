@@ -71,9 +71,9 @@
     <item>Prefiro grelha do utilizador</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Double press Back</item>
-    <item>Confirmation dialog</item>
-    <item>Nothing</item>
+    <item>Carregue duas vezes para trás</item>
+    <item>Caixa de diálogo de confirmação</item>
+    <item>Nada</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Dispositivo padrão</item>
@@ -98,20 +98,20 @@
     <item>Cálculo do Nascer/Pôr do sol</item>
     <item>Código inicial da lista arrastar\largar</item>
     <item>Controlador multitoque</item>
-    <item>Showcase library</item>
-    <item>Interface icons</item>
-    <item>Waypoint icons</item>
-    <item>Czech localization</item>
-    <item>French localization</item>
-    <item>Finnish localization</item>
-    <item>Bulgarian localization</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
-    <item>Italian localization</item>
-    <item>Spanish localization</item>
-    <item>Swedish localization</item>
-    <item>Ukrainian localization</item>
-    <item>Portuguese localization</item>
+    <item>Biblioteca de amostra</item>
+    <item>Ícones da interface</item>
+    <item>Ícones de waypoints</item>
+    <item>Localização checa</item>
+    <item>Localização francesa</item>
+    <item>Localização finlandesa</item>
+    <item>Localização búlgara</item>
+    <item>Localização alemã</item>
+    <item>Localização turca</item>
+    <item>Localização italiana</item>
+    <item>Localização espanhola</item>
+    <item>Localização sueca</item>
+    <item>Localização ucraniana</item>
+    <item>Localização portuguesa</item>
   </string-array>
   <string-array name="panel_action_names">
     <item>Aumentar o zoom</item>

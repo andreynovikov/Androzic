@@ -281,6 +281,7 @@
   <string name="pref_unitcoordinate_title">Координати</string>
   <string name="pref_unitangle_title">Схилення</string>
   <string name="pref_unitsunrise_title">Схід/захід</string>
+  <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Сітки</string>
   <string name="pref_grid_mapshow_title">Показувати сітки мапи</string>
   <string name="pref_grid_usershow_title">Показувати сітку користувача</string>

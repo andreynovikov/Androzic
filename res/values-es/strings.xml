@@ -283,6 +283,7 @@
   <string name="pref_unitcoordinate_title">Coordenadas</string>
   <string name="pref_unitangle_title">Declinacion</string>
   <string name="pref_unitsunrise_title">Aurora/Puesta</string>
+  <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Cuadricula</string>
   <string name="pref_grid_mapshow_title">Ver la cuadricula en el mapa</string>
   <string name="pref_grid_usershow_title">Ver cuadricula personalizada</string>

@@ -279,6 +279,7 @@
   <string name="pref_unitcoordinate_title">Koordináták</string>
   <string name="pref_unitangle_title">Eltérés</string>
   <string name="pref_unitsunrise_title">Napkelte/Napnyugta</string>
+  <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Hálózatok</string>
   <string name="pref_grid_mapshow_title">Mutasd a térképen a hálózatot</string>
   <string name="pref_grid_usershow_title">Mutasd az egyedi hálózatot</string>
