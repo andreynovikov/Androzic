@@ -235,7 +235,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	 */
 	public void pause()
 	{
-		if (cachedHolder != null)
+		if (cachedHolder != null || drawingThread == null)
 			return;
 		cachedHolder = drawingThread.surfaceHolder;
 		surfaceDestroyed(cachedHolder);
