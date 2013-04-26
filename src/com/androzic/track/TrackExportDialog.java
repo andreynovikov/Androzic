@@ -31,6 +31,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
+import com.androzic.location.ILocationService;
 import com.androzic.ui.ColorButton;
 import com.androzic.util.FileUtils;
 import com.androzic.util.GpxFiles;
@@ -49,19 +50,18 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 	private SliderContainer tillSliderContainer;
 	private Button saveButton;
 
-	private Track track;
-
 	private boolean validName;
 	private boolean validDates;
+	private ILocationService locationService;
 
 	public TrackExportDialog()
 	{
 		throw new RuntimeException("Unimplemented initialization context");
 	}
 
-	public TrackExportDialog(Track track)
+	public TrackExportDialog(ILocationService locationService)
 	{
-		this.track = track;
+		this.locationService = locationService;
 		setRetainInstance(true);
 	}
 
@@ -81,28 +81,21 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 		color = (ColorButton) view.findViewById(R.id.color_button);
 		color.setColor(prefs.getInt(getString(R.string.pref_tracking_currentcolor), getResources().getColor(R.color.currenttrack)), Color.RED);
 
-		Track.TrackPoint start = track.getPoint(0);
 		Calendar startTime = Calendar.getInstance();
-		startTime.setTimeInMillis(start.time);
-		Track.TrackPoint end = track.getLastPoint();
+		startTime.setTimeInMillis(locationService.getTrackStartTime());
 		Calendar endTime = Calendar.getInstance();
-		endTime.setTimeInMillis(end.time);
-
-		Calendar fromTime = Calendar.getInstance();
-		fromTime.setTimeInMillis(end.time);
-		Calendar tillTime = Calendar.getInstance();
-		tillTime.setTimeInMillis(end.time);
+		endTime.setTimeInMillis(locationService.getTrackEndTime());
 
 		fromSliderContainer = (SliderContainer) view.findViewById(R.id.fromSliderContainer);
 		fromSliderContainer.setMinuteInterval(1);
-		fromSliderContainer.setTime(fromTime);
+		fromSliderContainer.setTime(endTime);
 		fromSliderContainer.setMinTime(startTime);
 		fromSliderContainer.setMaxTime(endTime);
 		fromSliderContainer.setMinuteInterval(60);
 		fromSliderContainer.setOnTimeChangeListener(onFromTimeChangeListener);
 		tillSliderContainer = (SliderContainer) view.findViewById(R.id.tillSliderContainer);
 		tillSliderContainer.setMinuteInterval(1);
-		tillSliderContainer.setTime(tillTime);
+		tillSliderContainer.setTime(endTime);
 		tillSliderContainer.setMinTime(startTime);
 		tillSliderContainer.setMaxTime(endTime);
 		tillSliderContainer.setMinuteInterval(60);
@@ -122,7 +115,7 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 		saveButton.setOnClickListener(saveOnClickListener);
 
 		validName = false;
-		validDates = fromTime.compareTo(tillTime) <= 0;
+		validDates = true;
 		updateSaveButton();
 
 		dialog.setTitle(R.string.exporttrack_name);
@@ -159,13 +152,6 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 					String format = formatSpinner.getItemAtPosition(formatSpinner.getSelectedItemPosition()).toString();
 					String filename = FileUtils.sanitizeFilename(name) + format;
 
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-					track.name = name;
-					track.width = prefs.getInt(getString(R.string.pref_tracking_linewidth), getResources().getColor(R.integer.def_track_linewidth));
-					track.color = color.getColor();
-
-					List<Track.TrackPoint> points = track.getPoints();
-
 					Calendar startTime = fromSliderContainer.getTime();
 					startTime.set(Calendar.HOUR_OF_DAY, 0);
 					startTime.set(Calendar.MINUTE, 0);
@@ -178,26 +164,9 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 					endTime.set(Calendar.SECOND, 59);
 					endTime.set(Calendar.MILLISECOND, 999);
 					long end = endTime.getTimeInMillis();
-
-					int sp = 0;
-					int ep = points.size();
-					for (int i = 0; i < ep; i++)
-					{
-						Track.TrackPoint point = points.get(i);
-						if (point.time < start)
-						{
-							sp = i;
-							continue;
-						}
-						if (point.time > end)
-						{
-							ep = i;
-						}
-					}
-					if (ep < points.size())
-						track.cutAfter(ep - 1);
-					if (sp > 0)
-						track.cutBefore(sp + 1);
+					
+					Track track = locationService.getTrack(start, end);
+					List<Track.TrackPoint> points = track.getPoints();
 
 					if (skipSingles)
 					{
@@ -224,6 +193,11 @@ public class TrackExportDialog extends SherlockDialogFragment implements TextWat
 						pd.dismiss();
 						return;
 					}
+
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+					track.name = name;
+					track.width = prefs.getInt(getString(R.string.pref_tracking_linewidth), getResources().getColor(R.integer.def_track_linewidth));
+					track.color = color.getColor();
 
 					try
 					{

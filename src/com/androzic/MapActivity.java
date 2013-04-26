@@ -1642,7 +1642,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				return true;
 			case R.id.menuExportCurrentTrack:
 		        FragmentManager fm = getSupportFragmentManager();
-		        TrackExportDialog trackExportDialog = new TrackExportDialog(locationService.getTrack());
+		        TrackExportDialog trackExportDialog = new TrackExportDialog(locationService);
 		        trackExportDialog.show(fm, "track_export");
 				return true;
 			case R.id.menuExpandCurrentTrack:

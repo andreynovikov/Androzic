@@ -481,6 +481,58 @@ public class LocationService extends BaseLocationService implements LocationList
 		return track;
 	}
 
+	public Track getTrack(long start, long end)
+	{
+		if (trackDB == null)
+			openDatabase();
+		Track track = new Track();
+		if (trackDB == null)
+			return track;
+		Cursor cursor = trackDB.rawQuery("SELECT * FROM track WHERE datetime >= ? AND datetime <= ? ORDER BY _id DESC", new String[] {String.valueOf(start), String.valueOf(end)});
+		for (boolean hasItem = cursor.moveToLast(); hasItem; hasItem = cursor.moveToPrevious())
+		{
+			double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
+			double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
+			double elevation = cursor.getDouble(cursor.getColumnIndex("elevation"));
+			double speed = cursor.getDouble(cursor.getColumnIndex("speed"));
+			double bearing = cursor.getDouble(cursor.getColumnIndex("track"));
+			double accuracy = cursor.getDouble(cursor.getColumnIndex("accuracy"));
+			int code = cursor.getInt(cursor.getColumnIndex("code"));
+			long time = cursor.getLong(cursor.getColumnIndex("datetime"));
+			track.addPoint(code == 0, latitude, longitude, elevation, speed, bearing, accuracy, time);
+		}
+		cursor.close();
+		return track;
+	}
+
+	public long getTrackStartTime()
+	{
+		long res = Long.MIN_VALUE;
+		if (trackDB == null)
+			openDatabase();
+		if (trackDB == null)
+			return res;
+		Cursor cursor = trackDB.rawQuery("SELECT MIN(datetime) FROM track WHERE datetime > 0", null);
+		if (cursor.moveToFirst())
+			res = cursor.getLong(0);
+		cursor.close();
+		return res;
+	}
+
+	public long getTrackEndTime()
+	{
+		long res = Long.MAX_VALUE;
+		if (trackDB == null)
+			openDatabase();
+		if (trackDB == null)
+			return res;
+		Cursor cursor = trackDB.rawQuery("SELECT MAX(datetime) FROM track", null);
+		if (cursor.moveToFirst())
+			res = cursor.getLong(0);
+		cursor.close();
+		return res;
+	}
+
 	public void clearTrack()
 	{
 		if (trackDB == null)
@@ -1045,9 +1097,27 @@ public class LocationService extends BaseLocationService implements LocationList
 		}
 
 		@Override
+		public Track getTrack(long start, long end)
+		{
+			return LocationService.this.getTrack(start, end);
+		}
+
+		@Override
 		public void clearTrack()
 		{
 			LocationService.this.clearTrack();
+		}
+
+		@Override
+		public long getTrackStartTime()
+		{
+			return LocationService.this.getTrackStartTime();
+		}
+
+		@Override
+		public long getTrackEndTime()
+		{
+			return LocationService.this.getTrackEndTime();
 		}
 	}
 }

@@ -13,5 +13,8 @@ public interface ILocationService
 	float getHDOP();
 	float getVDOP();
 	Track getTrack();
+	Track getTrack(long start, long end);
 	void clearTrack();
+	long getTrackStartTime();
+	long getTrackEndTime();
 }
