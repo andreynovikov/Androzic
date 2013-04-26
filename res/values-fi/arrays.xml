@@ -71,9 +71,9 @@
     <item>Käytä omaa ruudustoa</item>
   </string-array>
   <string-array name="exit_names">
-    <item>Double press Back</item>
-    <item>Confirmation dialog</item>
-    <item>Nothing</item>
+    <item>Kaksoisnapauta palaa painiketta</item>
+    <item>Vahvistuksen valintaikkuna</item>
+    <item>Ei mitään</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Oletus</item>
@@ -100,7 +100,7 @@
     <item>Monikosketus ohjain</item>
     <item>Showcase library</item>
     <item>Interface icons</item>
-    <item>Waypoint icons</item>
+    <item>Reittipisteiden kuvakkeet</item>
     <item>Czech localization</item>
     <item>French localization</item>
     <item>Finnish localization</item>
