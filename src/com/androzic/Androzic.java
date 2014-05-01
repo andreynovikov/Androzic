@@ -1634,6 +1634,8 @@ public class Androzic extends BaseApplication
 					if (provider != null)
 					{
 						onlineMaps.add(provider);
+				        if (current.equals(provider.code))
+					        curProvider = provider;
 					}
 				}
 			    reader.close();
