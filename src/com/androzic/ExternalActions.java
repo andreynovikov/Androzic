@@ -29,6 +29,7 @@ import com.androzic.overlay.RouteOverlay;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ public class ExternalActions extends Activity
 		Log.e("ANDROZIC","New intent: "+action);
 		
 		Androzic application = (Androzic) getApplication();
+		Intent activity = new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		if (action.equals("com.androzic.PLOT_ROUTE"))
 		{
@@ -89,7 +91,32 @@ public class ExternalActions extends Activity
 			i.putExtra(NavigationService.EXTRA_PROXIMITY, waypoint.proximity);
 			startService(i);
 		}
-        startActivity(new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+		else if ("geo".equals(intent.getScheme()))
+		{
+			Uri uri = intent.getData();
+			Log.e("GEO", uri.toString());
+			String data = uri.getSchemeSpecificPart();
+			Log.e("GEO", data);
+			
+			// geo:latitude,longitude
+			// geo:latitude,longitude?z=zoom
+			if (data.contains("?"))
+				data = data.substring(0, data.indexOf("?") - 1);
+			try
+			{
+				String[] ll = data.split(",");
+				double lat = Double.parseDouble(ll[0]);
+				double lon = Double.parseDouble(ll[1]);
+				Log.e("GEO", lat + " " + lon);
+				activity.putExtra("lat", lat);
+				activity.putExtra("lon", lon);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+        startActivity(activity);
 		finish();
 	}
 }

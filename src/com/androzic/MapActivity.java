@@ -530,6 +530,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 		if (application.hasEnsureVisible())
 		{
 			setFollowing(false);
+			followOnLocation = false;
 			double[] loc = application.getEnsureVisible();
 			application.setMapCenter(loc[0], loc[1], true, false);
 			application.clearEnsureVisible();
