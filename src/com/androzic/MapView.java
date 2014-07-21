@@ -72,8 +72,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private boolean strictUnfollow = true;
 	private boolean hideOnDrag = true;
 	private boolean loadBestMap = true;
-	private int bestMapInterval = 5000;
-	private long drawPeriod = 200;
+	private int bestMapInterval = 5000; // 5 seconds
+	private long drawPeriod = 200 * 1000000; // 200 milliseconds
 	/**
 	 * True when there is a valid location
 	 */
@@ -269,7 +269,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		{
 			this.surfaceHolder = surfaceHolder;
 			this.mapView = mapView;
-			prevTime = System.currentTimeMillis();
+			prevTime = System.nanoTime();
 		}
 
 		public void setRunning(boolean run)
@@ -283,26 +283,26 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			Canvas canvas;
 			while (runFlag)
 			{
-				// limit the frame rate to maximum 5 frames per second (200 miliseconds)
-				long elapsedTime = System.currentTimeMillis() - prevTime;
+				// limit the frame rate to maximum 5 frames per second (200 milliseconds)
+				long elapsedTime = System.nanoTime() - prevTime;
 				if (elapsedTime < drawPeriod)
 				{
 					try
 					{
-						Thread.sleep(drawPeriod - elapsedTime);
+						Thread.sleep((drawPeriod - elapsedTime) / 1000000);
 					}
 					catch (InterruptedException e)
 					{
 					}
 				}
-				prevTime = System.currentTimeMillis();
+				prevTime = System.nanoTime();
 				canvas = null;
 				try
 				{
 					canvas = surfaceHolder.lockCanvas();
 					synchronized (lock)
 					{
-						drawPeriod = mapView.calculateLookAhead() ? 50 : 200;
+						drawPeriod = 1000000 * (mapView.calculateLookAhead() ? 50 : 200);
 						if (canvas != null)
 							mapView.doDraw(canvas);
 					}
@@ -486,6 +486,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 	}
 
+	/**
+	 * 
+	 * @return True if look ahead position was recalculated
+	 */
 	private boolean calculateLookAhead()
 	{
 		boolean recalculated = false;
