@@ -91,7 +91,7 @@ public class MapLoader
 	    {
 		    String[] fields;
 		    String line = reader.readLine();
-		    if (! line.startsWith("OziExplorer Map Data File"))
+		    if (line == null || ! line.startsWith("OziExplorer Map Data File"))
 		    {
 		    	reader.close();
 				throw new IllegalArgumentException("Bad map header: " + map.mappath);
