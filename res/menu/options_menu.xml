@@ -136,6 +136,10 @@
                 android:icon="@drawable/ic_action_share"
                 android:title="@string/menu_share"/>
             <item
+                android:id="@+id/menuViewElsewhere"
+                android:icon="@drawable/ic_action_show"
+                android:title="@string/menu_view_elsewhere"/>
+            <item
                 android:id="@+id/menuCopyLocation"
                 android:icon="@drawable/ic_action_copy"
                 android:title="@string/menu_copy"/>

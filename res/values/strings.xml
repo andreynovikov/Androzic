@@ -195,6 +195,7 @@
 	<string name="menu_share">Share</string>
 	<string name="menu_copy">Copy to clipboard</string>
 	<string name="menu_paste">Paste from clipboard</string>
+	<string name="menu_view_elsewhere">View elsewhere</string>
 	<string name="menu_gps">GPS settings</string>
 	<string name="menu_anchor">Set anchor</string>
 	<string name="menu_view">View</string>

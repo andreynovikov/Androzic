@@ -64,6 +64,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -1714,6 +1715,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				startActivityForResult(new Intent(this, MapList.class), RESULT_LOAD_MAP);
 				return true;
 			case R.id.menuShare:
+			{
 				Intent i = new Intent(android.content.Intent.ACTION_SEND);
 				i.setType("text/plain");
 				i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
@@ -1722,6 +1724,15 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 				i.putExtra(Intent.EXTRA_TEXT, spos);
 				startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
 				return true;
+			}
+			case R.id.menuViewElsewhere:
+			{
+				double[] sloc = application.getMapCenter();
+				String geoUri = "geo:" + Double.toString(sloc[0]) + "," + Double.toString(sloc[1]);
+				Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(geoUri));
+				startActivity(intent);
+				return true;
+			}
 			case R.id.menuCopyLocation:
 			{
 				ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
