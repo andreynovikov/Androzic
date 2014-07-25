@@ -23,6 +23,7 @@ package com.androzic.route;
 import java.io.File;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,14 +31,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.util.FileUtils;
 import com.androzic.util.OziExplorerFiles;
 
-public class RouteSave extends SherlockActivity
+public class RouteSave extends ActionBarActivity
 {
 	private TextView filename;
 	private Route route;

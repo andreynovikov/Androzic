@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="SherlockTheme" parent="@style/Theme.Sherlock">
+    <style name="ApplicationTheme" parent="@style/Theme.AppCompat">
         <item name="horizontalPadding">6dip</item>
     </style>
-    <style name="SherlockDialog" parent="@style/Theme.Sherlock.Dialog">
+    <style name="Dialog" parent="@android:style/Theme.Dialog">
         <item name="horizontalPadding">6dip</item>
     </style>
     <style name="Scroller">

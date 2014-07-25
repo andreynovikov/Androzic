@@ -20,13 +20,8 @@
 
 package com.androzic.route;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.androzic.Androzic;
-import com.androzic.R;
-import com.androzic.data.Route;
-import com.androzic.ui.ColorButton;
-
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -35,7 +30,12 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class RouteProperties extends SherlockActivity
+import com.androzic.Androzic;
+import com.androzic.R;
+import com.androzic.data.Route;
+import com.androzic.ui.ColorButton;
+
+public class RouteProperties extends ActionBarActivity
 {
 	private Route route;
 	

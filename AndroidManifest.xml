@@ -34,7 +34,7 @@
 
     <uses-sdk
         android:minSdkVersion="7"
-        android:targetSdkVersion="16" />
+        android:targetSdkVersion="19" />
 
     <uses-feature
         android:name="android.hardware.location"
@@ -94,7 +94,7 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:restoreAnyVersion="true"
-        android:theme="@style/SherlockTheme" >
+        android:theme="@style/ApplicationTheme" >
         <activity
             android:name=".Splash"
             android:configChanges="orientation"
@@ -150,7 +150,7 @@
         <activity
             android:name=".Information"
             android:label="@string/information_name"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".Credits"
             android:label="@string/credits_name" />
@@ -167,10 +167,10 @@
         <activity
             android:name=".MapList"
             android:label="@string/maplist_name"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".ErrorDialog"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".map.MapInformation"
             android:label="@string/mapinformation_name" />
@@ -184,7 +184,7 @@
             android:name=".ui.MarkerPickerActivity"
             android:exported="true"
             android:label="@string/markericon_name"
-            android:theme="@style/SherlockDialog" >
+            android:theme="@style/Dialog" >
             <intent-filter>
                 <action android:name="com.androzic.PICK_ICON" />
 
@@ -193,15 +193,15 @@
         </activity>
         <activity
             android:name=".waypoint.WaypointInfo"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".waypoint.WaypointProject"
             android:label="@string/waypointproject_name"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".waypoint.WaypointFileList"
             android:label="@string/loadwaypoints_name"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".waypoint.WaypointFileLoad"
             android:exported="true">
@@ -236,7 +236,7 @@
         <activity
             android:name=".waypoint.CoordinatesReceived"
             android:label="@string/coordinates_name"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".track.TrackList"
             android:label="@string/managetracks_name" />
@@ -246,31 +246,31 @@
         <activity
             android:name=".track.TrackFileList"
             android:label="@string/loadtrack_name"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".track.TrackToRoute"
             android:label="@string/track2route_name" />
         <activity
             android:name=".track.TrackSave"
             android:label="@string/savetrack_name"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".route.RouteFileList"
             android:label="@string/loadroute_name"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".route.RouteStart"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".route.RouteList"
             android:label="@string/manageroutes_name" />
         <activity
             android:name=".route.RouteEdit"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".route.RouteSave"
             android:label="@string/saveroute_name"
-            android:theme="@style/SherlockDialog" />
+            android:theme="@style/Dialog" />
         <activity
             android:name=".route.RouteProperties"
             android:label="@string/routeproperties_name" />

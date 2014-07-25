@@ -40,17 +40,17 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.androzic.map.online.TileProvider;
 import com.androzic.ui.SeekbarPreference;
 
-public class Preferences extends SherlockPreferenceActivity
+public class Preferences extends PreferenceActivity
 {
 
 	protected void onCreate(Bundle savedInstanceState)
@@ -113,7 +113,7 @@ public class Preferences extends SherlockPreferenceActivity
 		startActivity(new Intent(Preferences.this, activity).putExtra("KEY", key));
 	}
 
-	public static class InnerPreferences extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener
+	public static class InnerPreferences extends PreferenceActivity implements OnSharedPreferenceChangeListener
 	{
 		@Override
 		public void onCreate(Bundle savedInstanceState)
@@ -287,7 +287,7 @@ public class Preferences extends SherlockPreferenceActivity
 	/**
 	 * Preference lists Androzic plugins preferences.
 	 */
-	public static class PluginsPreferences extends SherlockPreferenceActivity
+	public static class PluginsPreferences extends PreferenceActivity
 	{
 		@Override
 		public void onCreate(Bundle savedInstanceState)

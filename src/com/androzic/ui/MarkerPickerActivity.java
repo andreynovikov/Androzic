@@ -27,10 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.androzic.Androzic;
-import com.androzic.R;
-
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -39,14 +36,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 
-public class MarkerPickerActivity extends SherlockActivity implements OnItemClickListener, OnItemLongClickListener
+import com.androzic.Androzic;
+import com.androzic.R;
+
+public class MarkerPickerActivity extends Activity implements OnItemClickListener, OnItemLongClickListener
 {
 	private GridView grid;
 	private List<String> names;

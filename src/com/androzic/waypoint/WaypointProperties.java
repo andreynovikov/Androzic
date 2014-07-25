@@ -32,6 +32,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
@@ -51,7 +52,6 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
@@ -63,7 +63,7 @@ import com.jhlabs.map.GeodeticPosition;
 import com.jhlabs.map.ReferenceException;
 import com.jhlabs.map.UTMReference;
 
-public class WaypointProperties extends SherlockActivity implements OnItemSelectedListener
+public class WaypointProperties extends ActionBarActivity implements OnItemSelectedListener
 {
 	private Waypoint waypoint;
 

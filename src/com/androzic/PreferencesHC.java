@@ -90,6 +90,13 @@ public class PreferencesHC extends PreferenceActivity
 		loadHeadersFromResource(R.xml.preference_headers, target);
 	}
 
+    @Override
+    public boolean isValidFragment(String name)
+    {
+		return true;
+    	
+    }
+
 	public static class PreferencesFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 	{
 		@Override

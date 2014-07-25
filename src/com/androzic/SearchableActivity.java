@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -49,14 +50,13 @@ import android.provider.SearchRecentSuggestions;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.Window;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
@@ -66,7 +66,7 @@ import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 import com.jhlabs.map.GeodeticPosition;
 
-public class SearchableActivity extends SherlockListActivity
+public class SearchableActivity extends ListActivity
 {
 	private static final int MSG_FINISH = 1;
 
@@ -122,7 +122,7 @@ public class SearchableActivity extends SherlockListActivity
 			return;
 		}
 
-		setSupportProgressBarIndeterminateVisibility(true);
+		setProgressBarIndeterminateVisibility(true);
 		
 		if (thread == null)
 		{
@@ -156,7 +156,7 @@ public class SearchableActivity extends SherlockListActivity
 		TextView emptyView = (TextView) getListView().getEmptyView();
 		if (emptyView != null)
 			emptyView.setText(R.string.msg_nothing_found);
-		setSupportProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 		adapter.notifyDataSetChanged();
 	}
 

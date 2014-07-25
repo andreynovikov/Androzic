@@ -27,22 +27,21 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-public class MapList extends SherlockListActivity
+public class MapList extends ListActivity
 {
 	List<com.androzic.map.Map> maps;
 	List<Map<String, String>> mapData = new ArrayList<Map<String, String>>();
@@ -136,7 +135,7 @@ public class MapList extends SherlockListActivity
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
-		MenuInflater inflater = getSupportMenuInflater();
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.maplist_menu, menu);
 		return true;
 	}

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -12,6 +11,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -27,7 +27,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
@@ -39,8 +38,7 @@ import com.androzic.util.KmlFiles;
 import com.androzic.util.OziExplorerFiles;
 import com.googlecode.android.widgets.DateSlider.SliderContainer;
 
-@SuppressLint("ValidFragment")
-public class TrackExportDialog extends SherlockDialogFragment implements TextWatcher
+public class TrackExportDialog extends DialogFragment implements TextWatcher
 {
 	private EditText nameText;
 	private Spinner formatSpinner;

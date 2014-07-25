@@ -25,12 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-
+import android.app.ListActivity;
 import android.os.Bundle;
 import android.widget.SimpleAdapter;
 
-public class Credits extends SherlockListActivity
+public class Credits extends ListActivity
 {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) 

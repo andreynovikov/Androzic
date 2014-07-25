@@ -20,30 +20,29 @@
 
 package com.androzic.route;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.androzic.Androzic;
-import com.androzic.R;
-import com.androzic.data.Route;
-import com.androzic.data.Waypoint;
-import com.androzic.waypoint.WaypointProperties;
+import java.util.ArrayList;
+import java.util.List;
 
-import android.os.Bundle;
+import android.app.ListActivity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.androzic.Androzic;
+import com.androzic.R;
+import com.androzic.data.Route;
+import com.androzic.data.Waypoint;
+import com.androzic.waypoint.WaypointProperties;
 import com.ericharlow.DragNDrop.DragListener;
 import com.ericharlow.DragNDrop.DragNDropAdapter;
 import com.ericharlow.DragNDrop.DragNDropListView;
 import com.ericharlow.DragNDrop.DropListener;
 import com.ericharlow.DragNDrop.RemoveListener;
 
-public class RouteEdit extends SherlockListActivity implements DropListener, OnClickListener, RemoveListener, DragListener
+public class RouteEdit extends ListActivity implements DropListener, OnClickListener, RemoveListener, DragListener
 {
 	private Route route;
 	private int index;

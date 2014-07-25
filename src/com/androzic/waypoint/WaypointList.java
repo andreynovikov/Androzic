@@ -29,6 +29,7 @@ import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ExpandableListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -46,6 +47,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -57,10 +61,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockExpandableListActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
@@ -70,7 +70,7 @@ import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 import com.github.espiandev.showcaseview.ShowcaseView;
 
-public class WaypointList extends SherlockExpandableListActivity implements OnItemLongClickListener
+public class WaypointList extends ExpandableListActivity implements OnItemLongClickListener
 {
 	private static final int qaWaypointVisible = 1;
 	private static final int qaWaypointNavigate = 2;
@@ -175,7 +175,7 @@ public class WaypointList extends SherlockExpandableListActivity implements OnIt
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
-		MenuInflater inflater = getSupportMenuInflater();
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.waypointlist_menu, menu);
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 		{

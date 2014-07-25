@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -52,12 +53,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Window;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.overlay.CurrentTrackOverlay;
@@ -68,7 +68,7 @@ import com.androzic.util.GpxFiles;
 import com.androzic.util.KmlFiles;
 import com.androzic.util.OziExplorerFiles;
 
-public class Splash extends SherlockActivity implements OnClickListener
+public class Splash extends Activity implements OnClickListener
 {
 	private static final int MSG_FINISH = 1;
 	private static final int MSG_ERROR = 2;
@@ -410,7 +410,8 @@ public class Splash extends SherlockActivity implements OnClickListener
 								double accuracy = cursor.getDouble(cursor.getColumnIndex("accuracy"));
 								int code = cursor.getInt(cursor.getColumnIndex("code"));
 								long time = cursor.getLong(cursor.getColumnIndex("datetime"));
-								track.addPoint(code == 0, latitude, longitude, altitude, speed, bearing, accuracy, time);
+								boolean continous = cursor.isFirst() || cursor.isLast() ? false : code == 0;
+								track.addPoint(continous, latitude, longitude, altitude, speed, bearing, accuracy, time);
 							}
 							track.show = true;
 							application.currentTrackOverlay.setTrack(track);

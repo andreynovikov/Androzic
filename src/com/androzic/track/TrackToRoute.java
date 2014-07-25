@@ -26,20 +26,20 @@ import java.util.concurrent.Executors;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.overlay.RouteOverlay;
 
-public class TrackToRoute extends SherlockActivity
+public class TrackToRoute extends ActionBarActivity
 {
 	private ProgressDialog dlgWait;
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);

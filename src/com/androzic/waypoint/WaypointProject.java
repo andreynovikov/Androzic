@@ -25,16 +25,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.androzic.Androzic;
-import com.androzic.R;
-import com.androzic.data.Waypoint;
-import com.androzic.util.Geo;
-import com.androzic.util.StringFormatter;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.hardware.GeomagneticField;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -43,7 +38,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class WaypointProject extends SherlockActivity
+import com.androzic.Androzic;
+import com.androzic.R;
+import com.androzic.data.Waypoint;
+import com.androzic.util.Geo;
+import com.androzic.util.StringFormatter;
+
+public class WaypointProject extends ActionBarActivity
 {
 	List<Waypoint> waypoints = null;
 	

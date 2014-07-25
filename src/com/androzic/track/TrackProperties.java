@@ -23,13 +23,8 @@ package com.androzic.track;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.androzic.Androzic;
-import com.androzic.R;
-import com.androzic.data.Track;
-import com.androzic.ui.ColorButton;
-
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,7 +35,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class TrackProperties extends SherlockActivity
+import com.androzic.Androzic;
+import com.androzic.R;
+import com.androzic.data.Track;
+import com.androzic.ui.ColorButton;
+
+public class TrackProperties extends ActionBarActivity
 {
 	private Track track;
 	

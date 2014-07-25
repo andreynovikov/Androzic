@@ -40,27 +40,27 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.actionbarsherlock.view.Window;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class WaypointInfo extends SherlockDialogFragment implements OnClickListener
+public class WaypointInfo extends DialogFragment implements OnClickListener
 {
 	private Waypoint waypoint;
 	private Drawable icon;

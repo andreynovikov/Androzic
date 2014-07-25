@@ -72,13 +72,19 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
@@ -88,12 +94,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
-import com.actionbarsherlock.view.Window;
 import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
@@ -133,7 +133,7 @@ import com.github.espiandev.showcaseview.ShowcaseView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 
-public class MapActivity extends SherlockFragmentActivity implements View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener, ShowcaseView.OnShowcaseEventListener
+public class MapActivity extends ActionBarActivity implements View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener, ShowcaseView.OnShowcaseEventListener
 {
 	private static final String TAG = "MapActivity";
 
@@ -1563,7 +1563,7 @@ public class MapActivity extends SherlockFragmentActivity implements View.OnClic
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
-		MenuInflater inflater = getSupportMenuInflater();
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.options_menu, menu);
 
 		// add plugins
