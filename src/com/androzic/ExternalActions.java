@@ -22,17 +22,17 @@ package com.androzic;
 
 import java.util.Calendar;
 
-import com.androzic.data.Route;
-import com.androzic.data.Waypoint;
-import com.androzic.navigation.NavigationService;
-import com.androzic.overlay.RouteOverlay;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.androzic.data.Route;
+import com.androzic.data.Waypoint;
+import com.androzic.navigation.NavigationService;
+import com.androzic.overlay.RouteOverlay;
 
 /**
  * Executes intents from external applications.
@@ -94,9 +94,7 @@ public class ExternalActions extends Activity
 		else if ("geo".equals(intent.getScheme()))
 		{
 			Uri uri = intent.getData();
-			Log.e("GEO", uri.toString());
 			String data = uri.getSchemeSpecificPart();
-			Log.e("GEO", data);
 			
 			// geo:latitude,longitude
 			// geo:latitude,longitude?z=zoom
@@ -107,7 +105,6 @@ public class ExternalActions extends Activity
 				String[] ll = data.split(",");
 				double lat = Double.parseDouble(ll[0]);
 				double lon = Double.parseDouble(ll[1]);
-				Log.e("GEO", lat + " " + lon);
 				activity.putExtra("lat", lat);
 				activity.putExtra("lon", lon);
 			}
