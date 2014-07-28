@@ -175,7 +175,7 @@
             android:name=".map.MapInformation"
             android:label="@string/mapinformation_name" />
         <activity
-            android:name=".waypoint.WaypointList"
+            android:name=".waypoint.WaypointListActivity"
             android:label="@string/managewaypoints_name" />
         <activity
             android:name=".waypoint.WaypointProperties"

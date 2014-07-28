@@ -4,6 +4,7 @@ import com.androzic.data.Waypoint;
 
 public interface OnWaypointActionListener
 {
+	void onWaypointView(Waypoint waypoint);
 	void onWaypointNavigate(Waypoint waypoint);
 	void onWaypointEdit(Waypoint waypoint);
 	void onWaypointShare(Waypoint waypoint);

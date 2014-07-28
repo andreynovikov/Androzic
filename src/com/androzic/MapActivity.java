@@ -127,6 +127,7 @@ import com.androzic.waypoint.OnWaypointActionListener;
 import com.androzic.waypoint.WaypointFileList;
 import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
+import com.androzic.waypoint.WaypointListActivity;
 import com.androzic.waypoint.WaypointProject;
 import com.androzic.waypoint.WaypointProperties;
 import com.github.espiandev.showcaseview.ShowcaseView;
@@ -1634,7 +1635,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 				startActivityForResult(new Intent(this, WaypointProject.class), RESULT_SAVE_WAYPOINT);
 				return true;
 			case R.id.menuManageWaypoints:
-				startActivityForResult(new Intent(this, WaypointList.class), RESULT_MANAGE_WAYPOINTS);
+				startActivityForResult(new Intent(this, WaypointListActivity.class), RESULT_MANAGE_WAYPOINTS);
 				return true;
 			case R.id.menuLoadWaypoints:
 				startActivityForResult(new Intent(this, WaypointFileList.class), RESULT_LOAD_WAYPOINTS);
@@ -2091,7 +2092,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 				startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
 				break;
 			case R.id.waypoints:
-				startActivityForResult(new Intent(this, WaypointList.class), RESULT_MANAGE_WAYPOINTS);
+				startActivityForResult(new Intent(this, WaypointListActivity.class), RESULT_MANAGE_WAYPOINTS);
 				break;
 			case R.id.info:
 				startActivity(new Intent(this, Information.class));
@@ -2200,6 +2201,12 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 				map.requestFocus();
 				break;
 		}
+	}
+
+	@Override
+	public void onWaypointView(Waypoint waypoint)
+	{
+		application.ensureVisible(waypoint);
 	}
 
 	@Override
