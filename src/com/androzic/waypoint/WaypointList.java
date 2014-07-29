@@ -227,7 +227,7 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(final MenuItem item)
+	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		Activity activity = getActivity();
 		switch (item.getItemId())
