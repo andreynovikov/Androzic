@@ -116,6 +116,7 @@ import com.androzic.overlay.WaypointsOverlay;
 import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
 import com.androzic.route.RouteList;
+import com.androzic.route.RouteListActivity;
 import com.androzic.route.RouteStart;
 import com.androzic.track.TrackExportDialog;
 import com.androzic.track.TrackList;
@@ -1674,12 +1675,12 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 				}).setNegativeButton(R.string.no, null).show();
 				return true;
 			case R.id.menuManageRoutes:
-				startActivityForResult(new Intent(this, RouteList.class).putExtra("MODE", RouteList.MODE_MANAGE), RESULT_MANAGE_ROUTES);
+				startActivityForResult(new Intent(this, RouteListActivity.class).putExtra("MODE", RouteList.MODE_MANAGE), RESULT_MANAGE_ROUTES);
 				return true;
 			case R.id.menuStartNavigation:
 				if (application.getRoutes().size() > 1)
 				{
-					startActivity(new Intent(this, RouteList.class).putExtra("MODE", RouteList.MODE_START));
+					startActivity(new Intent(this, RouteListActivity.class).putExtra("MODE", RouteList.MODE_START));
 				}
 				else
 				{

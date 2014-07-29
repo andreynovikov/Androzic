@@ -20,9 +20,9 @@
 
 package com.androzic.route;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -35,7 +35,7 @@ import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
 import com.androzic.navigation.NavigationService;
 
-public class RouteStart extends ActionBarActivity
+public class RouteStart extends Activity
 {
     private Route route;
 	private RadioButton forward;

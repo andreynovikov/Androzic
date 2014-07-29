@@ -262,7 +262,7 @@
             android:name=".route.RouteStart"
             android:theme="@style/Dialog" />
         <activity
-            android:name=".route.RouteList"
+            android:name=".route.RouteListActivity"
             android:label="@string/manageroutes_name" />
         <activity
             android:name=".route.RouteEdit"

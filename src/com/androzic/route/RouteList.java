@@ -1,21 +1,21 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
- *
+ * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * 
  * This file is part of Androzic application.
- *
+ * 
  * Androzic is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ * 
  * Androzic is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ * 
  * You should have received a copy of the GNU General Public License
- * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.androzic.route;
@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +41,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,15 +57,10 @@ import android.widget.TextView;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
-import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.StringFormatter;
 
-public class RouteList extends ListActivity
+public class RouteList extends ListFragment
 {
-	private static final int RESULT_START_ROUTE = 1;
-	private static final int RESULT_LOAD_ROUTE = 2;
-	private static final int RESULT_ROUTE_DETAILS = 3;
-
 	public static final int MODE_MANAGE = 1;
 	public static final int MODE_START = 2;
 
@@ -74,6 +70,8 @@ public class RouteList extends ListActivity
 	private static final int qaRouteEdit = 4;
 	private static final int qaRouteSave = 5;
 	private static final int qaRouteRemove = 6;
+
+	private OnRouteActionListener routeActionsCallback;
 
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
 	final Handler handler = new Handler();
@@ -86,25 +84,40 @@ public class RouteList extends ListActivity
 	private int mode;
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_with_empty_view);
+		setRetainInstance(true);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		return inflater.inflate(R.layout.list_with_empty_view, null);
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
 
 		TextView emptyView = (TextView) getListView().getEmptyView();
 		if (emptyView != null)
 			emptyView.setText(R.string.msg_empty_route_list);
 
-		mode = getIntent().getExtras().getInt("MODE");
+		Activity activity = getActivity();
+
+		mode = activity.getIntent().getExtras().getInt("MODE");
 
 		if (mode == MODE_START)
-			setTitle(getString(R.string.selectroute_name));
+			activity.setTitle(getString(R.string.selectroute_name));
 
-		adapter = new RouteListAdapter(this);
+		adapter = new RouteListAdapter(activity);
 		setListAdapter(adapter);
 
 		Resources resources = getResources();
-		quickAction = new QuickAction(this);
+		quickAction = new QuickAction(activity);
 		quickAction.addActionItem(new ActionItem(qaRouteDetails, getString(R.string.menu_details), resources.getDrawable(R.drawable.ic_action_list)));
 		quickAction.addActionItem(new ActionItem(qaRouteNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_directions)));
 		quickAction.addActionItem(new ActionItem(qaRouteProperties, getString(R.string.menu_properties), resources.getDrawable(R.drawable.ic_action_edit)));
@@ -128,6 +141,23 @@ public class RouteList extends ListActivity
 	}
 
 	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try
+		{
+			routeActionsCallback = (OnRouteActionListener) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement OnRouteActionListener");
+		}
+	}
+
+	@Override
 	public void onResume()
 	{
 		super.onResume();
@@ -135,38 +165,34 @@ public class RouteList extends ListActivity
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu)
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
 		if (mode == MODE_MANAGE)
 		{
-			MenuInflater inflater = getMenuInflater();
 			inflater.inflate(R.menu.routelist_menu, menu);
 		}
-		return true;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(final MenuItem item)
+	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		switch (item.getItemId())
 		{
 			case R.id.menuNewRoute:
-				Androzic application = (Androzic) getApplication();
+				Androzic application = Androzic.getApplication();
 				Route route = new Route("New route", "", true);
 				application.addRoute(route);
-				int position = application.getRouteIndex(route);
-				setResult(RESULT_OK, new Intent().putExtra("index", position));
-				finish();
+				routeActionsCallback.onRouteEdit(route);
 				return true;
 			case R.id.menuLoadRoute:
-				startActivityForResult(new Intent(this, RouteFileList.class), RESULT_LOAD_ROUTE);
+				startActivityForResult(new Intent(getActivity(), RouteFileList.class), RouteListActivity.RESULT_LOAD_ROUTE);
 				return true;
 		}
 		return false;
 	}
 
 	@Override
-	protected void onListItemClick(ListView lv, View v, int position, long id)
+	public void onListItemClick(ListView lv, View v, int position, long id)
 	{
 		switch (mode)
 		{
@@ -183,38 +209,10 @@ public class RouteList extends ListActivity
 				quickAction.show(v);
 				break;
 			case MODE_START:
-				startActivityForResult(new Intent(this, RouteStart.class).putExtra("index", position), RESULT_START_ROUTE);
-		}
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		super.onActivityResult(requestCode, resultCode, data);
-
-		switch (requestCode)
-		{
-			case RESULT_START_ROUTE:
-				if (resultCode == RESULT_OK)
-					finish();
+				Androzic application = Androzic.getApplication();
+				Route route = application.getRoute(position);
+				routeActionsCallback.onRouteNavigate(route);
 				break;
-			case RESULT_LOAD_ROUTE:
-				if (resultCode == RESULT_OK)
-				{
-					final Androzic application = (Androzic) getApplication();
-					int[] indexes = data.getExtras().getIntArray("index");
-					for (int index : indexes)
-					{
-						RouteOverlay newRoute = new RouteOverlay(this, application.getRoute(index));
-						application.routeOverlays.add(newRoute);
-					}
-				}
-				break;
-			case RESULT_ROUTE_DETAILS:
-				if (resultCode == RESULT_OK)
-				{
-					finish();
-				}
 		}
 	}
 
@@ -222,28 +220,25 @@ public class RouteList extends ListActivity
 		@Override
 		public void onItemClick(QuickAction source, int pos, int actionId)
 		{
-			final int position = selectedKey;
-			final Androzic application = (Androzic) getApplication();
-			final Route route = application.getRoute(position);
+			Androzic application = Androzic.getApplication();
+			Route route = application.getRoute(selectedKey);
 
 			switch (actionId)
 			{
 				case qaRouteDetails:
-					startActivityForResult(new Intent(RouteList.this, RouteDetails.class).putExtra("index", position), RESULT_ROUTE_DETAILS);
+					routeActionsCallback.onRouteDetails(route);
 					break;
 				case qaRouteNavigate:
-					startActivityForResult(new Intent(RouteList.this, RouteStart.class).putExtra("index", position), RESULT_START_ROUTE);
+					routeActionsCallback.onRouteNavigate(route);
 					break;
 				case qaRouteProperties:
-					startActivity(new Intent(RouteList.this, RouteProperties.class).putExtra("index", position));
+					routeActionsCallback.onRouteEdit(route);
 					break;
 				case qaRouteEdit:
-					route.show = true;
-					setResult(RESULT_OK, new Intent().putExtra("index", position));
-					finish();
+					routeActionsCallback.onRouteEditPath(route);
 					break;
 				case qaRouteSave:
-					startActivity(new Intent(RouteList.this, RouteSave.class).putExtra("index", position));
+					routeActionsCallback.onRouteSave(route);
 					break;
 				case qaRouteRemove:
 					application.removeRoute(route);
@@ -340,7 +335,7 @@ public class RouteList extends ListActivity
 			text = (TextView) v.findViewById(R.id.filename);
 			if (route.filepath != null)
 			{
-				String filepath = route.filepath.startsWith(application.dataPath) ? route.filepath.substring(application.dataPath.length() + 1, route.filepath.length()): route.filepath;
+				String filepath = route.filepath.startsWith(application.dataPath) ? route.filepath.substring(application.dataPath.length() + 1, route.filepath.length()) : route.filepath;
 				text.setText(filepath);
 			}
 			else
@@ -348,13 +343,13 @@ public class RouteList extends ListActivity
 				text.setText("");
 			}
 			ImageView icon = (ImageView) v.findViewById(R.id.icon);
-			Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity),(int) (40 * mDensity), Config.ARGB_8888);
+			Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity), (int) (40 * mDensity), Config.ARGB_8888);
 			bm.eraseColor(Color.TRANSPARENT);
 			Canvas bc = new Canvas(bm);
 			mLinePaint.setColor(route.lineColor);
 			mBorderPaint.setColor(route.lineColor);
 			bc.drawPath(mLinePath, mLinePaint);
-			int half = Math.round(mPointWidth / 4);				
+			int half = Math.round(mPointWidth / 4);
 			bc.drawCircle(12 * mDensity, 5 * mDensity, half, mFillPaint);
 			bc.drawCircle(12 * mDensity, 5 * mDensity, half, mBorderPaint);
 			bc.drawCircle(24 * mDensity, 12 * mDensity, half, mFillPaint);
