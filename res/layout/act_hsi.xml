@@ -10,7 +10,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true">
 
-    	<TableLayout android:id="@+id/movinginfo"
+    	<TableLayout android:id="@+id/navinfo"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content">
 			
