@@ -6,3 +6,4 @@ ressrc/
 *.apk
 *.so
 local.properties
+Thumbs.db
