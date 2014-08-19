@@ -612,7 +612,7 @@ public class LocationService extends BaseLocationService implements LocationList
 		if (lastWritenLocation != null)
 			timeFromLastWriting = loc.getTime() - lastWritenLocation.getTime();
 
-		if (lastLocation == null || lastWritenLocation == null || !isContinous || timeFromLastWriting > maxTime || distanceFromLastWriting > minDistance && timeFromLastWriting > minTime)
+		if (lastLocation == null || lastWritenLocation == null || !continous || timeFromLastWriting > maxTime || distanceFromLastWriting > minDistance && timeFromLastWriting > minTime)
 		{
 			needsWrite = true;
 		}
@@ -620,10 +620,7 @@ public class LocationService extends BaseLocationService implements LocationList
 		lastLocation = loc;
 
 		if (needsWrite)
-		{
-			writeLocation(loc, isContinous);
-			isContinous = continous;
-		}
+			writeLocation(loc, continous);
 	}
 
 	private void tearTrack()
@@ -799,14 +796,21 @@ public class LocationService extends BaseLocationService implements LocationList
 
 			long prevLocationMillis = lastLocationMillis;
 			float prevSpeed = lastKnownLocation.getSpeed();
+			float prevTrack = lastKnownLocation.getBearing();
 
 			lastKnownLocation = location;
+
+			if (lastKnownLocation.getSpeed() == 0 && prevTrack != 0)
+			{
+				lastKnownLocation.setBearing(prevTrack);
+			}
+
 			lastLocationMillis = time;
 			sendUpdate = true;
 
 			if (!Float.isNaN(nmeaGeoidHeight))
 			{
-				location.setAltitude(location.getAltitude() + nmeaGeoidHeight);
+				lastKnownLocation.setAltitude(lastKnownLocation.getAltitude() + nmeaGeoidHeight);
 			}
 
 			if (justStarted)
