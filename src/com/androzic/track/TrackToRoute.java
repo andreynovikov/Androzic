@@ -118,8 +118,7 @@ public class TrackToRoute extends ActionBarActivity
     	    				break;
     				}
     				application.addRoute(route);
-    				// TODO it's a hack
-    				RouteOverlay newRoute = new RouteOverlay(application.mapActivity, route);
+    				RouteOverlay newRoute = new RouteOverlay(route);
     				application.routeOverlays.add(newRoute);
     				dlgWait.dismiss();
     	    		finish();

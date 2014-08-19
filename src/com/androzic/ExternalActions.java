@@ -66,9 +66,9 @@ public class ExternalActions extends Activity
             		route.addWaypoint(name, wptLat[i], wptLon[i]);
             	}
             	int rt = application.addRoute(route);
-    			RouteOverlay newRoute = new RouteOverlay(this, route);
+    			RouteOverlay routeOverlay = new RouteOverlay(route);
     			// FIXME no overlay at this point
-    			application.routeOverlays.add(newRoute);
+    			application.routeOverlays.add(routeOverlay);
     			startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt));
             }
             else

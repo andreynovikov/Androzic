@@ -74,7 +74,7 @@ public class RouteListActivity extends ActionBarActivity implements OnRouteActio
 					int[] indexes = data.getExtras().getIntArray("index");
 					for (int index : indexes)
 					{
-						RouteOverlay newRoute = new RouteOverlay(this, application.getRoute(index));
+						RouteOverlay newRoute = new RouteOverlay(application.getRoute(index));
 						application.routeOverlays.add(newRoute);
 					}
 				}

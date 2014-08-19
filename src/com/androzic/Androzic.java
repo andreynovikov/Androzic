@@ -40,8 +40,10 @@ import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
@@ -56,8 +58,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.GeomagneticField;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -71,6 +75,8 @@ import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
+import com.androzic.location.ILocationListener;
+import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
 import com.androzic.map.Map;
 import com.androzic.map.MapIndex;
@@ -101,6 +107,8 @@ import com.jhlabs.map.proj.ProjectionException;
 
 public class Androzic extends BaseApplication
 {
+	private static final String TAG = "Androzic";
+
 	public static final int PATH_DATA = 0x001;
 	public static final int PATH_ICONS = 0x008;
 	
@@ -125,6 +133,21 @@ public class Androzic extends BaseApplication
 	private double[] location = new double[] {Double.NaN, Double.NaN};
 	private double[] shouldBeVisible = new double[] {Double.NaN, Double.NaN};
 	private double magneticDeclination = 0;
+
+	private ILocationService locationService = null;
+	private int magInterval;
+	private long lastMagnetic = 0;
+
+	public NavigationService navigationService = null;
+
+	public Location lastKnownLocation;
+	public boolean gpsEnabled;
+	public int gpsStatus;
+	public int gpsFSats;
+	public int gpsTSats;
+	public boolean gpsContinous;
+	public boolean gpsGeoid;
+	public boolean shouldEnableFollowing;
 	
 	private AbstractMap<Long, MapObject> mapObjects = new HashMap<Long, MapObject>();
 	private List<Waypoint> waypoints = new ArrayList<Waypoint>();
@@ -166,7 +189,7 @@ public class Androzic extends BaseApplication
 	private String mapPath;
 	public String iconPath;
 	public boolean mapsInited = false;
-	public MapActivity mapActivity;
+	private MapHolder mapHolder;
 	private int screenSize;
 	public Drawable customCursor = null;
 	public boolean iconsEnabled = false;
@@ -184,45 +207,14 @@ public class Androzic extends BaseApplication
 
 	private Handler mapsHandler = new Handler();
 
-	protected void setMapActivity(MapActivity activity)
+	public MapHolder getMapHolder()
 	{
-		mapActivity = activity;
-		for (MapOverlay mo : fileTrackOverlays)
-		{
-			mo.setMapContext(mapActivity);
-		}
-		if (currentTrackOverlay != null)
-		{
-			currentTrackOverlay.setMapContext(mapActivity);
-		}
-		for (MapOverlay mo : routeOverlays)
-		{
-			mo.setMapContext(mapActivity);
-		}
-		if (navigationOverlay != null)
-		{
-			navigationOverlay.setMapContext(mapActivity);
-		}
-		if (waypointsOverlay != null)
-		{
-			waypointsOverlay.setMapContext(mapActivity);
-		}
-		if (distanceOverlay != null)
-		{
-			distanceOverlay.setMapContext(mapActivity);
-		}
-		if (accuracyOverlay != null)
-		{
-			accuracyOverlay.setMapContext(mapActivity);
-		}
-		if (mapObjectsOverlay != null)
-		{
-			mapObjectsOverlay.setMapContext(mapActivity);
-		}
-		if (scaleOverlay != null)
-		{
-			scaleOverlay.setMapContext(mapActivity);
-		}
+		return mapHolder;
+	}
+
+	protected void setMapHolder(MapHolder holder)
+	{
+		mapHolder = holder;
 		initGrids();
 	}
 	
@@ -951,17 +943,6 @@ public class Androzic extends BaseApplication
 		return loc;
 	}
 	
-	void setLocation(Location loc, boolean updatemag)
-	{
-		location[0] = loc.getLatitude();
-		location[1] = loc.getLongitude();
-		if (updatemag && angleType == 1)
-		{
-			GeomagneticField mag = new GeomagneticField((float) location[0], (float) location[1], (float) loc.getAltitude(), System.currentTimeMillis());
-			magneticDeclination = mag.getDeclination();
-		}
-	}
-	
 	public void initializeMapCenter()
 	{
 		double[] coordinate = null;
@@ -996,9 +977,10 @@ public class Androzic extends BaseApplication
 	/**
 	 * Updates available map list for current location
 	 * 
+	 * @param reindex
+	 *            Recreate index of maps for current location 
 	 * @param findbest
-	 *            Look for better map in current location
-	 * @param findbest2 
+	 *            Look for best map in current location
 	 * @return true if current map was changed
 	 */
 	public boolean updateLocationMaps(boolean reindex, boolean findbest)
@@ -1023,6 +1005,7 @@ public class Androzic extends BaseApplication
 		{
 			newMap = MockMap.getMap(mapCenter[0], mapCenter[1]);
 		}
+		Log.w(TAG, newMap.title);
 		return setMap(newMap);
 	}
 	
@@ -1237,22 +1220,22 @@ public class Androzic extends BaseApplication
 	{
 		llGridOverlay = null;
 		grGridOverlay = null;
-		if (mapGrid && currentMap != null && currentMap.llGrid != null && currentMap.llGrid.enabled && mapActivity != null)
+		if (mapGrid && currentMap != null && currentMap.llGrid != null && currentMap.llGrid.enabled)
 		{
-			LatLonGridOverlay llgo = new LatLonGridOverlay(mapActivity);
+			LatLonGridOverlay llgo = new LatLonGridOverlay();
 			llgo.setGrid(currentMap.llGrid);
 			llGridOverlay = llgo;
 		}
-		if (mapGrid && currentMap != null && currentMap.grGrid != null && currentMap.grGrid.enabled && mapActivity != null && (! userGrid || gridPrefer == 0))
+		if (mapGrid && currentMap != null && currentMap.grGrid != null && currentMap.grGrid.enabled && (! userGrid || gridPrefer == 0))
 		{
-			OtherGridOverlay ogo = new OtherGridOverlay(mapActivity);
+			OtherGridOverlay ogo = new OtherGridOverlay();
 			ogo.setGrid(currentMap.grGrid);
 			grGridOverlay = ogo;
 		}
-		else if (userGrid && currentMap != null && mapActivity != null)
+		else if (userGrid && currentMap != null)
 		{
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-			OtherGridOverlay ogo = new OtherGridOverlay(mapActivity);
+			OtherGridOverlay ogo = new OtherGridOverlay();
 			Map.Grid grid = currentMap.new Grid();
 			grid.color1 = 0xFF0000FF;
 			grid.color2 = 0xFF0000FF;
@@ -1270,12 +1253,12 @@ public class Androzic extends BaseApplication
 	synchronized private boolean setMap(final Map newMap)
 	{
 		// TODO should override equals()?
-		if (newMap != null && ! newMap.equals(currentMap) && mapActivity != null)
+		if (newMap != null && ! newMap.equals(currentMap) && mapHolder != null)
 		{
-			Log.d("ANDROZIC", "Set map: " + newMap);
+			Log.i(TAG, "Set map: " + newMap);
 			try
 			{
-				newMap.activate(mapActivity.map, screenSize);
+				newMap.activate(mapHolder.getMapView(), screenSize);
 			}
 			catch (final Throwable e)
 			{
@@ -1356,7 +1339,7 @@ public class Androzic extends BaseApplication
 						try
 						{
 							if (! map.activated())
-								map.activate(mapActivity.map, screenSize);
+								map.activate(mapHolder.getMapView(), screenSize);
 							double zoom = map.mpp / currentMap.mpp * currentMap.getZoom();
 							if (zoom != map.getZoom())
 								map.setTemporaryZoom(zoom);
@@ -1435,8 +1418,8 @@ public class Androzic extends BaseApplication
 			}
 			catch (OutOfMemoryError err)
 			{
-	        	if (! memmsg && mapActivity != null)
-	        		mapActivity.runOnUiThread(new Runnable() {
+	        	if (! memmsg && mapHolder != null)
+	        		mapHolder.getMapView().getHandler().post(new Runnable() {
 
 						@Override
 						public void run()
@@ -1469,7 +1452,7 @@ public class Androzic extends BaseApplication
 		
 		llGridOverlay = null;
 		grGridOverlay = null;
-		mapActivity = null;
+		mapHolder = null;
 		currentMap = null;
 		suitableMaps = null;
 		maps = null;
@@ -1481,7 +1464,91 @@ public class Androzic extends BaseApplication
 	{
 		String action = enable ? LocationService.ENABLE_LOCATIONS : LocationService.DISABLE_LOCATIONS;
 		startService(new Intent(this, LocationService.class).setAction(action));
+		bindService(new Intent(this, LocationService.class), locationConnection, 0);
 	}
+	
+	private ServiceConnection locationConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder binder)
+		{
+			locationService = (ILocationService) binder;
+			locationService.registerLocationCallback(locationListener);
+			Log.d(TAG, "Location service connected");
+		}
+
+		public void onServiceDisconnected(ComponentName className)
+		{
+			locationService = null;
+			Log.d(TAG, "Location service disconnected");
+		}
+	};
+
+	private ILocationListener locationListener = new ILocationListener() {
+		@Override
+		public void onGpsStatusChanged(String provider, final int status, final int fsats, final int tsats)
+		{
+			if (LocationManager.GPS_PROVIDER.equals(provider))
+			{
+				gpsStatus = status;
+				gpsFSats = fsats;
+				gpsTSats = tsats;
+			}
+		}
+
+		@Override
+		public void onLocationChanged(final Location location, final boolean continous, final boolean geoid, final float smoothspeed, final float avgspeed)
+		{
+			Log.d(TAG, "Location arrived");
+
+			final long lastLocationMillis = location.getTime();
+
+			if (angleType == 1 && lastLocationMillis - lastMagnetic >= magInterval)
+			{
+				GeomagneticField mag = new GeomagneticField((float) location.getLatitude(), (float) location.getLongitude(), (float) location.getAltitude(), System.currentTimeMillis());
+				magneticDeclination = mag.getDeclination();
+				lastMagnetic = lastLocationMillis;
+			}
+
+			Androzic.this.location[0] = location.getLatitude();
+			Androzic.this.location[1] = location.getLongitude();
+
+			shouldEnableFollowing = shouldEnableFollowing || lastKnownLocation == null;
+
+			lastKnownLocation = location;
+			gpsEnabled = LocationManager.GPS_PROVIDER.equals(location.getProvider());
+			gpsContinous = continous;
+			gpsGeoid = geoid;
+
+			if (accuracyOverlay != null && location.hasAccuracy())
+			{
+				accuracyOverlay.setAccuracy(location.getAccuracy());
+			}
+		}
+
+		@Override
+		public void onProviderChanged(String provider)
+		{
+		}
+
+		@Override
+		public void onProviderDisabled(String provider)
+		{
+			if (LocationManager.GPS_PROVIDER.equals(provider))
+			{
+				Log.i(TAG, "GPS provider disabled");
+				gpsEnabled = false;
+			}
+		}
+
+		@Override
+		public void onProviderEnabled(String provider)
+		{
+			if (LocationManager.GPS_PROVIDER.equals(provider))
+			{
+				Log.i(TAG, "GPS provider enabled");
+				gpsEnabled = true;
+			}
+		}
+	};
 
 	public void enableTracking(boolean enable)
 	{
@@ -1902,7 +1969,8 @@ public class Androzic extends BaseApplication
 		}
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		Configuration config = getBaseContext().getResources().getConfiguration();
+		Resources resources = getBaseContext().getResources();
+		Configuration config = resources.getConfiguration();
 
 		charset = settings.getString(getString(R.string.pref_charset), "UTF-8");
 		String lang = settings.getString(getString(R.string.pref_locale), "");
@@ -1911,7 +1979,9 @@ public class Androzic extends BaseApplication
 			locale = new Locale(lang);
 		    Locale.setDefault(locale);
 		    config.locale = locale;
-		    getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+		    resources.updateConfiguration(config, resources.getDisplayMetrics());
 		}
+		
+		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
 	}	
 }

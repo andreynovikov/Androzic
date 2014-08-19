@@ -135,7 +135,7 @@ import com.github.espiandev.showcaseview.ShowcaseView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 
-public class MapActivity extends ActionBarActivity implements View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener, ShowcaseView.OnShowcaseEventListener
+public class MapActivity extends ActionBarActivity implements MapHolder, View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener, ShowcaseView.OnShowcaseEventListener
 {
 	private static final String TAG = "MapActivity";
 
@@ -252,7 +252,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		application = (Androzic) getApplication();
 
 		// FIXME Should find a better place for this
-		application.mapObjectsOverlay = new MapObjectsOverlay(this);
+		application.mapObjectsOverlay = new MapObjectsOverlay();
 
 		// check if called after crash
 		if (!application.mapsInited)
@@ -263,7 +263,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 			return;
 		}
 
-		application.setMapActivity(this);
+		application.setMapHolder(this);
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		setRequestedOrientation(Integer.parseInt(settings.getString(getString(R.string.pref_orientation), "-1")));
@@ -342,7 +342,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 
 		trackBar.setOnSeekBarChangeListener(this);
 
-		map.initialize(application);
+		map.initialize(application, this);
 
 		dimView = new RelativeLayout(this);
 
@@ -378,7 +378,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 					route = OziExplorerFiles.loadRoutesFromFile(rtf, application.charset).get(0);
 					rt = application.addRoute(route);
 				}
-				RouteOverlay newRoute = new RouteOverlay(this, route);
+				RouteOverlay newRoute = new RouteOverlay(route);
 				application.routeOverlays.add(newRoute);
 				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt).putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, ndir).putExtra(NavigationService.EXTRA_ROUTE_START, nwpt));
 			}
@@ -818,7 +818,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 			{
 				lastRenderTime = lastLocationMillis;
 
-				application.setLocation(location, magnetic);
+				//application.setLocation(location, magnetic);
 				map.setLocation(location);
 				final boolean enableFollowing = followOnLocation && lastKnownLocation == null;
 
@@ -985,7 +985,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 	}
 
-	protected final void updateCoordinates(final double latlon[])
+	public final void updateCoordinates(final double[] latlon)
 	{
 		// TODO strange situation, needs investigation
 		if (application != null)
@@ -1002,7 +1002,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 	}
 
-	protected final void updateFileInfo()
+	public final void updateFileInfo()
 	{
 		final String title = application.getMapTitle();
 		this.runOnUiThread(new Runnable() {
@@ -1125,7 +1125,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 			waypointName.setText("» " + navigationService.navWaypoint.name);
 			if (application.navigationOverlay == null)
 			{
-				application.navigationOverlay = new NavigationOverlay(this);
+				application.navigationOverlay = new NavigationOverlay();
 				application.navigationOverlay.onMapChanged();
 			}
 		}
@@ -1272,7 +1272,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 		if (ctEnabled && application.currentTrackOverlay == null)
 		{
-			application.currentTrackOverlay = new CurrentTrackOverlay(this);
+			application.currentTrackOverlay = new CurrentTrackOverlay();
 		}
 		else if (!ctEnabled && application.currentTrackOverlay != null)
 		{
@@ -1281,13 +1281,13 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 		if (application.waypointsOverlay == null)
 		{
-			application.waypointsOverlay = new WaypointsOverlay(this);
+			application.waypointsOverlay = new WaypointsOverlay();
 			application.waypointsOverlay.setWaypoints(application.getWaypoints());
 		}
 		application.waypointsOverlay.setEnabled(wptEnabled);
 		if (navEnabled && application.navigationOverlay == null)
 		{
-			application.navigationOverlay = new NavigationOverlay(this);
+			application.navigationOverlay = new NavigationOverlay();
 		}
 		else if (!navEnabled && application.navigationOverlay != null)
 		{
@@ -1296,7 +1296,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 		if (distEnabled && application.distanceOverlay == null)
 		{
-			application.distanceOverlay = new DistanceOverlay(this);
+			application.distanceOverlay = new DistanceOverlay();
 		}
 		else if (!distEnabled && application.distanceOverlay != null)
 		{
@@ -1310,7 +1310,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 		if (scaleEnabled && application.scaleOverlay == null)
 		{
-			application.scaleOverlay = new ScaleOverlay(this);
+			application.scaleOverlay = new ScaleOverlay();
 		}
 		else if (!scaleEnabled && application.scaleOverlay != null)
 		{
@@ -1319,7 +1319,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 		if (accEnabled && application.accuracyOverlay == null)
 		{
-			application.accuracyOverlay = new AccuracyOverlay(this);
+			application.accuracyOverlay = new AccuracyOverlay();
 			application.accuracyOverlay.setAccuracy(application.getLocationAsLocation().getAccuracy());
 		}
 		else if (!accEnabled && application.accuracyOverlay != null)
@@ -1428,7 +1428,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 		if (newroute)
 		{
-			RouteOverlay newRoute = new RouteOverlay(this, application.editingRoute);
+			RouteOverlay newRoute = new RouteOverlay(application.editingRoute);
 			application.routeOverlays.add(newRoute);
 		}
 		findViewById(R.id.editroute).setVisibility(View.VISIBLE);
@@ -1437,6 +1437,13 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		if (showDistance > 0)
 			application.distanceOverlay.setEnabled(false);
 		updateMapViewArea();
+	}
+
+
+	@Override
+	public MapView getMapView()
+	{
+		return map;
 	}
 
 	public void setFollowing(boolean follow)

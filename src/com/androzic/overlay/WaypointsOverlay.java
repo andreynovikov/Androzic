@@ -22,13 +22,10 @@ package com.androzic.overlay;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
-import com.androzic.Androzic;
-import com.androzic.MapActivity;
 import com.androzic.MapView;
 import com.androzic.data.Waypoint;
 
@@ -36,9 +33,9 @@ public class WaypointsOverlay extends MapObjectsOverlay
 {
 	private List<Waypoint> waypoints;
 
-	public WaypointsOverlay(final Activity mapActivity)
+	public WaypointsOverlay()
 	{
-		super(mapActivity);
+		super();
 		enabled = true;
 	}
 
@@ -51,17 +48,15 @@ public class WaypointsOverlay extends MapObjectsOverlay
 	@Override
 	public boolean onSingleTap(MotionEvent e, Rect mapTap, MapView mapView)
 	{
-		Androzic application = Androzic.getApplication();
-
 		synchronized (waypoints)
 		{
 			for (int i = waypoints.size() - 1; i >= 0; i--)
 			{
 				Waypoint wpt = waypoints.get(i);
 				int[] pointXY = application.getXYbyLatLon(wpt.latitude, wpt.longitude);
-				if (mapTap.contains(pointXY[0], pointXY[1]) && context instanceof MapActivity)
+				if (mapTap.contains(pointXY[0], pointXY[1]))
 				{
-					return ((MapActivity) context).waypointTapped(wpt, (int) e.getX(), (int) e.getY());
+					return application.getMapHolder().waypointTapped(wpt, (int) e.getX(), (int) e.getY());
 				}
 			}
 		}
@@ -76,7 +71,6 @@ public class WaypointsOverlay extends MapObjectsOverlay
 	@Override
 	protected void onDrawFinished(final Canvas c, final MapView mapView, int centerX, int centerY)
 	{
-		Androzic application = (Androzic) context.getApplication();
 		final int[] cxy = mapView.mapCenterXY;
 
 		synchronized (waypoints)

@@ -217,7 +217,7 @@ public class Splash extends Activity implements OnClickListener
 					gotit.setVisibility(View.VISIBLE);
 					break;
 				case MSG_FINISH:
-					startActivity(new Intent(Splash.this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
+					startActivity(new Intent(Splash.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
 					finish();
 					break;
 				case MSG_ERROR:
@@ -387,7 +387,7 @@ public class Splash extends Activity implements OnClickListener
 			// read track tail
 			if (settings.getBoolean(getString(R.string.pref_showcurrenttrack), true))
 			{
-				application.currentTrackOverlay = new CurrentTrackOverlay(Splash.this);
+				application.currentTrackOverlay = new CurrentTrackOverlay();
 				if (settings.getBoolean(getString(R.string.pref_tracking_currentload), resources.getBoolean(R.bool.def_tracking_currentload)))
 				{
 					int length = Integer.parseInt(settings.getString(getString(R.string.pref_tracking_currentlength), getString(R.string.def_tracking_currentlength)));
@@ -452,7 +452,7 @@ public class Splash extends Activity implements OnClickListener
 						for (Route route : routes)
 						{
 							route.show = !hide;
-							RouteOverlay newRoute = new RouteOverlay(Splash.this, route);
+							RouteOverlay newRoute = new RouteOverlay(route);
 							application.routeOverlays.add(newRoute);
 						}
 					}

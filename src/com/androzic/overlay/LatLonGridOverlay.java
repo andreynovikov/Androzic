@@ -22,14 +22,12 @@ package com.androzic.overlay;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 
-import com.androzic.Androzic;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.map.Map;
@@ -44,14 +42,15 @@ public class LatLonGridOverlay extends MapOverlay
 	Rect clip;
 	double spacing;
 	
-	public LatLonGridOverlay(Activity activity)
+	public LatLonGridOverlay()
 	{
-		super(activity);
+		super();
+
         linePaint = new Paint();
         linePaint.setAntiAlias(true);
         linePaint.setStrokeWidth(1);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setColor(context.getResources().getColor(R.color.distanceline));
+        linePaint.setColor(application.getResources().getColor(R.color.distanceline));
 /*
         circlePaint = new Paint();
         circlePaint.setAntiAlias(true);
@@ -73,7 +72,6 @@ public class LatLonGridOverlay extends MapOverlay
 	public synchronized void onMapChanged()
 	{
 		grid.clear();
-    	Androzic application = (Androzic) context.getApplication();
     	Map map = application.getCurrentMap();
     	if (map == null)
     		return;

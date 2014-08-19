@@ -20,12 +20,10 @@
 
 package com.androzic.overlay;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-import com.androzic.Androzic;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.util.Geo;
@@ -36,15 +34,15 @@ public class AccuracyOverlay extends MapOverlay
 	int radius = 0;
 	float accuracy = 0;
 
-	public AccuracyOverlay(final Activity activity)
+	public AccuracyOverlay()
 	{
-		super(activity);
+		super();
 
 		paint = new Paint();
         paint.setAntiAlias(true);
         paint.setStrokeWidth(5);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setColor(context.getResources().getColor(R.color.accuracy));
+        paint.setColor(application.getResources().getColor(R.color.accuracy));
 	}
 
 	public void setAccuracy(float accuracy)
@@ -52,7 +50,6 @@ public class AccuracyOverlay extends MapOverlay
 		if (accuracy > 0 && this.accuracy != accuracy)
 		{
 			this.accuracy = accuracy;
-			Androzic application = (Androzic) context.getApplication();
 			double[] loc = application.getLocation();
 			double[] prx = Geo.projection(loc[0], loc[1], accuracy/2, 90);
 			int[] cxy = application.getXYbyLatLon(loc[0], loc[1]);

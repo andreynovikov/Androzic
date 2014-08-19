@@ -20,7 +20,6 @@
 
 package com.androzic.overlay;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -39,23 +38,18 @@ public class CurrentTrackOverlay extends TrackOverlay
 	private ILocationService trackingService = null;
 	private boolean isBound = false;
 
-    public CurrentTrackOverlay(final Activity mapActivity)
+    public CurrentTrackOverlay()
     {
-    	super(mapActivity);
+    	super();
 
-    	onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
+    	onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(application));
     	
     	track.name = "Current Track";
     	track.show = true;
+
+        isBound = application.bindService(new Intent(application, LocationService.class), trackingConnection, 0);
     }
     
-	public void setMapContext(final Activity activity)
-	{
-		unbind();
-		super.setMapContext(activity);
-        isBound = context.getApplicationContext().bindService(new Intent(context.getApplicationContext(), LocationService.class), trackingConnection, 0);
-	}
-
     @Override
 	public void setTrack(Track track)
 	{
@@ -83,7 +77,7 @@ public class CurrentTrackOverlay extends TrackOverlay
                	trackingService.unregisterTrackingCallback(trackingListener);
     		}
 
-    		context.getApplicationContext().unbindService(trackingConnection);
+    		application.unbindService(trackingConnection);
     		isBound = false;
     	}
 	}
@@ -92,7 +86,7 @@ public class CurrentTrackOverlay extends TrackOverlay
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
 		super.onPreferencesChanged(settings);
-    	track.maxPoints = Integer.parseInt(settings.getString(context.getString(R.string.pref_tracking_currentlength), context.getString(R.string.def_tracking_currentlength)));		
+    	track.maxPoints = Integer.parseInt(settings.getString(application.getString(R.string.pref_tracking_currentlength), application.getString(R.string.def_tracking_currentlength)));
 	}
     
     private ServiceConnection trackingConnection = new ServiceConnection()

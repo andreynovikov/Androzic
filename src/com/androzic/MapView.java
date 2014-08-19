@@ -125,6 +125,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private PorterDuffColorFilter active = null;
 
 	private Androzic application;
+	private MapHolder mapHolder;
 
 	private SurfaceHolder cachedHolder;
 	private DrawingThread drawingThread;
@@ -153,9 +154,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		setWillNotDraw(false);
 	}
 
-	public void initialize(Androzic application)
+	public void initialize(Androzic application, MapHolder holder)
 	{
 		this.application = application;
+		this.mapHolder = holder;
 
 		getHolder().addCallback(this);
 
@@ -478,8 +480,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		application.notifyOverlays();
 		try
 		{
-			MapActivity androzic = (MapActivity) getContext();
-			androzic.updateFileInfo();
+			mapHolder.updateFileInfo();
 		}
 		finally
 		{
@@ -641,8 +642,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		{
 			try
 			{
-				MapActivity androzic = (MapActivity) getContext();
-				androzic.setFollowing(!isFollowing);
+				mapHolder.setFollowing(!isFollowing);
 			}
 			catch (Exception e)
 			{
@@ -771,8 +771,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 		try
 		{
-			MapActivity activity = (MapActivity) getContext();
-			activity.updateCoordinates(mapCenter);
+			mapHolder.updateCoordinates(mapCenter);
 		}
 		finally
 		{
@@ -1170,8 +1169,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			Log.e(TAG, "Scale: " + scale);
 			try
 			{
-				MapActivity androzic = (MapActivity) this.getContext();
-				androzic.zoomMap(scale);
+				mapHolder.zoomMap(scale);
 			}
 			finally
 			{

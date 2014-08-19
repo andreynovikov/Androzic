@@ -20,15 +20,14 @@
 
 package com.androzic.overlay;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 
-import com.androzic.Androzic;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.map.Map;
@@ -44,14 +43,17 @@ public class ScaleOverlay extends MapOverlay
 	private long lastScaleMove;
 	private int lastScalePos;
 
-	public ScaleOverlay(Activity activity)
+	public ScaleOverlay()
 	{
-		super(activity);
+		super();
+		
+		Resources resources = application.getResources();
+
 		linePaint = new Paint();
         linePaint.setAntiAlias(false);
         linePaint.setStrokeWidth(2);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setColor(context.getResources().getColor(R.color.scalebar));
+        linePaint.setColor(resources.getColor(R.color.scalebar));
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
         textPaint.setStrokeWidth(2);
@@ -59,18 +61,17 @@ public class ScaleOverlay extends MapOverlay
         textPaint.setTextAlign(Align.CENTER);
         textPaint.setTextSize(16);
         textPaint.setTypeface(Typeface.SANS_SERIF);
-        textPaint.setColor(context.getResources().getColor(R.color.scalebar));
+        textPaint.setColor(resources.getColor(R.color.scalebar));
     	mpp = 0;
     	lastScaleMove = 0;
     	lastScalePos = 1;
-    	onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
+    	onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(application));
     	enabled = true;
 	}
 
 	@Override
 	public synchronized void onMapChanged()
 	{
-    	Androzic application = (Androzic) context.getApplication();
     	Map map = application.getCurrentMap();
     	if (map == null)
     		return;
@@ -210,7 +211,8 @@ public class ScaleOverlay extends MapOverlay
 	@Override
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
-		int color = settings.getInt(context.getString(R.string.pref_scalebarcolor), context.getResources().getColor(R.color.scalebar));
+		Resources resources = application.getResources();
+		int color = settings.getInt(application.getString(R.string.pref_scalebarcolor), resources.getColor(R.color.scalebar));
 		linePaint.setColor(color);
 		textPaint.setColor(color);
 	}

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    
     <string name="paypaluri">https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=novikov@gmail.com&amp;lc=GB&amp;item_name=Androzic&amp;currency_code=USD&amp;bn=PP-DonationsBF:btn_donateCC_LG_global.gif:NonHosted</string>
     <string name="googleplusuri">https://plus.google.com/communities/104267455273813373911</string>
     <string name="facebookuri">http://www.facebook.com/androzic</string>

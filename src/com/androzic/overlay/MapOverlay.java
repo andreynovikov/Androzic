@@ -20,29 +20,25 @@
 
 package com.androzic.overlay;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import com.androzic.Androzic;
 import com.androzic.MapView;
 
 public abstract class MapOverlay
 {
-	Activity context;
+	Androzic application;
 	boolean enabled;
 	
-	MapOverlay(final Activity activity)
+	MapOverlay()
 	{
-		context = activity;
+		application = Androzic.getApplication();
 		enabled = false;
-	}
-	
-	public void setMapContext(final Activity activity)
-	{
-		context = activity;
 	}
 	
 	/**
@@ -55,6 +51,7 @@ public abstract class MapOverlay
 	 * Managed Draw calls gives Overlays the possibility to first draw manually and after 
 	 * that do a final draw. This is very useful, i sth. to be drawn needs to be <b>topmost</b>.
 	 */
+	@SuppressLint("WrongCall")
 	public void onManagedDraw(final Canvas c, final MapView mapView, int centerX, int centerY)
 	{
 		if (enabled)
