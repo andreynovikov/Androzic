@@ -26,15 +26,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.androzic.util.FileList;
 import com.androzic.util.MapFilenameFilter;
 
 public class MapIndex implements Serializable
 {
-	private static final long serialVersionUID = 5L;
+	private static final long serialVersionUID = 6L;
 	
 	private ArrayList<Map> maps;
 	private String mapsRoot;
@@ -88,12 +88,23 @@ public class MapIndex implements Serializable
 	public void addMap(Map map)
 	{
 		if (! maps.contains(map))
-			maps.add(map);
+		{
+			ListIterator<Map> iter = maps.listIterator();
+			iter.add(map);
+		}
 	}
 
 	public void removeMap(Map map)
 	{
-		maps.remove(map);
+		for (ListIterator<Map> iter = maps.listIterator(); iter.hasNext();)
+		{
+			Map m = iter.next();
+			if (m.equals(map))
+			{
+				iter.remove();
+				return;
+			}
+		}
 	}
 
 	public List<Map> getCoveringMaps(Map refMap, Map.Bounds area, boolean covered, boolean bestmap)
@@ -141,7 +152,7 @@ public class MapIndex implements Serializable
 
 	public void cleanBadMaps()
 	{
-		for (Iterator<Map> iter = maps.iterator(); iter.hasNext();)
+		for (ListIterator<Map> iter = maps.listIterator(); iter.hasNext();)
 		{
 			Map map = iter.next();
 			if (map.loadError != null)
