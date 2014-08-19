@@ -5,7 +5,10 @@
     android:drawablePadding="10dip"
     android:drawableLeft="@drawable/splash_icon"
     android:gravity="center"
-    android:padding="10dip"
+    android:paddingBottom="0dip"
+    android:paddingLeft="10dip"
+    android:paddingRight="10dip"
+    android:paddingTop="10dip"
     android:text="@string/app_name"
     android:textSize="40sp"
     android:textStyle="bold" />

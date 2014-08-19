@@ -8,6 +8,15 @@
     <include layout="@layout/inc_logo" />
 
     <TextView
+        android:id="@+id/dedicated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dip"
+        android:paddingBottom="10dip"
+        android:text="@string/msg_dedicated"
+        android:textSize="9sp" />
+
+    <TextView
         android:id="@+id/paid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
