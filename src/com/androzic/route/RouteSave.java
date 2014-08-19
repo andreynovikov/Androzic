@@ -22,8 +22,8 @@ package com.androzic.route;
 
 import java.io.File;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,7 +37,7 @@ import com.androzic.data.Route;
 import com.androzic.util.FileUtils;
 import com.androzic.util.OziExplorerFiles;
 
-public class RouteSave extends ActionBarActivity
+public class RouteSave extends Activity
 {
 	private TextView filename;
 	private Route route;

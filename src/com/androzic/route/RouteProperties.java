@@ -20,8 +20,8 @@
 
 package com.androzic.route;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -35,7 +35,7 @@ import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.ui.ColorButton;
 
-public class RouteProperties extends ActionBarActivity
+public class RouteProperties extends Activity
 {
 	private Route route;
 	

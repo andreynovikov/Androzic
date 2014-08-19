@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -32,7 +33,6 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
@@ -63,7 +63,7 @@ import com.jhlabs.map.GeodeticPosition;
 import com.jhlabs.map.ReferenceException;
 import com.jhlabs.map.UTMReference;
 
-public class WaypointProperties extends ActionBarActivity implements OnItemSelectedListener
+public class WaypointProperties extends Activity implements OnItemSelectedListener
 {
 	private Waypoint waypoint;
 

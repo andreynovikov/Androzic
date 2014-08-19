@@ -23,9 +23,9 @@ package com.androzic.track;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,7 +39,7 @@ import com.androzic.data.Track;
 import com.androzic.util.FileUtils;
 import com.androzic.util.OziExplorerFiles;
 
-public class TrackSave extends ActionBarActivity
+public class TrackSave extends Activity
 {
 	private TextView filename;
 	private Track track;

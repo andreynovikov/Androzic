@@ -29,7 +29,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.hardware.GeomagneticField;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -44,7 +43,7 @@ import com.androzic.data.Waypoint;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class WaypointProject extends ActionBarActivity
+public class WaypointProject extends Activity
 {
 	List<Waypoint> waypoints = null;
 	
