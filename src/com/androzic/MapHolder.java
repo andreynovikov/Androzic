@@ -2,13 +2,15 @@ package com.androzic;
 
 import com.androzic.data.Waypoint;
 
-import android.content.Context;
-
 public interface MapHolder
 {
 	MapView getMapView();
 	void setFollowing(boolean follow);
-	void zoomMap(float scale);
+	void zoomMap(float factor);
+	void zoomIn();
+	void zoomOut();
+	void previousMap();
+	void nextMap();
 	void updateCoordinates(double[] latlon);
 	void updateFileInfo();
 	

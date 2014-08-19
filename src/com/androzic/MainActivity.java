@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -26,7 +27,10 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -38,13 +42,15 @@ import com.androzic.ui.DrawerAdapter;
 import com.androzic.ui.DrawerItem;
 import com.androzic.waypoint.OnWaypointActionListener;
 import com.androzic.waypoint.WaypointList;
+import com.androzic.waypoint.WaypointListActivity;
 
-public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnSharedPreferenceChangeListener
+public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnSharedPreferenceChangeListener, OnClickListener
 {
 	private static final String TAG = "MapActivity";
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
+	private View mDrawerActions;
 	private ActionBarDrawerToggle mDrawerToggle;
 
 	private CharSequence mDrawerTitle;
@@ -65,11 +71,11 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		Log.e(TAG, "onCreate()");
 
 		setContentView(R.layout.activity_main);
-		
+
 		backToast = Toast.makeText(this, R.string.backQuit, Toast.LENGTH_SHORT);
 
 		application = Androzic.getApplication();
-		
+
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		onSharedPreferenceChanged(settings, getString(R.string.pref_exit));
 
@@ -77,13 +83,13 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		settings.registerOnSharedPreferenceChangeListener(this);
 
 		mDrawerItems = new ArrayList<DrawerItem>();
-		
+
 		Resources resources = getResources();
-		
+
 		Drawable icon;
 		Intent action;
 		Fragment fragment;
-		
+
 		// add main items to drawer list
 		icon = resources.getDrawable(R.drawable.ic_action_map);
 		fragment = Fragment.instantiate(this, MapFragment.class.getName());
@@ -109,6 +115,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		mTitle = mDrawerTitle = getTitle();
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+		mDrawerActions = findViewById(R.id.right_drawer);
 
 		// set a custom shadow that overlays the main content when the drawer opens
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -128,26 +135,43 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		R.string.drawer_open, /* "open drawer" description for accessibility */
 		R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
-			public void onDrawerClosed(View view)
+			public void onDrawerClosed(View drawerView)
 			{
-				getSupportActionBar().setTitle(mTitle);
-				supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+				if (drawerView == mDrawerList)
+				{
+					getSupportActionBar().setTitle(mTitle);
+					supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+				}
 			}
 
 			public void onDrawerOpened(View drawerView)
 			{
-				getSupportActionBar().setTitle(mDrawerTitle);
-				supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+				if (drawerView == mDrawerList)
+				{
+					getSupportActionBar().setTitle(mDrawerTitle);
+					supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+				}
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+		// set button actions
+		findViewById(R.id.zoomin).setOnClickListener(this);
+		findViewById(R.id.zoomout).setOnClickListener(this);
+		findViewById(R.id.nextmap).setOnClickListener(this);
+		findViewById(R.id.prevmap).setOnClickListener(this);
+		findViewById(R.id.info).setOnClickListener(this);
+		findViewById(R.id.follow).setOnClickListener(this);
+		findViewById(R.id.locate).setOnClickListener(this);
+		findViewById(R.id.tracking).setOnClickListener(this);
+		findViewById(R.id.expand).setOnClickListener(this);
 
 		if (savedInstanceState == null)
 		{
 			selectItem(0);
 		}
 	}
-	
+
 	@Override
 	protected void onResume()
 	{
@@ -166,10 +190,10 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		if (isFinishing())
 		{
 			// clear all overlays from map
-			//updateOverlays(null, true);
-			//application.waypointsOverlay = null;
-			//application.navigationOverlay = null;
-			//application.distanceOverlay = null;
+			// updateOverlays(null, true);
+			// application.waypointsOverlay = null;
+			// application.navigationOverlay = null;
+			// application.distanceOverlay = null;
 
 			application.clear();
 		}
@@ -180,8 +204,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-//		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.menu.options_menu, menu);
+		// MenuInflater inflater = getMenuInflater();
+		// inflater.inflate(R.menu.options_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -254,6 +278,10 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 			mDrawerList.setItemChecked(position, true);
 			setTitle(item.name);
 			mDrawerLayout.closeDrawer(mDrawerList);
+			if (item.fragment instanceof MapFragment)
+				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerActions);
+			else
+				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerActions);
 		}
 	}
 
@@ -289,35 +317,35 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	public void onWaypointView(Waypoint waypoint)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onWaypointNavigate(Waypoint waypoint)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onWaypointEdit(Waypoint waypoint)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onWaypointShare(Waypoint waypoint)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onWaypointRemove(Waypoint waypoint)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -425,6 +453,76 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 				return;
 			default:
 				super.onBackPressed();
+		}
+	}
+
+	@Override
+	public void onClick(View v)
+	{
+		switch (v.getId())
+		{
+			case R.id.zoomin:
+				application.getMapHolder().zoomIn();
+				break;
+			case R.id.zoomout:
+				application.getMapHolder().zoomOut();
+				break;
+			case R.id.nextmap:
+				application.getMapHolder().nextMap();
+				break;
+			case R.id.prevmap:
+				application.getMapHolder().previousMap();
+				break;
+			case R.id.maps:
+				//startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
+				break;
+			case R.id.waypoints:
+				//startActivityForResult(new Intent(this, WaypointListActivity.class), RESULT_MANAGE_WAYPOINTS);
+				break;
+			case R.id.info:
+				startActivity(new Intent(this, Information.class));
+				break;
+			case R.id.follow:
+				//setFollowing(!map.isFollowing());
+				break;
+			case R.id.locate:
+			{
+				/*
+				boolean isLocating = locationService != null && locationService.isLocating();
+				application.enableLocating(!isLocating);
+				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+				editor.putBoolean(getString(R.string.lc_locate), !isLocating);
+				editor.commit();
+				*/
+				break;
+			}
+			case R.id.tracking:
+			{
+				/*
+				boolean isTracking = locationService != null && locationService.isTracking();
+				application.enableTracking(!isTracking);
+				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+				editor.putBoolean(getString(R.string.lc_track), !isTracking);
+				editor.commit();
+				*/
+				break;
+			}
+			case R.id.expand:
+				ImageButton expand = (ImageButton) findViewById(R.id.expand);
+				/*
+				if (isFullscreen)
+				{
+					getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+					expand.setImageDrawable(getResources().getDrawable(R.drawable.expand));
+				}
+				else
+				{
+					getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+					expand.setImageDrawable(getResources().getDrawable(R.drawable.collapse));
+				}
+				isFullscreen = !isFullscreen;
+				*/
+				break;
 		}
 	}
 

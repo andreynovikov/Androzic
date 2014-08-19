@@ -1,15 +1,18 @@
 package com.androzic;
 
-import android.app.Activity;
-import android.content.Intent;
+import java.lang.ref.WeakReference;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -74,8 +77,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private TextView xtkValue;
 	private TextView xtkUnit;
 
+	private TextView waitBar;
+
 	Androzic application;
 
+	private ExecutorService executorThread = Executors.newSingleThreadExecutor();
+	private FinishHandler finishHandler;
 	private Handler updateCallback = new Handler();
 
 	protected long lastRenderTime = 0;
@@ -93,6 +100,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		setHasOptionsMenu(true);
 
 		application = Androzic.getApplication();
+
+		finishHandler = new FinishHandler(this);
 	}
 
 	@Override
@@ -122,7 +131,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		bearingUnit = (TextView) view.findViewById(R.id.bearingunit);
 		turnValue = (TextView) view.findViewById(R.id.turn);
 		// trackBar = (SeekBar) findViewById(R.id.trackbar);
-		// waitBar = (TextView) findViewById(R.id.waitbar);
+		waitBar = (TextView) view.findViewById(R.id.waitbar);
 		map = (MapView) view.findViewById(R.id.mapview);
 		map.initialize(application, this);
 
@@ -590,10 +599,115 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
-	public void zoomMap(float scale)
+	public void zoomMap(final float factor)
 	{
-		// TODO Auto-generated method stub
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				synchronized (map)
+				{
+					if (application.zoomBy(factor))
+					{
+						map.updateMapInfo();
+						map.update();
+					}
+				}
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
+	}
 
+	@Override
+	public void zoomIn()
+	{
+		//TODO Show toast here
+		if (application.getNextZoom() == 0.0)
+			return;
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				synchronized (map)
+				{
+					if (application.zoomIn())
+					{
+						map.updateMapInfo();
+						map.update();
+					}
+				}
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
+	}
+
+	@Override
+	public void zoomOut()
+	{
+		if (application.getPrevZoom() == 0.0)
+			return;
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				synchronized (map)
+				{
+					if (application.zoomOut())
+					{
+						map.updateMapInfo();
+						map.update();
+					}
+				}
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
+	}
+
+	@Override
+	public void previousMap()
+	{
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				synchronized (map)
+				{
+					if (application.prevMap())
+					{
+						map.suspendBestMap();
+						map.updateMapInfo();
+						map.update();
+					}
+				}
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
+	}
+
+	@Override
+	public void nextMap()
+	{
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				synchronized (map)
+				{
+					if (application.nextMap())
+					{
+						map.suspendBestMap();
+						map.updateMapInfo();
+						map.update();
+					}
+				}
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
 	}
 
 	private void updateGPSStatus()
@@ -752,6 +866,28 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				//startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
 				break;
 
+		}
+	}
+
+	@SuppressLint("HandlerLeak")
+	private class FinishHandler extends Handler
+	{
+		private final WeakReference<MapFragment> target;
+
+		FinishHandler(MapFragment fragment)
+		{
+			this.target = new WeakReference<MapFragment>(fragment);
+		}
+
+		@Override
+		public void handleMessage(Message msg)
+		{
+			MapFragment mapFragment = target.get();
+			if (mapFragment != null)
+			{
+				mapFragment.waitBar.setVisibility(View.INVISIBLE);
+				mapFragment.waitBar.setText("");
+			}
 		}
 	}
 

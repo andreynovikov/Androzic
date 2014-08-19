@@ -1486,6 +1486,97 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		});
 	}
 
+	@Override
+	public void zoomIn()
+	{
+		//TODO Show toast here
+		if (application.getNextZoom() == 0.0)
+			return;
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				synchronized (map)
+				{
+					if (application.zoomIn())
+					{
+						map.updateMapInfo();
+						map.update();
+					}
+				}
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
+	}
+
+	@Override
+	public void zoomOut()
+	{
+		if (application.getPrevZoom() == 0.0)
+			return;
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				synchronized (map)
+				{
+					if (application.zoomOut())
+					{
+						map.updateMapInfo();
+						map.update();
+					}
+				}
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
+	}
+
+	@Override
+	public void previousMap()
+	{
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				synchronized (map)
+				{
+					if (application.prevMap())
+					{
+						map.suspendBestMap();
+						map.updateMapInfo();
+						map.update();
+					}
+				}
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
+	}
+
+	@Override
+	public void nextMap()
+	{
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				synchronized (map)
+				{
+					if (application.nextMap())
+					{
+						map.suspendBestMap();
+						map.updateMapInfo();
+						map.update();
+					}
+				}
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
+	}
+
 	protected void dimScreen(Location location)
 	{
 		int color = Color.TRANSPARENT;
@@ -2019,82 +2110,16 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		switch (v.getId())
 		{
 			case R.id.zoomin:
-				if (application.getNextZoom() == 0.0)
-					break;
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
-					{
-						synchronized (map)
-						{
-							if (application.zoomIn())
-							{
-								map.updateMapInfo();
-								map.update();
-							}
-						}
-						finishHandler.sendEmptyMessage(0);
-					}
-				});
+				zoomIn();
 				break;
 			case R.id.zoomout:
-				if (application.getPrevZoom() == 0.0)
-					break;
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
-					{
-						synchronized (map)
-						{
-							if (application.zoomOut())
-							{
-								map.updateMapInfo();
-								map.update();
-							}
-						}
-						finishHandler.sendEmptyMessage(0);
-					}
-				});
+				zoomOut();
 				break;
 			case R.id.nextmap:
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
-					{
-						synchronized (map)
-						{
-							if (application.prevMap())
-							{
-								map.suspendBestMap();
-								map.updateMapInfo();
-								map.update();
-							}
-						}
-						finishHandler.sendEmptyMessage(0);
-					}
-				});
+				nextMap();
 				break;
 			case R.id.prevmap:
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
-					{
-						synchronized (map)
-						{
-							if (application.nextMap())
-							{
-								map.suspendBestMap();
-								map.updateMapInfo();
-								map.update();
-							}
-						}
-						finishHandler.sendEmptyMessage(0);
-					}
-				});
+				previousMap();
 				break;
 			case R.id.maps:
 				startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
