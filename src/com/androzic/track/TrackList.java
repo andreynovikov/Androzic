@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2013 Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014 Andrey Novikov <http://andreynovikov.info/>
  * 
  * This file is part of Androzic application.
  * 
@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +42,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,13 +58,10 @@ import android.widget.TextView;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
-import com.androzic.overlay.TrackOverlay;
 import com.androzic.util.StringFormatter;
 
-public class TrackList extends ListActivity
+public class TrackList extends ListFragment
 {
-	private static final int RESULT_LOAD_TRACK = 1;
-
 	List<Track> tracks = null;
 
 	private static final int qaTrackProperties = 1;
@@ -72,6 +70,8 @@ public class TrackList extends ListActivity
 	private static final int qaTrackSave = 4;
 	private static final int qaTrackRemove = 5;
 
+	private OnTrackActionListener trackActionsCallback;
+	
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
 	final Handler handler = new Handler();
 
@@ -81,20 +81,35 @@ public class TrackList extends ListActivity
 	private Drawable selectedBackground;
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_with_empty_view);
+		setRetainInstance(true);
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		return inflater.inflate(R.layout.list_with_empty_view, container, false);
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
 
 		TextView emptyView = (TextView) getListView().getEmptyView();
 		if (emptyView != null)
 			emptyView.setText(R.string.msg_empty_track_list);
 
-		adapter = new TrackListAdapter(this);
+		Activity activity = getActivity();
+		
+		adapter = new TrackListAdapter(activity);
 		setListAdapter(adapter);
 
 		Resources resources = getResources();
-		quickAction = new QuickAction(this);
+		quickAction = new QuickAction(activity);
 		quickAction.addActionItem(new ActionItem(qaTrackProperties, getString(R.string.menu_properties), resources.getDrawable(R.drawable.ic_action_edit)));
 		quickAction.addActionItem(new ActionItem(qaTrackEdit, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_action_track)));
 		quickAction.addActionItem(new ActionItem(qaTrackToRoute, getString(R.string.menu_track2route), resources.getDrawable(R.drawable.ic_action_directions)));
@@ -115,20 +130,35 @@ public class TrackList extends ListActivity
 			}
 		});
 	}
+	
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try
+		{
+			trackActionsCallback = (OnTrackActionListener) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement OnTrackActionListener");
+		}
+	}
 
 	@Override
-	protected void onResume()
+	public void onResume()
 	{
 		super.onResume();
 		adapter.notifyDataSetChanged();
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu)
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
-		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.tracklist_menu, menu);
-		return true;
 	}
 
 	@Override
@@ -137,14 +167,14 @@ public class TrackList extends ListActivity
 		switch (item.getItemId())
 		{
 			case R.id.menuLoadTrack:
-				startActivityForResult(new Intent(this, TrackFileList.class), RESULT_LOAD_TRACK);
+				startActivityForResult(new Intent(getActivity(), TrackFileList.class), TrackListActivity.RESULT_LOAD_TRACK);
 				return true;
 		}
 		return false;
 	}
 
 	@Override
-	protected void onListItemClick(ListView lv, View v, int position, long id)
+	public void onListItemClick(ListView lv, View v, int position, long id)
 	{
 		v.setTag("selected");
 		selectedKey = position;
@@ -158,51 +188,27 @@ public class TrackList extends ListActivity
 		quickAction.show(v);
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		super.onActivityResult(requestCode, resultCode, data);
-
-		switch (requestCode)
-		{
-			case RESULT_LOAD_TRACK:
-				if (resultCode == RESULT_OK)
-				{
-					final Androzic application = (Androzic) getApplication();
-					int[] indexes = data.getExtras().getIntArray("index");
-					for (int index : indexes)
-					{
-						TrackOverlay newTrack = new TrackOverlay(this, application.getTrack(index));
-						application.fileTrackOverlays.add(newTrack);
-					}
-				}
-				break;
-		}
-	}
-
 	private OnActionItemClickListener trackActionItemClickListener = new OnActionItemClickListener() {
 		@Override
 		public void onItemClick(QuickAction source, int pos, int actionId)
 		{
 			final int position = selectedKey;
-			final Androzic application = (Androzic) getApplication();
+			final Androzic application = Androzic.getApplication();
 			final Track track = application.getTrack(position);
 
 			switch (actionId)
 			{
 				case qaTrackProperties:
-					startActivity(new Intent(TrackList.this, TrackProperties.class).putExtra("INDEX", position));
+					trackActionsCallback.onTrackEdit(track);
 					break;
 				case qaTrackEdit:
-					setResult(RESULT_OK, new Intent().putExtra("index", position));
-					finish();
+					trackActionsCallback.onTrackEditPath(track);
 					break;
 				case qaTrackToRoute:
-					startActivity(new Intent(TrackList.this, TrackToRoute.class).putExtra("INDEX", position));
-					finish();
+					trackActionsCallback.onTrackToRoute(track);
 					break;
 				case qaTrackSave:
-					startActivity(new Intent(TrackList.this, TrackSave.class).putExtra("INDEX", position));
+					trackActionsCallback.onTrackSave(track);
 					break;
 				case qaTrackRemove:
 					application.removeTrack(track);

@@ -119,7 +119,7 @@ import com.androzic.route.RouteList;
 import com.androzic.route.RouteListActivity;
 import com.androzic.route.RouteStart;
 import com.androzic.track.TrackExportDialog;
-import com.androzic.track.TrackList;
+import com.androzic.track.TrackListActivity;
 import com.androzic.util.Astro;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.OziExplorerFiles;
@@ -127,7 +127,6 @@ import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
 import com.androzic.waypoint.WaypointFileList;
 import com.androzic.waypoint.WaypointInfo;
-import com.androzic.waypoint.WaypointList;
 import com.androzic.waypoint.WaypointListActivity;
 import com.androzic.waypoint.WaypointProject;
 import com.androzic.waypoint.WaypointProperties;
@@ -1642,7 +1641,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 				startActivityForResult(new Intent(this, WaypointFileList.class), RESULT_LOAD_WAYPOINTS);
 				return true;
 			case R.id.menuManageTracks:
-				startActivityForResult(new Intent(this, TrackList.class), RESULT_MANAGE_TRACKS);
+				startActivityForResult(new Intent(this, TrackListActivity.class), RESULT_MANAGE_TRACKS);
 				return true;
 			case R.id.menuExportCurrentTrack:
 		        FragmentManager fm = getSupportFragmentManager();
