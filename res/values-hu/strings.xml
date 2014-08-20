@@ -209,7 +209,7 @@
   <string name="pref_onlinemap_title">Térkép-szolgáltató</string>
   <string name="pref_onlinemap_summary">Online térkép forrása</string>
   <string name="pref_onlinemapscale_title">Alapértelmezett nagyítási szint</string>
-  <string name="pref_onlinemapscale_summary">Nagyítási szintet 100 %-ban értelmezi</string>
+  <string name="pref_onlinemapscale_summary">Nagyítási szintet 100% -ban értelmezi</string>
   <string name="pref_loc_title">Pozició</string>
   <string name="pref_loc_usenetwork_title">Használd a mobilhálózatot</string>
   <string name="pref_loc_usenetwork_summary">Használd mobilhálózatot helymeghatározásra, ha a GPS jel nem elérhető</string>
