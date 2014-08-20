@@ -75,6 +75,7 @@ import com.androzic.location.LocationService;
 import com.androzic.map.Map;
 import com.androzic.map.MapIndex;
 import com.androzic.map.MockMap;
+import com.androzic.map.SASMapLoader;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.TileProvider;
 import com.androzic.navigation.NavigationService;
@@ -1607,6 +1608,29 @@ public class Androzic extends BaseApplication
 			}
 		}
 
+		// SAS maps
+		File sasRoot = new File(rootPath, "sas");
+		File[] files = sasRoot.listFiles();
+		if (files != null)
+		{
+			for (File file: files)
+			{
+				if (file.isDirectory())
+				{
+					try
+					{
+						maps.addMap(SASMapLoader.load(file));
+					}
+					catch (IOException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+				
+		// Online maps
 		onlineMaps = new ArrayList<TileProvider>();
 		boolean useOnline = settings.getBoolean(getString(R.string.pref_useonlinemap), getResources().getBoolean(R.bool.def_useonlinemap));
 		String current = settings.getString(getString(R.string.pref_onlinemap), getResources().getString(R.string.def_onlinemap));
