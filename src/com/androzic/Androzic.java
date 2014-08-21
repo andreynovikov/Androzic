@@ -1230,9 +1230,7 @@ public class Androzic extends BaseApplication
 		boolean newmap = setMap(newMap);
 		if (currentMap != null)
 		{
-			int x = currentMap.getScaledWidth() / 2;
-			int y = currentMap.getScaledHeight() / 2;
-			currentMap.getLatLonByXY(x, y, mapCenter);
+			currentMap.getMapCenter(mapCenter);
 			suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
 			coveringMaps = null;
 		}
