@@ -23,6 +23,8 @@ package com.androzic.map;
 import java.io.File;
 import java.io.IOException;
 
+import android.util.Log;
+
 import com.androzic.map.sas.SASMap;
 
 public class SASMapLoader
@@ -46,13 +48,38 @@ public class SASMapLoader
 				minZoom = z;
 			if (z > maxZoom)
 				maxZoom = z;
-			if (ext == null)
-				ext = searchForTile(file, zoom);
 		}
+		
+		int[] corners = new int[4];
+		ext = calculateCorners(file, maxZoom, corners);
+		
 		if (maxZoom > 0 && ext != null)
 		{
+			
 			SASMap map = new SASMap(name, file.getAbsolutePath(), ext, minZoom, maxZoom);
 			map.ellipsoid = ellipsoid;
+			map.width = (corners[2] - corners[0] + 1) * SASMap.TILE_WIDTH;
+			map.height = (corners[3] - corners[2] + 1) * SASMap.TILE_HEIGHT;
+			
+			Log.e("SAS", corners[0] + "," + corners[1] + " - " + corners[2] + "," + corners[3]);
+			map.setCornersAmount(4);
+			map.cornerMarkers[0].x = corners[0] * SASMap.TILE_WIDTH;
+			map.cornerMarkers[0].y = corners[1] * SASMap.TILE_HEIGHT;
+			map.cornerMarkers[1].x = corners[0] * SASMap.TILE_WIDTH;
+			map.cornerMarkers[1].y = (corners[3] + 1) * SASMap.TILE_HEIGHT;
+			map.cornerMarkers[2].x = (corners[2] + 1) * SASMap.TILE_WIDTH;
+			map.cornerMarkers[2].y = (corners[3] + 1) * SASMap.TILE_HEIGHT;
+			map.cornerMarkers[3].x = (corners[2] + 1) * SASMap.TILE_WIDTH;
+			map.cornerMarkers[3].y = corners[1] * SASMap.TILE_HEIGHT;
+			double[] ll = new double[2];
+			for (int i = 0; i < 4; i++)
+			{
+				map.getLatLonByXY(map.cornerMarkers[i].x, map.cornerMarkers[i].y, ll);
+				map.cornerMarkers[i].lat = ll[0];
+				map.cornerMarkers[i].lon = ll[1];
+				Log.e("SAS", map.cornerMarkers[i].lat + "," + map.cornerMarkers[i].lon);
+			}
+
 			return map;
 		}
 		else
@@ -61,31 +88,61 @@ public class SASMapLoader
 		}
 	}
 
-	private static String searchForTile(File file, String zoom)
+	private static String calculateCorners(File file, int zoom, int[] corners)
 	{
-		File root = new File(file, zoom);
+		int minX = Integer.MAX_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int maxY = Integer.MIN_VALUE;
+		String ext = null;
+
+		File root = new File(file, "z" + zoom);
+		Log.e("SAS", root.getAbsolutePath());
 		File[] x1024 = root.listFiles();
 		if (x1024 == null)
 			return null;
+
 		for (File x1024file: x1024)
 		{
-			File[] x = x1024file.listFiles();
-			if (x == null)
+			File[] xs = x1024file.listFiles();
+			if (xs == null)
 				continue;
-			for (File xfile: x)
+			for (File xfile: xs)
 			{
+				int x = Integer.parseInt(xfile.getName().substring(1));
+				if (x < minX)
+					minX = x;
+				if (x > maxX)
+					maxX = x;
+				
 				File[] y1024 = xfile.listFiles();
 				if (y1024 == null)
 					continue;
 				for (File y1024file: y1024)
 				{
-					String[] y = y1024file.list();
-					if (y == null)
+					String[] ys = y1024file.list();
+					if (ys == null)
 						continue;
-					return y[0].substring(y[0].lastIndexOf("."));
+					for (String yf: ys)
+					{
+						int dot = yf.lastIndexOf(".");
+						int y = Integer.parseInt(yf.substring(1, dot));
+						if (y < minY)
+							minY = y;
+						if (y > maxY)
+							maxY = y;
+						if (ext == null)
+							ext = yf.substring(dot);
+					}
 				}
 			}
 		}
-		return null;
+
+		corners[0] = minX;
+		corners[1] = minY;
+		corners[2] = maxX;
+		corners[3] = maxY;
+
+		return ext;
 	}
 }
