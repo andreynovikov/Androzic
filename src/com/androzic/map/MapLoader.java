@@ -348,9 +348,9 @@ public class MapLoader
 			map.cornerMarkers[1].x = 0;
 			map.cornerMarkers[1].y = map.height - 1;
 			map.cornerMarkers[2].x = map.width - 1;
-			map.cornerMarkers[2].y = 0;
+			map.cornerMarkers[2].y = map.height - 1;
 			map.cornerMarkers[3].x = map.width - 1;
-			map.cornerMarkers[3].y = map.height - 1;
+			map.cornerMarkers[3].y = 0;
 			double[] ll = new double[2];
 			for (int i = 0; i < 4; i++)
 			{
