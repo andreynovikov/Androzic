@@ -21,11 +21,7 @@
 package com.androzic;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -80,7 +76,6 @@ public class Splash extends Activity implements OnClickListener
 	private static final int RES_YES = 1;
 	private static final int RES_NO = 2;
 
-	private static final int DOWNLOAD_SIZE = 207216;
 	private static final int PROGRESS_STEP = 10000;
 
 	private int result;
@@ -125,8 +120,8 @@ public class Splash extends Activity implements OnClickListener
 		progress = (ProgressBar) findViewById(R.id.progress);
 		message = (TextView) findViewById(R.id.message);
 
-		message.setText(getString(R.string.msg_connectingtoserver));
-		progress.setMax(DOWNLOAD_SIZE + PROGRESS_STEP * 4);
+		message.setText(getString(R.string.msg_wait));
+		progress.setMax(PROGRESS_STEP * 4);
 
 		yes = (Button) findViewById(R.id.yes);
 		yes.setOnClickListener(this);
@@ -471,124 +466,9 @@ public class Splash extends Activity implements OnClickListener
 			msg.setData(b);
 			mHandler.sendMessage(msg);
 
-			// load maps if no any found
+			// put world map if no any found
 			if (mapdir.list().length == 0)
-			{
-				wait = true;
-				msg = mHandler.obtainMessage(MSG_ASK);
-				b = new Bundle();
-				b.putString("message", getString(R.string.nomaps_explained, application.getMapPath()));
-				msg.setData(b);
-				mHandler.sendMessage(msg);
-
-				while (wait)
-				{
-					try
-					{
-						sleep(100);
-					}
-					catch (InterruptedException e)
-					{
-						e.printStackTrace();
-					}
-				}
-
-				if (result == RES_YES)
-				{
-					try
-					{
-						// URL u = new URL("http://androzic.googlecode.com/files/world.ozfx3");
-						URL u = new URL("https://docs.google.com/uc?export=download&id=0Bxnm5oGXU2cja2lQMzVvWFNpZjQ");
-						HttpURLConnection c = (HttpURLConnection) u.openConnection();
-						c.setRequestMethod("GET");
-						c.setDoOutput(true);
-						c.connect();
-						FileOutputStream f = new FileOutputStream(new File(application.getMapPath(), "world.ozf2"));
-
-						InputStream in = c.getInputStream();
-
-						msg = mHandler.obtainMessage(MSG_STATUS);
-						b = new Bundle();
-						b.putString("message", getString(R.string.msg_loadingimagefile));
-						msg.setData(b);
-						mHandler.sendMessage(msg);
-
-						byte[] buffer = new byte[1024];
-						int len = 0;
-						while ((len = in.read(buffer)) > 0)
-						{
-							f.write(buffer, 0, len);
-
-							total += len;
-							msg = mHandler.obtainMessage(MSG_PROGRESS);
-							b = new Bundle();
-							b.putInt("total", total);
-							msg.setData(b);
-							mHandler.sendMessage(msg);
-						}
-						f.close();
-
-						msg = mHandler.obtainMessage(MSG_STATUS);
-						b = new Bundle();
-						b.putString("message", getString(R.string.msg_loadingmapfile));
-						msg.setData(b);
-						mHandler.sendMessage(msg);
-
-						// u = new URL("http://androzic.googlecode.com/files/world.map");
-						u = new URL("https://docs.google.com/uc?export=download&id=0Bxnm5oGXU2cjWllteG4tSDBxekU");
-						c = (HttpURLConnection) u.openConnection();
-						c.setRequestMethod("GET");
-						c.setDoOutput(true);
-						c.connect();
-						f = new FileOutputStream(new File(application.getMapPath(), "world.map"));
-
-						in = c.getInputStream();
-
-						buffer = new byte[1024];
-						len = 0;
-						while ((len = in.read(buffer)) > 0)
-						{
-							f.write(buffer, 0, len);
-
-							total += len;
-							msg = mHandler.obtainMessage(MSG_PROGRESS);
-							b = new Bundle();
-							b.putInt("total", total);
-							msg.setData(b);
-							mHandler.sendMessage(msg);
-						}
-						f.close();
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-						msg = mHandler.obtainMessage(MSG_ERROR);
-						b = new Bundle();
-						b.putString("message", getString(R.string.err_noconnection));
-						msg.setData(b);
-						mHandler.sendMessage(msg);
-						File dir = new File(application.getMapPath());
-						File[] files = dir.listFiles();
-						if (files != null)
-						{
-							for (int i = 0; i < files.length; i++)
-							{
-								files[i].delete();
-							}
-						}
-						return;
-					}
-				}
-			}
-			else
-			{
-				total += DOWNLOAD_SIZE;
-				msg = mHandler.obtainMessage(MSG_PROGRESS);
-				b = new Bundle();
-				b.putInt("total", total);
-				msg.setData(b);
-				mHandler.sendMessage(msg);
-			}
+				application.copyAssets("maps", mapdir);
 
 			msg = mHandler.obtainMessage(MSG_STATUS);
 			b = new Bundle();

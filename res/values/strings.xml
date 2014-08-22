@@ -37,14 +37,10 @@
     <string name="msg_wait">Please wait&#8230;</string>
     <string name="msg_scansdcard">Scanning SD card</string>
     <string name="msg_badtrackimplementation">Please notice that performance will degrade on long tracks, be patient.</string>
-    <string name="msg_connectingtoserver">Connecting to server&#8230;</string>
-    <string name="msg_loadingimagefile">Loading world map image file&#8230;</string>
-    <string name="msg_loadingmapfile">Loading world map data file&#8230;</string>
     <string name="msg_initializingmaps">Initializing maps&#8230;</string>
     <string name="msg_initializingdata">Initializing data&#8230;</string>
     <string name="msg_initializingplugins">Initializing plugins&#8230;</string>
     <string name="msg_initializingview">Initializing view&#8230;</string>
-    <string name="msg_cleaning">Cleaning&#8230;</string>
     <string name="msg_paid">Donated version</string>
     <string name="msg_dedicated">Dedicated to Olya</string>
     <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
@@ -145,7 +141,6 @@
 		    
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>
-    <string name="nomaps_explained">Map folder &#8216;%s&#8217; is empty. Download and install world map (250KB)?</string>
     <string name="upto">Up to %.0f meters</string>
     <string name="arrived">You have reached route destination</string>
     <string name="restart_needed">Application restart needed</string>

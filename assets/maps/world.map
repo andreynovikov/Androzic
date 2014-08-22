@@ -1,0 +1,56 @@
+OziExplorer Map Data File Version 2.2
+World Map
+world.ozf2
+1 ,Map Code,
+WGS 84,WGS 84,   0.0000,   0.0000,WGS 84
+Reserved 1
+Reserved 2
+Magnetic Variation,,,E
+Map Projection,Mercator,PolyCal,No,AutoCalOnly,No,BSBUseWPX,No
+Point01,xy,    0,    0,in, deg,  85,  3.0677,N, 180,   0.0000,W, grid,   ,           ,           ,N
+Point02,xy, 2047,    0,in, deg,  85,  3.0677,N, 179,  49.4531,E, grid,   ,           ,           ,N
+Point03,xy,    0, 2047,in, deg,  85,  2.1565,S, 180,   0.0000,W, grid,   ,           ,           ,N
+Point04,xy, 2047, 2047,in, deg,  85,  2.1565,S, 179,  49.4531,E, grid,   ,           ,           ,N
+Point05,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point06,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point07,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point08,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point09,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point10,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point11,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point12,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point13,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point14,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point15,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point16,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point17,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point18,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point19,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point20,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point21,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point22,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point23,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point24,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point25,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point26,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point27,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point28,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point29,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Point30,xy,     ,     ,in, deg,    ,        ,,    ,        ,, grid,   ,           ,           ,
+Projection Setup,,,,,,,,,,
+Map Feature = MF ; Map Comment = MC     These follow if they exist
+Track File = TF      These follow if they exist
+Moving Map Parameters = MM?    These follow if they exist
+MM0,Yes
+MMPNUM,4
+MMPXY,1,0,0
+MMPXY,2,2047,0
+MMPXY,3,2047,2047
+MMPXY,4,0,2047
+MMPLL,1,-180.000000,  85.051129
+MMPLL,2, 180.000000,  85.051129
+MMPLL,3, 180.000000, -85.051129
+MMPLL,4,-180.000000, -85.051129
+MM1B,19567.87924100512
+MOP,Map Open Position,0,0
+IWH,Map Image Width/Height,2048,2048
