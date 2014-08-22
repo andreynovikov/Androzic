@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014 Andrey Novikov <http://andreynovikov.info/>
  * 
  * This file is part of Androzic application.
  * 
@@ -27,7 +27,6 @@ import java.util.Comparator;
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -43,10 +42,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,7 +66,6 @@ import com.androzic.data.WaypointSet;
 import com.androzic.ui.ExpandableListFragment;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
-import com.github.espiandev.showcaseview.ShowcaseView;
 
 public class WaypointList extends ExpandableListFragment implements OnItemLongClickListener
 {
@@ -86,7 +82,6 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 	private WaypointExpandableListAdapter adapter;
 	private QuickAction quickAction;
 	private QuickAction setQuickAction;
-	private ShowcaseView showcaseView;
 
 	private long selectedKey;
 	private int selectedSetKey;
@@ -176,7 +171,6 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 	public void onResume()
 	{
 		super.onResume();
-		runShowcase();
 	}
 
 	@Override
@@ -553,87 +547,6 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 				}
 			});
 			notifyDataSetChanged();
-		}
-	}
-
-	private enum Showcase
-	{
-		NONE, LOADSET, SETACTIONS
-	};
-
-	@SuppressLint("NewApi")
-	private Showcase selectShowcase(SharedPreferences internal)
-	{
-		FragmentActivity activity = getActivity();
-		boolean hasActionBar = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) && activity.getActionBar() != null;
-
-		if (!internal.getBoolean("shown_load_waypointset", false) && hasActionBar)
-			return Showcase.LOADSET;
-
-		if (!internal.getBoolean("shown_waypointset_actions", false))
-			return Showcase.SETACTIONS;
-
-		return Showcase.NONE;
-	}
-
-	private void runShowcase()
-	{
-		Activity activity = getActivity();
-		final SharedPreferences internal = activity.getSharedPreferences("showcase", Context.MODE_PRIVATE);
-		Showcase show = selectShowcase(internal);
-
-		if (show == Showcase.NONE)
-		{
-			if (showcaseView != null)
-				showcaseView.hide();
-			return;
-		}
-
-		if (showcaseView == null)
-		{
-			getExpandableListView().collapseGroup(0);
-			ShowcaseView.ConfigOptions showcaseOptions = new ShowcaseView.ConfigOptions();
-			showcaseView = ShowcaseView.insertShowcaseView(0, 0, activity, "", "", showcaseOptions);
-		}
-
-		switch (show)
-		{
-			case LOADSET:
-			{
-				showcaseView.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.menuLoadWaypoints, activity);
-				showcaseView.setText(R.string.showcase_load_waypoints_title, R.string.showcase_load_waypoints_description);
-				showcaseView.overrideButtonClick(new View.OnClickListener() {
-					@Override
-					public void onClick(View v)
-					{
-						internal.edit().putBoolean("shown_load_waypointset", true).commit();
-						runShowcase();
-					}
-				});
-				break;
-			}
-			case SETACTIONS:
-			{
-				getExpandableListView().post(new Runnable() {
-					@Override
-					public void run()
-					{
-						showcaseView.setShowcaseView(getExpandableListView().getChildAt(0));
-						showcaseView.setText(R.string.showcase_waypointset_actions_title, R.string.showcase_waypointset_actions_description);
-						showcaseView.overrideButtonClick(new View.OnClickListener() {
-							@Override
-							public void onClick(View v)
-							{
-								internal.edit().putBoolean("shown_waypointset_actions", true).commit();
-								runShowcase();
-							}
-						});
-					}
-				});
-				break;
-			}
-			default:
-				break;
 		}
 	}
 }
