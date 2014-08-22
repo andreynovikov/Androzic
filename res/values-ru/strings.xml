@@ -36,16 +36,12 @@
   <string name="msg_wait">Пожалуйста, подождите&#8230;</string>
   <string name="msg_scansdcard">Сканирование SD-карты</string>
   <string name="msg_badtrackimplementation">Обратите внимание, что работа с длинными файловыми треками сказывается на производительности, проявляйте терпение.</string>
-  <string name="msg_connectingtoserver">Подключение к серверу#8230;</string>
-  <string name="msg_loadingimagefile">Загрузка файла изображения#8230;</string>
-  <string name="msg_loadingmapfile">Загрузка файла карты&#8230;</string>
   <string name="msg_initializingmaps">Инициализация карт&#8230;</string>
   <string name="msg_initializingdata">Инициализация данных&#8230;</string>
   <string name="msg_initializingplugins">Инициализация плагинов&#8230;</string>
   <string name="msg_initializingview">Инициализация экрана&#8230;</string>
-  <string name="msg_cleaning">Очистка&#8230;</string>
   <string name="msg_paid">Платная версия</string>
-  <string name="msg_dedicated">Посвящается Оле</string>
+  <string name="msg_dedicated">Посвящено моей прекрасной Оле</string>
   <string name="msg_nothing_found">Ничего не было найдено. Пожалуйста, примите во внимание что данные находятся только если они загружены в Androzic, местоположения находятся по имени только при наличии подключения к Интернету.</string>
   <string name="msg_empty_route_list">Нет доступных маршрутов. Используйте меню для создания маршрута или загрузки его из файла.</string>
   <string name="msg_empty_track_list">Нет доступных треков. Используйте меню для загрузки трека из файла.</string>
@@ -138,7 +134,6 @@
   <string name="skip_single_locations">Пропускать одиночные местоположения</string>
   <string name="badmaps">Ошибка индексирования карт</string>
   <string name="nomaps">Карт не найдено</string>
-  <string name="nomaps_explained">Папка с картами «%s» пустая. Загрузить и установить карту мира (250KB)?</string>
   <string name="upto">С точностью до %.0f м</string>
   <string name="arrived">Вы достигли точки назначения</string>
   <string name="restart_needed">Требуется перезапуск программы</string>
@@ -227,6 +222,7 @@
   <string name="pref_folder_title">Файлы</string>
   <string name="pref_folder_prefix_title">Папка приложения</string>
   <string name="pref_folder_map_title">Папка карт</string>
+  <string name="pref_folder_sas_title">Папка кэша SAS.Планета</string>
   <string name="pref_folder_data_title">Папка данных</string>
   <string name="pref_folder_icon_title">Папка иконок</string>
   <string name="pref_folder_prefix_caution">Данная настройка предназначена только для продвинутых пользователей. Изменяйте её с осторожностью: некорректные значения могут привести к невозможности запуска приложения.</string>
