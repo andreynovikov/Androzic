@@ -467,7 +467,8 @@ public class Splash extends Activity implements OnClickListener
 			mHandler.sendMessage(msg);
 
 			// put world map if no any found
-			if (mapdir.list().length == 0)
+			String[] mapfiles = mapdir.list();
+			if (mapfiles != null && mapfiles.length == 0)
 				application.copyAssets("maps", mapdir);
 
 			msg = mHandler.obtainMessage(MSG_STATUS);
