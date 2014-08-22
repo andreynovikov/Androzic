@@ -1,8 +1,9 @@
-<b>Navigation client that uses OziExplorer maps</b> (ozf2, ozfx3). Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required). 
+<b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required).
 
 <b>Application features:</b>
-• support for ozf2, ozfx3 maps
+• support for ozf2 maps (ozfx3 maps can be opened but not guaranteed)
 • support for online maps
+• support for SAS.Planet maps cache
 • works without maps as a simple navigator
 • track recording in background (power-safe)
 • navigation to waypoint and via route
@@ -24,4 +25,4 @@
 
 <b>Androzic is free and open-source.</b> It is distributed under GNU GPL v3 license. More information can be found on http://androzic.com/
 
-<b>Caution!</b> Current version of Img2Ozf generates ozfx3 maps in new encrypted format, they won't open in Androzic. Please use older versions of Img2Ozf, last known good version is 3.03.
+<b>Caution!</b> Modern versions of Img2Ozf generate maps in new encrypted format, they won't open in Androzic. Please use older versions of Img2Ozf, last known good version is 3.03.

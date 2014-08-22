@@ -1,9 +1,7 @@
 bin/
 gen/
-obj/
 .svn/
 ressrc/
 *.apk
-*.so
 local.properties
 Thumbs.db
