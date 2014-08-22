@@ -23,8 +23,6 @@ package com.androzic.map;
 import java.io.File;
 import java.io.IOException;
 
-import android.util.Log;
-
 import com.androzic.map.sas.SASMap;
 
 public class SASMapLoader
@@ -56,12 +54,9 @@ public class SASMapLoader
 		if (maxZoom > 0 && ext != null)
 		{
 			
-			SASMap map = new SASMap(name, file.getAbsolutePath(), ext, minZoom, maxZoom);
+			SASMap map = new SASMap(name, file.getAbsolutePath(), ext, minZoom - 1, maxZoom - 1);
 			map.ellipsoid = ellipsoid;
-			map.width = (corners[2] - corners[0] + 1) * SASMap.TILE_WIDTH;
-			map.height = (corners[3] - corners[2] + 1) * SASMap.TILE_HEIGHT;
 			
-			Log.e("SAS", corners[0] + "," + corners[1] + " - " + corners[2] + "," + corners[3]);
 			map.setCornersAmount(4);
 			map.cornerMarkers[0].x = corners[0] * SASMap.TILE_WIDTH;
 			map.cornerMarkers[0].y = corners[1] * SASMap.TILE_HEIGHT;
@@ -77,7 +72,6 @@ public class SASMapLoader
 				map.getLatLonByXY(map.cornerMarkers[i].x, map.cornerMarkers[i].y, ll);
 				map.cornerMarkers[i].lat = ll[0];
 				map.cornerMarkers[i].lon = ll[1];
-				Log.e("SAS", map.cornerMarkers[i].lat + "," + map.cornerMarkers[i].lon);
 			}
 
 			return map;
@@ -97,7 +91,6 @@ public class SASMapLoader
 		String ext = null;
 
 		File root = new File(file, "z" + zoom);
-		Log.e("SAS", root.getAbsolutePath());
 		File[] x1024 = root.listFiles();
 		if (x1024 == null)
 			return null;
