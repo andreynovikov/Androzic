@@ -236,6 +236,7 @@
     <string name="pref_folder_title">Folders</string>
     <string name="pref_folder_prefix_title">Application folder</string>
     <string name="pref_folder_map_title">Maps folder</string>
+    <string name="pref_folder_sas_title">SAS.Planet cache folder</string>
     <string name="pref_folder_data_title">Data folder</string>
     <string name="pref_folder_icon_title">Icons folder</string>
     <string name="pref_folder_prefix_caution">This option is for advanced users only. Use it with caution: if not set properly application can fail to start.</string>

@@ -12,6 +12,10 @@
         android:key="@string/pref_folder_data"
         android:title="@string/pref_folder_data_title" />
     <com.androzic.ui.FolderPickerPreference
+        android:defaultValue="@string/def_folder_sas"
+        android:key="@string/pref_folder_sas"
+        android:title="@string/pref_folder_sas_title" />
+    <com.androzic.ui.FolderPickerPreference
         android:defaultValue="@string/def_folder_icon"
         android:key="@string/pref_folder_icon"
         android:title="@string/pref_folder_icon_title" />

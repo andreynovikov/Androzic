@@ -16,6 +16,7 @@
     <string name="pref_folder_root">folderroot</string>
     <string name="pref_folder_map">foldermapnew</string>
     <string name="pref_folder_map_old">foldermap</string>
+    <string name="pref_folder_sas">foldersas</string>
     <string name="pref_folder_waypoint">folderwaypoint</string>
     <string name="pref_folder_data">folderdata</string>
     <string name="pref_folder_icon">foldericon</string>
@@ -101,6 +102,7 @@
 	<string name="def_grid_userscale">200</string>
 	<string name="def_grid_usermpp">20</string>
 	<string name="def_folder_map">Androzic/maps</string>
+	<string name="def_folder_sas">Androzic/sas</string>
 	<string name="def_folder_icon">Androzic/icons</string>
 	<string name="def_folder_data">Androzic/data</string>
 	<string name="def_folder_prefix">Androzic</string>

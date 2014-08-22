@@ -103,6 +103,7 @@ import com.jhlabs.map.proj.ProjectionException;
 public class Androzic extends BaseApplication
 {
 	public static final int PATH_DATA = 0x001;
+	public static final int PATH_SAS = 0x002;
 	public static final int PATH_ICONS = 0x008;
 	
 	public static final int ORDER_SHOW_PREFERENCE = 0;
@@ -165,6 +166,7 @@ public class Androzic extends BaseApplication
 	public String dataPath;
 	private String rootPath;
 	private String mapPath;
+	private String sasPath;
 	public String iconPath;
 	public boolean mapsInited = false;
 	public MapActivity mapActivity;
@@ -1509,6 +1511,8 @@ public class Androzic extends BaseApplication
 			dataPath = path;
 		if ((pathtype & PATH_ICONS) > 0)
 			iconPath = path;
+		if ((pathtype & PATH_SAS) > 0)
+			sasPath = path;
 	}
 
 	public boolean setMapPath(String path)
@@ -1607,7 +1611,7 @@ public class Androzic extends BaseApplication
 		}
 
 		// SAS maps
-		File sasRoot = new File(rootPath, "sas");
+		File sasRoot = new File(sasPath);
 		File[] files = sasRoot.listFiles();
 		if (files != null)
 		{

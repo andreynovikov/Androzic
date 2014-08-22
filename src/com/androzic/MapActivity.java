@@ -2347,6 +2347,10 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		{
 			application.setDataPath(Androzic.PATH_DATA, sharedPreferences.getString(key, resources.getString(R.string.def_folder_data)));
 		}
+		else if (getString(R.string.pref_folder_sas).equals(key))
+		{
+			application.setDataPath(Androzic.PATH_SAS, sharedPreferences.getString(key, resources.getString(R.string.def_folder_sas)));
+		}
 		else if (getString(R.string.pref_folder_icon).equals(key))
 		{
 			application.setDataPath(Androzic.PATH_ICONS, sharedPreferences.getString(key, resources.getString(R.string.def_folder_icon)));
