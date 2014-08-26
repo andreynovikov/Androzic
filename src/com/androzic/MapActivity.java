@@ -131,11 +131,8 @@ import com.androzic.waypoint.WaypointList;
 import com.androzic.waypoint.WaypointListActivity;
 import com.androzic.waypoint.WaypointProject;
 import com.androzic.waypoint.WaypointProperties;
-import com.github.espiandev.showcaseview.ShowcaseView;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorSet;
 
-public class MapActivity extends ActionBarActivity implements MapHolder, View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener, ShowcaseView.OnShowcaseEventListener
+public class MapActivity extends ActionBarActivity implements MapHolder, View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener
 {
 	private static final String TAG = "MapActivity";
 
@@ -204,7 +201,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	protected QuickAction3D rteQuickAction;
 	protected QuickAction3D mobQuickAction;
 	private ViewGroup dimView;
-	private ShowcaseView showcaseView;
 
 	protected Androzic application;
 
@@ -547,8 +543,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		map.updateMapInfo();
 		map.update();
 		map.requestFocus();
-
-		runShowcase();
 	}
 
 	@Override
@@ -2506,155 +2500,4 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			}
 		}
 	}
-
-	@Override
-	public void onShowcaseViewHide(ShowcaseView showcaseView)
-	{
-		Panel panel = (Panel) findViewById(R.id.panel);
-		panel.setOpen(false, true);
-	}
-
-	@Override
-	public void onShowcaseViewShow(ShowcaseView showcaseView)
-	{
-	}
-
-	private enum Showcase{NONE, PANEL, FOLLOW, ADDWPT, SEARCH};
-	
-	@SuppressLint("NewApi")
-	private Showcase selectShowcase(SharedPreferences internal)
-	{
-		boolean hasActionBar = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) && getActionBar() != null;
-
-		if (! internal.getBoolean("shown_panel", false))
-			return Showcase.PANEL;
-		
-		if (! internal.getBoolean("shown_follow", false))
-			return Showcase.FOLLOW;
-		
-		if (! internal.getBoolean("shown_add_waypoint", false) && hasActionBar)
-			return Showcase.ADDWPT;
-		
-		if (! internal.getBoolean("shown_search", false) && hasActionBar)
-			return Showcase.SEARCH;
-
-		return Showcase.NONE;
-	}
-	
-	private void runShowcase()
-	{
-		final SharedPreferences internal = getSharedPreferences("showcase", Context.MODE_PRIVATE);
-		Showcase show = selectShowcase(internal);
-		
-		if (show == Showcase.NONE)
-		{
-			if (showcaseView != null)
-				showcaseView.hide();
-			return;
-		}
-		
-		if (showcaseView == null)
-		{
-			ShowcaseView.ConfigOptions showcaseOptions = new ShowcaseView.ConfigOptions();
-			showcaseView = ShowcaseView.insertShowcaseView(0, 0, this, "", "", showcaseOptions);
-			showcaseView.setOnShowcaseEventListener(this);
-		}
-		
-		switch (show)
-		{
-			case PANEL:
-			{
-				Panel panel = (Panel) findViewById(R.id.panel);
-				panel.setOpen(false, false);
-				showcaseView.setShowcaseView(panel.getHandle());
-				showcaseView.setText(R.string.showcase_panel_title, R.string.showcase_panel_description);
-				showcaseView.overrideButtonClick(panelShowcaseListener);
-				break;
-			}
-			case FOLLOW:
-			{
-				setFollowing(false);
-				Panel panel = (Panel) findViewById(R.id.panel);
-				panel.setOpen(true, false);
-				showcaseView.setShowcaseView(findViewById(R.id.follow));
-				showcaseView.setText(R.string.showcase_follow_title, R.string.showcase_follow_description);
-				showcaseView.overrideButtonClick(new View.OnClickListener() {
-					@Override
-					public void onClick(View v)
-					{
-						Panel panel = (Panel) findViewById(R.id.panel);
-						panel.setOpen(false, true);
-						internal.edit().putBoolean("shown_follow", true).commit();
-						runShowcase();
-					}
-				});
-				break;
-			}
-			case ADDWPT:
-			{
-				showcaseView.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.menuAddWaypoint, this);
-				showcaseView.setText(R.string.showcase_add_waypoint_title, R.string.showcase_add_waypoint_description);
-				showcaseView.overrideButtonClick(new View.OnClickListener() {
-					@Override
-					public void onClick(View v)
-					{
-						internal.edit().putBoolean("shown_add_waypoint", true).commit();
-						runShowcase();
-					}
-				});
-				break;
-			}
-			case SEARCH:
-			{
-				showcaseView.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.menuSearch, this);
-				showcaseView.setText(R.string.showcase_search_title, R.string.showcase_search_description);
-				showcaseView.overrideButtonClick(new View.OnClickListener() {
-					@Override
-					public void onClick(View v)
-					{
-						internal.edit().putBoolean("shown_search", true).commit();
-						runShowcase();
-					}
-				});
-				break;
-			}
-			default:
-				break;
-		}
-	}
-	
-	private View.OnClickListener panelShowcaseListener = new View.OnClickListener() {
-		
-		@Override
-		public void onClick(View v)
-		{
-			AnimatorSet as = showcaseView.animateGesture(0, 0, -200, 0);
-			as.addListener(new Animator.AnimatorListener() {
-				
-				@Override
-				public void onAnimationStart(Animator animation)
-				{
-				}
-				
-				@Override
-				public void onAnimationRepeat(Animator animation)
-				{
-				}
-				
-				@Override
-				public void onAnimationEnd(Animator animation)
-				{
-					SharedPreferences internal = getSharedPreferences("showcase", Context.MODE_PRIVATE);
-					internal.edit().putBoolean("shown_panel", true).commit();
-					runShowcase();
-				}
-				
-				@Override
-				public void onAnimationCancel(Animator animation)
-				{
-				}
-			});
-			as.start();
-		}
-	};
 }
