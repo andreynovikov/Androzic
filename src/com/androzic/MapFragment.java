@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -136,6 +137,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		map.initialize(application, this);
 
 		currentFile.setOnClickListener(this);
+		mapZoom.setOnClickListener(this);
 		
 		application.setMapHolder(this);
 		
@@ -677,11 +679,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				synchronized (map)
 				{
 					if (application.prevMap())
-					{
-						map.suspendBestMap();
-						map.updateMapInfo();
-						map.update();
-					}
+						mapChanged();
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
@@ -699,15 +697,19 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				synchronized (map)
 				{
 					if (application.nextMap())
-					{
-						map.suspendBestMap();
-						map.updateMapInfo();
-						map.update();
-					}
+						mapChanged();
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
 		});
+	}
+	
+	@Override
+	public void mapChanged()
+	{
+		map.suspendBestMap();
+		map.updateMapInfo();
+		map.update();
 	}
 
 	private void updateGPSStatus()
@@ -863,9 +865,27 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		switch (v.getId())
 		{
 			case R.id.currentfile:
-				//startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
-				break;
-
+		        FragmentManager manager = getFragmentManager();
+		        SuitableMapsList dialog = new SuitableMapsList();
+		        dialog.show(manager, "dialog");
+		        break;
+			case R.id.currentzoom:
+				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
+				executorThread.execute(new Runnable() {
+					public void run()
+					{
+						synchronized (map)
+						{
+							if (application.setZoom(1.))
+							{
+								map.updateMapInfo();
+								map.update();
+							}
+						}
+						finishHandler.sendEmptyMessage(0);
+					}
+				});
 		}
 	}
 

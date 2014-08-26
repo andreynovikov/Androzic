@@ -11,6 +11,7 @@ public interface MapHolder
 	void zoomOut();
 	void previousMap();
 	void nextMap();
+	void mapChanged();
 	void updateCoordinates(double[] latlon);
 	void updateFileInfo();
 	

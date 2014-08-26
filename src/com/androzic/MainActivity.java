@@ -1,14 +1,12 @@
 package com.androzic;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -25,16 +23,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.androzic.data.Waypoint;
+import com.androzic.map.Map;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.RouteList;
 import com.androzic.route.RouteListActivity;
@@ -42,9 +41,8 @@ import com.androzic.ui.DrawerAdapter;
 import com.androzic.ui.DrawerItem;
 import com.androzic.waypoint.OnWaypointActionListener;
 import com.androzic.waypoint.WaypointList;
-import com.androzic.waypoint.WaypointListActivity;
 
-public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnSharedPreferenceChangeListener, OnClickListener
+public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnMapActionListener, OnSharedPreferenceChangeListener, OnClickListener
 {
 	private static final String TAG = "MapActivity";
 
@@ -78,8 +76,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		onSharedPreferenceChanged(settings, getString(R.string.pref_exit));
-
-		setRequestedOrientation(Integer.parseInt(settings.getString(getString(R.string.pref_orientation), "-1")));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_hidestatusbar));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_orientation));
 		settings.registerOnSharedPreferenceChangeListener(this);
 
 		mDrawerItems = new ArrayList<DrawerItem>();
@@ -106,7 +104,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		action = new Intent(this, PreferencesHC.class);
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), action));
 		// add plugins to drawer list
-		Map<String, Pair<Drawable, Intent>> plugins = application.getPluginsViews();
+		java.util.Map<String, Pair<Drawable, Intent>> plugins = application.getPluginsViews();
 		for (String plugin : plugins.keySet())
 		{
 			mDrawerItems.add(new DrawerItem(plugins.get(plugin).first, plugin, plugins.get(plugin).second));
@@ -162,9 +160,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		findViewById(R.id.prevmap).setOnClickListener(this);
 		findViewById(R.id.info).setOnClickListener(this);
 		findViewById(R.id.follow).setOnClickListener(this);
-		findViewById(R.id.locate).setOnClickListener(this);
-		findViewById(R.id.tracking).setOnClickListener(this);
-		findViewById(R.id.expand).setOnClickListener(this);
 
 		if (savedInstanceState == null)
 		{
@@ -204,8 +199,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		// MenuInflater inflater = getMenuInflater();
-		// inflater.inflate(R.menu.options_menu, menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.general_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -215,7 +210,9 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	{
 		// If the nav drawer is open, hide action items related to the content view
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		// menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+		menu.findItem(R.id.action_search).setVisible(!drawerOpen);
+		menu.findItem(R.id.action_locating).setChecked(application.isLocating());
+		menu.findItem(R.id.action_tracking).setChecked(application.isTracking());
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -247,6 +244,12 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		 * }
 		 * return true;
 		 */
+			case R.id.action_locating:
+				application.enableLocating(!application.isLocating());
+				return true;
+			case R.id.action_tracking:
+				application.enableTracking(!application.isTracking());
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -349,66 +352,39 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	}
 
 	@Override
+	public void onMapSelectedAtPosition(Map map)
+	{
+		if (application.setMap(map))
+			application.getMapHolder().mapChanged();
+	}
+
+	@Override
+	public void onMapSelected(Map map)
+	{
+		if (application.loadMap(map))
+			application.getMapHolder().mapChanged();
+	}
+
+	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
 		Resources resources = getResources();
-		// application preferences
-		if (getString(R.string.pref_folder_data).equals(key))
+
+		if (getString(R.string.pref_exit).equals(key))
 		{
-			application.setDataPath(Androzic.PATH_DATA, sharedPreferences.getString(key, resources.getString(R.string.def_folder_data)));
+			exitConfirmation = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			secondBack = false;
 		}
-		else if (getString(R.string.pref_folder_icon).equals(key))
+		else if (getString(R.string.pref_hidestatusbar).equals(key))
 		{
-			application.setDataPath(Androzic.PATH_ICONS, sharedPreferences.getString(key, resources.getString(R.string.def_folder_icon)));
+			if (sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_hidestatusbar)))
+				getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			else
+				getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
 		else if (getString(R.string.pref_orientation).equals(key))
 		{
 			setRequestedOrientation(Integer.parseInt(sharedPreferences.getString(key, "-1")));
-		}
-		else if (getString(R.string.pref_grid_mapshow).equals(key))
-		{
-			application.mapGrid = sharedPreferences.getBoolean(key, false);
-			application.initGrids();
-		}
-		else if (getString(R.string.pref_grid_usershow).equals(key))
-		{
-			application.userGrid = sharedPreferences.getBoolean(key, false);
-			application.initGrids();
-		}
-		else if (getString(R.string.pref_grid_preference).equals(key))
-		{
-			application.gridPrefer = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			application.initGrids();
-		}
-		else if (getString(R.string.pref_grid_userscale).equals(key) || getString(R.string.pref_grid_userunit).equals(key) || getString(R.string.pref_grid_usermpp).equals(key))
-		{
-			application.initGrids();
-		}
-		else if (getString(R.string.pref_useonlinemap).equals(key) && sharedPreferences.getBoolean(key, false))
-		{
-			application.setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
-		}
-		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
-		{
-			application.setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
-		}
-		else if (getString(R.string.pref_mapadjacent).equals(key))
-		{
-			application.adjacentMaps = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapadjacent));
-		}
-		else if (getString(R.string.pref_mapcropborder).equals(key))
-		{
-			application.cropMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapcropborder));
-		}
-		else if (getString(R.string.pref_mapdrawborder).equals(key))
-		{
-			application.drawMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapdrawborder));
-		}
-		// activity preferences
-		else if (getString(R.string.pref_exit).equals(key))
-		{
-			exitConfirmation = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			secondBack = false;
 		}
 	}
 
@@ -474,54 +450,16 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 				application.getMapHolder().previousMap();
 				break;
 			case R.id.maps:
-				//startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
+				// startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
 				break;
 			case R.id.waypoints:
-				//startActivityForResult(new Intent(this, WaypointListActivity.class), RESULT_MANAGE_WAYPOINTS);
+				// startActivityForResult(new Intent(this, WaypointListActivity.class), RESULT_MANAGE_WAYPOINTS);
 				break;
 			case R.id.info:
 				startActivity(new Intent(this, Information.class));
 				break;
 			case R.id.follow:
-				//setFollowing(!map.isFollowing());
-				break;
-			case R.id.locate:
-			{
-				/*
-				boolean isLocating = locationService != null && locationService.isLocating();
-				application.enableLocating(!isLocating);
-				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-				editor.putBoolean(getString(R.string.lc_locate), !isLocating);
-				editor.commit();
-				*/
-				break;
-			}
-			case R.id.tracking:
-			{
-				/*
-				boolean isTracking = locationService != null && locationService.isTracking();
-				application.enableTracking(!isTracking);
-				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-				editor.putBoolean(getString(R.string.lc_track), !isTracking);
-				editor.commit();
-				*/
-				break;
-			}
-			case R.id.expand:
-				ImageButton expand = (ImageButton) findViewById(R.id.expand);
-				/*
-				if (isFullscreen)
-				{
-					getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-					expand.setImageDrawable(getResources().getDrawable(R.drawable.expand));
-				}
-				else
-				{
-					getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-					expand.setImageDrawable(getResources().getDrawable(R.drawable.collapse));
-				}
-				isFullscreen = !isFullscreen;
-				*/
+				// setFollowing(!map.isFollowing());
 				break;
 		}
 	}

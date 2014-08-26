@@ -46,6 +46,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -105,7 +106,7 @@ import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
 import com.jhlabs.map.proj.ProjectionException;
 
-public class Androzic extends BaseApplication
+public class Androzic extends BaseApplication implements OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "Androzic";
 
@@ -1047,6 +1048,19 @@ public class Androzic extends BaseApplication
 			return 0.0;
 	}
 	
+	public boolean setZoom(double zoom)
+	{
+		if (zoom == getZoom())
+			return false;
+		if (currentMap != null)
+		{
+			currentMap.setZoom(zoom);
+			coveringMaps = null;
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean zoomIn()
 	{
 		if (currentMap != null)
@@ -1176,6 +1190,11 @@ public class Androzic extends BaseApplication
 			return false;
 	}
 
+	/**
+	 * Sets map if it available for current location.
+	 * @param id ID of a map to set
+	 * @return true if map was changed
+	 */
 	public boolean selectMap(int id)
 	{
 		if (currentMap != null && currentMap.id == id)
@@ -1204,6 +1223,11 @@ public class Androzic extends BaseApplication
 				break;
 			}
 		}
+		return loadMap(newMap);
+	}
+
+	public boolean loadMap(Map newMap)
+	{
 		boolean newmap = setMap(newMap);
 		if (currentMap != null)
 		{
@@ -1250,7 +1274,7 @@ public class Androzic extends BaseApplication
 		}
 	}
 	
-	synchronized private boolean setMap(final Map newMap)
+	synchronized boolean setMap(final Map newMap)
 	{
 		// TODO should override equals()?
 		if (newMap != null && ! newMap.equals(currentMap) && mapHolder != null)
@@ -1299,6 +1323,17 @@ public class Androzic extends BaseApplication
 				if (s)
 					setMap(onlineMap);
 			}
+		}
+	}
+	
+	public void removeOnlineMap()
+	{
+		maps.removeMap(onlineMap);
+		if (currentMap == onlineMap)
+		{
+			updateLocationMaps(true, true);
+			onlineMap.deactivate();
+			onlineMap = null;
 		}
 	}
 	
@@ -1460,11 +1495,20 @@ public class Androzic extends BaseApplication
 		memmsg = false;
 	}
 
+	public boolean isLocating()
+	{
+		return locationService != null && locationService.isLocating();
+	}
+
 	public void enableLocating(boolean enable)
 	{
 		String action = enable ? LocationService.ENABLE_LOCATIONS : LocationService.DISABLE_LOCATIONS;
 		startService(new Intent(this, LocationService.class).setAction(action));
-		bindService(new Intent(this, LocationService.class), locationConnection, 0);
+		if (locationService == null)
+			bindService(new Intent(this, LocationService.class), locationConnection, 0);
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putBoolean(getString(R.string.lc_locate), enable);
+		editor.commit();
 	}
 	
 	private ServiceConnection locationConnection = new ServiceConnection() {
@@ -1514,7 +1558,7 @@ public class Androzic extends BaseApplication
 			shouldEnableFollowing = shouldEnableFollowing || lastKnownLocation == null;
 
 			lastKnownLocation = location;
-			gpsEnabled = LocationManager.GPS_PROVIDER.equals(location.getProvider());
+			gpsEnabled = gpsEnabled || LocationManager.GPS_PROVIDER.equals(location.getProvider());
 			gpsContinous = continous;
 			gpsGeoid = geoid;
 
@@ -1550,10 +1594,18 @@ public class Androzic extends BaseApplication
 		}
 	};
 
+	public boolean isTracking()
+	{
+		return locationService != null && locationService.isTracking();
+	}
+
 	public void enableTracking(boolean enable)
 	{
 		String action = enable ? LocationService.ENABLE_TRACK : LocationService.DISABLE_TRACK;
 		startService(new Intent(this, LocationService.class).setAction(action));
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putBoolean(getString(R.string.lc_track), enable);
+		editor.commit();
 	}
 	
 	public void setRootPath(String path)
@@ -1919,6 +1971,65 @@ public class Androzic extends BaseApplication
 		}
 	}
 
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+	{
+		Resources resources = getResources();
+		
+		if (getString(R.string.pref_folder_data).equals(key))
+		{
+			setDataPath(Androzic.PATH_DATA, sharedPreferences.getString(key, resources.getString(R.string.def_folder_data)));
+		}
+		else if (getString(R.string.pref_folder_icon).equals(key))
+		{
+			setDataPath(Androzic.PATH_ICONS, sharedPreferences.getString(key, resources.getString(R.string.def_folder_icon)));
+		}
+		else if (getString(R.string.pref_grid_mapshow).equals(key))
+		{
+			mapGrid = sharedPreferences.getBoolean(key, false);
+			initGrids();
+		}
+		else if (getString(R.string.pref_grid_usershow).equals(key))
+		{
+			userGrid = sharedPreferences.getBoolean(key, false);
+			initGrids();
+		}
+		else if (getString(R.string.pref_grid_preference).equals(key))
+		{
+			gridPrefer = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			initGrids();
+		}
+		else if (getString(R.string.pref_grid_userscale).equals(key) || getString(R.string.pref_grid_userunit).equals(key) || getString(R.string.pref_grid_usermpp).equals(key))
+		{
+			initGrids();
+		}
+		else if (getString(R.string.pref_useonlinemap).equals(key))
+		{
+			boolean online = sharedPreferences.getBoolean(key, false);
+			if (online)
+				setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
+			else
+				removeOnlineMap();
+		}
+		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
+		{
+			setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
+		}
+		else if (getString(R.string.pref_mapadjacent).equals(key))
+		{
+			adjacentMaps = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapadjacent));
+		}
+		else if (getString(R.string.pref_mapcropborder).equals(key))
+		{
+			cropMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapcropborder));
+		}
+		else if (getString(R.string.pref_mapdrawborder).equals(key))
+		{
+			drawMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapdrawborder));
+		}
+	}	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig)
 	{
@@ -1983,5 +2094,7 @@ public class Androzic extends BaseApplication
 		}
 		
 		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
-	}	
+		
+		settings.registerOnSharedPreferenceChangeListener(this);
+	}
 }

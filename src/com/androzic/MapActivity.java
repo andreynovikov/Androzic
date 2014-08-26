@@ -1545,9 +1545,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				{
 					if (application.prevMap())
 					{
-						map.suspendBestMap();
-						map.updateMapInfo();
-						map.update();
+						mapChanged();
 					}
 				}
 				finishHandler.sendEmptyMessage(0);
@@ -1567,14 +1565,20 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				{
 					if (application.nextMap())
 					{
-						map.suspendBestMap();
-						map.updateMapInfo();
-						map.update();
+						mapChanged();
 					}
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
 		});
+	}
+
+	@Override
+	public void mapChanged()
+	{
+		map.suspendBestMap();
+		map.updateMapInfo();
+		map.update();
 	}
 
 	protected void dimScreen(Location location)
