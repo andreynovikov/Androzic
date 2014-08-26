@@ -5,18 +5,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.internal.view.SupportMenuInflater;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.internal.view.menu.MenuPopupHelper;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -31,7 +37,7 @@ import com.androzic.location.LocationService;
 import com.androzic.overlay.NavigationOverlay;
 import com.androzic.util.StringFormatter;
 
-public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, OnClickListener
+public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, OnClickListener, MenuBuilder.Callback
 {
 	private static final String TAG = "MapFragment";
 
@@ -136,6 +142,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		map = (MapView) view.findViewById(R.id.mapview);
 		map.initialize(application, this);
 
+		coordinates.setOnClickListener(this);
 		currentFile.setOnClickListener(this);
 		mapZoom.setOnClickListener(this);
 		
@@ -862,8 +869,21 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void onClick(View v)
 	{
+		MenuBuilder mMenu;
+		MenuPopupHelper mPopup;
 		switch (v.getId())
 		{
+			case R.id.coordinates:
+				// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
+				mMenu = new MenuBuilder(getActivity());
+				mMenu.setCallback(this);
+				mPopup = new MenuPopupHelper(getActivity(), mMenu, v);
+				mPopup.setForceShowIcon(true);
+				//TODO test it on older device
+				//getActivity().getMenuInflater();
+				new SupportMenuInflater(getActivity()).inflate(R.menu.location_menu, mMenu);
+				mPopup.show();
+			    break;
 			case R.id.currentfile:
 		        FragmentManager manager = getFragmentManager();
 		        SuitableMapsList dialog = new SuitableMapsList();
@@ -887,6 +907,41 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					}
 				});
 		}
+	}
+
+	@Override
+	public boolean onMenuItemSelected(MenuBuilder builder, MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.action_share:
+			{
+				Intent i = new Intent(android.content.Intent.ACTION_SEND);
+				i.setType("text/plain");
+				i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
+				double[] sloc = application.getMapCenter();
+				String spos = StringFormatter.coordinates(application.coordinateFormat, " ", sloc[0], sloc[1]);
+				i.putExtra(Intent.EXTRA_TEXT, spos);
+				startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
+				return true;
+			}
+			case R.id.action_view_elsewhere:
+			{
+				double[] sloc = application.getMapCenter();
+				String geoUri = "geo:" + Double.toString(sloc[0]) + "," + Double.toString(sloc[1]);
+				Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(geoUri));
+				startActivity(intent);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void onMenuModeChange(MenuBuilder builder)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 	@SuppressLint("HandlerLeak")
