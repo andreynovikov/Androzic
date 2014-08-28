@@ -243,7 +243,7 @@
             android:label="@string/coordinates_name"
             android:theme="@style/Dialog" />
         <activity
-            android:name=".track.TrackList"
+            android:name=".track.TrackListActivity"
             android:label="@string/managetracks_name" />
         <activity
             android:name=".track.TrackProperties"

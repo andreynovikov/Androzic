@@ -643,6 +643,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return tracks.get(index);
 	}
 
+	public int getTrackIndex(final Track track)
+	{
+		return tracks.indexOf(track);
+	}
+	
 	public List<Track> getTracks()
 	{
 		return tracks;

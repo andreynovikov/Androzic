@@ -93,7 +93,7 @@ public class RouteList extends ListFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		return inflater.inflate(R.layout.list_with_empty_view, null);
+		return inflater.inflate(R.layout.list_with_empty_view, container, false);
 	}
 
 	@Override
