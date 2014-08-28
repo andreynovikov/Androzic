@@ -69,7 +69,7 @@ public class TrackListActivity extends ActionBarActivity implements OnTrackActio
 					int[] indexes = data.getExtras().getIntArray("index");
 					for (int index : indexes)
 					{
-						TrackOverlay newTrack = new TrackOverlay(this, application.getTrack(index));
+						TrackOverlay newTrack = new TrackOverlay(application.getTrack(index));
 						application.fileTrackOverlays.add(newTrack);
 					}
 				}
