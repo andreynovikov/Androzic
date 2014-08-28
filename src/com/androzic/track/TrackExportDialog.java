@@ -194,7 +194,7 @@ public class TrackExportDialog extends DialogFragment implements TextWatcher
 
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 					track.name = name;
-					track.width = prefs.getInt(getString(R.string.pref_tracking_linewidth), getResources().getColor(R.integer.def_track_linewidth));
+					track.width = prefs.getInt(getString(R.string.pref_tracking_linewidth), getResources().getInteger(R.integer.def_track_linewidth));
 					track.color = color.getColor();
 
 					try
