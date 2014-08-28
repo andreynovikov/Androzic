@@ -102,11 +102,18 @@ public class SASMapLoader
 				continue;
 			for (File xfile: xs)
 			{
-				int x = Integer.parseInt(xfile.getName().substring(1));
-				if (x < minX)
-					minX = x;
-				if (x > maxX)
-					maxX = x;
+				try
+				{
+					int x = Integer.parseInt(xfile.getName().substring(1));
+					if (x < minX)
+						minX = x;
+					if (x > maxX)
+						maxX = x;
+				}
+				catch (NumberFormatException e)
+				{
+					e.printStackTrace();
+				}
 				
 				File[] y1024 = xfile.listFiles();
 				if (y1024 == null)
@@ -119,13 +126,20 @@ public class SASMapLoader
 					for (String yf: ys)
 					{
 						int dot = yf.lastIndexOf(".");
-						int y = Integer.parseInt(yf.substring(1, dot));
-						if (y < minY)
-							minY = y;
-						if (y > maxY)
-							maxY = y;
-						if (ext == null)
-							ext = yf.substring(dot);
+						try
+						{
+							int y = Integer.parseInt(yf.substring(1, dot));
+							if (y < minY)
+								minY = y;
+							if (y > maxY)
+								maxY = y;
+							if (ext == null)
+								ext = yf.substring(dot);
+						}
+						catch (NumberFormatException e)
+						{
+							e.printStackTrace();
+						}
 					}
 				}
 			}
