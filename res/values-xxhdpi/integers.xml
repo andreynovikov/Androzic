@@ -3,5 +3,6 @@
 <integer name="def_waypoint_width">20</integer>
 <integer name="def_route_linewidth">5</integer>
 <integer name="def_route_pointwidth">18</integer>
+<integer name="def_track_linewidth">3</integer>
 <integer name="def_navigation_linewidth">13</integer>
 </resources>
