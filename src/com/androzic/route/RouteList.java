@@ -185,7 +185,7 @@ public class RouteList extends ListFragment
 				routeActionsCallback.onRouteEdit(route);
 				return true;
 			case R.id.menuLoadRoute:
-				startActivityForResult(new Intent(getActivity(), RouteFileList.class), RouteListActivity.RESULT_LOAD_ROUTE);
+				getActivity().startActivityForResult(new Intent(getActivity(), RouteFileList.class), RouteListActivity.RESULT_LOAD_ROUTE);
 				return true;
 		}
 		return false;

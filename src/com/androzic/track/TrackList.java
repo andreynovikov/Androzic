@@ -167,7 +167,7 @@ public class TrackList extends ListFragment
 		switch (item.getItemId())
 		{
 			case R.id.menuLoadTrack:
-				startActivityForResult(new Intent(getActivity(), TrackFileList.class), TrackListActivity.RESULT_LOAD_TRACK);
+				getActivity().startActivityForResult(new Intent(getActivity(), TrackFileList.class), TrackListActivity.RESULT_LOAD_TRACK);
 				return true;
 		}
 		return false;
