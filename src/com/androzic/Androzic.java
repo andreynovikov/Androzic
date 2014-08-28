@@ -910,14 +910,20 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	{
 		if (angleType == 0)
 		{
-			float lat = (float) (Double.isNaN(location[0]) ? mapCenter[0] : location[0]);
-			float lon = (float) (Double.isNaN(location[1]) ? mapCenter[1] : location[1]);
-			GeomagneticField mag = new GeomagneticField(lat, lon, 0.0f, System.currentTimeMillis());
-			magneticDeclination = mag.getDeclination();
+			double lat = Double.isNaN(location[0]) ? mapCenter[0] : location[0];
+			double lon = Double.isNaN(location[1]) ? mapCenter[1] : location[1];
+			magneticDeclination = getDeclination(lat, lon);
 		}		
 		return magneticDeclination;
 	}
-	
+
+
+	public double getDeclination(double lat, double lon)
+	{
+		GeomagneticField mag = new GeomagneticField((float) lat, (float) lon, 0.0f, System.currentTimeMillis());
+		return mag.getDeclination();
+	}
+
 	public double fixDeclination(double declination)
 	{
 		if (angleType == 1)
@@ -1510,7 +1516,23 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.putBoolean(getString(R.string.lc_locate), enable);
 		editor.commit();
 	}
-	
+
+	public float getHDOP()
+	{
+		if (locationService != null)
+			return locationService.getHDOP();
+		else
+			return Float.NaN;
+	}
+
+	public float getVDOP()
+	{
+		if (locationService != null)
+			return locationService.getVDOP();
+		else
+			return Float.NaN;
+	}
+
 	private ServiceConnection locationConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder binder)
 		{

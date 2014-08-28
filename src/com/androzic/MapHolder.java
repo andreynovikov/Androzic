@@ -5,6 +5,7 @@ import com.androzic.data.Waypoint;
 public interface MapHolder
 {
 	MapView getMapView();
+	void toggleFollowing();
 	void setFollowing(boolean follow);
 	void zoomMap(float factor);
 	void zoomIn();

@@ -74,15 +74,6 @@
                 android:src="@drawable/arrow_left" />
 
             <ImageButton
-                android:id="@+id/info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:paddingBottom="8dip"
-                android:paddingTop="8dip"
-                android:src="@drawable/info" />
-
-            <ImageButton
                 android:id="@+id/follow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

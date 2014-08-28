@@ -1,3 +1,23 @@
+/*
+ * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
+ * Copyright (C) 2010-2014 Andrey Novikov <http://andreynovikov.info/>
+ * 
+ * This file is part of Androzic application.
+ * 
+ * Androzic is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Androzic is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.androzic;
 
 import java.util.ArrayList;
@@ -37,6 +57,7 @@ import com.androzic.map.Map;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.RouteList;
 import com.androzic.route.RouteListActivity;
+import com.androzic.track.TrackList;
 import com.androzic.ui.DrawerAdapter;
 import com.androzic.ui.DrawerItem;
 import com.androzic.waypoint.OnWaypointActionListener;
@@ -96,8 +117,11 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		fragment = Fragment.instantiate(this, WaypointList.class.getName());
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_waypoints), fragment));
 		icon = resources.getDrawable(R.drawable.ic_action_directions);
-		action = new Intent(this, RouteListActivity.class).putExtra("MODE", RouteList.MODE_MANAGE);
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_routes), action));
+		fragment = Fragment.instantiate(this, RouteList.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_routes), fragment));
+		icon = resources.getDrawable(R.drawable.ic_action_track);
+		fragment = Fragment.instantiate(this, TrackList.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_tracks), fragment));
 
 		mDrawerItems.add(new DrawerItem(getString(R.string.menu_preferences)));
 		icon = resources.getDrawable(R.drawable.ic_action_settings);
@@ -158,7 +182,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		findViewById(R.id.zoomout).setOnClickListener(this);
 		findViewById(R.id.nextmap).setOnClickListener(this);
 		findViewById(R.id.prevmap).setOnClickListener(this);
-		findViewById(R.id.info).setOnClickListener(this);
 		findViewById(R.id.follow).setOnClickListener(this);
 
 		if (savedInstanceState == null)
@@ -255,7 +278,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		}
 	}
 
-	/* The click listner for ListView in the navigation drawer */
+	/* The click listener for ListView in the navigation drawer */
 	private class DrawerItemClickListener implements ListView.OnItemClickListener
 	{
 		@Override
@@ -449,17 +472,9 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 			case R.id.prevmap:
 				application.getMapHolder().previousMap();
 				break;
-			case R.id.maps:
-				// startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
-				break;
-			case R.id.waypoints:
-				// startActivityForResult(new Intent(this, WaypointListActivity.class), RESULT_MANAGE_WAYPOINTS);
-				break;
-			case R.id.info:
-				startActivity(new Intent(this, Information.class));
-				break;
 			case R.id.follow:
-				// setFollowing(!map.isFollowing());
+				//TODO Toggle button icon
+				application.getMapHolder().toggleFollowing();
 				break;
 		}
 	}

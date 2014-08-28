@@ -1,6 +1,27 @@
+/*
+ * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
+ * Copyright (C) 2010-2014 Andrey Novikov <http://andreynovikov.info/>
+ * 
+ * This file is part of Androzic application.
+ * 
+ * Androzic is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Androzic is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.androzic;
 
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,6 +33,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,6 +57,8 @@ import android.widget.TextView;
 import com.androzic.data.Waypoint;
 import com.androzic.location.LocationService;
 import com.androzic.overlay.NavigationOverlay;
+import com.androzic.util.Clipboard;
+import com.androzic.util.CoordinateParser;
 import com.androzic.util.StringFormatter;
 
 public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, OnClickListener, MenuBuilder.Callback
@@ -143,11 +167,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		map.initialize(application, this);
 
 		coordinates.setOnClickListener(this);
+		satInfo.setOnClickListener(this);
 		currentFile.setOnClickListener(this);
 		mapZoom.setOnClickListener(this);
-		
+
 		application.setMapHolder(this);
-		
+
 		return view;
 	}
 
@@ -170,7 +195,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorvector));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorcolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_navigation_proximity));
-		
+
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitspeed));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitelevation));
@@ -182,7 +207,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 		map.setKeepScreenOn(keepScreenOn);
 
-		//FIXME Better move it to application?
+		// FIXME Better move it to application?
 		if (application.hasEnsureVisible())
 		{
 			setFollowing(false);
@@ -222,7 +247,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	public void onDestroyView()
 	{
 		super.onDestroyView();
-		
+
 		map = null;
 		coordinates = null;
 		satInfo = null;
@@ -243,7 +268,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		xtkUnit = null;
 		bearingValue = null;
 		turnValue = null;
-		//trackBar = null;
+		// trackBar = null;
 	}
 
 	@Override
@@ -266,7 +291,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 
 			map.setLocation(application.lastKnownLocation);
-			
+
 			if (application.gpsEnabled)
 			{
 				if (!map.isFixed())
@@ -308,7 +333,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				if (map.isMoving())
 				{
 					map.setMoving(false);
-					//FIXME Should we?
+					// FIXME Should we?
 					map.setFixed(false);
 				}
 			}
@@ -339,14 +364,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				map.update();
 
 			updateGPSStatus();
-			
+
 			// auto dim
 			/*
-			if (autoDim && dimInterval > 0 && lastLocationMillis - lastDim >= dimInterval)
-			{
-				dimScreen(location);
-				lastDim = lastLocationMillis;
-			}
+			 * if (autoDim && dimInterval > 0 && lastLocationMillis - lastDim >= dimInterval)
+			 * {
+			 * dimScreen(location);
+			 * lastDim = lastLocationMillis;
+			 * }
 			 */
 		}
 	};
@@ -367,6 +392,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	{
 		final ViewTreeObserver vto = map.getViewTreeObserver();
 		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+			@SuppressLint("NewApi")
+			@SuppressWarnings("deprecation")
 			public void onGlobalLayout()
 			{
 				View root = getView();
@@ -383,14 +410,19 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					area.right = v.getLeft();
 				if (!area.isEmpty())
 					map.updateViewArea(area);
+				ViewTreeObserver ob;
 				if (vto.isAlive())
+					ob = vto;
+				else
+					ob = map.getViewTreeObserver();
+
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
 				{
-					vto.removeGlobalOnLayoutListener(this);
+					ob.removeGlobalOnLayoutListener(this);
 				}
 				else
 				{
-					final ViewTreeObserver vto1 = map.getViewTreeObserver();
-					vto1.removeGlobalOnLayoutListener(this);
+					ob.removeOnGlobalLayoutListener(this);
 				}
 			}
 		});
@@ -402,7 +434,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		boolean isNavigatingViaRoute = isNavigating && application.navigationService.isNavigatingViaRoute();
 
 		View rootView = getView();
-		
+
 		// waypoint panel
 		rootView.findViewById(R.id.waypointinfo).setVisibility(isNavigating ? View.VISIBLE : View.GONE);
 		// route panel
@@ -460,7 +492,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		if (isNavigating)
 		{
 			waypointName.setText("» " + application.navigationService.navWaypoint.name);
-			//FIXME All overlay operations should go into application
+			// FIXME All overlay operations should go into application
 			if (application.navigationOverlay == null)
 			{
 				application.navigationOverlay = new NavigationOverlay();
@@ -587,6 +619,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
+	public void toggleFollowing()
+	{
+		setFollowing(!map.isFollowing());
+	}
+
+	@Override
 	public void setFollowing(boolean follow)
 	{
 		if (application.editingRoute == null && application.editingTrack == null)
@@ -631,7 +669,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void zoomIn()
 	{
-		//TODO Show toast here
+		// TODO Show toast here
 		if (application.getNextZoom() == 0.0)
 			return;
 		waitBar.setVisibility(View.VISIBLE);
@@ -710,7 +748,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 		});
 	}
-	
+
 	@Override
 	public void mapChanged()
 	{
@@ -775,19 +813,19 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				else
 				{
 					int rz = (int) Math.floor(zoom);
-					String zoomStr = zoom - rz != 0.0 ? String.format("%.1f", zoom) : String.valueOf(rz);
+					String zoomStr = zoom - rz != 0.0 ? String.format(Locale.getDefault(), "%.1f", zoom) : String.valueOf(rz);
 					mapZoom.setText(zoomStr + "%");
 				}
 
-				//ImageButton zoomin = (ImageButton) findViewById(R.id.zoomin);
-				//ImageButton zoomout = (ImageButton) findViewById(R.id.zoomout);
-				//zoomin.setEnabled(application.getNextZoom() != 0.0);
-				//zoomout.setEnabled(application.getPrevZoom() != 0.0);
+				// ImageButton zoomin = (ImageButton) findViewById(R.id.zoomin);
+				// ImageButton zoomout = (ImageButton) findViewById(R.id.zoomout);
+				// zoomin.setEnabled(application.getNextZoom() != 0.0);
+				// zoomout.setEnabled(application.getPrevZoom() != 0.0);
 
-				//LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF444444);
+				// LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF444444);
 
-				//zoomin.setColorFilter(zoomin.isEnabled() ? null : disable);
-				//zoomout.setColorFilter(zoomout.isEnabled() ? null : disable);
+				// zoomin.setColorFilter(zoomin.isEnabled() ? null : disable);
+				// zoomout.setColorFilter(zoomout.isEnabled() ? null : disable);
 			}
 		});
 	}
@@ -874,22 +912,34 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		switch (v.getId())
 		{
 			case R.id.coordinates:
+			{
 				// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
 				mMenu = new MenuBuilder(getActivity());
 				mMenu.setCallback(this);
 				mPopup = new MenuPopupHelper(getActivity(), mMenu, v);
 				mPopup.setForceShowIcon(true);
-				//TODO test it on older device
-				//getActivity().getMenuInflater();
+				// TODO test it on older device
+				// getActivity().getMenuInflater();
 				new SupportMenuInflater(getActivity()).inflate(R.menu.location_menu, mMenu);
 				mPopup.show();
-			    break;
+				break;
+			}
+			case R.id.sats:
+			{
+				FragmentManager manager = getFragmentManager();
+				GPSInfo dialog = new GPSInfo();
+				dialog.show(manager, "dialog");
+				break;
+			}
 			case R.id.currentfile:
-		        FragmentManager manager = getFragmentManager();
-		        SuitableMapsList dialog = new SuitableMapsList();
-		        dialog.show(manager, "dialog");
-		        break;
+			{
+				FragmentManager manager = getFragmentManager();
+				SuitableMapsList dialog = new SuitableMapsList();
+				dialog.show(manager, "dialog");
+				break;
+			}
 			case R.id.currentzoom:
+			{
 				waitBar.setVisibility(View.VISIBLE);
 				waitBar.setText(R.string.msg_wait);
 				executorThread.execute(new Runnable() {
@@ -906,6 +956,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						finishHandler.sendEmptyMessage(0);
 					}
 				});
+			}
 		}
 	}
 
@@ -914,13 +965,20 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	{
 		switch (item.getItemId())
 		{
+			case R.id.action_information:
+			{
+				FragmentManager manager = getFragmentManager();
+				LocationInfo dialog = new LocationInfo(application.getMapCenter());
+				dialog.show(manager, "dialog");
+				return true;
+			}
 			case R.id.action_share:
 			{
 				Intent i = new Intent(android.content.Intent.ACTION_SEND);
 				i.setType("text/plain");
 				i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
-				double[] sloc = application.getMapCenter();
-				String spos = StringFormatter.coordinates(application.coordinateFormat, " ", sloc[0], sloc[1]);
+				double[] loc = application.getMapCenter();
+				String spos = StringFormatter.coordinates(application.coordinateFormat, " ", loc[0], loc[1]);
 				i.putExtra(Intent.EXTRA_TEXT, spos);
 				startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
 				return true;
@@ -933,6 +991,32 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				startActivity(intent);
 				return true;
 			}
+			case R.id.action_copy_location:
+			{
+				double[] cloc = application.getMapCenter();
+				String cpos = StringFormatter.coordinates(application.coordinateFormat, " ", cloc[0], cloc[1]);
+				Clipboard.copy(getActivity(), cpos);
+				return true;
+			}
+			case R.id.action_paste_location:
+			{
+				String text = Clipboard.paste(getActivity());
+				try
+				{
+					double c[] = CoordinateParser.parse(text);
+					if (!Double.isNaN(c[0]) && !Double.isNaN(c[1]))
+					{
+						boolean mapChanged = application.setMapCenter(c[0], c[1], true, false);
+						if (mapChanged)
+							map.updateMapInfo();
+						map.update();
+						map.setFollowing(false);
+					}
+				}
+				catch (IllegalArgumentException e)
+				{
+				}
+			}
 		}
 		return false;
 	}
@@ -941,7 +1025,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	public void onMenuModeChange(MenuBuilder builder)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@SuppressLint("HandlerLeak")

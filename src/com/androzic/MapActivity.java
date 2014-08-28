@@ -1440,6 +1440,13 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		return map;
 	}
 
+	@Override
+	public void toggleFollowing()
+	{
+		setFollowing(!map.isFollowing());
+	}
+
+	@Override
 	public void setFollowing(boolean follow)
 	{
 		if (application.editingRoute == null && application.editingTrack == null)
