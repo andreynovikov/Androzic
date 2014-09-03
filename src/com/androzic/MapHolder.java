@@ -12,7 +12,14 @@ public interface MapHolder
 	void zoomOut();
 	void previousMap();
 	void nextMap();
+	/**
+	 * Called when current map have changed
+	 */
 	void mapChanged();
+	/**
+	 * Called when location, zoom or other map conditions that need redraw have changed
+	 */
+	void conditionsChanged();
 	void updateCoordinates(double[] latlon);
 	void updateFileInfo();
 	

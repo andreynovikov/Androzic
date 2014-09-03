@@ -70,6 +70,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	 * UI (map data) update interval in milliseconds
 	 */
 	private long updatePeriod;
+	private boolean following;
 	private boolean followOnLocation;
 	private boolean keepScreenOn;
 	private int showDistance;
@@ -206,20 +207,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		updateNavigationStatus();
 
 		map.setKeepScreenOn(keepScreenOn);
-
-		// FIXME Better move it to application?
-		if (application.hasEnsureVisible())
-		{
-			setFollowing(false);
-			followOnLocation = false;
-			double[] loc = application.getEnsureVisible();
-			application.setMapCenter(loc[0], loc[1], true, false);
-			application.clearEnsureVisible();
-		}
-		else
-		{
-			application.updateLocationMaps(true, map.isBestMapEnabled());
-		}
+		map.setFollowing(following);
 
 		customizeLayout(settings);
 
@@ -621,12 +609,13 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void toggleFollowing()
 	{
-		setFollowing(!map.isFollowing());
+		setFollowing(!following);
 	}
 
 	@Override
 	public void setFollowing(boolean follow)
 	{
+		followOnLocation = false;
 		if (application.editingRoute == null && application.editingTrack == null)
 		{
 			if (showDistance > 0 && application.distanceOverlay != null)
@@ -641,7 +630,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					application.distanceOverlay.setEnabled(false);
 				}
 			}
-			map.setFollowing(follow);
+			following = follow;
+			if (map != null)
+				map.setFollowing(following);
 		}
 	}
 
@@ -656,10 +647,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				synchronized (map)
 				{
 					if (application.zoomBy(factor))
-					{
-						map.updateMapInfo();
-						map.update();
-					}
+						conditionsChanged();
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
@@ -680,10 +668,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				synchronized (map)
 				{
 					if (application.zoomIn())
-					{
-						map.updateMapInfo();
-						map.update();
-					}
+						conditionsChanged();
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
@@ -703,10 +688,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				synchronized (map)
 				{
 					if (application.zoomOut())
-					{
-						map.updateMapInfo();
-						map.update();
-					}
+						conditionsChanged();
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
@@ -750,8 +732,19 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
+	public void conditionsChanged()
+	{
+		if (map == null)
+			return;
+		map.updateMapInfo();
+		map.update();
+	}
+
+	@Override
 	public void mapChanged()
 	{
+		if (map == null)
+			return;
 		map.suspendBestMap();
 		map.updateMapInfo();
 		map.update();
@@ -1010,6 +1003,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						if (mapChanged)
 							map.updateMapInfo();
 						map.update();
+						following = false;
 						map.setFollowing(false);
 					}
 				}

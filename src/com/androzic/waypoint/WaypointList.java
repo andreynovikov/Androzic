@@ -122,11 +122,22 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 			@Override
 			public void onDismiss()
 			{
-				View v = getExpandableListView().findViewWithTag("selected");
-				if (v != null)
+				try
 				{
-					v.setBackgroundDrawable(selectedBackground);
-					v.setTag(null);
+					ExpandableListView lv = getExpandableListView();
+					if (lv != null)
+					{
+						View v = lv.findViewWithTag("selected");
+						if (v != null)
+						{
+							v.setBackgroundDrawable(selectedBackground);
+							v.setTag(null);
+						}
+					}
+				}
+				catch (IllegalStateException ignore)
+				{
+					// Ignore dismissing view after list view was destroyed
 				}
 			}
 		});

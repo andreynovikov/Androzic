@@ -61,9 +61,6 @@ import com.androzic.util.StringFormatter;
 
 public class RouteList extends ListFragment
 {
-	public static final int MODE_MANAGE = 1;
-	public static final int MODE_START = 2;
-
 	private static final int qaRouteDetails = 1;
 	private static final int qaRouteNavigate = 2;
 	private static final int qaRouteProperties = 3;
@@ -80,8 +77,6 @@ public class RouteList extends ListFragment
 	private QuickAction quickAction;
 	private int selectedKey;
 	private Drawable selectedBackground;
-
-	private int mode;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -107,11 +102,6 @@ public class RouteList extends ListFragment
 			emptyView.setText(R.string.msg_empty_route_list);
 
 		Activity activity = getActivity();
-
-		mode = activity.getIntent().getExtras().getInt("MODE");
-
-		if (mode == MODE_START)
-			activity.setTitle(getString(R.string.selectroute_name));
 
 		adapter = new RouteListAdapter(activity);
 		setListAdapter(adapter);
@@ -167,10 +157,7 @@ public class RouteList extends ListFragment
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
-		if (mode == MODE_MANAGE)
-		{
-			inflater.inflate(R.menu.routelist_menu, menu);
-		}
+		inflater.inflate(R.menu.routelist_menu, menu);
 	}
 
 	@Override
@@ -194,26 +181,16 @@ public class RouteList extends ListFragment
 	@Override
 	public void onListItemClick(ListView lv, View v, int position, long id)
 	{
-		switch (mode)
-		{
-			case MODE_MANAGE:
-				v.setTag("selected");
-				selectedKey = position;
-				selectedBackground = v.getBackground();
-				int l = v.getPaddingLeft();
-				int t = v.getPaddingTop();
-				int r = v.getPaddingRight();
-				int b = v.getPaddingBottom();
-				v.setBackgroundResource(R.drawable.list_selector_background_focus);
-				v.setPadding(l, t, r, b);
-				quickAction.show(v);
-				break;
-			case MODE_START:
-				Androzic application = Androzic.getApplication();
-				Route route = application.getRoute(position);
-				routeActionsCallback.onRouteNavigate(route);
-				break;
-		}
+		v.setTag("selected");
+		selectedKey = position;
+		selectedBackground = v.getBackground();
+		int l = v.getPaddingLeft();
+		int t = v.getPaddingTop();
+		int r = v.getPaddingRight();
+		int b = v.getPaddingBottom();
+		v.setBackgroundResource(R.drawable.list_selector_background_focus);
+		v.setPadding(l, t, r, b);
+		quickAction.show(v);
 	}
 
 	private OnActionItemClickListener routeActionItemClickListener = new OnActionItemClickListener() {

@@ -21,6 +21,7 @@
 package com.androzic;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -37,6 +38,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -52,23 +54,29 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.androzic.data.Route;
+import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
 import com.androzic.map.Map;
 import com.androzic.navigation.NavigationService;
+import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteList;
-import com.androzic.route.RouteListActivity;
+import com.androzic.track.OnTrackActionListener;
 import com.androzic.track.TrackList;
 import com.androzic.ui.DrawerAdapter;
 import com.androzic.ui.DrawerItem;
+import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
 import com.androzic.waypoint.WaypointList;
+import com.androzic.waypoint.WaypointProperties;
 
-public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnMapActionListener, OnSharedPreferenceChangeListener, OnClickListener
+public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener, OnClickListener
 {
 	private static final String TAG = "MapActivity";
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
+	private int mDrawerListSelection;
 	private View mDrawerActions;
 	private ActionBarDrawerToggle mDrawerToggle;
 
@@ -176,6 +184,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		getSupportFragmentManager().addOnBackStackChangedListener(mBackStackChangedListener);
 
 		// set button actions
 		findViewById(R.id.zoomin).setOnClickListener(this);
@@ -186,6 +195,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 
 		if (savedInstanceState == null)
 		{
+			mDrawerListSelection = -1;
 			selectItem(0);
 		}
 	}
@@ -198,11 +208,19 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	}
 
 	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		Log.e(TAG, "onPause()");
+	}
+
+	@Override
 	protected void onDestroy()
 	{
 		super.onDestroy();
 		Log.e(TAG, "onDestroy()");
 
+		getSupportFragmentManager().removeOnBackStackChangedListener(mBackStackChangedListener);
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 
 		if (isFinishing())
@@ -232,8 +250,10 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
 		// If the nav drawer is open, hide action items related to the content view
-		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		menu.findItem(R.id.action_search).setVisible(!drawerOpen);
+		boolean hide = mDrawerLayout.isDrawerOpen(mDrawerList) || mDrawerListSelection != 0;
+		menu.findItem(R.id.action_search).setVisible(!hide);
+		menu.findItem(R.id.action_locating).setVisible(!hide);
+		menu.findItem(R.id.action_tracking).setVisible(!hide);
 		menu.findItem(R.id.action_locating).setChecked(application.isLocating());
 		menu.findItem(R.id.action_tracking).setChecked(application.isTracking());
 		return super.onPrepareOptionsMenu(menu);
@@ -290,24 +310,47 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 
 	private void selectItem(int position)
 	{
+		if (mDrawerListSelection == position)
+		{
+			mDrawerLayout.closeDrawer(mDrawerList);
+			return;
+		}
+		
 		DrawerItem item = mDrawerItems.get(position);
+		// Actions
 		if (item.isAction())
 		{
 			if (position > 0)
 				startActivity(item.action);
 		}
+		// Fragments
 		else
 		{
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager.beginTransaction().replace(R.id.content_frame, item.fragment).commit();
-			// update selected item and title, then close the drawer
-			mDrawerList.setItemChecked(position, true);
-			setTitle(item.name);
-			mDrawerLayout.closeDrawer(mDrawerList);
-			if (item.fragment instanceof MapFragment)
-				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerActions);
+			FragmentManager fm = getSupportFragmentManager();
+			if (position == 0)
+			{
+				FragmentTransaction ft = fm.beginTransaction();
+				if (fm.getBackStackEntryCount() == 0)
+				{
+					ft.add(R.id.content_frame, item.fragment, "map");
+				}
+				else
+				{
+					fm.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+					Fragment fragment = fm.findFragmentByTag("map");
+					ft.attach(fragment);
+				}
+				ft.commit();
+			}
 			else
-				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerActions);
+			{
+				if (fm.getBackStackEntryCount() > 0)
+					fm.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+				addFragment(item.fragment);
+			}
+			// update selected item and title, then close the drawer
+			updateDrawerUI(item, position);
+			mDrawerLayout.closeDrawer(mDrawerList);
 		}
 	}
 
@@ -342,36 +385,48 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onWaypointView(Waypoint waypoint)
 	{
-		// TODO Auto-generated method stub
-
+		if (application.ensureVisible(waypoint))
+			application.getMapHolder().mapChanged();
+		else
+			application.getMapHolder().conditionsChanged();
+		selectItem(0);
 	}
 
 	@Override
 	public void onWaypointNavigate(Waypoint waypoint)
 	{
-		// TODO Auto-generated method stub
-
+		Intent intent = new Intent(application, NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+		intent.putExtra(NavigationService.EXTRA_NAME, waypoint.name);
+		intent.putExtra(NavigationService.EXTRA_LATITUDE, waypoint.latitude);
+		intent.putExtra(NavigationService.EXTRA_LONGITUDE, waypoint.longitude);
+		intent.putExtra(NavigationService.EXTRA_PROXIMITY, waypoint.proximity);
+		application.startService(intent);
+		selectItem(0);
 	}
 
 	@Override
 	public void onWaypointEdit(Waypoint waypoint)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO Refactor
+		int index = application.getWaypointIndex(waypoint);
+		startActivity(new Intent(application, WaypointProperties.class).putExtra("INDEX", index));
 	}
 
 	@Override
 	public void onWaypointShare(Waypoint waypoint)
 	{
-		// TODO Auto-generated method stub
-
+		Intent i = new Intent(android.content.Intent.ACTION_SEND);
+		i.setType("text/plain");
+		i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
+		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
+		i.putExtra(Intent.EXTRA_TEXT, waypoint.name + " @ " + coords);
+		startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
 	}
 
 	@Override
 	public void onWaypointRemove(Waypoint waypoint)
 	{
-		// TODO Auto-generated method stub
-
+		application.removeWaypoint(waypoint);
 	}
 
 	@Override
@@ -386,6 +441,69 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	{
 		if (application.loadMap(map))
 			application.getMapHolder().mapChanged();
+	}
+
+	@Override
+	public void onRouteDetails(Route route)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRouteNavigate(Route route)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRouteEdit(Route route)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRouteEditPath(Route route)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRouteSave(Route route)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTrackEdit(Track track)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTrackEditPath(Track track)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTrackToRoute(Track track)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTrackSave(Track track)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -411,11 +529,60 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		}
 	}
 
+	private void updateDrawerUI(DrawerItem item, int position)
+	{
+
+		mDrawerListSelection = position;
+		mDrawerList.setItemChecked(position, true);
+		setTitle(item.name);
+		if (item.fragment instanceof MapFragment)
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerActions);
+		else
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerActions);
+	}
+
+	private void restoreDrawerUI()
+	{
+		FragmentManager fm = getSupportFragmentManager();
+		String tag = "map";
+		if (fm.getBackStackEntryCount() > 0)
+		{
+			FragmentManager.BackStackEntry bse = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
+			tag = bse.getName();
+		}
+		Log.e(TAG, "restoreDrawerUI: " + tag);
+		Fragment fragment = fm.findFragmentByTag(tag);
+		for (int pos = 0; pos < mDrawerItems.size(); pos++)
+		{
+			DrawerItem item = mDrawerItems.get(pos);
+			if (item.isFragment() && item.fragment == fragment)
+			{
+				updateDrawerUI(item, pos);
+				break;
+			}
+		}
+	}
+	
+	private FragmentManager.OnBackStackChangedListener mBackStackChangedListener = new FragmentManager.OnBackStackChangedListener()
+	{
+		@Override
+        public void onBackStackChanged()
+        {
+			restoreDrawerUI();
+        }
+    };
+
 	final Handler backHandler = new Handler();
 
 	@Override
 	public void onBackPressed()
 	{
+		if (getSupportFragmentManager().getBackStackEntryCount() > 0)
+		{
+			super.onBackPressed();
+			return;
+		}
+		
 		switch (exitConfirmation)
 		{
 			case 0:
@@ -477,6 +644,33 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 				application.getMapHolder().toggleFollowing();
 				break;
 		}
+	}
+
+	private void addFragment(Fragment fragment)
+	{
+		FragmentManager fm = getSupportFragmentManager();
+		// Get topmost fragment		
+		String tag = "map";
+		if (fm.getBackStackEntryCount() > 0)
+		{
+			FragmentManager.BackStackEntry bse = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
+			tag = bse.getName();
+		}
+		FragmentTransaction ft = fm.beginTransaction();
+		Fragment top = getSupportFragmentManager().findFragmentByTag(tag);
+		// Detach it
+		ft.detach(top);
+		// Add new fragment
+		addFragment(fragment, ft);
+		ft.commit();
+	}
+
+	private void addFragment(Fragment fragment, FragmentTransaction ft)
+	{
+		// Add fragment to back stack with unique tag
+		String tag = UUID.randomUUID().toString();
+		ft.add(R.id.content_frame, fragment, tag);
+		ft.addToBackStack(tag);
 	}
 
 }

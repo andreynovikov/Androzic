@@ -132,7 +132,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	private Rectangle coveringScreen = new Rectangle();
 	private double[] mapCenter = new double[] {0.0, 0.0};
 	private double[] location = new double[] {Double.NaN, Double.NaN};
-	private double[] shouldBeVisible = new double[] {Double.NaN, Double.NaN};
 	private double magneticDeclination = 0;
 
 	private ILocationService locationService = null;
@@ -559,33 +558,18 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		saveWaypoints(defWaypointSet);
 	}
 
-	public void ensureVisible(MapObject waypoint)
+	public boolean ensureVisible(MapObject waypoint)
 	{
-		ensureVisible(waypoint.latitude, waypoint.longitude);
+		return ensureVisible(waypoint.latitude, waypoint.longitude);
 	}
 
-	public void ensureVisible(double lat, double lon)
+	public boolean ensureVisible(double lat, double lon)
 	{
-		shouldBeVisible[0] = lat;
-		shouldBeVisible[1] = lon;
+		if (mapHolder != null)
+			mapHolder.setFollowing(false);
+		return setMapCenter(lat, lon, true, false);
 	}
 	
-	public boolean hasEnsureVisible()
-	{
-		return ! Double.isNaN(shouldBeVisible[0]);
-	}
-	
-	public double[] getEnsureVisible()
-	{
-		return shouldBeVisible;
-	}
-	
-	public void clearEnsureVisible()
-	{
-		shouldBeVisible[0] = Double.NaN;
-		shouldBeVisible[1] = Double.NaN;
-	}
-
 	public int addWaypointSet(final WaypointSet newWaypointSet)
 	{
 		waypointSets.add(newWaypointSet);
@@ -979,6 +963,14 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return res;
 	}
 	
+	/**
+	 * Sets map center to specified coordinates
+	 * @param lat New latitude
+	 * @param lon New longitude
+	 * @param reindex Recreate index of maps for new location
+	 * @param findbest Look for best map in new location
+	 * @return true if current map was changed
+	 */
 	public boolean setMapCenter(double lat, double lon, boolean reindex, boolean findbest)
 	{
 		mapCenter[0] = lat;

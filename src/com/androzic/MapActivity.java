@@ -525,18 +525,8 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
 		registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
 
-		if (application.hasEnsureVisible())
-		{
-			setFollowing(false);
-			followOnLocation = false;
-			double[] loc = application.getEnsureVisible();
-			application.setMapCenter(loc[0], loc[1], true, false);
-			application.clearEnsureVisible();
-		}
-		else
-		{
-			application.updateLocationMaps(true, map.isBestMapEnabled());
-		}
+		application.updateLocationMaps(true, map.isBestMapEnabled());
+
 		updateMapViewArea();
 		map.resume();
 		map.updateMapInfo();
@@ -1476,10 +1466,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				synchronized (map)
 				{
 					if (application.zoomBy(factor))
-					{
-						map.updateMapInfo();
-						map.update();
-					}
+						conditionsChanged();
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
@@ -1500,10 +1487,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				synchronized (map)
 				{
 					if (application.zoomIn())
-					{
-						map.updateMapInfo();
-						map.update();
-					}
+						conditionsChanged();
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
@@ -1523,10 +1507,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				synchronized (map)
 				{
 					if (application.zoomOut())
-					{
-						map.updateMapInfo();
-						map.update();
-					}
+						conditionsChanged();
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
@@ -1544,9 +1525,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				synchronized (map)
 				{
 					if (application.prevMap())
-					{
 						mapChanged();
-					}
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
@@ -1564,13 +1543,19 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				synchronized (map)
 				{
 					if (application.nextMap())
-					{
 						mapChanged();
-					}
 				}
 				finishHandler.sendEmptyMessage(0);
 			}
 		});
+	}
+
+
+	@Override
+	public void conditionsChanged()
+	{
+		map.updateMapInfo();
+		map.update();
 	}
 
 	@Override
@@ -1777,12 +1762,12 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				}).setNegativeButton(R.string.no, null).show();
 				return true;
 			case R.id.menuManageRoutes:
-				startActivityForResult(new Intent(this, RouteListActivity.class).putExtra("MODE", RouteList.MODE_MANAGE), RESULT_MANAGE_ROUTES);
+				startActivityForResult(new Intent(this, RouteListActivity.class), RESULT_MANAGE_ROUTES);
 				return true;
 			case R.id.menuStartNavigation:
 				if (application.getRoutes().size() > 1)
 				{
-					startActivity(new Intent(this, RouteListActivity.class).putExtra("MODE", RouteList.MODE_START));
+					//startActivity(new Intent(this, RouteListActivity.class).putExtra("MODE", RouteList.MODE_START));
 				}
 				else
 				{
