@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +21,27 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>
 	private static final int VIEW_TYPE_TITLE = 0;
 	private static final int VIEW_TYPE_ACTION = 1;
 
-	Context mContext;
-	ArrayList<DrawerItem> mDrawerItems;
+	private Context mContext;
+	private ArrayList<DrawerItem> mDrawerItems;
+	private int mSelectedItem;
+	PorterDuffColorFilter mActiveIconFilter;
 
 	public DrawerAdapter(Context mContext, ArrayList<DrawerItem> items)
 	{
-
 		super(mContext, R.layout.drawer_list_item, items);
 		this.mContext = mContext;
 		this.mDrawerItems = items;
+		mActiveIconFilter = new PorterDuffColorFilter(mContext.getResources().getColor(R.color.drawer_selected_text), PorterDuff.Mode.SRC_IN);
+	}
+
+	public int getSelectedItem()
+	{
+		return mSelectedItem;
+	}
+
+	public void setSelectedItem(int selectedItem)
+	{
+		mSelectedItem = selectedItem;
 	}
 
 	@Override
@@ -99,6 +114,18 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>
 		{
 			drawerHolder.icon.setImageDrawable(item.icon);
 			drawerHolder.name.setText(item.name);
+			if (position == mSelectedItem)
+			{
+				drawerHolder.name.setTextColor(mContext.getResources().getColor(R.color.drawer_selected_text));
+				drawerHolder.name.setTypeface(Typeface.DEFAULT_BOLD);
+				drawerHolder.icon.setColorFilter(mActiveIconFilter);
+			}
+			else
+			{
+				drawerHolder.name.setTextColor(getContext().getResources().getColor(android.R.color.primary_text_dark));
+				drawerHolder.name.setTypeface(Typeface.DEFAULT);
+				drawerHolder.icon.setColorFilter(null);
+			}
 		}
 
 		return convertView;

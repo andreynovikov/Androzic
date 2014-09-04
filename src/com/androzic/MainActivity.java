@@ -72,11 +72,11 @@ import com.androzic.waypoint.WaypointProperties;
 
 public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener, OnClickListener
 {
-	private static final String TAG = "MapActivity";
+	private static final String TAG = "MainActivity";
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
-	private int mDrawerListSelection;
+	private DrawerAdapter mDrawerAdapter;
 	private View mDrawerActions;
 	private ActionBarDrawerToggle mDrawerToggle;
 
@@ -150,7 +150,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		// set a custom shadow that overlays the main content when the drawer opens
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 		// set up the drawer's list view with items and click listener
-		mDrawerList.setAdapter(new DrawerAdapter(this, mDrawerItems));
+		mDrawerAdapter = new DrawerAdapter(this, mDrawerItems);
+		mDrawerList.setAdapter(mDrawerAdapter);
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
@@ -195,7 +196,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 
 		if (savedInstanceState == null)
 		{
-			mDrawerListSelection = -1;
+			mDrawerAdapter.setSelectedItem(-1);
 			selectItem(0);
 		}
 	}
@@ -250,7 +251,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
 		// If the nav drawer is open, hide action items related to the content view
-		boolean hide = mDrawerLayout.isDrawerOpen(mDrawerList) || mDrawerListSelection != 0;
+		boolean hide = mDrawerLayout.isDrawerOpen(mDrawerList) || mDrawerAdapter.getSelectedItem() != 0;
 		menu.findItem(R.id.action_search).setVisible(!hide);
 		menu.findItem(R.id.action_locating).setVisible(!hide);
 		menu.findItem(R.id.action_tracking).setVisible(!hide);
@@ -310,7 +311,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 
 	private void selectItem(int position)
 	{
-		if (mDrawerListSelection == position)
+		if (mDrawerAdapter.getSelectedItem() == position)
 		{
 			mDrawerLayout.closeDrawer(mDrawerList);
 			return;
@@ -531,9 +532,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 
 	private void updateDrawerUI(DrawerItem item, int position)
 	{
-
-		mDrawerListSelection = position;
 		mDrawerList.setItemChecked(position, true);
+		mDrawerAdapter.setSelectedItem(position);
 		setTitle(item.name);
 		if (item.fragment instanceof MapFragment)
 			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerActions);

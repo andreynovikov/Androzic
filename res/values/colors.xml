@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<color name="drawer_selected_text">#FFFFFFFF</color>
 <color name="cursor">#FFFF0000</color>
 <color name="currenttrack">#FFA565FE</color>
 <color name="mapcross">#99333333</color>
