@@ -118,9 +118,9 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		Fragment fragment;
 
 		// add main items to drawer list
-		icon = resources.getDrawable(R.drawable.ic_action_map);
+		icon = resources.getDrawable(R.drawable.ic_action_mapmode);
 		fragment = Fragment.instantiate(this, MapFragment.class.getName());
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_maps), fragment));
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_map), fragment));
 		icon = resources.getDrawable(R.drawable.ic_action_location);
 		fragment = Fragment.instantiate(this, WaypointList.class.getName());
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_waypoints), fragment));
@@ -131,16 +131,25 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		fragment = Fragment.instantiate(this, TrackList.class.getName());
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_tracks), fragment));
 
-		mDrawerItems.add(new DrawerItem(getString(R.string.menu_preferences)));
-		icon = resources.getDrawable(R.drawable.ic_action_settings);
-		action = new Intent(this, PreferencesHC.class);
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), action));
 		// add plugins to drawer list
+		mDrawerItems.add(new DrawerItem());
+		icon = resources.getDrawable(R.drawable.ic_action_location_found);
+		action = new Intent(this, HSIActivity.class);
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_hsi), action));
 		java.util.Map<String, Pair<Drawable, Intent>> plugins = application.getPluginsViews();
 		for (String plugin : plugins.keySet())
 		{
 			mDrawerItems.add(new DrawerItem(plugins.get(plugin).first, plugin, plugins.get(plugin).second));
 		}
+
+		// add supplementary items to drawer list
+		mDrawerItems.add(new DrawerItem());
+		icon = resources.getDrawable(R.drawable.ic_action_settings);
+		action = new Intent(this, PreferencesHC.class);
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), action).makeSupplementary());
+		icon = resources.getDrawable(R.drawable.ic_action_info);
+		fragment = Fragment.instantiate(this, About.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_about), fragment).makeSupplementary());
 
 		mTitle = mDrawerTitle = getTitle();
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -312,14 +321,11 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	private void selectItem(int position)
 	{
 		if (mDrawerAdapter.getSelectedItem() == position)
-		{
-			mDrawerLayout.closeDrawer(mDrawerList);
 			return;
-		}
 		
 		DrawerItem item = mDrawerItems.get(position);
 		// Actions
-		if (item.isAction())
+		if (item.type == DrawerItem.ItemType.ACTION)
 		{
 			if (position > 0)
 				startActivity(item.action);
@@ -351,8 +357,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 			}
 			// update selected item and title, then close the drawer
 			updateDrawerUI(item, position);
-			mDrawerLayout.closeDrawer(mDrawerList);
 		}
+		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
 	@Override
@@ -555,7 +561,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		for (int pos = 0; pos < mDrawerItems.size(); pos++)
 		{
 			DrawerItem item = mDrawerItems.get(pos);
-			if (item.isFragment() && item.fragment == fragment)
+			if (item.type == DrawerItem.ItemType.FRAGMENT && item.fragment == fragment)
 			{
 				updateDrawerUI(item, pos);
 				break;

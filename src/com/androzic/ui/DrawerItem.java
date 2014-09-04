@@ -26,18 +26,32 @@ import android.support.v4.app.Fragment;
 
 public class DrawerItem
 {
+	public static enum ItemType
+	{
+		DIVIDER, TITLE, ACTION, FRAGMENT
+	}
+	
+	public ItemType type;
 	public Drawable icon;
 	public String name;
 	public Fragment fragment;
 	public Intent action;
+	public boolean supplementary = false;
+
+	public DrawerItem()
+	{
+		this.type = ItemType.DIVIDER;
+	}
 
 	public DrawerItem(String name)
 	{
+		this.type = ItemType.TITLE;
 		this.name = name;
 	}
 
 	public DrawerItem(Drawable icon, String name, Fragment fragment)
 	{
+		this.type = ItemType.FRAGMENT;
 		this.icon = icon;
 		this.name = name;
 		this.fragment = fragment;
@@ -45,23 +59,15 @@ public class DrawerItem
 	
 	public DrawerItem(Drawable icon, String name, Intent action)
 	{
+		this.type = ItemType.ACTION;
 		this.icon = icon;
 		this.name = name;
 		this.action = action;
 	}
-	
-	public boolean isTitle()
-	{
-		return fragment == null && action == null;
-	}
 
-	public boolean isFragment()
+	public DrawerItem makeSupplementary()
 	{
-		return fragment != null;
-	}
-
-	public boolean isAction()
-	{
-		return action != null;
+		this.supplementary = true;
+		return this;
 	}
 }

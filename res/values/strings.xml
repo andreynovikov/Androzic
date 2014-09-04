@@ -202,7 +202,9 @@
 	<string name="menu_hsi">HSI</string>
 	<string name="menu_compass">Compass</string>
 	<string name="menu_information">Information</string>
+	<string name="menu_about">About</string>
 	<string name="menu_maps">Maps</string>
+	<string name="menu_map">Map</string>
 	<string name="menu_all">All</string>
 	<string name="menu_atcursor">At cursor</string>
 	<string name="menu_preferences">Settings</string>
