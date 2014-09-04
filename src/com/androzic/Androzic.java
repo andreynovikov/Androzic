@@ -215,6 +215,18 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	protected void setMapHolder(MapHolder holder)
 	{
 		mapHolder = holder;
+		if (! currentMap.activated())
+		{
+			try
+			{
+				currentMap.activate(mapHolder.getMapView(), screenSize);
+			}
+			catch (final Throwable e)
+			{
+				e.printStackTrace();
+				handler.post(new MapActivationError(currentMap, e));
+			}
+		}
 		initGrids();
 	}
 	
@@ -989,6 +1001,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	 */
 	public boolean updateLocationMaps(boolean reindex, boolean findbest)
 	{
+		Log.e(TAG, "updateLocationMaps()");
 		if (maps == null)
 			return false;
 		
@@ -1009,7 +1022,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			newMap = MockMap.getMap(mapCenter[0], mapCenter[1]);
 		}
-		Log.w(TAG, newMap.title);
+		Log.w(TAG, "  new map: " + newMap.title);
 		return setMap(newMap);
 	}
 	
@@ -1280,23 +1293,21 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	synchronized boolean setMap(final Map newMap)
 	{
 		// TODO should override equals()?
-		if (newMap != null && ! newMap.equals(currentMap) && mapHolder != null)
+		if (newMap != null && ! newMap.equals(currentMap))
 		{
 			Log.i(TAG, "Set map: " + newMap);
-			try
+			if (mapHolder != null)
 			{
-				newMap.activate(mapHolder.getMapView(), screenSize);
-			}
-			catch (final Throwable e)
-			{
-				e.printStackTrace();
-				handler.post(new Runnable() {
-				    @Override
-				    public void run() {
-						Toast.makeText(Androzic.this, newMap.imagePath+": "+e.getMessage(), Toast.LENGTH_LONG).show();
-				    }
-				  });
-				return false;
+				try
+				{
+					newMap.activate(mapHolder.getMapView(), screenSize);
+				}
+				catch (final Throwable e)
+				{
+					e.printStackTrace();
+					handler.post(new MapActivationError(newMap, e));
+					return false;
+				}
 			}
 			if (currentMap != null)
 			{
@@ -2115,5 +2126,23 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
 		
 		settings.registerOnSharedPreferenceChangeListener(this);
+	}
+
+	private class MapActivationError implements Runnable
+	{
+		private Map map;
+		private Throwable e;
+
+		MapActivationError(Map map, Throwable e)
+		{
+			this.map = map;
+			this.e = e;
+		}
+
+		@Override
+		public void run()
+		{
+			Toast.makeText(Androzic.this, map.imagePath + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
 	}
 }
