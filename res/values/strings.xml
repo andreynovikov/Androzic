@@ -215,7 +215,10 @@
     <string name="menu_resetindex">Reset index</string>
     <string name="menu_newwaypointset">New set</string>
     
-	<string name="action_locating">Locating</string>
+    <string name="action_add_waypoint">Add waypoint</string>
+    <string name="action_follow">Follow</string>
+    <string name="action_unfollow">Unfollow</string>
+    <string name="action_locating">Locating</string>
 	<string name="action_tracking">Tracking</string>
 	
     <string name="action_bar_sort_alpha">Alphabetically</string>

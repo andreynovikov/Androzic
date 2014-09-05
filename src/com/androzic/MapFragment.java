@@ -21,17 +21,20 @@
 package com.androzic;
 
 import java.lang.ref.WeakReference;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +47,8 @@ import android.support.v7.internal.view.SupportMenuInflater;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.internal.view.menu.MenuPopupHelper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -60,10 +65,14 @@ import com.androzic.overlay.NavigationOverlay;
 import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.StringFormatter;
+import com.androzic.waypoint.OnWaypointActionListener;
+import com.androzic.waypoint.WaypointInfo;
 
 public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, OnClickListener, MenuBuilder.Callback
 {
 	private static final String TAG = "MapFragment";
+	
+	private OnWaypointActionListener waypointActionsCallback;
 
 	// Settings
 	/**
@@ -178,6 +187,23 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try
+		{
+			waypointActionsCallback = (OnWaypointActionListener) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement OnWaypointActionListener");
+		}
+	}
+
+	@Override
 	public void onResume()
 	{
 		super.onResume();
@@ -265,6 +291,35 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		super.onDestroy();
 
 		application = null;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+	{
+		inflater.inflate(R.menu.map_menu, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(final Menu menu)
+	{
+		//TODO Use proper icons
+		MenuItem follow = menu.findItem(R.id.action_follow);
+		if (following && map != null && ! map.getStrictUnfollow())
+		{
+			follow.setVisible(false);
+		}
+		else if (following)
+		{
+			follow.setIcon(R.drawable.ic_action_reload);
+			follow.setTitle(R.string.action_unfollow);
+		}
+		else
+		{
+			follow.setVisible(true);
+			follow.setIcon(R.drawable.ic_action_location_found);			
+			follow.setTitle(R.string.action_follow);
+		}
 	}
 
 	final private Runnable updateUI = new Runnable() {
@@ -588,8 +643,25 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public boolean waypointTapped(Waypoint waypoint, int x, int y)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		try
+		{
+			if (application.editingRoute != null)
+			{
+				//routeSelected = -1;
+				//waypointSelected = application.getWaypointIndex(waypoint);
+				//wptQuickAction.show(map, x, y);
+				return true;
+			}
+			else
+			{
+				waypointActionsCallback.onWaypointShow(waypoint);
+				return true;
+			}
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
 	}
 
 	@Override
@@ -604,12 +676,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	{
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public void toggleFollowing()
-	{
-		setFollowing(!following);
 	}
 
 	@Override
@@ -634,6 +700,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			if (map != null)
 				map.setFollowing(following);
 		}
+		getActivity().supportInvalidateOptionsMenu();
 	}
 
 	@Override
@@ -951,6 +1018,27 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				});
 			}
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.action_add_waypoint:
+				double[] loc = application.getMapCenter();
+				Waypoint waypoint = new Waypoint("", "", loc[0], loc[1]);
+				waypoint.date = Calendar.getInstance().getTime();
+				int wpt = application.addWaypoint(waypoint);
+				waypoint.name = "WPT" + wpt;
+				application.saveDefaultWaypoints();
+				map.update();
+				return true;
+			case R.id.action_follow:
+				setFollowing(!following);
+				return true;
+		}
+		return false;
 	}
 
 	@Override

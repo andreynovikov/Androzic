@@ -102,13 +102,8 @@ import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
 import com.androzic.map.MapInformation;
 import com.androzic.navigation.NavigationService;
-import com.androzic.overlay.AccuracyOverlay;
-import com.androzic.overlay.CurrentTrackOverlay;
-import com.androzic.overlay.DistanceOverlay;
-import com.androzic.overlay.MapObjectsOverlay;
 import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.RouteOverlay;
-import com.androzic.overlay.ScaleOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
@@ -119,7 +114,6 @@ import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
 import com.androzic.waypoint.WaypointFileList;
 import com.androzic.waypoint.WaypointInfo;
-import com.androzic.waypoint.WaypointListActivity;
 import com.androzic.waypoint.WaypointProject;
 import com.androzic.waypoint.WaypointProperties;
 
@@ -1274,12 +1268,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	}
 
 	@Override
-	public void toggleFollowing()
-	{
-		setFollowing(!map.isFollowing());
-	}
-
-	@Override
 	public void setFollowing(boolean follow)
 	{
 		if (application.editingRoute == null && application.editingTrack == null)
@@ -1549,25 +1537,11 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			case R.id.menuSearch:
 				onSearchRequested();
 				return true;
-			case R.id.menuAddWaypoint:
-			{
-				double[] loc = application.getMapCenter();
-				Waypoint waypoint = new Waypoint("", "", loc[0], loc[1]);
-				waypoint.date = Calendar.getInstance().getTime();
-				int wpt = application.addWaypoint(waypoint);
-				waypoint.name = "WPT" + wpt;
-				application.saveDefaultWaypoints();
-				map.update();
-				return true;
-			}
 			case R.id.menuNewWaypoint:
 				startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", -1), RESULT_SAVE_WAYPOINT);
 				return true;
 			case R.id.menuProjectWaypoint:
 				startActivityForResult(new Intent(this, WaypointProject.class), RESULT_SAVE_WAYPOINT);
-				return true;
-			case R.id.menuManageWaypoints:
-				startActivityForResult(new Intent(this, WaypointListActivity.class), RESULT_MANAGE_WAYPOINTS);
 				return true;
 			case R.id.menuLoadWaypoints:
 				startActivityForResult(new Intent(this, WaypointFileList.class), RESULT_LOAD_WAYPOINTS);
@@ -1616,17 +1590,8 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				navigationService.stopNavigation();
 				return true;
 			}
-			case R.id.menuHSI:
-				startActivity(new Intent(this, HSIActivity.class));
-				return true;
-			case R.id.menuInformation:
-				startActivity(new Intent(this, Information.class));
-				return true;
 			case R.id.menuMapInfo:
 				startActivity(new Intent(this, MapInformation.class));
-				return true;
-			case R.id.menuCursorMaps:
-				startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
 				return true;
 			case R.id.menuAllMaps:
 				startActivityForResult(new Intent(this, MapList.class), RESULT_LOAD_MAP);
@@ -1875,48 +1840,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	{
 		switch (v.getId())
 		{
-			case R.id.zoomin:
-				zoomIn();
-				break;
-			case R.id.zoomout:
-				zoomOut();
-				break;
-			case R.id.nextmap:
-				nextMap();
-				break;
-			case R.id.prevmap:
-				previousMap();
-				break;
-			case R.id.maps:
-				startActivityForResult(new Intent(this, MapList.class).putExtra("pos", true), RESULT_LOAD_MAP_ATPOSITION);
-				break;
-			case R.id.waypoints:
-				startActivityForResult(new Intent(this, WaypointListActivity.class), RESULT_MANAGE_WAYPOINTS);
-				break;
-			case R.id.info:
-				startActivity(new Intent(this, Information.class));
-				break;
-			case R.id.follow:
-				setFollowing(!map.isFollowing());
-				break;
-			case R.id.locate:
-			{
-				boolean isLocating = locationService != null && locationService.isLocating();
-				application.enableLocating(!isLocating);
-				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-				editor.putBoolean(getString(R.string.lc_locate), !isLocating);
-				editor.commit();
-				break;
-			}
-			case R.id.tracking:
-			{
-				boolean isTracking = locationService != null && locationService.isTracking();
-				application.enableTracking(!isTracking);
-				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-				editor.putBoolean(getString(R.string.lc_track), !isTracking);
-				editor.commit();
-				break;
-			}
 			case R.id.expand:
 				ImageButton expand = (ImageButton) findViewById(R.id.expand);
 				if (isFullscreen)
@@ -2005,7 +1928,11 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	@Override
 	public void onWaypointView(Waypoint waypoint)
 	{
-		application.ensureVisible(waypoint);
+	}
+
+	@Override
+	public void onWaypointShow(Waypoint waypoint)
+	{
 	}
 
 	@Override

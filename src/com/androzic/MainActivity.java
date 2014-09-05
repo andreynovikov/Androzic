@@ -32,6 +32,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -72,6 +73,7 @@ import com.androzic.ui.DrawerAdapter;
 import com.androzic.ui.DrawerItem;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
+import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
 import com.androzic.waypoint.WaypointProperties;
 
@@ -206,7 +208,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		findViewById(R.id.zoomout).setOnClickListener(this);
 		findViewById(R.id.nextmap).setOnClickListener(this);
 		findViewById(R.id.prevmap).setOnClickListener(this);
-		findViewById(R.id.follow).setOnClickListener(this);
 
 		if (savedInstanceState == null)
 		{
@@ -239,15 +240,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 
 		if (isFinishing())
-		{
-			// clear all overlays from map
-			// updateOverlays(null, true);
-			// application.waypointsOverlay = null;
-			// application.navigationOverlay = null;
-			// application.distanceOverlay = null;
-
 			application.clear();
-		}
 
 		application = null;
 	}
@@ -402,6 +395,22 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		else
 			application.getMapHolder().conditionsChanged();
 		selectItem(0);
+	}
+
+	@Override
+	public void onWaypointShow(Waypoint waypoint)
+	{
+		Location loc = application.getLocationAsLocation();
+        FragmentManager fm = getSupportFragmentManager();
+        WaypointInfo waypointInfo = (WaypointInfo) fm.findFragmentByTag("waypoint_info");
+        if (waypointInfo == null)
+        	waypointInfo = new WaypointInfo();
+        waypointInfo.setWaypoint(waypoint);
+		Bundle args = new Bundle();
+		args.putDouble("lat", loc.getLatitude());
+		args.putDouble("lon", loc.getLongitude());
+		waypointInfo.setArguments(args);
+		waypointInfo.show(fm, "waypoint_info");
 	}
 
 	@Override
@@ -667,10 +676,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 				break;
 			case R.id.prevmap:
 				application.getMapHolder().previousMap();
-				break;
-			case R.id.follow:
-				//TODO Toggle button icon
-				application.getMapHolder().toggleFollowing();
 				break;
 		}
 	}

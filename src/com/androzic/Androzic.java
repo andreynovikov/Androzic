@@ -900,7 +900,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	 */
 	public boolean updateLocationMaps(boolean reindex, boolean findbest)
 	{
-		Log.e(TAG, "updateLocationMaps()");
 		if (maps == null)
 			return false;
 		
@@ -921,7 +920,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			newMap = MockMap.getMap(mapCenter[0], mapCenter[1]);
 		}
-		Log.w(TAG, "  new map: " + newMap.title);
 		return setMap(newMap);
 	}
 	

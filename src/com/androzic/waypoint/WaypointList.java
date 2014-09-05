@@ -241,15 +241,15 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 				adapter.sort(0);
 				mSortMode = R.id.action_sort_alpha;
 				getActivity().supportInvalidateOptionsMenu();
-				break;
+				return true;
 			case R.id.action_sort_size:
 				adapter.sort(1);
 				mSortMode = R.id.action_sort_size;
 				getActivity().supportInvalidateOptionsMenu();
-				break;
+				return true;
 			case R.id.menuLoadWaypoints:
 				startActivity(new Intent(activity, WaypointFileList.class));
-				break;
+				return true;
 			case R.id.menuNewWaypointSet:
 				final EditText textEntryView = new EditText(activity);
 				textEntryView.setSingleLine(true);
@@ -268,7 +268,7 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 						}
 					}
 				}).setNegativeButton(R.string.cancel, null).create().show();
-				break;
+				return true;
 			case R.id.menuNewWaypoint:
 				startActivityForResult(new Intent(activity, WaypointProperties.class).putExtra("INDEX", -1), 0);
 				return true;
@@ -276,7 +276,7 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 				startActivityForResult(new Intent(activity, WaypointProject.class), 0);
 				return true;
 		}
-		return true;
+		return false;
 	}
 
 	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener() {

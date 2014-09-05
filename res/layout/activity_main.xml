@@ -72,15 +72,6 @@
                 android:paddingBottom="8dip"
                 android:paddingTop="8dip"
                 android:src="@drawable/arrow_left" />
-
-            <ImageButton
-                android:id="@+id/follow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:paddingBottom="8dip"
-                android:paddingTop="8dip"
-                android:src="@drawable/cursor_drag_arrow" />
         </LinearLayout>
     </ScrollView>
 
