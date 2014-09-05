@@ -53,6 +53,7 @@ import android.widget.Toast;
 
 import com.androzic.map.Map;
 import com.androzic.overlay.MapOverlay;
+import com.androzic.overlay.OverlayManager;
 import com.androzic.util.Geo;
 
 public class MapView extends SurfaceView implements SurfaceHolder.Callback, MultiTouchObjectCanvas<Object>
@@ -347,7 +348,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		if (!scaled && ((penOX == 0 && penOY == 0) || !hideOnDrag))
 		{
 			// TODO Optimize getOverlays()
-			for (MapOverlay mo : application.getOverlays(Androzic.ORDER_DRAW_PREFERENCE))
+			for (MapOverlay mo : application.overlayManager.getOverlays(OverlayManager.ORDER_DRAW_PREFERENCE))
 				mo.onManagedDraw(canvas, this, cx, cy);
 		}
 
@@ -477,7 +478,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				mpp = map.mpp / map.getZoom();
 		}
 		calculateVectorLength();
-		application.notifyOverlays();
+		application.overlayManager.notifyOverlays();
 		try
 		{
 			mapHolder.updateFileInfo();
@@ -807,7 +808,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 			int dt = GESTURE_THRESHOLD_DP / 2;
 			Rect tap = new Rect(mapTapX - dt, mapTapY - dt, mapTapX + dt, mapTapY + dt);
-			for (MapOverlay mo : application.getOverlays(Androzic.ORDER_SHOW_PREFERENCE))
+			for (MapOverlay mo : application.overlayManager.getOverlays(OverlayManager.ORDER_SHOW_PREFERENCE))
 				if (mo.onSingleTap(upEvent, tap, this))
 					break;
 		}

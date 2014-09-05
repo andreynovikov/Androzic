@@ -28,7 +28,6 @@ import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -172,7 +171,7 @@ public class RouteList extends ListFragment
 				routeActionsCallback.onRouteEdit(route);
 				return true;
 			case R.id.menuLoadRoute:
-				startActivityForResult(new Intent(getActivity(), RouteFileList.class), RouteListActivity.RESULT_LOAD_ROUTE);
+//				startActivityForResult(new Intent(getActivity(), RouteFileList.class), RouteListActivity.RESULT_LOAD_ROUTE);
 				return true;
 		}
 		return false;

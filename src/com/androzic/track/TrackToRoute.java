@@ -37,7 +37,6 @@ import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
-import com.androzic.overlay.RouteOverlay;
 
 public class TrackToRoute extends ActionBarActivity
 {
@@ -117,9 +116,7 @@ public class TrackToRoute extends ActionBarActivity
     	    				route = application.trackToRoute2(track, sensitivity);
     	    				break;
     				}
-    				application.addRoute(route);
-    				RouteOverlay newRoute = new RouteOverlay(route);
-    				application.routeOverlays.add(newRoute);
+    				application.addRouteWithOverlay(route);
     				dlgWait.dismiss();
     	    		finish();
     			};

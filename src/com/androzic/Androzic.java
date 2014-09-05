@@ -37,8 +37,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -85,18 +83,8 @@ import com.androzic.map.MockMap;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.TileProvider;
 import com.androzic.navigation.NavigationService;
-import com.androzic.overlay.AccuracyOverlay;
-import com.androzic.overlay.CurrentTrackOverlay;
-import com.androzic.overlay.DistanceOverlay;
-import com.androzic.overlay.LatLonGridOverlay;
-import com.androzic.overlay.MapObjectsOverlay;
-import com.androzic.overlay.MapOverlay;
-import com.androzic.overlay.NavigationOverlay;
-import com.androzic.overlay.OtherGridOverlay;
+import com.androzic.overlay.OverlayManager;
 import com.androzic.overlay.RouteOverlay;
-import com.androzic.overlay.ScaleOverlay;
-import com.androzic.overlay.TrackOverlay;
-import com.androzic.overlay.WaypointsOverlay;
 import com.androzic.util.Astro.Zenith;
 import com.androzic.util.CSV;
 import com.androzic.util.CoordinateParser;
@@ -113,9 +101,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public static final int PATH_DATA = 0x001;
 	public static final int PATH_ICONS = 0x008;
 	
-	public static final int ORDER_SHOW_PREFERENCE = 0;
-	public static final int ORDER_DRAW_PREFERENCE = 1;
-		
 	public int coordinateFormat = 0;
 	public int angleType = 0;
 	public int sunriseType = 0;
@@ -167,19 +152,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	
 	private boolean memmsg = false;
 	
-	// FIXME Put overlays in separate class
-	public LatLonGridOverlay llGridOverlay;
-	public OtherGridOverlay grGridOverlay;
-	public CurrentTrackOverlay currentTrackOverlay;
-	public NavigationOverlay navigationOverlay;
-	public MapObjectsOverlay mapObjectsOverlay;
-	public WaypointsOverlay waypointsOverlay;
-	public DistanceOverlay distanceOverlay;
-	public AccuracyOverlay accuracyOverlay;
-	public ScaleOverlay scaleOverlay;
-	public List<TrackOverlay> fileTrackOverlays = new ArrayList<TrackOverlay>();
-	public List<RouteOverlay> routeOverlays = new ArrayList<RouteOverlay>();
-	
 	private Locale locale = null;
 	private Handler handler = null;
 	public String charset;
@@ -190,6 +162,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public String iconPath;
 	public boolean mapsInited = false;
 	private MapHolder mapHolder;
+	OverlayManager overlayManager;
 	private int screenSize;
 	public Drawable customCursor = null;
 	public boolean iconsEnabled = false;
@@ -201,9 +174,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	protected boolean adjacentMaps = false;
 	protected boolean cropMapBorder = true;
 	protected boolean drawMapBorder = false;
-	protected boolean mapGrid = false;
-	protected boolean userGrid = false;
-	protected int gridPrefer = 0;
 
 	private Handler mapsHandler = new Handler();
 
@@ -227,85 +197,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				handler.post(new MapActivationError(currentMap, e));
 			}
 		}
-		initGrids();
-	}
-	
-	public List<MapOverlay> getOverlays(int order)
-	{
-		List<MapOverlay> overlays = new ArrayList<MapOverlay>();
-		if (order == ORDER_DRAW_PREFERENCE)
-		{
-			if (llGridOverlay != null)
-				overlays.add(llGridOverlay);
-			if (grGridOverlay != null)
-				overlays.add(grGridOverlay);
-			if (accuracyOverlay != null)
-				overlays.add(accuracyOverlay);
-			overlays.addAll(fileTrackOverlays);
-			if (currentTrackOverlay != null)
-				overlays.add(currentTrackOverlay);
-			overlays.addAll(routeOverlays);
-			if (navigationOverlay != null)
-				overlays.add(navigationOverlay);
-			if (waypointsOverlay != null)
-				overlays.add(waypointsOverlay);
-			if (scaleOverlay != null)
-				overlays.add(scaleOverlay);
-			if (mapObjectsOverlay != null)
-				overlays.add(mapObjectsOverlay);
-			if (distanceOverlay != null)
-				overlays.add(distanceOverlay);
-		}
-		else
-		{
-			if (accuracyOverlay != null)
-				overlays.add(accuracyOverlay);
-			if (distanceOverlay != null)
-				overlays.add(distanceOverlay);
-			if (scaleOverlay != null)
-				overlays.add(scaleOverlay);
-			if (navigationOverlay != null)
-				overlays.add(navigationOverlay);
-			if (currentTrackOverlay != null)
-				overlays.add(currentTrackOverlay);
-			overlays.addAll(routeOverlays);
-			if (waypointsOverlay != null)
-				overlays.add(waypointsOverlay);
-			overlays.addAll(fileTrackOverlays);
-			if (mapObjectsOverlay != null)
-				overlays.add(mapObjectsOverlay);
-			if (grGridOverlay != null)
-				overlays.add(grGridOverlay);
-			if (llGridOverlay != null)
-				overlays.add(llGridOverlay);
-		}
-		return overlays;
-	}
-	
-	private ExecutorService executorThread = Executors.newSingleThreadExecutor();
-
-	protected void notifyOverlays()
-	{
-		final List<MapOverlay> overlays = getOverlays(ORDER_SHOW_PREFERENCE);
-		final boolean[] states = new boolean[overlays.size()];
-		int i = 0;
-    	for (MapOverlay mo : overlays)
-    	{
-   			states[i] = mo.setEnabled(false);
-   			i++;
-    	}
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				int j = 0;
-		    	for (MapOverlay mo : overlays)
-		    	{
-		   			mo.onMapChanged();
-	   				mo.setEnabled(states[j]);
-		   			j++;
-		    	}
-			}
-		});
+		overlayManager.initGrids(currentMap);
 	}
 	
 	public java.util.Map<String, Intent> getPluginsPreferences()
@@ -854,7 +746,14 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		routes.add(newRoute);
 		return routes.lastIndexOf(newRoute);
 	}
-	
+
+	public void addRouteWithOverlay(Route route)
+	{
+		addRoute(route);
+		RouteOverlay routeOverlay = new RouteOverlay(route);
+		overlayManager.routeOverlays.add(routeOverlay);
+	}
+
 	public boolean removeRoute(final Route delRoute)
 	{
 		delRoute.removed = true;
@@ -1256,40 +1155,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return newmap;
 	}
 
-	protected void initGrids()
-	{
-		llGridOverlay = null;
-		grGridOverlay = null;
-		if (mapGrid && currentMap != null && currentMap.llGrid != null && currentMap.llGrid.enabled)
-		{
-			LatLonGridOverlay llgo = new LatLonGridOverlay();
-			llgo.setGrid(currentMap.llGrid);
-			llGridOverlay = llgo;
-		}
-		if (mapGrid && currentMap != null && currentMap.grGrid != null && currentMap.grGrid.enabled && (! userGrid || gridPrefer == 0))
-		{
-			OtherGridOverlay ogo = new OtherGridOverlay();
-			ogo.setGrid(currentMap.grGrid);
-			grGridOverlay = ogo;
-		}
-		else if (userGrid && currentMap != null)
-		{
-			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-			OtherGridOverlay ogo = new OtherGridOverlay();
-			Map.Grid grid = currentMap.new Grid();
-			grid.color1 = 0xFF0000FF;
-			grid.color2 = 0xFF0000FF;
-			grid.color3 = 0xFF0000FF;
-			grid.enabled = true;
-			grid.spacing = Integer.parseInt(settings.getString(getString(R.string.pref_grid_userscale), getResources().getString(R.string.def_grid_userscale)));
-			int distanceIdx = Integer.parseInt(settings.getString(getString(R.string.pref_grid_userunit), "0"));
-			grid.spacing *= Double.parseDouble(getResources().getStringArray(R.array.distance_factors_short)[distanceIdx]);
-			grid.maxMPP = Integer.parseInt(settings.getString(getString(R.string.pref_grid_usermpp), getResources().getString(R.string.def_grid_usermpp)));
-			ogo.setGrid(grid);
-			grGridOverlay = ogo;
-		}
-	}
-	
 	synchronized boolean setMap(final Map newMap)
 	{
 		// TODO should override equals()?
@@ -1315,7 +1180,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 			coveringMaps = null;
 			currentMap = newMap;
-			initGrids();
+			overlayManager.initGrids(currentMap);
 			return true;
 		}
 		return false;
@@ -1499,8 +1364,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		stopService(new Intent(this, NavigationService.class));
 		stopService(new Intent(this, LocationService.class));
 		
-		llGridOverlay = null;
-		grGridOverlay = null;
+		overlayManager.clear();
+		
 		mapHolder = null;
 		currentMap = null;
 		suitableMaps = null;
@@ -1592,9 +1457,9 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			gpsContinous = continous;
 			gpsGeoid = geoid;
 
-			if (accuracyOverlay != null && location.hasAccuracy())
+			if (overlayManager.accuracyOverlay != null && location.hasAccuracy())
 			{
-				accuracyOverlay.setAccuracy(location.getAccuracy());
+				overlayManager.accuracyOverlay.setAccuracy(location.getAccuracy());
 			}
 		}
 
@@ -2017,22 +1882,22 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		else if (getString(R.string.pref_grid_mapshow).equals(key))
 		{
-			mapGrid = sharedPreferences.getBoolean(key, false);
-			initGrids();
+			overlayManager.mapGrid = sharedPreferences.getBoolean(key, false);
+			overlayManager.initGrids(currentMap);
 		}
 		else if (getString(R.string.pref_grid_usershow).equals(key))
 		{
-			userGrid = sharedPreferences.getBoolean(key, false);
-			initGrids();
+			overlayManager.userGrid = sharedPreferences.getBoolean(key, false);
+			overlayManager.initGrids(currentMap);
 		}
 		else if (getString(R.string.pref_grid_preference).equals(key))
 		{
-			gridPrefer = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			initGrids();
+			overlayManager.gridPrefer = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			overlayManager.initGrids(currentMap);
 		}
 		else if (getString(R.string.pref_grid_userscale).equals(key) || getString(R.string.pref_grid_userunit).equals(key) || getString(R.string.pref_grid_usermpp).equals(key))
 		{
-			initGrids();
+			overlayManager.initGrids(currentMap);
 		}
 		else if (getString(R.string.pref_useonlinemap).equals(key))
 		{
@@ -2058,6 +1923,24 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			drawMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapdrawborder));
 		}
+		else if (getString(R.string.pref_showwaypoints).equals(key))
+		{
+			overlayManager.setWaypointsOverlayEnabled(sharedPreferences.getBoolean(key, true));
+		}
+		else if (getString(R.string.pref_showcurrenttrack).equals(key))
+		{
+			overlayManager.setCurrentTrackOverlayEnabled(sharedPreferences.getBoolean(key, true));
+		}
+		else if (getString(R.string.pref_showaccuracy).equals(key))
+		{
+			overlayManager.setAccuracyOverlayEnabled(sharedPreferences.getBoolean(key, true));
+		}
+		else if (getString(R.string.pref_showdistance_int).equals(key))
+		{
+			int showDistance = Integer.parseInt(sharedPreferences.getString(key, getString(R.string.def_showdistance)));
+			overlayManager.setDistanceOverlayEnabled(showDistance > 0);
+		}
+		overlayManager.onPreferencesChanged(sharedPreferences);
 	}	
 
 	@Override
@@ -2125,7 +2008,20 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		
 		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
 		
+		overlayManager = new OverlayManager();
+		
+		//TODO Initialize all suitable settings
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdrawborder));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_showwaypoints));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_showcurrenttrack));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_showaccuracy));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_showdistance_int));
+
 		settings.registerOnSharedPreferenceChangeListener(this);
+		
+		//navEnabled = navigationService != null && navigationService.isNavigating();
 	}
 
 	private class MapActivationError implements Runnable

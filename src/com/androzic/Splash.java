@@ -387,7 +387,7 @@ public class Splash extends Activity implements OnClickListener
 			// read track tail
 			if (settings.getBoolean(getString(R.string.pref_showcurrenttrack), true))
 			{
-				application.currentTrackOverlay = new CurrentTrackOverlay();
+				application.overlayManager.currentTrackOverlay = new CurrentTrackOverlay();
 				if (settings.getBoolean(getString(R.string.pref_tracking_currentload), resources.getBoolean(R.bool.def_tracking_currentload)))
 				{
 					int length = Integer.parseInt(settings.getString(getString(R.string.pref_tracking_currentlength), getString(R.string.def_tracking_currentlength)));
@@ -414,7 +414,7 @@ public class Splash extends Activity implements OnClickListener
 								track.addPoint(continous, latitude, longitude, altitude, speed, bearing, accuracy, time);
 							}
 							track.show = true;
-							application.currentTrackOverlay.setTrack(track);
+							application.overlayManager.currentTrackOverlay.setTrack(track);
 						}
 						cursor.close();
 						trackDB.close();
@@ -453,7 +453,7 @@ public class Splash extends Activity implements OnClickListener
 						{
 							route.show = !hide;
 							RouteOverlay newRoute = new RouteOverlay(route);
-							application.routeOverlays.add(newRoute);
+							application.overlayManager.routeOverlays.add(newRoute);
 						}
 					}
 					catch (Exception e)
@@ -462,6 +462,8 @@ public class Splash extends Activity implements OnClickListener
 					}
 				}
 			}
+			
+			application.overlayManager.init();
 
 			total += PROGRESS_STEP;
 			msg = mHandler.obtainMessage(MSG_PROGRESS);

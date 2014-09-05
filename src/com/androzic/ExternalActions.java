@@ -68,7 +68,7 @@ public class ExternalActions extends Activity
             	int rt = application.addRoute(route);
     			RouteOverlay routeOverlay = new RouteOverlay(route);
     			// FIXME no overlay at this point
-    			application.routeOverlays.add(routeOverlay);
+    			application.overlayManager.routeOverlays.add(routeOverlay);
     			startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt));
             }
             else

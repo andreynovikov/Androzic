@@ -64,7 +64,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -73,7 +72,6 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
-import android.text.ClipboardManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -112,16 +110,10 @@ import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.overlay.ScaleOverlay;
 import com.androzic.overlay.TrackOverlay;
-import com.androzic.overlay.WaypointsOverlay;
 import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
-import com.androzic.route.RouteList;
-import com.androzic.route.RouteListActivity;
-import com.androzic.route.RouteStart;
 import com.androzic.track.TrackExportDialog;
-import com.androzic.track.TrackListActivity;
 import com.androzic.util.Astro;
-import com.androzic.util.CoordinateParser;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
@@ -245,9 +237,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		finishHandler = new FinishHandler(this);
 		
 		application = (Androzic) getApplication();
-
-		// FIXME Should find a better place for this
-		application.mapObjectsOverlay = new MapObjectsOverlay();
 
 		// check if called after crash
 		if (!application.mapsInited)
@@ -374,7 +363,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					rt = application.addRoute(route);
 				}
 				RouteOverlay newRoute = new RouteOverlay(route);
-				application.routeOverlays.add(newRoute);
+				application.overlayManager.routeOverlays.add(newRoute);
 				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt).putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, ndir).putExtra(NavigationService.EXTRA_ROUTE_START, nwpt));
 			}
 			catch (Exception e)
@@ -465,7 +454,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		followOnLocation = settings.getBoolean(getString(R.string.pref_mapfollowonloc), resources.getBoolean(R.bool.def_mapfollowonloc));
 		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
 		showDistance = Integer.parseInt(settings.getString(getString(R.string.pref_showdistance_int), getString(R.string.def_showdistance)));
-		showAccuracy = settings.getBoolean(getString(R.string.pref_showaccuracy), true);
 		autoDim = settings.getBoolean(getString(R.string.pref_mapdim), resources.getBoolean(R.bool.def_mapdim));
 		dimInterval = settings.getInt(getString(R.string.pref_mapdiminterval), resources.getInteger(R.integer.def_mapdiminterval)) * 1000;
 		dimValue = settings.getInt(getString(R.string.pref_mapdimvalue), resources.getInteger(R.integer.def_mapdimvalue));
@@ -488,8 +476,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		}
 		updateGPSStatus();
 		updateNavigationStatus();
-		// prepare overlays
-		updateOverlays(settings, false);
 
 		if (settings.getBoolean(getString(R.string.ui_drawer_open), false))
 		{
@@ -603,12 +589,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 		if (isFinishing() && !restarting)
 		{
-			// clear all overlays from map
-			updateOverlays(null, true);
-			application.waypointsOverlay = null;
-			application.navigationOverlay = null;
-			application.distanceOverlay = null;
-
 			application.clear();
 		}
 
@@ -807,9 +787,9 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 				lastKnownLocation = location;
 
-				if (application.accuracyOverlay != null && location.hasAccuracy())
+				if (application.overlayManager.accuracyOverlay != null && location.hasAccuracy())
 				{
-					application.accuracyOverlay.setAccuracy(location.getAccuracy());
+					application.overlayManager.accuracyOverlay.setAccuracy(location.getAccuracy());
 				}
 
 				runOnUiThread(new Runnable() {
@@ -1106,16 +1086,16 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		if (isNavigating)
 		{
 			waypointName.setText("» " + navigationService.navWaypoint.name);
-			if (application.navigationOverlay == null)
+			if (application.overlayManager.navigationOverlay == null)
 			{
-				application.navigationOverlay = new NavigationOverlay();
-				application.navigationOverlay.onMapChanged();
+				application.overlayManager.navigationOverlay = new NavigationOverlay();
+				application.overlayManager.navigationOverlay.onMapChanged();
 			}
 		}
-		else if (application.navigationOverlay != null)
+		else if (application.overlayManager.navigationOverlay != null)
 		{
-			application.navigationOverlay.onBeforeDestroy();
-			application.navigationOverlay = null;
+			application.overlayManager.navigationOverlay.onBeforeDestroy();
+			application.overlayManager.navigationOverlay = null;
 		}
 
 		updateMapViewArea();
@@ -1233,142 +1213,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		updateMapViewArea();
 	}
 
-	private final void updateOverlays(final SharedPreferences settings, final boolean justRemove)
-	{
-		boolean ctEnabled = false;
-		boolean wptEnabled = false;
-		boolean navEnabled = false;
-		boolean distEnabled = false;
-		boolean accEnabled = false;
-		boolean moEnabled = false;
-		boolean scaleEnabled = false;
-
-		if (!justRemove)
-		{
-			ctEnabled = settings.getBoolean(getString(R.string.pref_showcurrenttrack), true);
-			wptEnabled = settings.getBoolean(getString(R.string.pref_showwaypoints), true);
-			distEnabled = showDistance > 0;
-			accEnabled = showAccuracy;
-			navEnabled = navigationService != null && navigationService.isNavigating();
-			moEnabled = true;
-			scaleEnabled = true;
-		}
-		if (ctEnabled && application.currentTrackOverlay == null)
-		{
-			application.currentTrackOverlay = new CurrentTrackOverlay();
-		}
-		else if (!ctEnabled && application.currentTrackOverlay != null)
-		{
-			application.currentTrackOverlay.onBeforeDestroy();
-			application.currentTrackOverlay = null;
-		}
-		if (application.waypointsOverlay == null)
-		{
-			application.waypointsOverlay = new WaypointsOverlay();
-			application.waypointsOverlay.setWaypoints(application.getWaypoints());
-		}
-		application.waypointsOverlay.setEnabled(wptEnabled);
-		if (navEnabled && application.navigationOverlay == null)
-		{
-			application.navigationOverlay = new NavigationOverlay();
-		}
-		else if (!navEnabled && application.navigationOverlay != null)
-		{
-			application.navigationOverlay.onBeforeDestroy();
-			application.navigationOverlay = null;
-		}
-		if (distEnabled && application.distanceOverlay == null)
-		{
-			application.distanceOverlay = new DistanceOverlay();
-		}
-		else if (!distEnabled && application.distanceOverlay != null)
-		{
-			application.distanceOverlay.onBeforeDestroy();
-			application.distanceOverlay = null;
-		}
-		if (!moEnabled && application.mapObjectsOverlay != null)
-		{
-			application.mapObjectsOverlay.onBeforeDestroy();
-			application.mapObjectsOverlay = null;
-		}
-		if (scaleEnabled && application.scaleOverlay == null)
-		{
-			application.scaleOverlay = new ScaleOverlay();
-		}
-		else if (!scaleEnabled && application.scaleOverlay != null)
-		{
-			application.scaleOverlay.onBeforeDestroy();
-			application.scaleOverlay = null;
-		}
-		if (accEnabled && application.accuracyOverlay == null)
-		{
-			application.accuracyOverlay = new AccuracyOverlay();
-			application.accuracyOverlay.setAccuracy(application.getLocationAsLocation().getAccuracy());
-		}
-		else if (!accEnabled && application.accuracyOverlay != null)
-		{
-			application.accuracyOverlay.onBeforeDestroy();
-			application.accuracyOverlay = null;
-		}
-
-		if (justRemove)
-		{
-			for (TrackOverlay to : application.fileTrackOverlays)
-			{
-				to.onBeforeDestroy();
-			}
-			application.fileTrackOverlays.clear();
-			for (RouteOverlay ro : application.routeOverlays)
-			{
-				ro.onBeforeDestroy();
-			}
-			application.routeOverlays.clear();
-			if (application.waypointsOverlay != null)
-			{
-				application.waypointsOverlay.onBeforeDestroy();
-			}
-		}
-		else
-		{
-			for (TrackOverlay to : application.fileTrackOverlays)
-			{
-				to.onPreferencesChanged(settings);
-			}
-			for (RouteOverlay ro : application.routeOverlays)
-			{
-				ro.onPreferencesChanged(settings);
-			}
-			if (application.waypointsOverlay != null)
-			{
-				application.waypointsOverlay.onPreferencesChanged(settings);
-			}
-			if (application.navigationOverlay != null)
-			{
-				application.navigationOverlay.onPreferencesChanged(settings);
-			}
-			if (application.mapObjectsOverlay != null)
-			{
-				application.mapObjectsOverlay.onPreferencesChanged(settings);
-			}
-			if (application.distanceOverlay != null)
-			{
-				application.distanceOverlay.onPreferencesChanged(settings);
-			}
-			if (application.accuracyOverlay != null)
-			{
-				application.accuracyOverlay.onPreferencesChanged(settings);
-			}
-			if (application.scaleOverlay != null)
-			{
-				application.scaleOverlay.onPreferencesChanged(settings);
-			}
-			if (application.currentTrackOverlay != null)
-			{
-				application.currentTrackOverlay.onPreferencesChanged(settings);
-			}
-		}
-	}
-
 	private void startEditTrack(Track track)
 	{
 		setFollowing(false);
@@ -1386,7 +1230,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		findViewById(R.id.trackdetails).setVisibility(View.VISIBLE);
 		updateGPSStatus();
 		if (showDistance > 0)
-			application.distanceOverlay.setEnabled(false);
+			application.overlayManager.distanceOverlay.setEnabled(false);
 		map.setFocusable(false);
 		map.setFocusableInTouchMode(false);
 		trackBar.requestFocus();
@@ -1400,7 +1244,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		application.editingRoute.editing = true;
 
 		boolean newroute = true;
-		for (Iterator<RouteOverlay> iter = application.routeOverlays.iterator(); iter.hasNext();)
+		for (Iterator<RouteOverlay> iter = application.overlayManager.routeOverlays.iterator(); iter.hasNext();)
 		{
 			RouteOverlay ro = iter.next();
 			if (ro.getRoute().editing)
@@ -1412,13 +1256,13 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		if (newroute)
 		{
 			RouteOverlay newRoute = new RouteOverlay(application.editingRoute);
-			application.routeOverlays.add(newRoute);
+			application.overlayManager.routeOverlays.add(newRoute);
 		}
 		findViewById(R.id.editroute).setVisibility(View.VISIBLE);
 		updateGPSStatus();
 		application.routeEditingWaypoints = new Stack<Waypoint>();
 		if (showDistance > 0)
-			application.distanceOverlay.setEnabled(false);
+			application.overlayManager.distanceOverlay.setEnabled(false);
 		updateMapViewArea();
 	}
 
@@ -1440,16 +1284,16 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	{
 		if (application.editingRoute == null && application.editingTrack == null)
 		{
-			if (showDistance > 0 && application.distanceOverlay != null)
+			if (showDistance > 0 && application.overlayManager.distanceOverlay != null)
 			{
 				if (showDistance == 2 && !follow)
 				{
-					application.distanceOverlay.setAncor(application.getLocation());
-					application.distanceOverlay.setEnabled(true);
+					application.overlayManager.distanceOverlay.setAncor(application.getLocation());
+					application.overlayManager.distanceOverlay.setEnabled(true);
 				}
 				else
 				{
-					application.distanceOverlay.setEnabled(false);
+					application.overlayManager.distanceOverlay.setEnabled(false);
 				}
 			}
 			map.setFollowing(follow);
@@ -1681,8 +1525,8 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		boolean nvr = navigationService != null && navigationService.isNavigatingViaRoute();
 
 		menu.findItem(R.id.menuManageWaypoints).setEnabled(wpt);
-		menu.findItem(R.id.menuExportCurrentTrack).setEnabled(application.currentTrackOverlay != null);
-		menu.findItem(R.id.menuClearCurrentTrack).setEnabled(application.currentTrackOverlay != null);
+		menu.findItem(R.id.menuExportCurrentTrack).setEnabled(application.overlayManager.currentTrackOverlay != null);
+		menu.findItem(R.id.menuClearCurrentTrack).setEnabled(application.overlayManager.currentTrackOverlay != null);
 		menu.findItem(R.id.menuManageRoutes).setVisible(!nvr);
 		menu.findItem(R.id.menuStartNavigation).setVisible(!nvr);
 		menu.findItem(R.id.menuStartNavigation).setEnabled(rts);
@@ -1728,9 +1572,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			case R.id.menuLoadWaypoints:
 				startActivityForResult(new Intent(this, WaypointFileList.class), RESULT_LOAD_WAYPOINTS);
 				return true;
-			case R.id.menuManageTracks:
-				startActivityForResult(new Intent(this, TrackListActivity.class), RESULT_MANAGE_TRACKS);
-				return true;
 			case R.id.menuExportCurrentTrack:
 		        FragmentManager fm = getSupportFragmentManager();
 		        TrackExportDialog trackExportDialog = new TrackExportDialog(locationService);
@@ -1741,11 +1582,11 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
-						if (application.currentTrackOverlay != null)
+						if (application.overlayManager.currentTrackOverlay != null)
 						{
 							Track track = locationService.getTrack();
 							track.show = true;
-							application.currentTrackOverlay.setTrack(track);
+							application.overlayManager.currentTrackOverlay.setTrack(track);
 						}
 					}
 				}).setNegativeButton(R.string.no, null).show();
@@ -1755,24 +1596,11 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
-						if (application.currentTrackOverlay != null)
-							application.currentTrackOverlay.clear();
+						if (application.overlayManager.currentTrackOverlay != null)
+							application.overlayManager.currentTrackOverlay.clear();
 						locationService.clearTrack();
 					}
 				}).setNegativeButton(R.string.no, null).show();
-				return true;
-			case R.id.menuManageRoutes:
-				startActivityForResult(new Intent(this, RouteListActivity.class), RESULT_MANAGE_ROUTES);
-				return true;
-			case R.id.menuStartNavigation:
-				if (application.getRoutes().size() > 1)
-				{
-					//startActivity(new Intent(this, RouteListActivity.class).putExtra("MODE", RouteList.MODE_START));
-				}
-				else
-				{
-					startActivity(new Intent(this, RouteStart.class).putExtra("INDEX", 0));
-				}
 				return true;
 			case R.id.menuNavigationDetails:
 				startActivity(new Intent(this, RouteDetails.class).putExtra("index", application.getRouteIndex(navigationService.navRoute)).putExtra("nav", true));
@@ -1803,62 +1631,11 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			case R.id.menuAllMaps:
 				startActivityForResult(new Intent(this, MapList.class), RESULT_LOAD_MAP);
 				return true;
-			case R.id.menuShare:
-			{
-				Intent i = new Intent(android.content.Intent.ACTION_SEND);
-				i.setType("text/plain");
-				i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
-				double[] sloc = application.getMapCenter();
-				String spos = StringFormatter.coordinates(application.coordinateFormat, " ", sloc[0], sloc[1]);
-				i.putExtra(Intent.EXTRA_TEXT, spos);
-				startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
-				return true;
-			}
-			case R.id.menuViewElsewhere:
-			{
-				double[] sloc = application.getMapCenter();
-				String geoUri = "geo:" + Double.toString(sloc[0]) + "," + Double.toString(sloc[1]);
-				Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(geoUri));
-				startActivity(intent);
-				return true;
-			}
-			case R.id.menuCopyLocation:
-			{
-				ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-				double[] cloc = application.getMapCenter();
-				String cpos = StringFormatter.coordinates(application.coordinateFormat, " ", cloc[0], cloc[1]);
-				clipboard.setText(cpos);
-				return true;
-			}
-			case R.id.menuPasteLocation:
-			{
-				ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-				if (clipboard.hasText())
-				{
-					String q = clipboard.getText().toString();
-					try
-					{
-						double c[] = CoordinateParser.parse(q);
-						if (!Double.isNaN(c[0]) && !Double.isNaN(c[1]))
-						{
-							boolean mapChanged = application.setMapCenter(c[0], c[1], true, false);
-							if (mapChanged)
-								map.updateMapInfo();
-							map.update();
-							map.setFollowing(false);
-						}
-					}
-					catch (IllegalArgumentException e)
-					{
-					}
-				}
-				return true;
-			}
 			case R.id.menuSetAnchor:
 				if (showDistance > 0)
 				{
-					application.distanceOverlay.setAncor(application.getMapCenter());
-					application.distanceOverlay.setEnabled(true);
+					application.overlayManager.distanceOverlay.setAncor(application.getMapCenter());
+					application.overlayManager.distanceOverlay.setEnabled(true);
 				}
 				return true;
 			case R.id.menuPreferences:
@@ -1929,7 +1706,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		{
 			case RESULT_MANAGE_WAYPOINTS:
 			{
-				application.waypointsOverlay.clearBitmapCache();
+				application.overlayManager.waypointsOverlay.clearBitmapCache();
 				application.saveWaypoints();
 				break;
 			}
@@ -1941,7 +1718,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					int count = extras.getInt("count");
 					if (count > 0)
 					{
-						application.waypointsOverlay.clearBitmapCache();
+						application.overlayManager.waypointsOverlay.clearBitmapCache();
 					}
 				}
 				break;
@@ -1950,7 +1727,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			{
 				if (resultCode == RESULT_OK)
 				{
-					application.waypointsOverlay.clearBitmapCache();
+					application.overlayManager.waypointsOverlay.clearBitmapCache();
 					application.saveWaypoints();
 					if (data != null && data.hasExtra("index")
 							&& PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_waypoint_visible), getResources().getBoolean(R.bool.def_waypoint_visible)))
@@ -1965,7 +1742,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				}
 				break;
 			case RESULT_MANAGE_TRACKS:
-				for (Iterator<TrackOverlay> iter = application.fileTrackOverlays.iterator(); iter.hasNext();)
+				for (Iterator<TrackOverlay> iter = application.overlayManager.fileTrackOverlays.iterator(); iter.hasNext();)
 				{
 					TrackOverlay to = iter.next();
 					to.onTrackPropertiesChanged();
@@ -1984,7 +1761,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				break;
 			case RESULT_MANAGE_ROUTES:
 			{
-				for (Iterator<RouteOverlay> iter = application.routeOverlays.iterator(); iter.hasNext();)
+				for (Iterator<RouteOverlay> iter = application.overlayManager.routeOverlays.iterator(); iter.hasNext();)
 				{
 					RouteOverlay ro = iter.next();
 					ro.onRoutePropertiesChanged();
@@ -2007,7 +1784,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				break;
 			}
 			case RESULT_EDIT_ROUTE:
-				for (Iterator<RouteOverlay> iter = application.routeOverlays.iterator(); iter.hasNext();)
+				for (Iterator<RouteOverlay> iter = application.overlayManager.routeOverlays.iterator(); iter.hasNext();)
 				{
 					RouteOverlay ro = iter.next();
 					if (ro.getRoute().editing)
@@ -2191,7 +1968,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					application.editingRoute.name = formatter.format(new Date());
 				}
 				application.editingRoute.editing = false;
-				for (Iterator<RouteOverlay> iter = application.routeOverlays.iterator(); iter.hasNext();)
+				for (Iterator<RouteOverlay> iter = application.overlayManager.routeOverlays.iterator(); iter.hasNext();)
 				{
 					RouteOverlay ro = iter.next();
 					ro.onRoutePropertiesChanged();
@@ -2202,7 +1979,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				updateGPSStatus();
 				if (showDistance == 2)
 				{
-					application.distanceOverlay.setEnabled(true);
+					application.overlayManager.distanceOverlay.setEnabled(true);
 				}
 				updateMapViewArea();
 				map.requestFocus();
@@ -2216,7 +1993,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				updateGPSStatus();
 				if (showDistance == 2)
 				{
-					application.distanceOverlay.setEnabled(true);
+					application.overlayManager.distanceOverlay.setEnabled(true);
 				}
 				map.setFocusable(true);
 				map.setFocusableInTouchMode(true);
@@ -2354,9 +2131,9 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		outState.putInt("routeSelected", routeSelected);
 		outState.putLong("mapObjectSelected", mapObjectSelected);
 
-		if (application.distanceOverlay != null)
+		if (application.overlayManager.distanceOverlay != null)
 		{
-			outState.putDoubleArray("distAncor", application.distanceOverlay.getAncor());
+			outState.putDoubleArray("distAncor", application.overlayManager.distanceOverlay.getAncor());
 		}
 	}
 
@@ -2365,56 +2142,9 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	{
 		Resources resources = getResources();
 		// application preferences
-		if (getString(R.string.pref_folder_data).equals(key))
-		{
-			application.setDataPath(Androzic.PATH_DATA, sharedPreferences.getString(key, resources.getString(R.string.def_folder_data)));
-		}
-		else if (getString(R.string.pref_folder_icon).equals(key))
-		{
-			application.setDataPath(Androzic.PATH_ICONS, sharedPreferences.getString(key, resources.getString(R.string.def_folder_icon)));
-		}
-		else if (getString(R.string.pref_orientation).equals(key))
+		if (getString(R.string.pref_orientation).equals(key))
 		{
 			setRequestedOrientation(Integer.parseInt(sharedPreferences.getString(key, "-1")));
-		}
-		else if (getString(R.string.pref_grid_mapshow).equals(key))
-		{
-			application.mapGrid = sharedPreferences.getBoolean(key, false);
-			application.initGrids();
-		}
-		else if (getString(R.string.pref_grid_usershow).equals(key))
-		{
-			application.userGrid = sharedPreferences.getBoolean(key, false);
-			application.initGrids();
-		}
-		else if (getString(R.string.pref_grid_preference).equals(key))
-		{
-			application.gridPrefer = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			application.initGrids();
-		}
-		else if (getString(R.string.pref_grid_userscale).equals(key) || getString(R.string.pref_grid_userunit).equals(key) || getString(R.string.pref_grid_usermpp).equals(key))
-		{
-			application.initGrids();
-		}
-		else if (getString(R.string.pref_useonlinemap).equals(key) && sharedPreferences.getBoolean(key, false))
-		{
-			application.setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
-		}
-		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
-		{
-			application.setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
-		}
-		else if (getString(R.string.pref_mapadjacent).equals(key))
-		{
-			application.adjacentMaps = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapadjacent));
-		}
-		else if (getString(R.string.pref_mapcropborder).equals(key))
-		{
-			application.cropMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapcropborder));
-		}
-		else if (getString(R.string.pref_mapdrawborder).equals(key))
-		{
-			application.drawMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapdrawborder));
 		}
 		// activity preferences
 		else if (getString(R.string.pref_wakelock).equals(key))

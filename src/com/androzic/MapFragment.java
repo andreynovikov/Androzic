@@ -481,16 +481,16 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		{
 			waypointName.setText("» " + application.navigationService.navWaypoint.name);
 			// FIXME All overlay operations should go into application
-			if (application.navigationOverlay == null)
+			if (application.overlayManager.navigationOverlay == null)
 			{
-				application.navigationOverlay = new NavigationOverlay();
-				application.navigationOverlay.onMapChanged();
+				application.overlayManager.navigationOverlay = new NavigationOverlay();
+				application.overlayManager.navigationOverlay.onMapChanged();
 			}
 		}
-		else if (application.navigationOverlay != null)
+		else if (application.overlayManager.navigationOverlay != null)
 		{
-			application.navigationOverlay.onBeforeDestroy();
-			application.navigationOverlay = null;
+			application.overlayManager.navigationOverlay.onBeforeDestroy();
+			application.overlayManager.navigationOverlay = null;
 		}
 
 		updateMapViewArea();
@@ -618,16 +618,16 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		followOnLocation = false;
 		if (application.editingRoute == null && application.editingTrack == null)
 		{
-			if (showDistance > 0 && application.distanceOverlay != null)
+			if (showDistance > 0 && application.overlayManager.distanceOverlay != null)
 			{
 				if (showDistance == 2 && !follow)
 				{
-					application.distanceOverlay.setAncor(application.getLocation());
-					application.distanceOverlay.setEnabled(true);
+					application.overlayManager.distanceOverlay.setAncor(application.getLocation());
+					application.overlayManager.distanceOverlay.setEnabled(true);
 				}
 				else
 				{
-					application.distanceOverlay.setEnabled(false);
+					application.overlayManager.distanceOverlay.setEnabled(false);
 				}
 			}
 			following = follow;

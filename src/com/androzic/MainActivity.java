@@ -61,8 +61,13 @@ import com.androzic.map.Map;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteList;
+import com.androzic.route.RouteProperties;
+import com.androzic.route.RouteSave;
 import com.androzic.track.OnTrackActionListener;
 import com.androzic.track.TrackList;
+import com.androzic.track.TrackProperties;
+import com.androzic.track.TrackSave;
+import com.androzic.track.TrackToRoute;
 import com.androzic.ui.DrawerAdapter;
 import com.androzic.ui.DrawerItem;
 import com.androzic.util.StringFormatter;
@@ -450,67 +455,85 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 			application.getMapHolder().mapChanged();
 	}
 
+/*
+	if (resultCode == RESULT_OK)
+	{
+		final Androzic application = Androzic.getApplication();
+		int[] indexes = data.getExtras().getIntArray("index");
+		for (int index : indexes)
+		{
+			RouteOverlay newRoute = new RouteOverlay(application.getRoute(index));
+			application.routeOverlays.add(newRoute);
+		}
+	}
+*/
+
 	@Override
 	public void onRouteDetails(Route route)
 	{
-		// TODO Auto-generated method stub
-		
+//		startActivityForResult(new Intent(this, RouteDetails.class).putExtra("index", application.getRouteIndex(route)), RESULT_ROUTE_DETAILS);
 	}
 
 	@Override
 	public void onRouteNavigate(Route route)
 	{
-		// TODO Auto-generated method stub
-		
+//		startActivityForResult(new Intent(this, RouteStart.class).putExtra("index", application.getRouteIndex(route)), RESULT_START_ROUTE);
 	}
 
 	@Override
 	public void onRouteEdit(Route route)
 	{
-		// TODO Auto-generated method stub
-		
+		startActivity(new Intent(this, RouteProperties.class).putExtra("index", application.getRouteIndex(route)));
 	}
 
 	@Override
 	public void onRouteEditPath(Route route)
 	{
-		// TODO Auto-generated method stub
-		
+//		route.show = true;
+//		setResult(RESULT_OK, new Intent().putExtra("index", application.getRouteIndex(route)));
 	}
 
 	@Override
 	public void onRouteSave(Route route)
 	{
-		// TODO Auto-generated method stub
-		
+		startActivity(new Intent(this, RouteSave.class).putExtra("index", application.getRouteIndex(route)));
 	}
+
+/*
+ 				if (resultCode == Activity.RESULT_OK)
+				{
+					final Androzic application = Androzic.getApplication();
+					int[] indexes = data.getExtras().getIntArray("index");
+					for (int index : indexes)
+					{
+						TrackOverlay newTrack = new TrackOverlay(application.getTrack(index));
+						application.fileTrackOverlays.add(newTrack);
+					}
+				}
+ */
 
 	@Override
 	public void onTrackEdit(Track track)
 	{
-		// TODO Auto-generated method stub
-		
+		startActivity(new Intent(this, TrackProperties.class).putExtra("INDEX", application.getTrackIndex(track)));
 	}
 
 	@Override
 	public void onTrackEditPath(Track track)
 	{
-		// TODO Auto-generated method stub
-		
+//		setResult(RESULT_OK, new Intent().putExtra("index", application.getTrackIndex(track)));
 	}
 
 	@Override
 	public void onTrackToRoute(Track track)
 	{
-		// TODO Auto-generated method stub
-		
+		startActivity(new Intent(this, TrackToRoute.class).putExtra("INDEX", application.getTrackIndex(track)));
 	}
 
 	@Override
 	public void onTrackSave(Track track)
 	{
-		// TODO Auto-generated method stub
-		
+		startActivity(new Intent(this, TrackSave.class).putExtra("INDEX", application.getTrackIndex(track)));
 	}
 
 	@Override
