@@ -428,9 +428,12 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onWaypointEdit(Waypoint waypoint)
 	{
-		// TODO Refactor
-		int index = application.getWaypointIndex(waypoint);
-		startActivity(new Intent(application, WaypointProperties.class).putExtra("INDEX", index));
+		FragmentManager fm = getSupportFragmentManager();
+		WaypointProperties waypointProperties = (WaypointProperties) fm.findFragmentByTag("waypoint_properties");
+		if (waypointProperties == null)
+			waypointProperties = (WaypointProperties) Fragment.instantiate(this, WaypointProperties.class.getName());
+		waypointProperties.setWaypoint(waypoint);
+		addFragment(waypointProperties, "waypoint_properties");
 	}
 
 	@Override
@@ -682,27 +685,33 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 
 	private void addFragment(Fragment fragment)
 	{
+		// Add fragment with unique tag
+		String tag = UUID.randomUUID().toString();
+		addFragment(fragment, tag);
+	}
+	
+	private void addFragment(Fragment fragment, String tag)
+	{
 		FragmentManager fm = getSupportFragmentManager();
 		// Get topmost fragment		
-		String tag = "map";
+		String parentTag = "map";
 		if (fm.getBackStackEntryCount() > 0)
 		{
 			FragmentManager.BackStackEntry bse = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
-			tag = bse.getName();
+			parentTag = bse.getName();
 		}
 		FragmentTransaction ft = fm.beginTransaction();
-		Fragment top = getSupportFragmentManager().findFragmentByTag(tag);
+		Fragment parent = getSupportFragmentManager().findFragmentByTag(parentTag);
 		// Detach it
-		ft.detach(top);
+		ft.detach(parent);
 		// Add new fragment
-		addFragment(fragment, ft);
+		addFragment(fragment, tag, ft);
 		ft.commit();
 	}
 
-	private void addFragment(Fragment fragment, FragmentTransaction ft)
+	private void addFragment(Fragment fragment, String tag, FragmentTransaction ft)
 	{
-		// Add fragment to back stack with unique tag
-		String tag = UUID.randomUUID().toString();
+		// Add fragment to back stack
 		ft.add(R.id.content_frame, fragment, tag);
 		ft.addToBackStack(tag);
 	}

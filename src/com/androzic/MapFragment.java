@@ -34,7 +34,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,7 +65,6 @@ import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
-import com.androzic.waypoint.WaypointInfo;
 
 public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, OnClickListener, MenuBuilder.Callback
 {
@@ -530,11 +528,11 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 		if (isNavigatingViaRoute)
 		{
-			routeName.setText("› " + application.navigationService.navRoute.name);
+			routeName.setText("ï¿½ " + application.navigationService.navRoute.name);
 		}
 		if (isNavigating)
 		{
-			waypointName.setText("» " + application.navigationService.navWaypoint.name);
+			waypointName.setText("ï¿½ " + application.navigationService.navWaypoint.name);
 			// FIXME All overlay operations should go into application
 			if (application.overlayManager.navigationOverlay == null)
 			{
@@ -978,8 +976,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				mMenu.setCallback(this);
 				mPopup = new MenuPopupHelper(getActivity(), mMenu, v);
 				mPopup.setForceShowIcon(true);
-				// TODO test it on older device
-				// getActivity().getMenuInflater();
 				new SupportMenuInflater(getActivity()).inflate(R.menu.location_menu, mMenu);
 				mPopup.show();
 				break;

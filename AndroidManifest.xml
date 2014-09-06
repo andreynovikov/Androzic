@@ -153,10 +153,6 @@
             android:name=".HSIActivity"
             android:label="@string/hsi_name" />
         <activity
-            android:name=".Information"
-            android:label="@string/information_name"
-            android:theme="@style/Dialog" />
-        <activity
             android:name=".Credits"
             android:label="@string/credits_name" />
         <activity
@@ -180,9 +176,6 @@
             android:name=".map.MapInformation"
             android:label="@string/mapinformation_name" />
         <activity
-            android:name=".waypoint.WaypointListActivity"
-            android:label="@string/managewaypoints_name" />
-        <activity
             android:name=".waypoint.WaypointProperties"
             android:label="@string/waypointproperties_name" />
         <activity
@@ -196,9 +189,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".waypoint.WaypointInfo"
-            android:theme="@style/Dialog" />
         <activity
             android:name=".waypoint.WaypointProject"
             android:label="@string/waypointproject_name"
@@ -243,9 +233,6 @@
             android:label="@string/coordinates_name"
             android:theme="@style/Dialog" />
         <activity
-            android:name=".track.TrackListActivity"
-            android:label="@string/managetracks_name" />
-        <activity
             android:name=".track.TrackProperties"
             android:label="@string/trackproperties_name" />
         <activity
@@ -266,9 +253,6 @@
         <activity
             android:name=".route.RouteStart"
             android:theme="@style/Dialog" />
-        <activity
-            android:name=".route.RouteListActivity"
-            android:label="@string/manageroutes_name" />
         <activity
             android:name=".route.RouteEdit"
             android:theme="@style/Dialog" />
