@@ -44,6 +44,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -94,15 +95,15 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 	{
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
+		setHasOptionsMenu(true);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
 		
-		Activity activity = getActivity();
+		FragmentActivity activity = getActivity();
 		
 		adapter = new WaypointExpandableListAdapter(activity);
 		setListAdapter(adapter);
@@ -112,7 +113,7 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 		Resources resources = getResources();
 		quickAction = new QuickAction(activity);
 		quickAction.addActionItem(new ActionItem(qaWaypointVisible, getString(R.string.menu_view), resources.getDrawable(R.drawable.ic_action_show)));
-		quickAction.addActionItem(new ActionItem(qaWaypointNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_directions)));
+		quickAction.addActionItem(new ActionItem(qaWaypointNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_navigate)));
 		quickAction.addActionItem(new ActionItem(qaWaypointProperties, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_action_edit)));
 		quickAction.addActionItem(new ActionItem(qaWaypointShare, getString(R.string.menu_share), resources.getDrawable(R.drawable.ic_action_share)));
 		quickAction.addActionItem(new ActionItem(qaWaypointDelete, getString(R.string.menu_delete), resources.getDrawable(R.drawable.ic_action_trash)));
@@ -182,6 +183,7 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 	public void onResume()
 	{
 		super.onResume();
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -234,18 +236,18 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		Activity activity = getActivity();
+		FragmentActivity activity = getActivity();
 		switch (item.getItemId())
 		{
 			case R.id.action_sort_alpha:
 				adapter.sort(0);
 				mSortMode = R.id.action_sort_alpha;
-				getActivity().supportInvalidateOptionsMenu();
+				activity.supportInvalidateOptionsMenu();
 				return true;
 			case R.id.action_sort_size:
 				adapter.sort(1);
 				mSortMode = R.id.action_sort_size;
-				getActivity().supportInvalidateOptionsMenu();
+				activity.supportInvalidateOptionsMenu();
 				return true;
 			case R.id.menuLoadWaypoints:
 				startActivity(new Intent(activity, WaypointFileList.class));
@@ -275,8 +277,9 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 			case R.id.menuProjectWaypoint:
 				startActivityForResult(new Intent(activity, WaypointProject.class), 0);
 				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-		return false;
 	}
 
 	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener() {

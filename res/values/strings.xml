@@ -215,6 +215,7 @@
     <string name="menu_resetindex">Reset index</string>
     <string name="menu_newwaypointset">New set</string>
     
+	<string name="action_save">Save</string>
     <string name="action_add_waypoint">Add waypoint</string>
     <string name="action_follow">Follow</string>
     <string name="action_unfollow">Unfollow</string>

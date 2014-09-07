@@ -48,6 +48,11 @@ public class OverlayManager
 		waypointsOverlay.setWaypoints(application.getWaypoints());
 	}
 
+	public void onWaypointsChanged()
+	{
+		waypointsOverlay.clearBitmapCache();
+	}
+
 	public void setWaypointsOverlayEnabled(boolean enabled)
 	{
 		waypointsOverlay.setEnabled(enabled);

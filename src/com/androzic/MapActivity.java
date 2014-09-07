@@ -1671,7 +1671,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		{
 			case RESULT_MANAGE_WAYPOINTS:
 			{
-				application.overlayManager.waypointsOverlay.clearBitmapCache();
 				application.saveWaypoints();
 				break;
 			}

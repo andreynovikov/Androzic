@@ -301,7 +301,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void onPrepareOptionsMenu(final Menu menu)
 	{
-		//TODO Use proper icons
 		MenuItem follow = menu.findItem(R.id.action_follow);
 		if (following && map != null && ! map.getStrictUnfollow())
 		{
@@ -309,15 +308,17 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 		else if (following)
 		{
-			follow.setIcon(R.drawable.ic_action_reload);
+			follow.setIcon(R.drawable.ic_action_lock_open);
 			follow.setTitle(R.string.action_unfollow);
 		}
 		else
 		{
 			follow.setVisible(true);
-			follow.setIcon(R.drawable.ic_action_location_found);			
+			follow.setIcon(R.drawable.ic_action_lock_closed);			
 			follow.setTitle(R.string.action_follow);
 		}
+		menu.findItem(R.id.action_locating).setChecked(application.isLocating());
+		menu.findItem(R.id.action_tracking).setChecked(application.isTracking());
 	}
 
 	final private Runnable updateUI = new Runnable() {
@@ -982,16 +983,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 			case R.id.sats:
 			{
-				FragmentManager manager = getFragmentManager();
 				GPSInfo dialog = new GPSInfo();
-				dialog.show(manager, "dialog");
+				dialog.show(getFragmentManager(), "dialog");
 				break;
 			}
 			case R.id.currentfile:
 			{
-				FragmentManager manager = getFragmentManager();
 				SuitableMapsList dialog = new SuitableMapsList();
-				dialog.show(manager, "dialog");
+				dialog.show(getFragmentManager(), "dialog");
 				break;
 			}
 			case R.id.currentzoom:
@@ -1032,6 +1031,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				return true;
 			case R.id.action_follow:
 				setFollowing(!following);
+				return true;
+			case R.id.action_locating:
+				application.enableLocating(!application.isLocating());
+				return true;
+			case R.id.action_tracking:
+				application.enableTracking(!application.isTracking());
 				return true;
 		}
 		return false;

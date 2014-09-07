@@ -162,7 +162,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public String iconPath;
 	public boolean mapsInited = false;
 	private MapHolder mapHolder;
-	OverlayManager overlayManager;
+	protected OverlayManager overlayManager;
 	private int screenSize;
 	public Drawable customCursor = null;
 	public boolean iconsEnabled = false;
@@ -455,6 +455,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			saveWaypoints(wptset);
 		}
+		overlayManager.onWaypointsChanged();
 	}
 
 	public void saveDefaultWaypoints()

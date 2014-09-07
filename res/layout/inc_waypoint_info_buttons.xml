@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:contentDescription="@string/menu_navigate"
-        android:src="@drawable/ic_action_directions" />
+        android:src="@drawable/ic_action_navigate" />
 
     <ImageButton
         android:id="@+id/edit_button"

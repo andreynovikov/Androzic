@@ -21,10 +21,10 @@
 package com.androzic;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,11 +46,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -248,8 +248,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.general_menu, menu);
+//		MenuInflater inflater = getMenuInflater();
+//		inflater.inflate(R.menu.general_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -258,27 +258,42 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
 		// If the nav drawer is open, hide action items related to the content view
-		boolean hide = mDrawerLayout.isDrawerOpen(mDrawerList) || mDrawerAdapter.getSelectedItem() != 0;
-		menu.findItem(R.id.action_search).setVisible(!hide);
-		menu.findItem(R.id.action_locating).setVisible(!hide);
-		menu.findItem(R.id.action_tracking).setVisible(!hide);
-		menu.findItem(R.id.action_locating).setChecked(application.isLocating());
-		menu.findItem(R.id.action_tracking).setChecked(application.isTracking());
+		//boolean hide = mDrawerLayout.isDrawerOpen(mDrawerList) || mDrawerAdapter.getSelectedItem() != 0;
+		//menu.findItem(R.id.action_search).setVisible(!hide);
+		//menu.findItem(R.id.action_locating).setVisible(!hide);
+		//menu.findItem(R.id.action_tracking).setVisible(!hide);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		// The action bar home/up action should open or close the drawer.
-		// ActionBarDrawerToggle will take care of this.
-		if (mDrawerToggle.onOptionsItemSelected(item))
-		{
-			return true;
-		}
 		// Handle action buttons
 		switch (item.getItemId())
 		{
+			case android.R.id.home:
+				FragmentManager fm = getSupportFragmentManager();
+				if (fm.getBackStackEntryCount() > 0)
+				{
+					View v = getCurrentFocus();
+					if (v != null)
+					{
+						// Hide keyboard
+						final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+					}
+					fm.popBackStack();
+					return true;
+				}
+				else
+				{
+					// The action bar home/up action should open or close the drawer.
+					// ActionBarDrawerToggle will take care of this.
+					if (mDrawerToggle.onOptionsItemSelected(item))
+					{
+						return true;
+					}
+				}	
 		/*
 		 * case R.id.action_websearch:
 		 * // create intent to perform web search for this planet
@@ -295,12 +310,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		 * }
 		 * return true;
 		 */
-			case R.id.action_locating:
-				application.enableLocating(!application.isLocating());
-				return true;
-			case R.id.action_tracking:
-				application.enableTracking(!application.isTracking());
-				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -332,27 +341,26 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		else
 		{
 			FragmentManager fm = getSupportFragmentManager();
-			if (position == 0)
+			if (fm.getBackStackEntryCount() > 0)
 			{
-				FragmentTransaction ft = fm.beginTransaction();
-				if (fm.getBackStackEntryCount() == 0)
-				{
-					ft.add(R.id.content_frame, item.fragment, "map");
-				}
-				else
-				{
-					fm.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-					Fragment fragment = fm.findFragmentByTag("map");
-					ft.attach(fragment);
-				}
-				ft.commit();
+				fm.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			}
+			FragmentTransaction ft = fm.beginTransaction();
+			Fragment parent = fm.findFragmentById(R.id.content_frame);
+			if (parent != null)
+			{
+				ft.detach(parent);
+			}
+			Fragment fragment = fm.findFragmentByTag(item.name);
+			if (fragment != null)
+			{
+				ft.attach(fragment);
 			}
 			else
 			{
-				if (fm.getBackStackEntryCount() > 0)
-					fm.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-				addFragment(item.fragment);
+				ft.add(R.id.content_frame, item.fragment, item.name);
 			}
+			ft.commit();
 			// update selected item and title, then close the drawer
 			updateDrawerUI(item, position);
 		}
@@ -588,8 +596,15 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		String tag = "map";
 		if (fm.getBackStackEntryCount() > 0)
 		{
+			mDrawerToggle.setDrawerIndicatorEnabled(false);
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerList);
 			FragmentManager.BackStackEntry bse = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
 			tag = bse.getName();
+		}
+		else
+		{
+			mDrawerToggle.setDrawerIndicatorEnabled(true);
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerList);
 		}
 		Log.e(TAG, "restoreDrawerUI: " + tag);
 		Fragment fragment = fm.findFragmentByTag(tag);
@@ -621,6 +636,11 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		if (getSupportFragmentManager().getBackStackEntryCount() > 0)
 		{
 			super.onBackPressed();
+			return;
+		}
+		else if (mDrawerAdapter.getSelectedItem() != 0)
+		{
+			selectItem(0);
 			return;
 		}
 		
@@ -683,37 +703,27 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		}
 	}
 
-	private void addFragment(Fragment fragment)
-	{
-		// Add fragment with unique tag
-		String tag = UUID.randomUUID().toString();
-		addFragment(fragment, tag);
-	}
-	
 	private void addFragment(Fragment fragment, String tag)
 	{
 		FragmentManager fm = getSupportFragmentManager();
-		// Get topmost fragment		
-		String parentTag = "map";
+		// Get topmost fragment
+		Fragment parent;
 		if (fm.getBackStackEntryCount() > 0)
 		{
 			FragmentManager.BackStackEntry bse = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
-			parentTag = bse.getName();
+			parent = fm.findFragmentByTag(bse.getName());
+		}
+		else
+		{
+			parent = fm.findFragmentById(R.id.content_frame);
 		}
 		FragmentTransaction ft = fm.beginTransaction();
-		Fragment parent = getSupportFragmentManager().findFragmentByTag(parentTag);
-		// Detach it
+		// Detach parent
 		ft.detach(parent);
-		// Add new fragment
-		addFragment(fragment, tag, ft);
-		ft.commit();
-	}
-
-	private void addFragment(Fragment fragment, String tag, FragmentTransaction ft)
-	{
-		// Add fragment to back stack
+		// Add new fragment to back stack
 		ft.add(R.id.content_frame, fragment, tag);
 		ft.addToBackStack(tag);
+		ft.commit();
 	}
 
 }

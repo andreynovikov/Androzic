@@ -1,21 +1,21 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
- *
+ * Copyright (C) 2010-2014 Andrey Novikov <http://andreynovikov.info/>
+ * 
  * This file is part of Androzic application.
- *
+ * 
  * Androzic is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ * 
  * Androzic is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ * 
  * You should have received a copy of the GNU General Public License
- * along with Androzic.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.androzic.waypoint;
@@ -24,9 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,17 +32,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -57,13 +56,13 @@ import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
 import com.androzic.ui.ColorButton;
-import com.androzic.ui.MarkerPickerActivity;
+import com.androzic.ui.MarkerPicker;
 import com.androzic.util.StringFormatter;
 import com.jhlabs.map.GeodeticPosition;
 import com.jhlabs.map.ReferenceException;
 import com.jhlabs.map.UTMReference;
 
-public class WaypointProperties extends Fragment implements OnItemSelectedListener, PopupMenu.OnMenuItemClickListener
+public class WaypointProperties extends Fragment implements AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener, MarkerPicker.OnMarkerPickerDialogListener
 {
 	private Waypoint waypoint;
 	private int route;
@@ -92,14 +91,17 @@ public class WaypointProperties extends Fragment implements OnItemSelectedListen
 
 	private int defMarkerColor;
 	private int defTextColor;
+	
+	private CharSequence oldTitle;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
+		setHasOptionsMenu(true);
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -170,18 +172,6 @@ public class WaypointProperties extends Fragment implements OnItemSelectedListen
 		coordformat.setOnItemSelectedListener(this);
 		coordformat.setSelection(application.coordinateFormat);
 
-		((Button) rootView.findViewById(R.id.done_button)).setOnClickListener(doneOnClickListener);
-		((Button) rootView.findViewById(R.id.cancel_button)).setOnClickListener(new OnClickListener() {
-			public void onClick(View v)
-			{
-				// Hide keyboard
-			    final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-			    imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-			    // "Close" fragment
-				getFragmentManager().popBackStack();
-			}
-		});
-		
 		return rootView;
 	}
 
@@ -193,12 +183,12 @@ public class WaypointProperties extends Fragment implements OnItemSelectedListen
 		if (savedInstanceState != null)
 		{
 			View rootView = getView();
-			
-			//waypoint = application.getRoute(route - 1).getWaypoints().get(index);
-			//waypoint = application.getWaypoint(index);
+
+			// waypoint = application.getRoute(route - 1).getWaypoints().get(index);
+			// waypoint = application.getWaypoint(index);
 
 			tabHost.setCurrentTabByTag(savedInstanceState.getString("tab"));
-			
+
 			iconValue = savedInstanceState.getString("icon");
 			ImageButton icon = (ImageButton) rootView.findViewById(R.id.icon_button);
 			if (iconValue != null)
@@ -219,9 +209,30 @@ public class WaypointProperties extends Fragment implements OnItemSelectedListen
 	public void onStart()
 	{
 		super.onStart();
-		
+
 		if (waypoint != null)
 			updateWaypointProperties();
+	}
+	
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		ActionBarActivity activity = (ActionBarActivity) getActivity();
+		if (oldTitle == null)
+			oldTitle = activity.getSupportActionBar().getTitle();
+		activity.getSupportActionBar().setTitle(R.string.waypointproperties_name);
+	}
+	
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		if (oldTitle != null)
+		{
+			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
+			oldTitle = null;
+		}
 	}
 
 	@Override
@@ -230,6 +241,111 @@ public class WaypointProperties extends Fragment implements OnItemSelectedListen
 		super.onSaveInstanceState(outState);
 		outState.putString("tab", tabHost.getCurrentTabTag());
 		outState.putString("icon", iconValue);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+	{
+		inflater.inflate(R.menu.itemsave_menu, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.action_save:
+				Androzic application = Androzic.getApplication();
+				try
+				{
+					if (name.getText().length() == 0)
+						return false;
+
+					if (waypoint == null)
+					{
+						waypoint = new Waypoint();
+						waypoint.date = Calendar.getInstance().getTime();
+					}
+
+					waypoint.name = name.getText().toString();
+
+					waypoint.description = description.getText().toString();
+					GeodeticPosition coords = getLatLon();
+					waypoint.latitude = coords.lat;
+					waypoint.longitude = coords.lon;
+
+					try
+					{
+						String p = proximity.getText().toString();
+						if ("".equals(p))
+							waypoint.proximity = 0;
+						else
+							waypoint.proximity = Integer.parseInt(p);
+					}
+					catch (NumberFormatException e)
+					{
+						e.printStackTrace();
+					}
+
+					try
+					{
+						String a = altitude.getText().toString();
+						if ("".equals(a))
+							waypoint.altitude = Integer.MIN_VALUE;
+						else
+							waypoint.altitude = Integer.parseInt(a);
+					}
+					catch (NumberFormatException e)
+					{
+						e.printStackTrace();
+					}
+
+					if (iconValue == null)
+					{
+						waypoint.image = "";
+						waypoint.drawImage = false;
+					}
+					else
+					{
+						waypoint.image = iconValue;
+						waypoint.drawImage = true;
+					}
+					int markerColorValue = markercolor.getColor();
+					if (markerColorValue != defMarkerColor)
+						waypoint.backcolor = markerColorValue;
+					int textColorValue = textcolor.getColor();
+					if (textColorValue != defTextColor)
+						waypoint.textcolor = textColorValue;
+
+					if (route == 0)
+					{
+						if (waypoint.set == null)
+						{
+							application.addWaypoint(waypoint);
+						}
+
+						int set = waypointSet.getSelectedItemPosition();
+						waypoint.set = application.getWaypointSets().get(set);
+					}
+
+					application.saveWaypoints();
+
+					// Hide keyboard
+					final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+					// "Close" fragment
+					getFragmentManager().popBackStack();
+					return true;
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+					Toast.makeText(getActivity(), "Invalid input", Toast.LENGTH_LONG).show();
+				}
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	public void setWaypoint(Waypoint waypoint)
@@ -250,18 +366,18 @@ public class WaypointProperties extends Fragment implements OnItemSelectedListen
 	private void updateWaypointProperties()
 	{
 		Androzic application = Androzic.getApplication();
-		
+
 		View rootView = getView();
 
 		int visible = route == 0 ? View.VISIBLE : View.GONE;
-		//TODO Think about this case
-		//rootView.findViewById(R.id.advanced).setVisibility(visible);
+		// TODO Think about this case
+		// rootView.findViewById(R.id.advanced).setVisibility(visible);
 		rootView.findViewById(R.id.icon_container).setVisibility(visible);
 		rootView.findViewById(android.R.id.tabs).setVisibility(visible);
 
 		name.setText(waypoint.name);
 		description.setText(waypoint.description);
-		
+
 		if (waypoint.altitude != Integer.MIN_VALUE)
 			altitude.setText(String.valueOf(waypoint.altitude));
 		if (waypoint.proximity != 0)
@@ -285,27 +401,24 @@ public class WaypointProperties extends Fragment implements OnItemSelectedListen
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	public void onMarkerSelected(String icon)
 	{
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == 0 && resultCode == Activity.RESULT_OK)
-		{
-			iconValue = data.getStringExtra("icon");
-			ImageButton icon = (ImageButton) getView().findViewById(R.id.icon_button);
-			Androzic application = Androzic.getApplication();
-			Bitmap b = BitmapFactory.decodeFile(application.iconPath + File.separator + iconValue);
-			if (b != null)
-				icon.setImageBitmap(b);
-		}
+		iconValue = icon;
+		ImageButton iconButton = (ImageButton) getView().findViewById(R.id.icon_button);
+		Androzic application = Androzic.getApplication();
+		Bitmap b = BitmapFactory.decodeFile(application.iconPath + File.separator + iconValue);
+		if (b != null)
+			iconButton.setImageBitmap(b);
 	}
-	
+
 	@Override
 	public boolean onMenuItemClick(final MenuItem item)
 	{
 		switch (item.getItemId())
 		{
 			case R.id.change:
-				startActivityForResult(new Intent(getActivity(), MarkerPickerActivity.class), 0);
+				MarkerPicker dialog = new MarkerPicker(this);
+				dialog.show(getFragmentManager(), "dialog");
 				break;
 			case R.id.remove:
 				iconValue = null;
@@ -321,109 +434,8 @@ public class WaypointProperties extends Fragment implements OnItemSelectedListen
 		{
 			PopupMenu popup = new PopupMenu(getActivity(), v);
 			popup.getMenuInflater().inflate(R.menu.marker_popup, popup.getMenu());
-			popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-				public boolean onMenuItemClick(MenuItem item)
-				{
-					return onContextItemSelected(item);
-				}
-			});
+			popup.setOnMenuItemClickListener(WaypointProperties.this);
 			popup.show();
-		}
-	};
-
-	private OnClickListener doneOnClickListener = new OnClickListener() {
-		public void onClick(View v)
-		{
-			Androzic application = Androzic.getApplication();
-			try
-			{
-				if (name.getText().length() == 0)
-					return;
-				
-				if (waypoint == null)
-				{
-					waypoint = new Waypoint();
-					waypoint.date = Calendar.getInstance().getTime();
-				}
-
-				waypoint.name = name.getText().toString();
-
-				waypoint.description = description.getText().toString();
-				GeodeticPosition coords = getLatLon();
-				waypoint.latitude = coords.lat;
-				waypoint.longitude = coords.lon;
-
-				try
-				{
-					String p = proximity.getText().toString();
-					if ("".equals(p))
-						waypoint.proximity = 0;
-					else
-						waypoint.proximity = Integer.parseInt(p);
-				}
-				catch (NumberFormatException e)
-				{
-					e.printStackTrace();
-				}
-
-				try
-				{
-					String a = altitude.getText().toString();
-					if ("".equals(a))
-						waypoint.altitude = Integer.MIN_VALUE;
-					else
-						waypoint.altitude = Integer.parseInt(a);
-				}
-				catch (NumberFormatException e)
-				{
-					e.printStackTrace();
-				}
-
-				if (iconValue == null)
-				{
-					waypoint.image = "";
-					waypoint.drawImage = false;
-				}
-				else
-				{
-					waypoint.image = iconValue;
-					waypoint.drawImage = true;
-				}
-				int markerColorValue = markercolor.getColor();
-				if (markerColorValue != defMarkerColor)
-					waypoint.backcolor = markerColorValue;
-				int textColorValue = textcolor.getColor();
-				if (textColorValue != defTextColor)
-					waypoint.textcolor = textColorValue;
-
-				int index = -1;
-				if (route == 0)
-				{
-					if (waypoint.set == null)
-					{
-						application.addWaypoint(waypoint);
-						index = application.getWaypointIndex(waypoint);
-					}
-
-					int set = waypointSet.getSelectedItemPosition();
-					waypoint.set = application.getWaypointSets().get(set);
-				}
-
-				if (index != -1)
-				{
-					//setResult(RESULT_OK, new Intent().putExtra("index", index));
-				}
-				else
-				{
-					//setResult(RESULT_OK);
-				}
-				getFragmentManager().popBackStack();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				Toast.makeText(getActivity(), "Invalid input", Toast.LENGTH_LONG).show();
-			}
 		}
 	};
 

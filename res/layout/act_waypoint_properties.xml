@@ -165,8 +165,6 @@
                 </LinearLayout>
             </ScrollView>
         </FrameLayout>
-
-        <include layout="@layout/inc_buttonbar" />
     </LinearLayout>
 
 </TabHost>
