@@ -71,6 +71,8 @@ import com.androzic.util.StringFormatter;
 
 public class WaypointList extends ExpandableListFragment implements OnItemLongClickListener, FileListDialog.OnFileListDialogListener
 {
+	private static final int DIALOG_WAYPOINT_PROJECT = 1;
+	
 	private static final int qaWaypointVisible = 1;
 	private static final int qaWaypointNavigate = 2;
 	private static final int qaWaypointProperties = 3;
@@ -251,8 +253,8 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 				activity.supportInvalidateOptionsMenu();
 				return true;
 			case R.id.action_load_waypoints:
-				WaypointFileList dialog = new WaypointFileList(this);
-				dialog.show(getFragmentManager(), "dialog");
+				WaypointFileList fileListDialog = new WaypointFileList(this);
+				fileListDialog.show(getFragmentManager(), "dialog");
 				return true;
 			case R.id.menuNewWaypointSet:
 				final EditText textEntryView = new EditText(activity);
@@ -276,13 +278,25 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 				startActivityForResult(new Intent(activity, WaypointProperties.class).putExtra("INDEX", -1), 0);
 				return true;
 			case R.id.menuProjectWaypoint:
-				startActivityForResult(new Intent(activity, WaypointProject.class), 0);
+				WaypointProject waypointProjectDialog = new WaypointProject();
+				waypointProjectDialog.setTargetFragment(this, DIALOG_WAYPOINT_PROJECT);
+				waypointProjectDialog.show(getFragmentManager(), "dialog");
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		switch(requestCode)
+		{
+			case DIALOG_WAYPOINT_PROJECT:
+				adapter.notifyDataSetChanged();
+				break;
+		}
+	}
 
 	@Override
 	public void onFileLoaded(int count)

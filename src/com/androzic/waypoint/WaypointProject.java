@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -26,12 +26,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.app.Dialog;
 import android.hardware.GeomagneticField;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.DialogFragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -44,20 +46,33 @@ import com.androzic.data.Waypoint;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class WaypointProject extends ActionBarActivity
+public class WaypointProject extends DialogFragment
 {
 	List<Waypoint> waypoints = null;
 	
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-		setContentView(R.layout.act_waypoint_project);
+	public WaypointProject()
+	{
+		setRetainInstance(true);
+	}
+	
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState)
+	{
+		Dialog dialog = super.onCreateDialog(savedInstanceState);
+		dialog.setTitle(R.string.waypointproject_name);
+		return dialog;
+	}
 
-		Androzic application = (Androzic) getApplication();
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		View view = inflater.inflate(R.layout.act_waypoint_project, container);
+
+		Activity activity = getActivity();
+		Androzic application = Androzic.getApplication();
 		waypoints = application.getWaypoints();
 		
-		((TextView) findViewById(R.id.name_text)).setText("WPT"+waypoints.size());
+		((TextView) view.findViewById(R.id.name_text)).setText("WPT"+waypoints.size());
 
 		Collections.sort(waypoints, new Comparator<Waypoint>()
         {
@@ -76,26 +91,39 @@ public class WaypointProject extends ActionBarActivity
 			items[i] =  wpt.name;
 			i++;
 		}
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, items);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		((Spinner) findViewById(R.id.source_spinner)).setAdapter(adapter);
+		((Spinner) view.findViewById(R.id.source_spinner)).setAdapter(adapter);
 		
 		items = new String[2];
 		items[0] = StringFormatter.distanceAbbr;
 		items[1] = StringFormatter.distanceShortAbbr;
-		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+		adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, items);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		((Spinner) findViewById(R.id.distance_spinner)).setAdapter(adapter);
+		((Spinner) view.findViewById(R.id.distance_spinner)).setAdapter(adapter);
 
 		items = getResources().getStringArray(R.array.angle_units);
-		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+		adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, items);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		((Spinner) findViewById(R.id.bearing_spinner)).setAdapter(adapter);
-		((Spinner) findViewById(R.id.bearing_spinner)).setSelection(application.angleType);
+		((Spinner) view.findViewById(R.id.bearing_spinner)).setAdapter(adapter);
+		((Spinner) view.findViewById(R.id.bearing_spinner)).setSelection(application.angleType);
 
-	    ((Button) findViewById(R.id.done_button)).setOnClickListener(doneOnClickListener);
-	    ((Button) findViewById(R.id.cancel_button)).setOnClickListener(new OnClickListener() { public void onClick(View v) { finish(); } });
-    }
+	    ((Button) view.findViewById(R.id.done_button)).setOnClickListener(doneOnClickListener);
+	    ((Button) view.findViewById(R.id.cancel_button)).setOnClickListener(new OnClickListener() { public void onClick(View v) { dismiss(); } });
+
+	    return view;
+	}
+	
+    @Override
+	public void onDestroyView()
+	{
+		super.onDestroyView();
+		
+		if (getDialog() != null && getRetainInstance())
+			getDialog().setDismissMessage(null);
+		
+		waypoints = null;
+	}
 		
 	private OnClickListener doneOnClickListener = new OnClickListener()
 	{
@@ -103,14 +131,15 @@ public class WaypointProject extends ActionBarActivity
         {
         	try
         	{
-        		Androzic application = (Androzic) getApplication();
+        		Androzic application = Androzic.getApplication();
         		Waypoint waypoint = new Waypoint();
-        		waypoint.name = ((TextView) findViewById(R.id.name_text)).getText().toString();
-        		double distance = Integer.parseInt(((TextView) findViewById(R.id.distance_text)).getText().toString());
-        		double bearing = Integer.parseInt(((TextView) findViewById(R.id.bearing_text)).getText().toString());
-        		int src = ((Spinner) findViewById(R.id.source_spinner)).getSelectedItemPosition();
-        		int df = ((Spinner) findViewById(R.id.distance_spinner)).getSelectedItemPosition();
-        		int bf = ((Spinner) findViewById(R.id.bearing_spinner)).getSelectedItemPosition();
+        		View view = getView();
+        		waypoint.name = ((TextView) view.findViewById(R.id.name_text)).getText().toString();
+        		double distance = Integer.parseInt(((TextView) view.findViewById(R.id.distance_text)).getText().toString());
+        		double bearing = Integer.parseInt(((TextView) view.findViewById(R.id.bearing_text)).getText().toString());
+        		int src = ((Spinner) view.findViewById(R.id.source_spinner)).getSelectedItemPosition();
+        		int df = ((Spinner) view.findViewById(R.id.distance_spinner)).getSelectedItemPosition();
+        		int bf = ((Spinner) view.findViewById(R.id.bearing_spinner)).getSelectedItemPosition();
         		double[] loc;
         		if (src > 0)
         		{
@@ -141,21 +170,15 @@ public class WaypointProject extends ActionBarActivity
         		waypoint.longitude = prj[1];
         		waypoint.date = Calendar.getInstance().getTime();
         		application.addWaypoint(waypoint);
-    			setResult(RESULT_OK, new Intent().putExtra("index", application.getWaypointIndex(waypoint)));
-        		finish();
+
+        		getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
+				dismiss();
         	}
         	catch (Exception e)
         	{
-    			Toast.makeText(getBaseContext(), "Invalid input", Toast.LENGTH_LONG).show();
+    			Toast.makeText(getActivity(), "Invalid input", Toast.LENGTH_LONG).show();
     			e.printStackTrace();
         	}
         }
     };
-
-    @Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		waypoints = null;
-	}
 }
