@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -24,25 +24,29 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import android.app.Activity;
-import android.content.Intent;
-
 import com.androzic.Androzic;
+import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
-import com.androzic.ui.FileListActivity;
+import com.androzic.ui.FileListDialog;
 import com.androzic.util.GpxFiles;
 import com.androzic.util.KmlFiles;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.WaypointFilenameFilter;
 
-public class WaypointFileList extends FileListActivity
+public class WaypointFileList extends FileListDialog
 {
+	public WaypointFileList(OnFileListDialogListener listener)
+	{
+		super(R.string.loadwaypoints_name, listener);
+	}
+
 	@Override
 	protected FilenameFilter getFilenameFilter()
 	{
@@ -52,20 +56,20 @@ public class WaypointFileList extends FileListActivity
 	@Override
 	protected String getPath()
 	{
-		Androzic application = (Androzic) getApplication();
+		Androzic application = Androzic.getApplication();
 		return application.dataPath;
 	}
 
 	@Override
 	protected void loadFile(File file)
 	{
-		Androzic application = (Androzic) getApplication();
+		Androzic application = Androzic.getApplication();
 		List<Waypoint> waypoints = null;
 
 		try
 		{
 			WaypointSet wptset = new WaypointSet(file);
-			String lc = file.getName().toLowerCase();
+			String lc = file.getName().toLowerCase(Locale.getDefault());
 			if (lc.endsWith(".wpt"))
 			{
 				waypoints = OziExplorerFiles.loadWaypointsFromFile(file, application.charset);
@@ -87,31 +91,26 @@ public class WaypointFileList extends FileListActivity
 					waypoint.set = wptset;
 				}
 				int count = application.addWaypoints(waypoints, wptset);
-				setResult(Activity.RESULT_OK, new Intent().putExtra("count", count));
+				onFileLoaded(count);
 			}
-			else
-			{
-				setResult(Activity.RESULT_CANCELED, new Intent());					
-			}
-			finish();
 		}
 		catch (IllegalArgumentException e)
 		{
-			runOnUiThread(wrongFormat);
+			getActivity().runOnUiThread(wrongFormat);
 		}
 		catch (SAXException e)
 		{
-			runOnUiThread(wrongFormat);
+			getActivity().runOnUiThread(wrongFormat);
 			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
-			runOnUiThread(readError);
+			getActivity().runOnUiThread(readError);
 			e.printStackTrace();
 		}
 		catch (ParserConfigurationException e)
 		{
-			runOnUiThread(readError);
+			getActivity().runOnUiThread(readError);
 			e.printStackTrace();
 		}
 	}

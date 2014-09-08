@@ -18,7 +18,7 @@
         </menu>
     </item>
     <item
-        android:id="@+id/menuLoadWaypoints"
+        android:id="@+id/action_load_waypoints"
         android:icon="@drawable/ic_action_import"
         app:showAsAction="ifRoom"
         android:title="@string/menu_load"/>

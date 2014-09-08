@@ -65,10 +65,11 @@ import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
 import com.androzic.ui.ExpandableListFragment;
+import com.androzic.ui.FileListDialog;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class WaypointList extends ExpandableListFragment implements OnItemLongClickListener
+public class WaypointList extends ExpandableListFragment implements OnItemLongClickListener, FileListDialog.OnFileListDialogListener
 {
 	private static final int qaWaypointVisible = 1;
 	private static final int qaWaypointNavigate = 2;
@@ -249,8 +250,9 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 				mSortMode = R.id.action_sort_size;
 				activity.supportInvalidateOptionsMenu();
 				return true;
-			case R.id.menuLoadWaypoints:
-				startActivity(new Intent(activity, WaypointFileList.class));
+			case R.id.action_load_waypoints:
+				WaypointFileList dialog = new WaypointFileList(this);
+				dialog.show(getFragmentManager(), "dialog");
 				return true;
 			case R.id.menuNewWaypointSet:
 				final EditText textEntryView = new EditText(activity);
@@ -266,7 +268,6 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 							Androzic application = Androzic.getApplication();
 							application.addWaypointSet(set);
 							adapter.notifyDataSetChanged();
-
 						}
 					}
 				}).setNegativeButton(R.string.cancel, null).create().show();
@@ -280,6 +281,13 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+
+	@Override
+	public void onFileLoaded(int count)
+	{
+		adapter.notifyDataSetChanged();
 	}
 
 	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener() {

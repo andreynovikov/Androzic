@@ -16,7 +16,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.androzic.Androzic;
-import com.androzic.MapActivity;
+import com.androzic.MainActivity;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
@@ -97,7 +97,7 @@ public class WaypointFileLoad extends Activity
 		}
 
 		pd.dismiss();
-        startActivity(new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+        startActivity(new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
 		finish();
 	}
 }
