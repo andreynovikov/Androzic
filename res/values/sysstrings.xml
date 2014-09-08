@@ -126,6 +126,7 @@
 	<string name="lc_locate">lc_locate</string>
 	<string name="lc_track">lc_track</string>
 	<string name="ui_drawer_open">ui_drawer_open</string>
+	<string name="ui_mapbuttons_shown">ui_mapbuttons_shown</string>
 		
 	<string name="root_path">Androzic</string>
 </resources>

@@ -1305,7 +1305,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		});
 	}
 
-	@Override
 	public void zoomIn()
 	{
 		//TODO Show toast here
@@ -1326,7 +1325,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		});
 	}
 
-	@Override
 	public void zoomOut()
 	{
 		if (application.getPrevZoom() == 0.0)
@@ -1346,7 +1344,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		});
 	}
 
-	@Override
 	public void previousMap()
 	{
 		waitBar.setVisibility(View.VISIBLE);
@@ -1364,7 +1361,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		});
 	}
 
-	@Override
 	public void nextMap()
 	{
 		waitBar.setVisibility(View.VISIBLE);

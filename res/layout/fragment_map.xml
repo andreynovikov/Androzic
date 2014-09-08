@@ -1,78 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-	<include layout="@layout/inc_map" />
-	
-	<LinearLayout android:id="@+id/topbar"
-		android:orientation="vertical"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignParentTop="true"
-		android:background="#88000000">
+    <include layout="@layout/inc_map" />
 
-		<include layout="@layout/inc_satinfo" />
-		<include layout="@layout/inc_routeinfo" />
-		<include layout="@layout/inc_waypointinfo" />
+    <LinearLayout
+        android:id="@+id/topbar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#88000000"
+        android:orientation="vertical" >
 
-	</LinearLayout>
+        <include layout="@layout/inc_satinfo" />
 
-	<LinearLayout android:id="@+id/bottombar"
-		android:orientation="vertical"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:background="#88000000">
+        <include layout="@layout/inc_routeinfo" />
 
-    	<TableLayout android:id="@+id/movinginfo"
-			android:visibility="gone"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
-	    
-			<TableRow>
-				<include layout="@layout/inc_distance" />
-				<include layout="@layout/inc_bearing" />
-				<include layout="@layout/inc_turn" />
-			</TableRow>
-			<TableRow android:id="@+id/movingrow">
-				<include layout="@layout/inc_speed" />
-				<include layout="@layout/inc_track" />
-				<include layout="@layout/inc_elevation" />
-				<include layout="@layout/inc_xtk" />
-			</TableRow>
-	    
-		</TableLayout>
+        <include layout="@layout/inc_waypointinfo" />
+    </LinearLayout>
 
-		<LinearLayout android:id="@+id/edittrack"
-			android:visibility="gone"
-			android:padding="3dip"
-			android:gravity="center_vertical"
-			android:orientation="horizontal" 
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
-	    
-			<include layout="@layout/inc_trackedit" /> 
+    <LinearLayout
+        android:id="@+id/bottombar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#88000000"
+        android:orientation="vertical" >
 
-		</LinearLayout>
+        <TableLayout
+            android:id="@+id/movinginfo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" >
 
-		<LinearLayout android:id="@+id/editroute"
-			android:visibility="gone"
-			android:padding="3dip"
-			android:orientation="horizontal" 
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
-	    
-			<include layout="@layout/inc_routeedit" /> 
+            <TableRow>
 
-		</LinearLayout>
+                <include layout="@layout/inc_distance" />
 
-		<include layout="@layout/inc_mapinfo" />
+                <include layout="@layout/inc_bearing" />
 
-	</LinearLayout>
-    
+                <include layout="@layout/inc_turn" />
+            </TableRow>
+
+            <TableRow android:id="@+id/movingrow" >
+
+                <include layout="@layout/inc_speed" />
+
+                <include layout="@layout/inc_track" />
+
+                <include layout="@layout/inc_elevation" />
+
+                <include layout="@layout/inc_xtk" />
+            </TableRow>
+        </TableLayout>
+
+        <LinearLayout
+            android:id="@+id/edittrack"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="3dip"
+            android:visibility="gone" >
+
+            <include layout="@layout/inc_trackedit" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/editroute"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dip"
+            android:visibility="gone" >
+
+            <include layout="@layout/inc_routeedit" />
+        </LinearLayout>
+
+        <include layout="@layout/inc_mapinfo" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mapbuttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottombar"
+        android:layout_alignParentRight="true"
+        android:background="#88000000"
+        android:orientation="vertical"
+        android:layout_marginRight="5dip"
+        android:layout_marginBottom="16dip" >
+
+        <ImageButton
+            android:id="@+id/zoom100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:padding="8dip"
+            android:contentDescription="@string/zoom_100"
+            android:src="@drawable/ic_action_search" />
+
+        <ImageButton
+            android:id="@+id/zoomin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:padding="8dip"
+            android:contentDescription="@string/zoom_in"
+            android:src="@drawable/ic_action_search" />
+
+        <ImageButton
+            android:id="@+id/zoomout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:padding="8dip"
+            android:contentDescription="@string/zoom_out"
+            android:src="@drawable/ic_action_search" />
+
+        <ImageButton
+            android:id="@+id/nextmap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:padding="8dip"
+            android:contentDescription="@string/next_map"
+            android:src="@drawable/ic_action_expand" />
+
+        <ImageButton
+            android:id="@+id/prevmap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:padding="8dip"
+            android:contentDescription="@string/prev_map"
+            android:src="@drawable/ic_action_collapse" />
+    </LinearLayout>
+
     <include layout="@layout/inc_trackdetails" />
+
     <include layout="@layout/inc_wait" />
-   
+
 </RelativeLayout>

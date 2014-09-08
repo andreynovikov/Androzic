@@ -1060,7 +1060,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return maps.getMaps(loc[0], loc[1]);
 	}
 	
-	public boolean nextMap()
+	public boolean prevMap()
 	{
 		updateLocationMaps(true, false);
 		int id = 0;
@@ -1082,7 +1082,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			return false;
 	}
 
-	public boolean prevMap()
+	public boolean nextMap()
 	{
 		updateLocationMaps(true, false);
 		int id = 0;

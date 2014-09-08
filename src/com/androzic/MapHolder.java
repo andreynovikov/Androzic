@@ -7,10 +7,6 @@ public interface MapHolder
 	MapView getMapView();
 	void setFollowing(boolean follow);
 	void zoomMap(float factor);
-	void zoomIn();
-	void zoomOut();
-	void previousMap();
-	void nextMap();
 	/**
 	 * Called when current map have changed
 	 */

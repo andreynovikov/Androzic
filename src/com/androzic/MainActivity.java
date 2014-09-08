@@ -48,7 +48,6 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -77,14 +76,13 @@ import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
 import com.androzic.waypoint.WaypointProperties;
 
-public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener, OnClickListener
+public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "MainActivity";
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private DrawerAdapter mDrawerAdapter;
-	private View mDrawerActions;
 	private ActionBarDrawerToggle mDrawerToggle;
 
 	private CharSequence mDrawerTitle;
@@ -161,7 +159,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		mTitle = mDrawerTitle = getTitle();
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
-		mDrawerActions = findViewById(R.id.right_drawer);
 
 		// set a custom shadow that overlays the main content when the drawer opens
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -202,12 +199,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		getSupportFragmentManager().addOnBackStackChangedListener(mBackStackChangedListener);
-
-		// set button actions
-		findViewById(R.id.zoomin).setOnClickListener(this);
-		findViewById(R.id.zoomout).setOnClickListener(this);
-		findViewById(R.id.nextmap).setOnClickListener(this);
-		findViewById(R.id.prevmap).setOnClickListener(this);
 
 		if (savedInstanceState == null)
 		{
@@ -584,10 +575,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		mDrawerList.setItemChecked(position, true);
 		mDrawerAdapter.setSelectedItem(position);
 		setTitle(item.name);
-		if (item.fragment instanceof MapFragment)
-			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerActions);
-		else
-			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerActions);
 	}
 
 	private void restoreDrawerUI()
@@ -680,26 +667,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 				return;
 			default:
 				super.onBackPressed();
-		}
-	}
-
-	@Override
-	public void onClick(View v)
-	{
-		switch (v.getId())
-		{
-			case R.id.zoomin:
-				application.getMapHolder().zoomIn();
-				break;
-			case R.id.zoomout:
-				application.getMapHolder().zoomOut();
-				break;
-			case R.id.nextmap:
-				application.getMapHolder().nextMap();
-				break;
-			case R.id.prevmap:
-				application.getMapHolder().previousMap();
-				break;
 		}
 	}
 

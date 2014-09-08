@@ -26,10 +26,13 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.miscwidgets.widget.Panel;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -174,6 +177,11 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		map = (MapView) view.findViewById(R.id.mapview);
 		map.initialize(application, this);
 
+		view.findViewById(R.id.zoom100).setOnClickListener(this);
+		view.findViewById(R.id.zoomin).setOnClickListener(this);
+		view.findViewById(R.id.zoomout).setOnClickListener(this);
+		view.findViewById(R.id.nextmap).setOnClickListener(this);
+		view.findViewById(R.id.prevmap).setOnClickListener(this);
 		coordinates.setOnClickListener(this);
 		satInfo.setOnClickListener(this);
 		currentFile.setOnClickListener(this);
@@ -308,13 +316,13 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 		else if (following)
 		{
-			follow.setIcon(R.drawable.ic_action_lock_open);
+			follow.setIcon(R.drawable.ic_action_lock_closed);
 			follow.setTitle(R.string.action_unfollow);
 		}
 		else
 		{
 			follow.setVisible(true);
-			follow.setIcon(R.drawable.ic_action_lock_closed);			
+			follow.setIcon(R.drawable.ic_action_lock_open);			
 			follow.setTitle(R.string.action_follow);
 		}
 		menu.findItem(R.id.action_locating).setChecked(application.isLocating());
@@ -422,10 +430,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	{
 		boolean slVisible = settings.getBoolean(getString(R.string.pref_showsatinfo), true);
 		boolean mlVisible = settings.getBoolean(getString(R.string.pref_showmapinfo), true);
+		boolean mbVisible = settings.getBoolean(getString(R.string.ui_mapbuttons_shown), true);
 
 		View root = getView();
 		root.findViewById(R.id.satinfo).setVisibility(slVisible ? View.VISIBLE : View.GONE);
 		root.findViewById(R.id.mapinfo).setVisibility(mlVisible ? View.VISIBLE : View.GONE);
+		root.findViewById(R.id.mapbuttons).setVisibility(mbVisible ? View.VISIBLE : View.GONE);
 
 		updateMapViewArea();
 	}
@@ -447,6 +457,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				v = root.findViewById(R.id.bottombar);
 				if (v != null)
 					area.bottom = v.getTop();
+				//TODO Test map buttons and right bar
 				v = root.findViewById(R.id.rightbar);
 				if (v != null)
 					area.right = v.getLeft();
@@ -721,83 +732,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
-	public void zoomIn()
-	{
-		// TODO Show toast here
-		if (application.getNextZoom() == 0.0)
-			return;
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				synchronized (map)
-				{
-					if (application.zoomIn())
-						conditionsChanged();
-				}
-				finishHandler.sendEmptyMessage(0);
-			}
-		});
-	}
-
-	@Override
-	public void zoomOut()
-	{
-		if (application.getPrevZoom() == 0.0)
-			return;
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				synchronized (map)
-				{
-					if (application.zoomOut())
-						conditionsChanged();
-				}
-				finishHandler.sendEmptyMessage(0);
-			}
-		});
-	}
-
-	@Override
-	public void previousMap()
-	{
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				synchronized (map)
-				{
-					if (application.prevMap())
-						mapChanged();
-				}
-				finishHandler.sendEmptyMessage(0);
-			}
-		});
-	}
-
-	@Override
-	public void nextMap()
-	{
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				synchronized (map)
-				{
-					if (application.nextMap())
-						mapChanged();
-				}
-				finishHandler.sendEmptyMessage(0);
-			}
-		});
-	}
-
-	@Override
 	public void conditionsChanged()
 	{
 		if (map == null)
@@ -970,6 +904,89 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		MenuPopupHelper mPopup;
 		switch (v.getId())
 		{
+			case R.id.zoom100:
+				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
+				executorThread.execute(new Runnable() {
+					public void run()
+					{
+						synchronized (map)
+						{
+							if (application.setZoom(1.))
+							{
+								map.updateMapInfo();
+								map.update();
+							}
+						}
+						finishHandler.sendEmptyMessage(0);
+					}
+				});
+				break;
+			case R.id.zoomin:
+				// TODO Show toast here
+				if (application.getNextZoom() == 0.0)
+					return;
+				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
+				executorThread.execute(new Runnable() {
+					public void run()
+					{
+						synchronized (map)
+						{
+							if (application.zoomIn())
+								conditionsChanged();
+						}
+						finishHandler.sendEmptyMessage(0);
+					}
+				});
+				break;
+			case R.id.zoomout:
+				if (application.getPrevZoom() == 0.0)
+					return;
+				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
+				executorThread.execute(new Runnable() {
+					public void run()
+					{
+						synchronized (map)
+						{
+							if (application.zoomOut())
+								conditionsChanged();
+						}
+						finishHandler.sendEmptyMessage(0);
+					}
+				});
+				break;
+			case R.id.prevmap:
+				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
+				executorThread.execute(new Runnable() {
+					public void run()
+					{
+						synchronized (map)
+						{
+							if (application.prevMap())
+								mapChanged();
+						}
+						finishHandler.sendEmptyMessage(0);
+					}
+				});
+				break;
+			case R.id.nextmap:
+				waitBar.setVisibility(View.VISIBLE);
+				waitBar.setText(R.string.msg_wait);
+				executorThread.execute(new Runnable() {
+					public void run()
+					{
+						synchronized (map)
+						{
+							if (application.nextMap())
+								mapChanged();
+						}
+						finishHandler.sendEmptyMessage(0);
+					}
+				});
+				break;
 			case R.id.coordinates:
 			{
 				// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
@@ -994,24 +1011,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				break;
 			}
 			case R.id.currentzoom:
-			{
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
-					{
-						synchronized (map)
-						{
-							if (application.setZoom(1.))
-							{
-								map.updateMapInfo();
-								map.update();
-							}
-						}
-						finishHandler.sendEmptyMessage(0);
-					}
-				});
-			}
+				View mapButtons = getView().findViewById(R.id.mapbuttons);
+				boolean visible = mapButtons.isShown();
+				mapButtons.setVisibility(visible ? View.GONE : View.VISIBLE);
+				// save panel state
+				Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
+				editor.putBoolean(getString(R.string.ui_mapbuttons_shown), !visible);
+				editor.commit();
+				break;
 		}
 	}
 

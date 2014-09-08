@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_follow"
-        android:icon="@drawable/ic_action_lock_closed"
+        android:icon="@drawable/ic_action_lock_open"
         android:orderInCategory="0"
         android:title="@string/action_follow"
         app:showAsAction="always"/>
