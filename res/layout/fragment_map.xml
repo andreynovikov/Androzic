@@ -99,7 +99,7 @@
             android:background="@null"
             android:padding="8dip"
             android:contentDescription="@string/zoom_100"
-            android:src="@drawable/ic_action_search" />
+            android:src="@drawable/ic_action_zoom_100" />
 
         <ImageButton
             android:id="@+id/zoomin"
@@ -108,7 +108,7 @@
             android:background="@null"
             android:padding="8dip"
             android:contentDescription="@string/zoom_in"
-            android:src="@drawable/ic_action_search" />
+            android:src="@drawable/ic_action_zoom_in" />
 
         <ImageButton
             android:id="@+id/zoomout"
@@ -117,7 +117,7 @@
             android:background="@null"
             android:padding="8dip"
             android:contentDescription="@string/zoom_out"
-            android:src="@drawable/ic_action_search" />
+            android:src="@drawable/ic_action_zoom_out" />
 
         <ImageButton
             android:id="@+id/nextmap"
