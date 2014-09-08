@@ -265,6 +265,9 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 					if (waypoint == null)
 					{
 						waypoint = new Waypoint();
+					}
+					if (waypoint.date == null)
+					{
 						waypoint.date = Calendar.getInstance().getTime();
 					}
 
@@ -351,7 +354,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 	public void setWaypoint(Waypoint waypoint)
 	{
 		this.waypoint = waypoint;
-		if (this.isVisible())
+		if (isVisible())
 			updateWaypointProperties();
 	}
 
@@ -359,7 +362,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 	{
 		this.waypoint = waypoint;
 		this.route = route;
-		if (this.isVisible())
+		if (isVisible())
 			updateWaypointProperties();
 	}
 

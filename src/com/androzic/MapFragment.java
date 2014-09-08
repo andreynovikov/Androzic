@@ -232,6 +232,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitspeed));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitelevation));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitangle));
 
 		PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(this);
 
@@ -894,6 +895,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			elevationFactor = Double.parseDouble(resources.getStringArray(R.array.elevation_factors)[elevationIdx]);
 			elevationAbbr = resources.getStringArray(R.array.elevation_abbrs)[elevationIdx];
 			elevationUnit.setText(elevationAbbr);
+		}
+		else if (getString(R.string.pref_unitangle).equals(key))
+		{
+			int angleType = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			trackUnit.setText((angleType == 0 ? "deg" : getString(R.string.degmag)));
+			bearingUnit.setText((angleType == 0 ? "deg" : getString(R.string.degmag)));
 		}
 	}
 

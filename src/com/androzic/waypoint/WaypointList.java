@@ -256,7 +256,7 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 				WaypointFileList fileListDialog = new WaypointFileList(this);
 				fileListDialog.show(getFragmentManager(), "dialog");
 				return true;
-			case R.id.menuNewWaypointSet:
+			case R.id.action_new_waypoint_set:
 				final EditText textEntryView = new EditText(activity);
 				textEntryView.setSingleLine(true);
 				textEntryView.setPadding(8, 0, 8, 0);
@@ -274,10 +274,10 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 					}
 				}).setNegativeButton(R.string.cancel, null).create().show();
 				return true;
-			case R.id.menuNewWaypoint:
-				startActivityForResult(new Intent(activity, WaypointProperties.class).putExtra("INDEX", -1), 0);
+			case R.id.action_new_waypoint:
+				waypointActionsCallback.onWaypointEdit(new Waypoint());
 				return true;
-			case R.id.menuProjectWaypoint:
+			case R.id.action_project_waypoint:
 				WaypointProject waypointProjectDialog = new WaypointProject();
 				waypointProjectDialog.setTargetFragment(this, DIALOG_WAYPOINT_PROJECT);
 				waypointProjectDialog.show(getFragmentManager(), "dialog");

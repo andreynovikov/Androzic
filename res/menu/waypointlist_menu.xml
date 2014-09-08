@@ -23,16 +23,16 @@
         app:showAsAction="ifRoom"
         android:title="@string/menu_load"/>
     <item
-        android:id="@+id/menuNewWaypointSet"
+        android:id="@+id/action_new_waypoint_set"
         android:icon="@drawable/ic_action_document_new"
         app:showAsAction="ifRoom|withText"
         android:title="@string/menu_newwaypointset"/>
     <item
-        android:id="@+id/menuNewWaypoint"
+        android:id="@+id/action_new_waypoint"
         android:icon="@drawable/ic_action_pin"
         android:title="@string/menu_new_waypoint"/>
     <item
-        android:id="@+id/menuProjectWaypoint"
+        android:id="@+id/action_project_waypoint"
         android:icon="@drawable/ic_action_arrow_right_top"
         android:title="@string/menu_project"/>
 

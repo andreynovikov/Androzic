@@ -438,10 +438,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		elevationFactor = Double.parseDouble(resources.getStringArray(R.array.elevation_factors)[elevationIdx]);
 		elevationAbbr = resources.getStringArray(R.array.elevation_abbrs)[elevationIdx];
 		elevationUnit.setText(elevationAbbr);
-		application.angleType = Integer.parseInt(settings.getString(getString(R.string.pref_unitangle), "0"));
-		trackUnit.setText((application.angleType == 0 ? "deg" : getString(R.string.degmag)));
-		bearingUnit.setText((application.angleType == 0 ? "deg" : getString(R.string.degmag)));
-		application.coordinateFormat = Integer.parseInt(settings.getString(getString(R.string.pref_unitcoordinate), "0"));
 		application.sunriseType = Integer.parseInt(settings.getString(getString(R.string.pref_unitsunrise), "0"));
 
 		renderInterval = settings.getInt(getString(R.string.pref_maprenderinterval), resources.getInteger(R.integer.def_maprenderinterval)) * 100;

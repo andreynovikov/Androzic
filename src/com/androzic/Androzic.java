@@ -1879,6 +1879,14 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			setDataPath(Androzic.PATH_ICONS, sharedPreferences.getString(key, resources.getString(R.string.def_folder_icon)));
 		}
+		else if (getString(R.string.pref_unitcoordinate).equals(key))
+		{
+			coordinateFormat = Integer.parseInt(sharedPreferences.getString(key, "0"));			
+		}
+		else if (getString(R.string.pref_unitangle).equals(key))
+		{
+			angleType = Integer.parseInt(sharedPreferences.getString(key, "0"));
+		}
 		else if (getString(R.string.pref_grid_mapshow).equals(key))
 		{
 			overlayManager.mapGrid = sharedPreferences.getBoolean(key, false);
@@ -2010,6 +2018,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		overlayManager = new OverlayManager();
 		
 		//TODO Initialize all suitable settings
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitcoordinate));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitangle));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdrawborder));
