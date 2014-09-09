@@ -146,7 +146,9 @@
 	<string name="zoom_out">Zoom out</string>
 	<string name="next_map">More scaled map</string>
 	<string name="prev_map">Less scaled map</string>
-		    
+	<string name="expand">Expand</string>
+	<string name="collapse">Collapse</string>
+			    
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>
     <string name="nomaps_explained">Map folder &#8216;%s&#8217; is empty. Download and install world map (250KB)?</string>

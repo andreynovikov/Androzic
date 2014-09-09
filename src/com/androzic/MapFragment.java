@@ -26,8 +26,6 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.miscwidgets.widget.Panel;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -48,12 +46,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.internal.view.SupportMenuInflater;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.internal.view.menu.MenuPopupHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -69,7 +68,7 @@ import com.androzic.util.CoordinateParser;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
 
-public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, OnClickListener, MenuBuilder.Callback
+public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, View.OnClickListener, View.OnTouchListener, MenuBuilder.Callback
 {
 	private static final String TAG = "MapFragment";
 	
@@ -131,6 +130,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	protected long lastDim = 0;
 	protected long lastMagnetic = 0;
 	private boolean lastGeoid = true;
+	private int zoom100X = 0;
+	private int zoom100Y = 0;
 
 	private boolean animationSet;
 
@@ -177,8 +178,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		map = (MapView) view.findViewById(R.id.mapview);
 		map.initialize(application, this);
 
-		view.findViewById(R.id.zoom100).setOnClickListener(this);
 		view.findViewById(R.id.zoomin).setOnClickListener(this);
+		view.findViewById(R.id.zoomin).setOnTouchListener(this);
 		view.findViewById(R.id.zoomout).setOnClickListener(this);
 		view.findViewById(R.id.nextmap).setOnClickListener(this);
 		view.findViewById(R.id.prevmap).setOnClickListener(this);
@@ -911,24 +912,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		MenuPopupHelper mPopup;
 		switch (v.getId())
 		{
-			case R.id.zoom100:
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
-					{
-						synchronized (map)
-						{
-							if (application.setZoom(1.))
-							{
-								map.updateMapInfo();
-								map.update();
-							}
-						}
-						finishHandler.sendEmptyMessage(0);
-					}
-				});
-				break;
 			case R.id.zoomin:
 				// TODO Show toast here
 				if (application.getNextZoom() == 0.0)
@@ -1027,6 +1010,59 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				editor.commit();
 				break;
 		}
+	}
+
+	private final Handler zoomHandler = new Handler();
+
+	@SuppressLint("ClickableViewAccessibility")
+	@Override
+	public boolean onTouch(View v, MotionEvent event)
+	{
+		switch (event.getAction())
+		{
+			case MotionEvent.ACTION_DOWN:
+				zoom100X = (int) event.getRawX();
+				zoom100Y = (int) event.getRawY();
+				Log.e(TAG, "Down: " + zoom100X + " " + zoom100Y);
+				zoomHandler.postDelayed(new Runnable() {
+					@Override
+					public void run()
+					{
+						zoom100X = 0;
+						zoom100Y = 0;
+					}
+				}, 2000);
+				break;
+			case MotionEvent.ACTION_UP:
+				Log.e(TAG, "Up: " + event.getRawX() + " " + event.getRawY());
+				int dx = Math.abs((int)event.getRawX() - zoom100X);
+				int dy = (int)event.getRawY() - zoom100Y;
+				int h = v.getHeight();
+				int w = v.getWidth() >> 1;
+				if (dy > h * 0.8 && dy < h * 2 && dx < w)
+				{
+					waitBar.setVisibility(View.VISIBLE);
+					waitBar.setText(R.string.msg_wait);
+					executorThread.execute(new Runnable() {
+						public void run()
+						{
+							synchronized (map)
+							{
+								if (application.setZoom(1.))
+								{
+									map.updateMapInfo();
+									map.update();
+								}
+							}
+							finishHandler.sendEmptyMessage(0);
+						}
+					});
+					zoom100X = 0;
+					zoom100Y = 0;
+				}
+				break;
+		}
+		return false;
 	}
 
 	@Override
