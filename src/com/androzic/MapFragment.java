@@ -28,7 +28,10 @@ import java.util.concurrent.Executors;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -59,10 +62,13 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androzic.data.Waypoint;
 import com.androzic.location.LocationService;
+import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.NavigationOverlay;
+import com.androzic.route.RouteDetails;
 import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.StringFormatter;
@@ -238,7 +244,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(this);
 
 		updateGPSStatus();
-		updateNavigationStatus();
+		onUpdateNavigationState();
+		onUpdateNavigationStatus();
+		
+		application.registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATUS));
+		application.registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
+		application.registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_LOCATING_STATUS));
+		application.registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+		application.registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
 
 		map.setKeepScreenOn(keepScreenOn);
 		map.setFollowing(following);
@@ -258,6 +271,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	{
 		super.onPause();
 
+		application.unregisterReceiver(broadcastReceiver);
+		
 		// Stop updating UI
 		map.pause();
 		updateCallback.removeCallbacks(updateUI);
@@ -329,6 +344,19 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 		menu.findItem(R.id.action_locating).setChecked(application.isLocating());
 		menu.findItem(R.id.action_tracking).setChecked(application.isTracking());
+		
+		boolean navigating = application.isNavigating();
+		boolean viaRoute = application.isNavigatingViaRoute();
+
+		menu.findItem(R.id.action_stop_navigation).setVisible(navigating);
+		menu.findItem(R.id.action_navigation_details).setVisible(viaRoute);
+		menu.findItem(R.id.action_next_nav_point).setVisible(viaRoute);
+		menu.findItem(R.id.action_prev_nav_point).setVisible(viaRoute);
+		if (viaRoute)
+		{
+			menu.findItem(R.id.action_next_nav_point).setEnabled(application.navigationService.hasNextRouteWaypoint());
+			menu.findItem(R.id.action_prev_nav_point).setEnabled(application.navigationService.hasPrevRouteWaypoint());
+		}
 	}
 
 	final private Runnable updateUI = new Runnable() {
@@ -483,7 +511,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		});
 	}
 
-	private void updateNavigationStatus()
+	private void onUpdateNavigationState()
 	{
 		boolean isNavigating = application.navigationService != null && application.navigationService.isNavigating();
 		boolean isNavigatingViaRoute = isNavigating && application.navigationService.isNavigatingViaRoute();
@@ -542,31 +570,20 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 		if (isNavigatingViaRoute)
 		{
-			routeName.setText("� " + application.navigationService.navRoute.name);
+			routeName.setText("\u21d2 " + application.navigationService.navRoute.name);
 		}
 		if (isNavigating)
 		{
-			waypointName.setText("� " + application.navigationService.navWaypoint.name);
-			// FIXME All overlay operations should go into application
-			if (application.overlayManager.navigationOverlay == null)
-			{
-				application.overlayManager.navigationOverlay = new NavigationOverlay();
-				application.overlayManager.navigationOverlay.onMapChanged();
-			}
-		}
-		else if (application.overlayManager.navigationOverlay != null)
-		{
-			application.overlayManager.navigationOverlay.onBeforeDestroy();
-			application.overlayManager.navigationOverlay = null;
+			waypointName.setText("\u2192 " + application.navigationService.navWaypoint.name);
 		}
 
 		updateMapViewArea();
 		map.update();
 	}
 
-	private void updateNavigationInfo()
+	private void onUpdateNavigationStatus()
 	{
-		if (application.navigationService == null || !application.navigationService.isNavigating())
+		if (!application.isNavigating())
 			return;
 
 		double distance = application.navigationService.navDistance;
@@ -1082,6 +1099,18 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			case R.id.action_follow:
 				setFollowing(!following);
 				return true;
+			case R.id.action_navigation_details:
+				startActivity(new Intent(getActivity(), RouteDetails.class).putExtra("index", application.getRouteIndex(application.navigationService.navRoute)).putExtra("nav", true));
+				return true;
+			case R.id.action_next_nav_point:
+				application.navigationService.nextRouteWaypoint();
+				return true;
+			case R.id.action_prev_nav_point:
+				application.navigationService.prevRouteWaypoint();
+				return true;
+			case R.id.action_stop_navigation:
+				application.navigationService.stopNavigation();
+				return true;
 			case R.id.action_locating:
 				application.enableLocating(!application.isLocating());
 				return true;
@@ -1160,6 +1189,41 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		// TODO Auto-generated method stub
 
 	}
+
+	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			Log.e(TAG, "Broadcast: " + action);
+			if (action.equals(NavigationService.BROADCAST_NAVIGATION_STATE))
+			{
+				onUpdateNavigationState();
+				getActivity().supportInvalidateOptionsMenu();
+			}
+			else if (action.equals(NavigationService.BROADCAST_NAVIGATION_STATUS))
+			{
+				onUpdateNavigationStatus();
+				getActivity().supportInvalidateOptionsMenu();
+			}
+			else if (action.equals(LocationService.BROADCAST_LOCATING_STATUS))
+			{
+				if (!application.isLocating())
+					map.clearLocation();
+			}
+			// In fact this is not needed on modern devices through activity is always
+			// paused when the screen is turned off. But we will keep it, may be there
+			// exist some devices (ROMs) that do not pause activities.
+			else if (action.equals(Intent.ACTION_SCREEN_OFF))
+			{
+				map.pause();
+			}
+			else if (action.equals(Intent.ACTION_SCREEN_ON))
+			{
+				map.resume();
+			}
+		}
+	};
 
 	@SuppressLint("HandlerLeak")
 	private class FinishHandler extends Handler

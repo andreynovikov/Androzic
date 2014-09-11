@@ -31,7 +31,6 @@ import android.widget.Toast;
 
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
-import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.RouteOverlay;
 
 /**
@@ -65,11 +64,11 @@ public class ExternalActions extends Activity
             		String name = wptNames != null ? wptNames[i] : "RWPT"+i;
             		route.addWaypoint(name, wptLat[i], wptLon[i]);
             	}
-            	int rt = application.addRoute(route);
+            	application.addRoute(route);
     			RouteOverlay routeOverlay = new RouteOverlay(route);
     			// FIXME no overlay at this point
     			application.overlayManager.routeOverlays.add(routeOverlay);
-    			startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt));
+    			application.startNavigation(route);
             }
             else
             {
@@ -84,12 +83,7 @@ public class ExternalActions extends Activity
     		waypoint.date = Calendar.getInstance().getTime();
 			int wpt = application.addWaypoint(waypoint);
 			waypoint.name = "WPT" + wpt;
-			Intent i = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
-			i.putExtra(NavigationService.EXTRA_NAME, waypoint.name);
-			i.putExtra(NavigationService.EXTRA_LATITUDE, waypoint.latitude);
-			i.putExtra(NavigationService.EXTRA_LONGITUDE, waypoint.longitude);
-			i.putExtra(NavigationService.EXTRA_PROXIMITY, waypoint.proximity);
-			startService(i);
+			application.startNavigation(waypoint);
 		}
 		else if ("geo".equals(intent.getScheme()))
 		{

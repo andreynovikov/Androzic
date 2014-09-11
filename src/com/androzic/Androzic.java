@@ -38,9 +38,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -83,6 +85,7 @@ import com.androzic.map.MockMap;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.TileProvider;
 import com.androzic.navigation.NavigationService;
+import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.OverlayManager;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.Astro.Zenith;
@@ -185,7 +188,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	protected void setMapHolder(MapHolder holder)
 	{
 		mapHolder = holder;
-		if (! currentMap.activated())
+		if (currentMap != null && !currentMap.activated())
 		{
 			try
 			{
@@ -1351,6 +1354,28 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		// send finalization broadcast
 		sendBroadcast(new Intent("com.androzic.plugins.action.FINALIZE"));
 
+		// clear services
+		unregisterReceiver(broadcastReceiver);
+
+		overlayManager.clear();
+
+		if (navigationService != null)
+		{
+			unbindService(navigationConnection);
+			navigationService = null;
+		}
+
+		if (locationService != null)
+		{
+			locationService.unregisterLocationCallback(locationListener);
+			unbindService(locationConnection);
+			locationService = null;
+		}
+
+		stopService(new Intent(this, NavigationService.class));
+		stopService(new Intent(this, LocationService.class));
+
+		// clear data
 		clearRoutes();
 		clearTracks();
 		clearWaypoints();
@@ -1358,12 +1383,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		clearMapObjects();
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
-		editor.commit();			
-		
-		stopService(new Intent(this, NavigationService.class));
-		stopService(new Intent(this, LocationService.class));
-		
-		overlayManager.clear();
+		editor.commit();
 		
 		mapHolder = null;
 		currentMap = null;
@@ -1373,6 +1393,39 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		memmsg = false;
 	}
 
+	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			Log.e(TAG, "Broadcast: " + action);
+			if (action.equals(NavigationService.BROADCAST_NAVIGATION_STATE))
+			{
+				int state = intent.getExtras().getInt("state");
+				switch (state)
+				{
+					case NavigationService.STATE_STARTED:
+						if (overlayManager.navigationOverlay == null)
+						{
+							overlayManager.navigationOverlay = new NavigationOverlay();
+							if (mapHolder != null)
+								overlayManager.navigationOverlay.onMapChanged();
+						}
+						break;
+					case NavigationService.STATE_REACHED:
+						Toast.makeText(Androzic.this, R.string.arrived, Toast.LENGTH_LONG).show();
+					case NavigationService.STATE_STOPED:
+						if (overlayManager.navigationOverlay != null)
+						{
+							overlayManager.navigationOverlay.onBeforeDestroy();
+							overlayManager.navigationOverlay = null;
+						}
+						break;
+				}
+			}
+		}
+	};
+
 	public boolean isLocating()
 	{
 		return locationService != null && locationService.isLocating();
@@ -1380,10 +1433,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 	public void enableLocating(boolean enable)
 	{
+		if (locationService == null)
+			bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
 		String action = enable ? LocationService.ENABLE_LOCATIONS : LocationService.DISABLE_LOCATIONS;
 		startService(new Intent(this, LocationService.class).setAction(action));
-		if (locationService == null)
-			bindService(new Intent(this, LocationService.class), locationConnection, 0);
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		editor.putBoolean(getString(R.string.lc_locate), enable);
 		editor.commit();
@@ -1502,6 +1555,103 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.commit();
 	}
 	
+	public boolean isNavigating()
+	{
+		return navigationService != null && navigationService.isNavigating();		
+	}
+	public boolean isNavigatingViaRoute()
+	{
+		return navigationService != null && navigationService.isNavigatingViaRoute();
+	}
+
+	public void initializeNavigation()
+	{
+		bindService(new Intent(this, NavigationService.class), navigationConnection, BIND_AUTO_CREATE);
+		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATUS));
+		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		String navWpt = settings.getString(getString(R.string.nav_wpt), "");
+		if (!"".equals(navWpt))
+		{
+			Waypoint waypoint = new Waypoint();
+			waypoint.name = navWpt;
+			waypoint.latitude = (double) settings.getFloat(getString(R.string.nav_wpt_lat), 0);
+			waypoint.longitude = (double) settings.getFloat(getString(R.string.nav_wpt_lon), 0);
+			waypoint.proximity = settings.getInt(getString(R.string.nav_wpt_prx), 0);
+			startNavigation(waypoint);
+		}
+
+		String navRoute = settings.getString(getString(R.string.nav_route), "");
+		if (!"".equals(navRoute) && settings.getBoolean(getString(R.string.pref_navigation_loadlast), getResources().getBoolean(R.bool.def_navigation_loadlast)))
+		{
+			int ndir = settings.getInt(getString(R.string.nav_route_dir), 0);
+			int nwpt = settings.getInt(getString(R.string.nav_route_wpt), -1);
+			try
+			{
+				Route route = getRouteByFile(navRoute);
+				if (route != null)
+				{
+					route.show = true;
+				}
+				else
+				{
+					File rtf = new File(navRoute);
+					// FIXME It's bad - it can be not a first route in a file
+					route = OziExplorerFiles.loadRoutesFromFile(rtf, charset).get(0);
+					addRoute(route);
+					RouteOverlay newRoute = new RouteOverlay(route);
+					overlayManager.routeOverlays.add(newRoute);
+				}
+				startNavigation(route, ndir, nwpt);
+			}
+			catch (Exception e)
+			{
+				Log.e(TAG, "Failed to start navigation", e);
+			}
+		}
+	}
+
+	public void startNavigation(Waypoint waypoint)
+	{
+		Intent i = new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+		i.putExtra(NavigationService.EXTRA_NAME, waypoint.name);
+		i.putExtra(NavigationService.EXTRA_LATITUDE, waypoint.latitude);
+		i.putExtra(NavigationService.EXTRA_LONGITUDE, waypoint.longitude);
+		i.putExtra(NavigationService.EXTRA_PROXIMITY, waypoint.proximity);
+		startService(i);
+	}
+	
+	public void startNavigation(Route route)
+	{
+		startNavigation(route, 0, -1);
+	}
+
+	public void startNavigation(Route route, int direction, int waypointIndex)
+	{
+    	route.show = true;
+		int rt = getRouteIndex(route);
+		Intent i = new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE);
+		i.putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt);
+		i.putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, direction);
+		i.putExtra(NavigationService.EXTRA_ROUTE_START, waypointIndex);
+		startService(i);
+	}
+
+	private ServiceConnection navigationConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service)
+		{
+			navigationService = ((NavigationService.LocalBinder) service).getService();
+			Log.d(TAG, "Navigation service connected");
+		}
+
+		public void onServiceDisconnected(ComponentName className)
+		{
+			navigationService = null;
+			Log.d(TAG, "Navigation service disconnected");
+		}
+	};
+
 	public void setRootPath(String path)
 	{
 		rootPath = path;

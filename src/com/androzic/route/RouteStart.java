@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -21,10 +21,13 @@
 package com.androzic.route;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -35,68 +38,94 @@ import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
 import com.androzic.navigation.NavigationService;
 
-public class RouteStart extends Activity
+public class RouteStart extends DialogFragment
 {
+	private OnRouteActionListener routeActionsCallback;
+
     private Route route;
 	private RadioButton forward;
 	private RadioButton reverse;
 	
-	private int index;
+	public void setRoute(Route route)
+	{
+		this.route = route;
+	}
 
 	@Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_route_start);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		View view = inflater.inflate(R.layout.act_route_start, container);
+		forward = (RadioButton) view.findViewById(R.id.forward);
+		reverse = (RadioButton) view.findViewById(R.id.reverse);
 
-        index = getIntent().getExtras().getInt("index");
-        
-		Androzic application = (Androzic) getApplication();
-		route = application.getRoute(index);
+	    Button navigate = (Button) view.findViewById(R.id.navigate_button);
+	    navigate.setOnClickListener(navigateOnClickListener);
 		
+		return view;
+	}
+
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try
+		{
+			routeActionsCallback = (OnRouteActionListener) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement OnRouteActionListener");
+		}
+	}
+
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+        updateRouteInfo();
+	}
+
+	public void updateRouteInfo()
+	{
 		if (route.length() < 2)
 		{
-			Toast.makeText(getBaseContext(), R.string.err_shortroute, Toast.LENGTH_LONG).show();
-			setResult(RESULT_CANCELED);
-    		finish();
+			Toast.makeText(getActivity(), R.string.err_shortroute, Toast.LENGTH_LONG).show();
+			// "Close" fragment
+			getFragmentManager().popBackStack();
     		return;
 		}
-		
-		this.setTitle(route.name);
+
+		Dialog dialog = getDialog();
+
+		dialog.setTitle(route.name);
 
 		Waypoint start = route.getWaypoint(0);
 		Waypoint end = route.getWaypoint(route.length()-1);
 
-		forward = (RadioButton) findViewById(R.id.forward);
-		forward.setText(start.name + " to "+end.name);
-		reverse = (RadioButton) findViewById(R.id.reverse);
-		reverse.setText(end.name + " to "+start.name);
+		forward.setText(start.name + " to " + end.name);
+		reverse.setText(end.name + " to " + start.name);
 
 		forward.setChecked(true);
-		
-	    Button navigate = (Button) findViewById(R.id.navigate_button);
-	    navigate.setOnClickListener(navigateOnClickListener);
     }
+
+	@Override
+	public void onDestroyView()
+	{
+		if (getDialog() != null && getRetainInstance())
+			getDialog().setDismissMessage(null);
+		super.onDestroyView();
+	}
 
 	private OnClickListener navigateOnClickListener = new OnClickListener()
 	{
         public void onClick(View v)
         {
-        	route.show = true;
         	int dir = forward.isChecked() ? NavigationService.DIRECTION_FORWARD : NavigationService.DIRECTION_REVERSE;
-			startService(new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra("index", index).putExtra("direction", dir));
-			setResult(RESULT_OK);
-    		finish();
+        	routeActionsCallback.onRouteNavigate(route, dir, -1);
+			dismiss();
         }
     };
-
-	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		route = null;
-		forward = null;
-		reverse = null;
-	}
-
 }

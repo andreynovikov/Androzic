@@ -33,11 +33,12 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.androzic.Androzic;
 import com.androzic.HSIActivity;
-import com.androzic.MapActivity;
+import com.androzic.MainActivity;
 import com.androzic.R;
 import com.androzic.data.MapObject;
 import com.androzic.data.Route;
@@ -102,17 +103,19 @@ public class NavigationService extends BaseNavigationService implements OnShared
 	@Override
 	public void onCreate()
 	{
-		application = (Androzic) getApplication();
+		application = Androzic.getApplication();
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_navigation_proximity));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_navigation_traverse));
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
-		notification = new Notification();
-		notification.when = 0;
-		contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK), 0);
-		notification.icon = R.drawable.ic_stat_navigation;
-		notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_nav_short), getText(R.string.notif_nav_started), contentIntent);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setContentIntent(contentIntent);
+		builder.setSmallIcon(R.drawable.ic_stat_navigation);
+		builder.setWhen(0);
+		builder.setContentTitle(getText(R.string.notif_nav_short));
+		builder.setContentText(getText(R.string.notif_nav_started));
+		notification = builder.build();
 
 		Log.i(TAG, "Service started");
 	}
@@ -122,7 +125,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 	{
 		if (intent != null)
 		{
-			Intent activity = new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+			Intent activity = new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 			String action = intent.getAction();
 			if (action == null)
 				return 0;
@@ -552,9 +555,13 @@ public class NavigationService extends BaseNavigationService implements OnShared
 	{
 		if (state != STATE_STOPED && state != STATE_REACHED)
 		{
-			notification.when = System.currentTimeMillis();
-			String message = String.format((String) getText(R.string.notif_nav_to), navWaypoint.name);
-			notification.setLatestEventInfo(getApplicationContext(), getText(R.string.notif_nav_short), message, contentIntent);
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+			builder.setContentIntent(contentIntent);
+			builder.setSmallIcon(R.drawable.ic_stat_navigation);
+			builder.setWhen(System.currentTimeMillis());
+			builder.setContentTitle(getText(R.string.notif_nav_short));
+			builder.setContentText(String.format((String) getText(R.string.notif_nav_to), navWaypoint.name));
+			notification = builder.build();
 			NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 			nm.notify(NOTIFICATION_ID, notification);
 		}

@@ -57,12 +57,14 @@ import android.widget.Toast;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
+import com.androzic.data.WaypointSet;
 import com.androzic.map.Map;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteList;
 import com.androzic.route.RouteProperties;
 import com.androzic.route.RouteSave;
+import com.androzic.route.RouteStart;
 import com.androzic.track.OnTrackActionListener;
 import com.androzic.track.TrackList;
 import com.androzic.track.TrackProperties;
@@ -415,12 +417,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onWaypointNavigate(Waypoint waypoint)
 	{
-		Intent intent = new Intent(application, NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
-		intent.putExtra(NavigationService.EXTRA_NAME, waypoint.name);
-		intent.putExtra(NavigationService.EXTRA_LATITUDE, waypoint.latitude);
-		intent.putExtra(NavigationService.EXTRA_LONGITUDE, waypoint.longitude);
-		intent.putExtra(NavigationService.EXTRA_PROXIMITY, waypoint.proximity);
-		application.startService(intent);
+		application.startNavigation(waypoint);
 		selectItem(0);
 	}
 
@@ -447,9 +444,19 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	}
 
 	@Override
-	public void onWaypointRemove(Waypoint waypoint)
+	public void onWaypointRemove(final Waypoint waypoint)
 	{
-		application.removeWaypoint(waypoint);
+		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.removeWaypointQuestion)
+		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				WaypointSet wptset = waypoint.set;
+				application.removeWaypoint(waypoint);
+				application.saveWaypoints(wptset);
+			}
+
+		}).setNegativeButton(R.string.no, null).show();
 	}
 
 	@Override
@@ -488,7 +495,19 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onRouteNavigate(Route route)
 	{
-//		startActivityForResult(new Intent(this, RouteStart.class).putExtra("index", application.getRouteIndex(route)), RESULT_START_ROUTE);
+		FragmentManager fm = getSupportFragmentManager();
+		RouteStart routeStart = (RouteStart) fm.findFragmentByTag("route_start");
+		if (routeStart == null)
+			routeStart = (RouteStart) Fragment.instantiate(this, RouteStart.class.getName());
+		routeStart.setRoute(route);
+		routeStart.show(fm, "route_start");
+	}
+	
+	@Override
+	public void onRouteNavigate(Route route, int direction, int waypointIndex)
+	{
+		application.startNavigation(route, direction, waypointIndex);
+		selectItem(0);
 	}
 
 	@Override

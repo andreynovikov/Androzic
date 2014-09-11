@@ -26,6 +26,7 @@ public interface OnRouteActionListener
 {
 	void onRouteDetails(Route route);
 	void onRouteNavigate(Route route);
+	void onRouteNavigate(Route route, int direction, int waypointIndex);
 	void onRouteEdit(Route route);
 	void onRouteEditPath(Route route);
 	void onRouteSave(Route route);

@@ -324,48 +324,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 		dimView = new RelativeLayout(this);
 
-		String navWpt = settings.getString(getString(R.string.nav_wpt), "");
-		if (!"".equals(navWpt) && savedInstanceState == null)
-		{
-			Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
-			intent.putExtra(NavigationService.EXTRA_NAME, navWpt);
-			intent.putExtra(NavigationService.EXTRA_LATITUDE, (double) settings.getFloat(getString(R.string.nav_wpt_lat), 0));
-			intent.putExtra(NavigationService.EXTRA_LONGITUDE, (double) settings.getFloat(getString(R.string.nav_wpt_lon), 0));
-			intent.putExtra(NavigationService.EXTRA_PROXIMITY, settings.getInt(getString(R.string.nav_wpt_prx), 0));
-			startService(intent);
-		}
-
-		String navRoute = settings.getString(getString(R.string.nav_route), "");
-		if (!"".equals(navRoute) && settings.getBoolean(getString(R.string.pref_navigation_loadlast), getResources().getBoolean(R.bool.def_navigation_loadlast)) && savedInstanceState == null)
-		{
-			int ndir = settings.getInt(getString(R.string.nav_route_dir), 0);
-			int nwpt = settings.getInt(getString(R.string.nav_route_wpt), -1);
-			try
-			{
-				int rt = -1;
-				Route route = application.getRouteByFile(navRoute);
-				if (route != null)
-				{
-					route.show = true;
-					rt = application.getRouteIndex(route);
-				}
-				else
-				{
-					File rtf = new File(navRoute);
-					// FIXME It's bad - it can be not a first route in a file
-					route = OziExplorerFiles.loadRoutesFromFile(rtf, application.charset).get(0);
-					rt = application.addRoute(route);
-				}
-				RouteOverlay newRoute = new RouteOverlay(route);
-				application.overlayManager.routeOverlays.add(newRoute);
-				startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt).putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, ndir).putExtra(NavigationService.EXTRA_ROUTE_START, nwpt));
-			}
-			catch (Exception e)
-			{
-				Log.e(TAG, "Failed to start navigation", e);
-			}
-		}
-
 		// set activity preferences
 		onSharedPreferenceChanged(settings, getString(R.string.pref_exit));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
@@ -1076,11 +1034,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		if (isNavigating)
 		{
 			waypointName.setText("» " + navigationService.navWaypoint.name);
-			if (application.overlayManager.navigationOverlay == null)
-			{
-				application.overlayManager.navigationOverlay = new NavigationOverlay();
-				application.overlayManager.navigationOverlay.onMapChanged();
-			}
 		}
 		else if (application.overlayManager.navigationOverlay != null)
 		{
@@ -1529,15 +1482,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			case R.id.menuSearch:
 				onSearchRequested();
 				return true;
-			case R.id.menuNewWaypoint:
-				startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", -1), RESULT_SAVE_WAYPOINT);
-				return true;
-			case R.id.menuProjectWaypoint:
-				startActivityForResult(new Intent(this, WaypointProject.class), RESULT_SAVE_WAYPOINT);
-				return true;
-			case R.id.menuLoadWaypoints:
-				startActivityForResult(new Intent(this, WaypointFileList.class), RESULT_LOAD_WAYPOINTS);
-				return true;
 			case R.id.menuExportCurrentTrack:
 		        FragmentManager fm = getSupportFragmentManager();
 		        TrackExportDialog trackExportDialog = new TrackExportDialog(locationService);
@@ -1568,20 +1512,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					}
 				}).setNegativeButton(R.string.no, null).show();
 				return true;
-			case R.id.menuNavigationDetails:
-				startActivity(new Intent(this, RouteDetails.class).putExtra("index", application.getRouteIndex(navigationService.navRoute)).putExtra("nav", true));
-				return true;
-			case R.id.menuNextNavPoint:
-				navigationService.nextRouteWaypoint();
-				return true;
-			case R.id.menuPrevNavPoint:
-				navigationService.prevRouteWaypoint();
-				return true;
-			case R.id.menuStopNavigation:
-			{
-				navigationService.stopNavigation();
-				return true;
-			}
 			case R.id.menuMapInfo:
 				startActivity(new Intent(this, MapInformation.class));
 				return true;
@@ -1815,8 +1745,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
-						// TODO change context everywhere?
-						stopService(new Intent(MapActivity.this, NavigationService.class));
 						MapActivity.this.finish();
 					}
 				}).setNegativeButton(R.string.no, null).show();
@@ -1929,48 +1857,21 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	@Override
 	public void onWaypointNavigate(final Waypoint waypoint)
 	{
-		Intent intent = new Intent(getApplicationContext(), NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
-		intent.putExtra(NavigationService.EXTRA_NAME, waypoint.name);
-		intent.putExtra(NavigationService.EXTRA_LATITUDE, waypoint.latitude);
-		intent.putExtra(NavigationService.EXTRA_LONGITUDE, waypoint.longitude);
-		intent.putExtra(NavigationService.EXTRA_PROXIMITY, waypoint.proximity);
-		startService(intent);
 	}
 
 	@Override
 	public void onWaypointEdit(final Waypoint waypoint)
 	{
-		int index = application.getWaypointIndex(waypoint);
-		startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index), RESULT_SAVE_WAYPOINT);
 	}
 
 	@Override
 	public void onWaypointShare(final Waypoint waypoint)
 	{
-		Intent i = new Intent(android.content.Intent.ACTION_SEND);
-		i.setType("text/plain");
-		i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
-		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
-		i.putExtra(Intent.EXTRA_TEXT, waypoint.name + " @ " + coords);
-		startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
 	}
 
 	@Override
 	public void onWaypointRemove(final Waypoint waypoint)
 	{
-		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.removeWaypointQuestion)
-		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which)
-			{
-				WaypointSet wptset = waypoint.set;
-				application.removeWaypoint(waypoint);
-				application.saveWaypoints(wptset);
-				map.invalidate();
-			}
-
-		}).setNegativeButton(R.string.no, null).show();
 	}
 
 	@Override

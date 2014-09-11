@@ -632,6 +632,9 @@ public class Splash extends Activity implements OnClickListener
 			// initialize current map
 			application.initializeMapCenter();
 
+			// initialize navigation
+			application.initializeNavigation();
+			
 			total += PROGRESS_STEP;
 			msg = mHandler.obtainMessage(MSG_PROGRESS);
 			b = new Bundle();

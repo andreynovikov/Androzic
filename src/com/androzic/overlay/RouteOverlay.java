@@ -57,11 +57,11 @@ public class RouteOverlay extends MapOverlay
 	int routeWidth = 2;
 	boolean showNames;
 
-	public RouteOverlay()
+	public RouteOverlay(final Route route)
 	{
 		super();
 
-		route = new Route();
+		this.route = route;
 		bitmaps = new WeakHashMap<Waypoint, Bitmap>();
 
 		Resources resources = application.getResources();
@@ -98,18 +98,14 @@ public class RouteOverlay extends MapOverlay
 		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(application));
 
 		enabled = true;
-	}
 
-	public RouteOverlay(final Route aRoute)
-	{
-		super();
-
-		route = aRoute;
 		if (route.lineColor == -1)
 			route.lineColor = linePaint.getColor();
+		
 		onRoutePropertiesChanged();
+
 	}
-	
+
 	private void initRouteColors()
 	{
 		linePaint.setColor(route.lineColor);
