@@ -537,7 +537,9 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onTrackToRoute(Track track)
 	{
-		startActivity(new Intent(this, TrackToRoute.class).putExtra("INDEX", application.getTrackIndex(track)));
+		FragmentManager fm = getSupportFragmentManager();
+		TrackToRoute trackToRouteDialog = new TrackToRoute(track);
+		trackToRouteDialog.show(fm, "track_to_route");
 	}
 
 	@Override
