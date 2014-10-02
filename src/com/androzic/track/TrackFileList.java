@@ -94,7 +94,7 @@ public class TrackFileList extends FileListDialog
 			{
 				for (Track track: tracks)
 				{
-					application.addTrackWithOverlay(track);
+					application.addTrack(track);
 				}
 				onFileLoaded(tracks.size());
 			}

@@ -121,11 +121,22 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 			@Override
 			public void onDismiss()
 			{
-				View v = getListView().findViewWithTag("selected");
-				if (v != null)
+				try
 				{
-					v.setBackgroundDrawable(selectedBackground);
-					v.setTag(null);
+					ListView lv = getListView();
+					if (lv != null)
+					{
+						View v = lv.findViewWithTag("selected");
+						if (v != null)
+						{
+							v.setBackgroundDrawable(selectedBackground);
+							v.setTag(null);
+						}
+					}
+				}
+				catch (IllegalStateException ignore)
+				{
+					// Ignore dismissing view after list view was destroyed
 				}
 			}
 		});

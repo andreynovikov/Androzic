@@ -67,8 +67,8 @@ public class RouteProperties extends ActionBarActivity
         color = (ColorButton) findViewById(R.id.color_button);
         color.setColor(route.lineColor, getResources().getColor(R.color.routeline));
 
-		ViewGroup width = (ViewGroup) findViewById(R.id.width_layout);
-		width.setVisibility(View.GONE);
+        //ViewGroup width = (ViewGroup) findViewById(R.id.width_layout);
+		//width.setVisibility(View.GONE);
 
 	    Button save = (Button) findViewById(R.id.done_button);
 	    save.setOnClickListener(saveOnClickListener);

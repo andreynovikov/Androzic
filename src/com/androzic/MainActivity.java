@@ -545,7 +545,12 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onTrackEdit(Track track)
 	{
-		startActivity(new Intent(this, TrackProperties.class).putExtra("INDEX", application.getTrackIndex(track)));
+		FragmentManager fm = getSupportFragmentManager();
+		TrackProperties trackProperties = (TrackProperties) fm.findFragmentByTag("track_properties");
+		if (trackProperties == null)
+			trackProperties = (TrackProperties) Fragment.instantiate(this, TrackProperties.class.getName());
+		trackProperties.setTrack(track);
+		addFragment(trackProperties, "track_properties");
 	}
 
 	@Override

@@ -510,23 +510,47 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		waypointSets.clear();
 	}
 	
-	public int addTrack(final Track newTrack)
+	public int addTrack(final Track track)
 	{
-		tracks.add(newTrack);
-		return tracks.lastIndexOf(newTrack);
-	}
-	
-	public void addTrackWithOverlay(Track track)
-	{
-		addTrack(track);
+		tracks.add(track);
 		TrackOverlay trackOverlay = new TrackOverlay(track);
 		overlayManager.fileTrackOverlays.add(trackOverlay);
+		return tracks.lastIndexOf(track);
+	}
+	
+	/**
+	 * Notify overlay that track properties have changed
+	 * @param track Changed track
+	 */
+	public void dispatchTrackPropertiesChanged(Track track)
+	{
+		for (Iterator<TrackOverlay> iter = overlayManager.fileTrackOverlays.iterator(); iter.hasNext();)
+		{
+			TrackOverlay to = iter.next();
+			if (to.getTrack() == track)
+			{
+				to.onTrackPropertiesChanged();
+			}
+		}
 	}
 
-	public boolean removeTrack(final Track delTrack)
+	public boolean removeTrack(final Track track)
 	{
-		delTrack.removed = true;
-		return tracks.remove(delTrack);
+		track.removed = true;
+		boolean removed = tracks.remove(track);
+		if (removed)
+		{
+			for (Iterator<TrackOverlay> iter = overlayManager.fileTrackOverlays.iterator(); iter.hasNext();)
+			{
+				TrackOverlay to = iter.next();
+				if (to.getTrack().removed)
+				{
+					to.onBeforeDestroy();
+					iter.remove();
+				}
+			}			
+		}
+		return removed;
 	}
 	
 	public void clearTracks()
@@ -536,6 +560,15 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			track.removed = true;			
 		}
 		tracks.clear();
+		for (Iterator<TrackOverlay> iter = overlayManager.fileTrackOverlays.iterator(); iter.hasNext();)
+		{
+			TrackOverlay to = iter.next();
+			if (to.getTrack().removed)
+			{
+				to.onBeforeDestroy();
+				iter.remove();
+			}
+		}			
 	}
 	
 	public Track getTrack(final int index)
