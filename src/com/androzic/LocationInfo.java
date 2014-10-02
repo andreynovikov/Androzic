@@ -23,6 +23,7 @@ package com.androzic;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -32,11 +33,17 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.TextView;
+
 import com.androzic.util.Astro;
 
 public class LocationInfo extends DialogFragment
 {
 	private double[] location;
+
+	public LocationInfo()
+	{
+		throw new RuntimeException("Unimplemented initialization context");
+	}
 
 	public LocationInfo(double[] location)
 	{

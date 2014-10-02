@@ -66,6 +66,7 @@ import com.androzic.route.RouteProperties;
 import com.androzic.route.RouteSave;
 import com.androzic.route.RouteStart;
 import com.androzic.track.OnTrackActionListener;
+import com.androzic.track.TrackExportDialog;
 import com.androzic.track.TrackList;
 import com.androzic.track.TrackProperties;
 import com.androzic.track.TrackSave;
@@ -473,19 +474,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 			application.getMapHolder().mapChanged();
 	}
 
-/*
-	if (resultCode == RESULT_OK)
-	{
-		final Androzic application = Androzic.getApplication();
-		int[] indexes = data.getExtras().getIntArray("index");
-		for (int index : indexes)
-		{
-			RouteOverlay newRoute = new RouteOverlay(application.getRoute(index));
-			application.routeOverlays.add(newRoute);
-		}
-	}
-*/
-
 	@Override
 	public void onRouteDetails(Route route)
 	{
@@ -529,19 +517,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		startActivity(new Intent(this, RouteSave.class).putExtra("index", application.getRouteIndex(route)));
 	}
 
-/*
- 				if (resultCode == Activity.RESULT_OK)
-				{
-					final Androzic application = Androzic.getApplication();
-					int[] indexes = data.getExtras().getIntArray("index");
-					for (int index : indexes)
-					{
-						TrackOverlay newTrack = new TrackOverlay(application.getTrack(index));
-						application.fileTrackOverlays.add(newTrack);
-					}
-				}
- */
-
 	@Override
 	public void onTrackEdit(Track track)
 	{
@@ -568,7 +543,9 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onTrackSave(Track track)
 	{
-		startActivity(new Intent(this, TrackSave.class).putExtra("INDEX", application.getTrackIndex(track)));
+        FragmentManager fm = getSupportFragmentManager();
+        TrackSave trackSaveDialog = new TrackSave(track);
+        trackSaveDialog.show(fm, "track_save");
 	}
 
 	@Override
