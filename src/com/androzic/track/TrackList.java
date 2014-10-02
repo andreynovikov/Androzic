@@ -29,7 +29,6 @@ import net.londatiga.android.QuickAction;
 import net.londatiga.android.QuickAction.OnActionItemClickListener;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -58,9 +57,10 @@ import android.widget.TextView;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
+import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
 
-public class TrackList extends ListFragment
+public class TrackList extends ListFragment implements FileListDialog.OnFileListDialogListener
 {
 	List<Track> tracks = null;
 
@@ -167,10 +167,17 @@ public class TrackList extends ListFragment
 		switch (item.getItemId())
 		{
 			case R.id.menuLoadTrack:
-//				startActivityForResult(new Intent(getActivity(), TrackFileList.class), TrackListActivity.RESULT_LOAD_TRACK);
+				TrackFileList fileListDialog = new TrackFileList(this);
+				fileListDialog.show(getFragmentManager(), "dialog");
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void onFileLoaded(int count)
+	{
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override

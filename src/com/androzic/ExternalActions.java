@@ -64,10 +64,8 @@ public class ExternalActions extends Activity
             		String name = wptNames != null ? wptNames[i] : "RWPT"+i;
             		route.addWaypoint(name, wptLat[i], wptLon[i]);
             	}
-            	application.addRoute(route);
-    			RouteOverlay routeOverlay = new RouteOverlay(route);
     			// FIXME no overlay at this point
-    			application.overlayManager.routeOverlays.add(routeOverlay);
+            	application.addRouteWithOverlay(route);
     			application.startNavigation(route);
             }
             else

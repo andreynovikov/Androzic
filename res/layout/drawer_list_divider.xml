@@ -9,6 +9,6 @@
         android:layout_height="1dp"
         android:layout_marginBottom="1dp"
         android:layout_marginTop="1dp"
-        android:background="#DADADA" />
+        android:background="#888888" />
 
 </LinearLayout>

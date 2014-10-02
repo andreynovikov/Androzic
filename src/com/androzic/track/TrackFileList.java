@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -25,35 +25,37 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
 import android.widget.Toast;
 
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
-import com.androzic.ui.FileListActivity;
+import com.androzic.ui.FileListDialog;
 import com.androzic.util.GpxFiles;
 import com.androzic.util.KmlFiles;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.TrackFilenameFilter;
 
-public class TrackFileList extends FileListActivity
+public class TrackFileList extends FileListDialog
 {
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) 
+	public TrackFileList(OnFileListDialogListener listener)
 	{
-		super.onCreate(savedInstanceState);
-		
-		Toast.makeText(getBaseContext(), getString(R.string.msg_badtrackimplementation), Toast.LENGTH_LONG).show();
+		super(R.string.loadtrack_name, listener);
 	}
-	
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		Toast.makeText(getActivity(), getString(R.string.msg_badtrackimplementation), Toast.LENGTH_LONG).show();
+	}
+
 	@Override
 	protected FilenameFilter getFilenameFilter()
 	{
@@ -63,18 +65,18 @@ public class TrackFileList extends FileListActivity
 	@Override
 	protected String getPath()
 	{
-		Androzic application = (Androzic) getApplication();
+		Androzic application = Androzic.getApplication();
 		return application.dataPath;
 	}
 
 	@Override
 	protected void loadFile(File file)
 	{
-		Androzic application = (Androzic) getApplication();
+		Androzic application = Androzic.getApplication();
 		List<Track> tracks = null;
 		try
 		{
-			String lc = file.getName().toLowerCase();
+			String lc = file.getName().toLowerCase(Locale.getDefault());
 			if (lc.endsWith(".plt"))
 			{
 				tracks = new ArrayList<Track>();
@@ -90,38 +92,30 @@ public class TrackFileList extends FileListActivity
 			}
 			if (tracks.size() > 0)
 			{
-				int[] index = new int[tracks.size()];
-				int i = 0;
 				for (Track track: tracks)
 				{
-					index[i] = application.addTrack(track);
-					i++;
+					application.addTrackWithOverlay(track);
 				}
-				setResult(Activity.RESULT_OK, new Intent().putExtra("index", index));
+				onFileLoaded(tracks.size());
 			}
-			else
-			{
-				setResult(Activity.RESULT_CANCELED, new Intent());					
-			}
-			finish();
 		}
 		catch (IllegalArgumentException e)
 		{
-			runOnUiThread(wrongFormat);
+			getActivity().runOnUiThread(wrongFormat);
 		}
 		catch (SAXException e)
 		{
-			runOnUiThread(wrongFormat);
+			getActivity().runOnUiThread(wrongFormat);
 			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
-			runOnUiThread(readError);
+			getActivity().runOnUiThread(readError);
 			e.printStackTrace();
 		}
 		catch (ParserConfigurationException e)
 		{
-			runOnUiThread(readError);
+			getActivity().runOnUiThread(readError);
 			e.printStackTrace();
 		}
 	}

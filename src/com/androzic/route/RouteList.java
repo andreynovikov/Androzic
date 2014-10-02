@@ -56,9 +56,10 @@ import android.widget.TextView;
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
+import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
 
-public class RouteList extends ListFragment
+public class RouteList extends ListFragment implements FileListDialog.OnFileListDialogListener
 {
 	private static final int qaRouteDetails = 1;
 	private static final int qaRouteNavigate = 2;
@@ -171,10 +172,17 @@ public class RouteList extends ListFragment
 				routeActionsCallback.onRouteEdit(route);
 				return true;
 			case R.id.menuLoadRoute:
-//				startActivityForResult(new Intent(getActivity(), RouteFileList.class), RouteListActivity.RESULT_LOAD_ROUTE);
+				RouteFileList fileListDialog = new RouteFileList(this);
+				fileListDialog.show(getFragmentManager(), "dialog");
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void onFileLoaded(int count)
+	{
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override

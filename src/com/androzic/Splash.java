@@ -448,12 +448,10 @@ public class Splash extends Activity implements OnClickListener
 						{
 							routes = GpxFiles.loadRoutesFromFile(file);
 						}
-						application.addRoutes(routes);
 						for (Route route : routes)
 						{
 							route.show = !hide;
-							RouteOverlay newRoute = new RouteOverlay(route);
-							application.overlayManager.routeOverlays.add(newRoute);
+							application.addRouteWithOverlay(route);
 						}
 					}
 					catch (Exception e)

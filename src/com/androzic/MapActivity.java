@@ -477,34 +477,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		unregisterReceiver(broadcastReceiver);
 		map.pause();
 
-		// save active route
-		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-		editor.putString(getString(R.string.nav_route), "");
-		editor.putString(getString(R.string.nav_wpt), "");
-		if (navigationService != null)
-		{
-			if (navigationService.isNavigatingViaRoute())
-			{
-				Route route = navigationService.navRoute;
-				if (route.filepath != null)
-				{
-					editor.putString(getString(R.string.nav_route), route.filepath);
-					editor.putInt(getString(R.string.nav_route_idx), application.getRouteIndex(navigationService.navRoute));
-					editor.putInt(getString(R.string.nav_route_dir), navigationService.navDirection);
-					editor.putInt(getString(R.string.nav_route_wpt), navigationService.navCurrentRoutePoint);
-				}
-			}
-			else if (navigationService.isNavigating())
-			{
-				MapObject wpt = navigationService.navWaypoint;
-				editor.putString(getString(R.string.nav_wpt), wpt.name);
-				editor.putInt(getString(R.string.nav_wpt_prx), wpt.proximity);
-				editor.putFloat(getString(R.string.nav_wpt_lat), (float) wpt.latitude);
-				editor.putFloat(getString(R.string.nav_wpt_lon), (float) wpt.longitude);
-			}
-		}
-		editor.commit();
-
 		if (navigationService != null)
 		{
 			unbindService(navigationConnection);

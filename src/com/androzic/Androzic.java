@@ -88,6 +88,7 @@ import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.OverlayManager;
 import com.androzic.overlay.RouteOverlay;
+import com.androzic.overlay.TrackOverlay;
 import com.androzic.util.Astro.Zenith;
 import com.androzic.util.CSV;
 import com.androzic.util.CoordinateParser;
@@ -515,6 +516,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return tracks.lastIndexOf(newTrack);
 	}
 	
+	public void addTrackWithOverlay(Track track)
+	{
+		addTrack(track);
+		TrackOverlay trackOverlay = new TrackOverlay(track);
+		overlayManager.fileTrackOverlays.add(trackOverlay);
+	}
+
 	public boolean removeTrack(final Track delTrack)
 	{
 		delTrack.removed = true;
@@ -764,13 +772,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return routes.remove(delRoute);
 	}
 	
-	public void addRoutes(final Iterable<Route> newRoutes)
-	{
-		Iterator<Route> iterator = newRoutes.iterator();
-		while (iterator.hasNext())
-			routes.add(iterator.next());
-	}
-
 	public void clearRoutes()
 	{
 		for (Route route : routes)
@@ -1606,9 +1607,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					File rtf = new File(navRoute);
 					// FIXME It's bad - it can be not a first route in a file
 					route = OziExplorerFiles.loadRoutesFromFile(rtf, charset).get(0);
-					addRoute(route);
-					RouteOverlay newRoute = new RouteOverlay(route);
-					overlayManager.routeOverlays.add(newRoute);
+					addRouteWithOverlay(route);
 				}
 				startNavigation(route, ndir, nwpt);
 			}

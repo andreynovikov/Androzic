@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -24,23 +24,28 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import android.content.Intent;
-
 import com.androzic.Androzic;
+import com.androzic.R;
 import com.androzic.data.Route;
-import com.androzic.ui.FileListActivity;
+import com.androzic.ui.FileListDialog;
 import com.androzic.util.GpxFiles;
 import com.androzic.util.KmlFiles;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.RouteFilenameFilter;
 
-public class RouteFileList extends FileListActivity
+public class RouteFileList extends FileListDialog
 {
+	public RouteFileList(OnFileListDialogListener listener)
+	{
+		super(R.string.loadroute_name, listener);
+	}
+
 	@Override
 	protected FilenameFilter getFilenameFilter()
 	{
@@ -50,18 +55,18 @@ public class RouteFileList extends FileListActivity
 	@Override
 	protected String getPath()
 	{
-		Androzic application = (Androzic) RouteFileList.this.getApplication();
+		Androzic application = Androzic.getApplication();
 		return application.dataPath;
 	}
 
 	@Override
 	protected void loadFile(File file)
 	{
-		Androzic application = (Androzic) getApplication();
+		Androzic application = Androzic.getApplication();
 	    List<Route> routes = null;
 		try
 		{
-			String lc = file.getName().toLowerCase();
+			String lc = file.getName().toLowerCase(Locale.getDefault());
 			if (lc.endsWith(".rt2") || lc.endsWith(".rte"))
 			{
 				routes = OziExplorerFiles.loadRoutesFromFile(file, application.charset);
@@ -76,38 +81,30 @@ public class RouteFileList extends FileListActivity
 			}
 			if (routes.size() > 0)
 			{
-				int[] index = new int[routes.size()];
-				int i = 0;
 				for (Route route: routes)
 				{
-					index[i] = application.addRoute(route);
-					i++;
+					application.addRouteWithOverlay(route);
 				}
-				setResult(RESULT_OK, new Intent().putExtra("index", index));
+				onFileLoaded(routes.size());
 			}
-			else
-			{
-				setResult(RESULT_CANCELED, new Intent());
-			}
-			finish();
 		}
 		catch (IllegalArgumentException e)
 		{
-			runOnUiThread(wrongFormat);
+			getActivity().runOnUiThread(wrongFormat);
 		}
 		catch (SAXException e)
 		{
-			runOnUiThread(wrongFormat);
+			getActivity().runOnUiThread(wrongFormat);
 			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
-			runOnUiThread(readError);
+			getActivity().runOnUiThread(readError);
 			e.printStackTrace();
 		}
 		catch (ParserConfigurationException e)
 		{
-			runOnUiThread(readError);
+			getActivity().runOnUiThread(readError);
 			e.printStackTrace();
 		}
 	}
