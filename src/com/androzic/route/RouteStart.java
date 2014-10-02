@@ -32,7 +32,6 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;

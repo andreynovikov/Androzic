@@ -1361,6 +1361,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 		if (navigationService != null)
 		{
+			if (navigationService.isNavigatingViaRoute() && navigationService.navRoute.filepath != null)
+			{
+				// save active route point
+				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+				editor.putInt(getString(R.string.nav_route_wpt), navigationService.navCurrentRoutePoint);
+				editor.commit();
+			}
 			unbindService(navigationConnection);
 			navigationService = null;
 		}
@@ -1620,8 +1627,16 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		i.putExtra(NavigationService.EXTRA_LONGITUDE, waypoint.longitude);
 		i.putExtra(NavigationService.EXTRA_PROXIMITY, waypoint.proximity);
 		startService(i);
+
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putString(getString(R.string.nav_route), "");
+		editor.putString(getString(R.string.nav_wpt), waypoint.name);
+		editor.putInt(getString(R.string.nav_wpt_prx), waypoint.proximity);
+		editor.putFloat(getString(R.string.nav_wpt_lat), (float) waypoint.latitude);
+		editor.putFloat(getString(R.string.nav_wpt_lon), (float) waypoint.longitude);
+		editor.commit();
 	}
-	
+
 	public void startNavigation(Route route)
 	{
 		startNavigation(route, 0, -1);
@@ -1636,6 +1651,28 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		i.putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, direction);
 		i.putExtra(NavigationService.EXTRA_ROUTE_START, waypointIndex);
 		startService(i);
+
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putString(getString(R.string.nav_wpt), "");
+		editor.putString(getString(R.string.nav_route), "");
+		if (route.filepath != null)
+		{
+			editor.putString(getString(R.string.nav_route), route.filepath);
+			editor.putInt(getString(R.string.nav_route_idx), getRouteIndex(route));
+			editor.putInt(getString(R.string.nav_route_dir), direction);
+			editor.putInt(getString(R.string.nav_route_wpt), waypointIndex);
+		}
+		editor.commit();
+	}
+
+	public void stopNavigation()
+	{
+		navigationService.stopNavigation();
+
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putString(getString(R.string.nav_wpt), "");
+		editor.putString(getString(R.string.nav_route), "");
+		editor.commit();
 	}
 
 	private ServiceConnection navigationConnection = new ServiceConnection() {

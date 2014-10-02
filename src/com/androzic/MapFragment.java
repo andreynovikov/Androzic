@@ -62,12 +62,10 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.androzic.data.Waypoint;
 import com.androzic.location.LocationService;
 import com.androzic.navigation.NavigationService;
-import com.androzic.overlay.NavigationOverlay;
 import com.androzic.route.RouteDetails;
 import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
@@ -1109,7 +1107,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				application.navigationService.prevRouteWaypoint();
 				return true;
 			case R.id.action_stop_navigation:
-				application.navigationService.stopNavigation();
+				application.stopNavigation();
 				return true;
 			case R.id.action_locating:
 				application.enableLocating(!application.isLocating());
