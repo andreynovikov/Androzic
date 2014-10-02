@@ -24,13 +24,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.londatiga.android.ActionItem;
-import net.londatiga.android.QuickAction;
-import net.londatiga.android.QuickAction.OnActionItemClickListener;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -42,6 +38,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.support.v7.internal.view.SupportMenuInflater;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.internal.view.menu.MenuPopupHelper;
+import android.support.v7.internal.view.menu.MenuPresenter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,7 +51,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.androzic.Androzic;
@@ -60,15 +59,9 @@ import com.androzic.data.Track;
 import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
 
-public class TrackList extends ListFragment implements FileListDialog.OnFileListDialogListener
+public class TrackList extends ListFragment implements FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
 	List<Track> tracks = null;
-
-	private static final int qaTrackProperties = 1;
-	private static final int qaTrackEdit = 2;
-	private static final int qaTrackToRoute = 3;
-	private static final int qaTrackSave = 4;
-	private static final int qaTrackRemove = 5;
 
 	private OnTrackActionListener trackActionsCallback;
 	
@@ -76,7 +69,6 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 	final Handler handler = new Handler();
 
 	private TrackListAdapter adapter;
-	private QuickAction quickAction;
 	private int selectedKey;
 	private Drawable selectedBackground;
 
@@ -107,39 +99,6 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 		
 		adapter = new TrackListAdapter(activity);
 		setListAdapter(adapter);
-
-		Resources resources = getResources();
-		quickAction = new QuickAction(activity);
-		quickAction.addActionItem(new ActionItem(qaTrackProperties, getString(R.string.menu_properties), resources.getDrawable(R.drawable.ic_action_edit)));
-		quickAction.addActionItem(new ActionItem(qaTrackEdit, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_action_track)));
-		quickAction.addActionItem(new ActionItem(qaTrackToRoute, getString(R.string.menu_track2route), resources.getDrawable(R.drawable.ic_action_directions)));
-		quickAction.addActionItem(new ActionItem(qaTrackSave, getString(R.string.menu_save), resources.getDrawable(R.drawable.ic_action_save)));
-		quickAction.addActionItem(new ActionItem(qaTrackRemove, getString(R.string.menu_remove), resources.getDrawable(R.drawable.ic_action_cancel)));
-
-		quickAction.setOnActionItemClickListener(trackActionItemClickListener);
-		quickAction.setOnDismissListener(new PopupWindow.OnDismissListener() {
-			@Override
-			public void onDismiss()
-			{
-				try
-				{
-					ListView lv = getListView();
-					if (lv != null)
-					{
-						View v = lv.findViewWithTag("selected");
-						if (v != null)
-						{
-							v.setBackgroundDrawable(selectedBackground);
-							v.setTag(null);
-						}
-					}
-				}
-				catch (IllegalStateException ignore)
-				{
-					// Ignore dismissing view after list view was destroyed
-				}
-			}
-		});
 	}
 	
 	@Override
@@ -203,38 +162,70 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 		int b = v.getPaddingBottom();
 		v.setBackgroundResource(R.drawable.list_selector_background_focus);
 		v.setPadding(l, t, r, b);
-		quickAction.show(v);
+		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
+		MenuBuilder menu = new MenuBuilder(getActivity());
+		menu.setCallback(this);
+		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.name));
+		popup.setForceShowIcon(true);
+		popup.setCallback(this);
+		new SupportMenuInflater(getActivity()).inflate(R.menu.track_menu, menu);
+		popup.show();
 	}
 
-	private OnActionItemClickListener trackActionItemClickListener = new OnActionItemClickListener() {
-		@Override
-		public void onItemClick(QuickAction source, int pos, int actionId)
-		{
-			final int position = selectedKey;
-			final Androzic application = Androzic.getApplication();
-			final Track track = application.getTrack(position);
 
-			switch (actionId)
+	@Override
+	public boolean onMenuItemSelected(MenuBuilder builder, MenuItem item)
+	{
+		final Androzic application = Androzic.getApplication();
+		final Track track = application.getTrack(selectedKey);
+		
+		switch (item.getItemId())
+		{
+			case R.id.action_edit:
+				trackActionsCallback.onTrackEdit(track);
+				return true;
+			case R.id.action_edith_path:
+				trackActionsCallback.onTrackEditPath(track);
+				return true;
+			case R.id.action_track_to_route:
+				trackActionsCallback.onTrackToRoute(track);
+				return true;
+			case R.id.action_save:
+				trackActionsCallback.onTrackSave(track);
+				return true;
+			case R.id.action_remove:
+				application.removeTrack(track);
+				adapter.notifyDataSetChanged();
+				return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public void onMenuModeChange(MenuBuilder builder)
+	{
+	}
+
+	@Override
+	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
+	{
+		ListView lv = getListView();
+		if (allMenusAreClosing && lv != null)
+		{
+			View v = lv.findViewWithTag("selected");
+			if (v != null)
 			{
-				case qaTrackProperties:
-					trackActionsCallback.onTrackEdit(track);
-					break;
-				case qaTrackEdit:
-					trackActionsCallback.onTrackEditPath(track);
-					break;
-				case qaTrackToRoute:
-					trackActionsCallback.onTrackToRoute(track);
-					break;
-				case qaTrackSave:
-					trackActionsCallback.onTrackSave(track);
-					break;
-				case qaTrackRemove:
-					application.removeTrack(track);
-					adapter.notifyDataSetChanged();
-					break;
+				v.setBackgroundDrawable(selectedBackground);
+				v.setTag(null);
 			}
 		}
-	};
+	}
+
+	@Override
+	public boolean onOpenSubMenu(MenuBuilder menu)
+	{
+		return false;
+	}
 
 	public class TrackListAdapter extends BaseAdapter
 	{

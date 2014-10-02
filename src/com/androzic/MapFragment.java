@@ -923,8 +923,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void onClick(View v)
 	{
-		MenuBuilder mMenu;
-		MenuPopupHelper mPopup;
 		switch (v.getId())
 		{
 			case R.id.zoomin:
@@ -995,6 +993,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			case R.id.coordinates:
 			{
 				// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
+				MenuBuilder mMenu;
+				MenuPopupHelper mPopup;
 				mMenu = new MenuBuilder(getActivity());
 				mMenu.setCallback(this);
 				mPopup = new MenuPopupHelper(getActivity(), mMenu, v);
