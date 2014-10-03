@@ -458,6 +458,15 @@ public class OziExplorerFiles
 			route.name = fields[1].replace((char) 209, ',');
     		try
     		{
+    			int width = Integer.parseInt(fields[2]);
+    			if (width > 0)
+    				route.width = width;
+    		}
+    		catch (NumberFormatException e)
+    		{
+    		}
+    		try
+    		{
     			int color = Integer.parseInt(fields[3]);
     			if (color != 0)
     				route.lineColor = bgr2rgb(color);
@@ -594,9 +603,10 @@ public class OziExplorerFiles
 
 		// Field 1 : H3
 		// Field 2 : route name (no commas allowed)
-		// Field 3 : ???
+		// Field 3 : ??? (we use it for route line width)
 		// Field 4 : route color (RGB)
-		writer.write("H3,"+route.name.replace(',', (char) 209)+",,"+
+		writer.write("H3,"+route.name.replace(',', (char) 209)+","+
+				String.valueOf(route.width)+","+
 				String.valueOf(rgb2bgr(route.lineColor))+"\n");
 	
 		//Field 1 : W

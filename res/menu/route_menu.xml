@@ -7,7 +7,7 @@
         android:title="@string/menu_details"/>
     <item
         android:id="@+id/action_navigate"
-        android:icon="@drawable/ic_action_directions"
+        android:icon="@drawable/ic_action_navigate"
         android:title="@string/menu_navigate"/>
     <item
         android:id="@+id/action_edit"

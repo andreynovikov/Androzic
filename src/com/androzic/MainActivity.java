@@ -501,7 +501,12 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onRouteEdit(Route route)
 	{
-		startActivity(new Intent(this, RouteProperties.class).putExtra("index", application.getRouteIndex(route)));
+		FragmentManager fm = getSupportFragmentManager();
+		RouteProperties routeProperties = (RouteProperties) fm.findFragmentByTag("route_properties");
+		if (routeProperties == null)
+			routeProperties = (RouteProperties) Fragment.instantiate(this, RouteProperties.class.getName());
+		routeProperties.setRoute(route);
+		addFragment(routeProperties, "route_properties");
 	}
 
 	@Override
@@ -514,7 +519,9 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onRouteSave(Route route)
 	{
-		startActivity(new Intent(this, RouteSave.class).putExtra("index", application.getRouteIndex(route)));
+        FragmentManager fm = getSupportFragmentManager();
+        RouteSave routeSaveDialog = new RouteSave(route);
+        routeSaveDialog.show(fm, "route_save");
 	}
 
 	@Override

@@ -57,6 +57,8 @@ public class RouteOverlay extends MapOverlay
 	int routeWidth = 2;
 	boolean showNames;
 
+	private boolean preserveWidth = false;
+
 	public RouteOverlay(final Route route)
 	{
 		super();
@@ -99,11 +101,13 @@ public class RouteOverlay extends MapOverlay
 
 		enabled = true;
 
+		if (route.width <= 0)
+			route.width = (int) linePaint.getStrokeWidth();
+
 		if (route.lineColor == -1)
 			route.lineColor = linePaint.getColor();
 		
 		onRoutePropertiesChanged();
-
 	}
 
 	private void initRouteColors()
@@ -142,6 +146,11 @@ public class RouteOverlay extends MapOverlay
 
 	public void onRoutePropertiesChanged()
 	{
+		if (linePaint.getStrokeWidth() != route.width)
+		{
+			routeWidth = route.width;
+			preserveWidth = true;
+		}
 		if (linePaint.getColor() != route.lineColor)
 		{
 			initRouteColors();
@@ -294,7 +303,8 @@ public class RouteOverlay extends MapOverlay
 	{
 		Resources resources = application.getResources();
 
-		routeWidth = settings.getInt(application.getString(R.string.pref_route_linewidth), resources.getInteger(R.integer.def_route_linewidth));
+		if (!preserveWidth)
+			routeWidth = settings.getInt(application.getString(R.string.pref_route_linewidth), resources.getInteger(R.integer.def_route_linewidth));
 		pointWidth = settings.getInt(application.getString(R.string.pref_route_pointwidth), resources.getInteger(R.integer.def_route_pointwidth));
 		showNames = settings.getBoolean(application.getString(R.string.pref_route_showname), true);
 

@@ -794,6 +794,22 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return routes.lastIndexOf(route);
 	}
 
+	/**
+	 * Notify overlay that route properties have changed
+	 * @param route Changed route
+	 */
+	public void dispatchRoutePropertiesChanged(Route route)
+	{
+		for (Iterator<RouteOverlay> iter = overlayManager.routeOverlays.iterator(); iter.hasNext();)
+		{
+			RouteOverlay to = iter.next();
+			if (to.getRoute() == route)
+			{
+				to.onRoutePropertiesChanged();
+			}
+		}
+	}
+
 	public boolean removeRoute(final Route route)
 	{
 		route.removed = true;

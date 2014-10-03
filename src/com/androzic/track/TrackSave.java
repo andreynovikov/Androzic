@@ -21,11 +21,9 @@
 package com.androzic.track;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -112,10 +110,6 @@ public class TrackSave extends DialogFragment
     		
     		try
     		{
-    			String state = Environment.getExternalStorageState();
-    			if (! Environment.MEDIA_MOUNTED.equals(state))
-    				throw new FileNotFoundException(getString(R.string.err_nosdcard));
-    			
     			Androzic application = Androzic.getApplication();
     			File dir = new File(application.dataPath);
     			if (! dir.exists())
