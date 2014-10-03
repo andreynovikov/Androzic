@@ -61,7 +61,6 @@ import android.widget.TextView;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.overlay.CurrentTrackOverlay;
-import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.AutoloadedRouteFilenameFilter;
 import com.androzic.util.FileList;
 import com.androzic.util.GpxFiles;
@@ -451,7 +450,7 @@ public class Splash extends Activity implements OnClickListener
 						for (Route route : routes)
 						{
 							route.show = !hide;
-							application.addRouteWithOverlay(route);
+							application.addRoute(route);
 						}
 					}
 					catch (Exception e)

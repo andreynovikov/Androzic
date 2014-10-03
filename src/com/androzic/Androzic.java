@@ -786,23 +786,31 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return route;
 	}
 	
-	public int addRoute(final Route newRoute)
+	public int addRoute(final Route route)
 	{
-		routes.add(newRoute);
-		return routes.lastIndexOf(newRoute);
-	}
-
-	public void addRouteWithOverlay(Route route)
-	{
-		addRoute(route);
+		routes.add(route);
 		RouteOverlay routeOverlay = new RouteOverlay(route);
 		overlayManager.routeOverlays.add(routeOverlay);
+		return routes.lastIndexOf(route);
 	}
 
-	public boolean removeRoute(final Route delRoute)
+	public boolean removeRoute(final Route route)
 	{
-		delRoute.removed = true;
-		return routes.remove(delRoute);
+		route.removed = true;
+		boolean removed = routes.remove(route);
+		if (removed)
+		{
+			for (Iterator<RouteOverlay> iter = overlayManager.routeOverlays.iterator(); iter.hasNext();)
+			{
+				RouteOverlay to = iter.next();
+				if (to.getRoute().removed)
+				{
+					to.onBeforeDestroy();
+					iter.remove();
+				}
+			}
+		}
+		return removed;
 	}
 	
 	public void clearRoutes()
@@ -812,6 +820,15 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			route.removed = true;
 		}
 		routes.clear();
+		for (Iterator<RouteOverlay> iter = overlayManager.routeOverlays.iterator(); iter.hasNext();)
+		{
+			RouteOverlay to = iter.next();
+			if (to.getRoute().removed)
+			{
+				to.onBeforeDestroy();
+				iter.remove();
+			}
+		}			
 	}
 	
 	public Route getRoute(final int index)
@@ -1640,7 +1657,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					File rtf = new File(navRoute);
 					// FIXME It's bad - it can be not a first route in a file
 					route = OziExplorerFiles.loadRoutesFromFile(rtf, charset).get(0);
-					addRouteWithOverlay(route);
+					addRoute(route);
 				}
 				startNavigation(route, ndir, nwpt);
 			}

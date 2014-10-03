@@ -65,7 +65,7 @@ public class ExternalActions extends Activity
             		route.addWaypoint(name, wptLat[i], wptLon[i]);
             	}
     			// FIXME no overlay at this point
-            	application.addRouteWithOverlay(route);
+            	application.addRoute(route);
     			application.startNavigation(route);
             }
             else

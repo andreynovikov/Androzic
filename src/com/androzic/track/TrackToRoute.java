@@ -131,7 +131,7 @@ public class TrackToRoute extends DialogFragment
     	    				route = application.trackToRoute2(track, sensitivity);
     	    				break;
     				}
-    				application.addRouteWithOverlay(route);
+    				application.addRoute(route);
     	    		dismiss();
     			};
     		});

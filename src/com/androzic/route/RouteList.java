@@ -23,13 +23,9 @@ package com.androzic.route;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.londatiga.android.ActionItem;
-import net.londatiga.android.QuickAction;
-import net.londatiga.android.QuickAction.OnActionItemClickListener;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -41,6 +37,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.support.v7.internal.view.SupportMenuInflater;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.internal.view.menu.MenuPopupHelper;
+import android.support.v7.internal.view.menu.MenuPresenter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,7 +50,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.androzic.Androzic;
@@ -59,22 +58,14 @@ import com.androzic.data.Route;
 import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
 
-public class RouteList extends ListFragment implements FileListDialog.OnFileListDialogListener
+public class RouteList extends ListFragment implements FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
-	private static final int qaRouteDetails = 1;
-	private static final int qaRouteNavigate = 2;
-	private static final int qaRouteProperties = 3;
-	private static final int qaRouteEdit = 4;
-	private static final int qaRouteSave = 5;
-	private static final int qaRouteRemove = 6;
-
 	private OnRouteActionListener routeActionsCallback;
 
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
 	final Handler handler = new Handler();
 
 	private RouteListAdapter adapter;
-	private QuickAction quickAction;
 	private int selectedKey;
 	private Drawable selectedBackground;
 
@@ -105,29 +96,6 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 
 		adapter = new RouteListAdapter(activity);
 		setListAdapter(adapter);
-
-		Resources resources = getResources();
-		quickAction = new QuickAction(activity);
-		quickAction.addActionItem(new ActionItem(qaRouteDetails, getString(R.string.menu_details), resources.getDrawable(R.drawable.ic_action_list)));
-		quickAction.addActionItem(new ActionItem(qaRouteNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_directions)));
-		quickAction.addActionItem(new ActionItem(qaRouteProperties, getString(R.string.menu_properties), resources.getDrawable(R.drawable.ic_action_edit)));
-		quickAction.addActionItem(new ActionItem(qaRouteEdit, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_action_track)));
-		quickAction.addActionItem(new ActionItem(qaRouteSave, getString(R.string.menu_save), resources.getDrawable(R.drawable.ic_action_save)));
-		quickAction.addActionItem(new ActionItem(qaRouteRemove, getString(R.string.menu_remove), resources.getDrawable(R.drawable.ic_action_cancel)));
-
-		quickAction.setOnActionItemClickListener(routeActionItemClickListener);
-		quickAction.setOnDismissListener(new PopupWindow.OnDismissListener() {
-			@Override
-			public void onDismiss()
-			{
-				View v = getListView().findViewWithTag("selected");
-				if (v != null)
-				{
-					v.setBackgroundDrawable(selectedBackground);
-					v.setTag(null);
-				}
-			}
-		});
 	}
 
 	@Override
@@ -197,40 +165,72 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 		int b = v.getPaddingBottom();
 		v.setBackgroundResource(R.drawable.list_selector_background_focus);
 		v.setPadding(l, t, r, b);
-		quickAction.show(v);
+		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
+		MenuBuilder menu = new MenuBuilder(getActivity());
+		menu.setCallback(this);
+		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.name));
+		popup.setForceShowIcon(true);
+		popup.setCallback(this);
+		new SupportMenuInflater(getActivity()).inflate(R.menu.route_menu, menu);
+		popup.show();
 	}
 
-	private OnActionItemClickListener routeActionItemClickListener = new OnActionItemClickListener() {
-		@Override
-		public void onItemClick(QuickAction source, int pos, int actionId)
+	@Override
+	public boolean onMenuItemSelected(MenuBuilder builder, MenuItem item)
+	{
+		final Androzic application = Androzic.getApplication();
+		final Route route = application.getRoute(selectedKey);
+		
+		switch (item.getItemId())
 		{
-			Androzic application = Androzic.getApplication();
-			Route route = application.getRoute(selectedKey);
+			case R.id.action_details:
+				routeActionsCallback.onRouteDetails(route);
+				return true;
+			case R.id.action_navigate:
+				routeActionsCallback.onRouteNavigate(route);
+				return true;
+			case R.id.action_edit:
+				routeActionsCallback.onRouteEdit(route);
+				return true;
+			case R.id.action_edith_path:
+				routeActionsCallback.onRouteEditPath(route);
+				return true;
+			case R.id.action_save:
+				routeActionsCallback.onRouteSave(route);
+				return true;
+			case R.id.action_remove:
+				application.removeRoute(route);
+				adapter.notifyDataSetChanged();
+				return true;
+		}
+		return false;
+	}
 
-			switch (actionId)
+	@Override
+	public void onMenuModeChange(MenuBuilder builder)
+	{
+	}
+
+	@Override
+	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
+	{
+		ListView lv = getListView();
+		if (allMenusAreClosing && lv != null)
+		{
+			View v = lv.findViewWithTag("selected");
+			if (v != null)
 			{
-				case qaRouteDetails:
-					routeActionsCallback.onRouteDetails(route);
-					break;
-				case qaRouteNavigate:
-					routeActionsCallback.onRouteNavigate(route);
-					break;
-				case qaRouteProperties:
-					routeActionsCallback.onRouteEdit(route);
-					break;
-				case qaRouteEdit:
-					routeActionsCallback.onRouteEditPath(route);
-					break;
-				case qaRouteSave:
-					routeActionsCallback.onRouteSave(route);
-					break;
-				case qaRouteRemove:
-					application.removeRoute(route);
-					adapter.notifyDataSetChanged();
-					break;
+				v.setBackgroundDrawable(selectedBackground);
+				v.setTag(null);
 			}
 		}
-	};
+	}
+
+	@Override
+	public boolean onOpenSubMenu(MenuBuilder menu)
+	{
+		return false;
+	}
 
 	public class RouteListAdapter extends BaseAdapter
 	{

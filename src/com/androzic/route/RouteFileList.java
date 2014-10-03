@@ -83,7 +83,7 @@ public class RouteFileList extends FileListDialog
 			{
 				for (Route route: routes)
 				{
-					application.addRouteWithOverlay(route);
+					application.addRoute(route);
 				}
 				onFileLoaded(routes.size());
 			}
