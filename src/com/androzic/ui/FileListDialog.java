@@ -39,6 +39,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -57,6 +58,7 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 	List<File> files = null;
 	List<Map<String, String>> fileData = new ArrayList<Map<String, String>>();
 
+	ViewGroup dialogView;
 	ListView listView;
 	ProgressBar spinner;
 
@@ -84,11 +86,11 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(title);
-		View view = getActivity().getLayoutInflater().inflate(R.layout.dlg_list, null);
-		builder.setView(view);
+		dialogView = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.dlg_list, null);
+		builder.setView(dialogView);
 
-		listView = (ListView) view.findViewById(android.R.id.list);
-		spinner = (ProgressBar) view.findViewById(R.id.loading_spinner);
+		listView = (ListView) dialogView.findViewById(android.R.id.list);
+		spinner = (ProgressBar) dialogView.findViewById(R.id.loading_spinner);
 		listView.setOnItemClickListener(this);
 
 		shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -205,6 +207,12 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 	{
 		final View from = direct ? spinner : listView;
 		final View to = direct ? listView : spinner;
+
+		if (!direct)
+		{
+    		dialogView.setMinimumWidth(dialogView.getWidth());
+    		dialogView.setMinimumHeight(dialogView.getHeight());
+		}
 
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1)
 		{

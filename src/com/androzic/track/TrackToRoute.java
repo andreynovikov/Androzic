@@ -26,11 +26,14 @@ import java.util.concurrent.Executors;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 
@@ -46,8 +49,6 @@ public class TrackToRoute extends DialogFragment
 	private RadioButton algA;
 	//private RadioButton algB;
 	private SeekBar sensitivity;
-	private View content;
-	private View progress;
 	
 	private Track track;
 	
@@ -67,9 +68,6 @@ public class TrackToRoute extends DialogFragment
 	{
 		View rootView = inflater.inflate(R.layout.act_track_to_route, container);
 
-		content = rootView.findViewById(R.id.content);
-		progress = rootView.findViewById(R.id.progress);
-		
 		algA = (RadioButton) rootView.findViewById(R.id.alg_a);
 		//algB = (RadioButton) rootView.findViewById(R.id.alg_b);
 		algA.setChecked(true);
@@ -104,8 +102,20 @@ public class TrackToRoute extends DialogFragment
         	final int s = sensitivity.getProgress();
         	final float sensitivity = (s + 1) / 2f;
 
-        	content.setVisibility(View.GONE);
-        	progress.setVisibility(View.VISIBLE);
+    		ProgressBar progress = new ProgressBar(getActivity(), null, android.R.attr.progressBarStyleLarge);
+    		progress.setIndeterminate(true);
+    		
+    		ViewGroup rootView = (ViewGroup) getView();
+    		rootView.setMinimumWidth(rootView.getWidth());
+    		rootView.setMinimumHeight(rootView.getHeight());
+    		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) rootView.getLayoutParams();
+    		params.gravity = Gravity.CENTER;
+    		rootView.removeAllViews();
+    		rootView.setLayoutParams(params);
+    		
+    		params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+    		params.gravity = Gravity.CENTER;
+    		rootView.addView(progress, params);
 
     		threadPool.execute(new Runnable() 
     		{
