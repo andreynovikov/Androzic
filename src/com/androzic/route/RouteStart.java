@@ -20,16 +20,17 @@
 
 package com.androzic.route;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androzic.R;
@@ -42,25 +43,43 @@ public class RouteStart extends DialogFragment
 	private OnRouteActionListener routeActionsCallback;
 
     private Route route;
-	private RadioButton forward;
-	private RadioButton reverse;
-	
-	public void setRoute(Route route)
+
+    public RouteStart()
+	{
+		throw new RuntimeException("Unimplemented initialization context");
+	}
+
+	public RouteStart(Route route)
 	{
 		this.route = route;
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
-		View view = inflater.inflate(R.layout.act_route_start, container);
-		forward = (RadioButton) view.findViewById(R.id.forward);
-		reverse = (RadioButton) view.findViewById(R.id.reverse);
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+	}
 
-	    Button navigate = (Button) view.findViewById(R.id.navigate_button);
-	    navigate.setOnClickListener(navigateOnClickListener);
-		
-		return view;
+	@SuppressLint("InflateParams")
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState)
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(getString(R.string.routestart_name));
+		final View view = getActivity().getLayoutInflater().inflate(R.layout.act_route_start, null);
+		builder.setView(view);
+		builder.setPositiveButton(R.string.navigate, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton)
+			{
+				RadioButton forward = (RadioButton) view.findViewById(R.id.forward);
+	        	int dir = forward.isChecked() ? NavigationService.DIRECTION_FORWARD : NavigationService.DIRECTION_REVERSE;
+	        	routeActionsCallback.onRouteNavigate(route, dir, -1);
+				dismiss();
+			}
+		});
+		updateRouteInfo(view);
+		return builder.create();
 	}
 
 	@Override
@@ -80,14 +99,7 @@ public class RouteStart extends DialogFragment
 		}
 	}
 
-	@Override
-	public void onStart()
-	{
-		super.onStart();
-        updateRouteInfo();
-	}
-
-	public void updateRouteInfo()
+	public void updateRouteInfo(View view)
 	{
 		if (route.length() < 2)
 		{
@@ -97,15 +109,20 @@ public class RouteStart extends DialogFragment
     		return;
 		}
 
-		Dialog dialog = getDialog();
-
-		dialog.setTitle(route.name);
+		TextView name = (TextView) view.findViewById(R.id.name);
+		name.setText(route.name);
 
 		Waypoint start = route.getWaypoint(0);
 		Waypoint end = route.getWaypoint(route.length()-1);
 
-		forward.setText(start.name + " to " + end.name);
-		reverse.setText(end.name + " to " + start.name);
+		RadioButton forward = (RadioButton) view.findViewById(R.id.forward);
+		RadioButton reverse = (RadioButton) view.findViewById(R.id.reverse);
+
+		Resources resources = getResources();
+		String from = resources.getString(R.string.from_start);
+		String to = resources.getString(R.string.start_to_end);
+		forward.setText(from + " " + start.name + " " + to + " " + end.name);
+		reverse.setText(from + " " + end.name + " " + to + " " + start.name);
 
 		forward.setChecked(true);
     }
@@ -117,14 +134,4 @@ public class RouteStart extends DialogFragment
 			getDialog().setDismissMessage(null);
 		super.onDestroyView();
 	}
-
-	private OnClickListener navigateOnClickListener = new OnClickListener()
-	{
-        public void onClick(View v)
-        {
-        	int dir = forward.isChecked() ? NavigationService.DIRECTION_FORWARD : NavigationService.DIRECTION_REVERSE;
-        	routeActionsCallback.onRouteNavigate(route, dir, -1);
-			dismiss();
-        }
-    };
 }

@@ -483,12 +483,9 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onRouteNavigate(Route route)
 	{
-		FragmentManager fm = getSupportFragmentManager();
-		RouteStart routeStart = (RouteStart) fm.findFragmentByTag("route_start");
-		if (routeStart == null)
-			routeStart = (RouteStart) Fragment.instantiate(this, RouteStart.class.getName());
-		routeStart.setRoute(route);
-		routeStart.show(fm, "route_start");
+        FragmentManager fm = getSupportFragmentManager();
+        RouteStart routeStartDialog = new RouteStart(route);
+        routeStartDialog.show(fm, "route_start");
 	}
 	
 	@Override

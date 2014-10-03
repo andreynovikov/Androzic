@@ -18,6 +18,7 @@
     <string name="saveroute_name">Save route to file</string>
     <string name="routeproperties_name">Edit route</string>
     <string name="routedetails_name">Route details</string>
+    <string name="routestart_name">Select direction</string>
     <string name="markericon_name">Select marker icon</string>
     <string name="pref_name">Androzic settings</string>
     <string name="hsi_name">HSI</string>
@@ -148,7 +149,9 @@
 	<string name="prev_map">Less scaled map</string>
 	<string name="expand">Expand</string>
 	<string name="collapse">Collapse</string>
-			    
+	<string name="from_start">From</string>
+	<string name="start_to_end">to</string>
+
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>
     <string name="nomaps_explained">Map folder &#8216;%s&#8217; is empty. Download and install world map (250KB)?</string>
