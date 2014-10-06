@@ -24,16 +24,14 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 
-import net.londatiga.android.ActionItem;
-import net.londatiga.android.QuickAction;
-import net.londatiga.android.QuickAction.OnActionItemClickListener;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -45,6 +43,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.internal.view.SupportMenuInflater;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.internal.view.menu.MenuPopupHelper;
+import android.support.v7.internal.view.menu.MenuPresenter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,7 +59,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.androzic.Androzic;
@@ -69,23 +71,13 @@ import com.androzic.ui.FileListDialog;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class WaypointList extends ExpandableListFragment implements OnItemLongClickListener, FileListDialog.OnFileListDialogListener
+public class WaypointList extends ExpandableListFragment implements OnItemLongClickListener, FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
 	private static final int DIALOG_WAYPOINT_PROJECT = 1;
 	
-	private static final int qaWaypointVisible = 1;
-	private static final int qaWaypointNavigate = 2;
-	private static final int qaWaypointProperties = 3;
-	private static final int qaWaypointShare = 4;
-	private static final int qaWaypointDelete = 5;
-	private static final int qaWaypointSetClear = 101;
-	private static final int qaWaypointSetRemove = 102;
-
 	private OnWaypointActionListener waypointActionsCallback;
 	
 	private WaypointExpandableListAdapter adapter;
-	private QuickAction quickAction;
-	private QuickAction setQuickAction;
 
 	private long selectedKey;
 	private int selectedSetKey;
@@ -112,44 +104,6 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 		setListAdapter(adapter);
 
 		getExpandableListView().setOnItemLongClickListener(this);
-
-		Resources resources = getResources();
-		quickAction = new QuickAction(activity);
-		quickAction.addActionItem(new ActionItem(qaWaypointVisible, getString(R.string.menu_view), resources.getDrawable(R.drawable.ic_action_show)));
-		quickAction.addActionItem(new ActionItem(qaWaypointNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_navigate)));
-		quickAction.addActionItem(new ActionItem(qaWaypointProperties, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_action_edit)));
-		quickAction.addActionItem(new ActionItem(qaWaypointShare, getString(R.string.menu_share), resources.getDrawable(R.drawable.ic_action_share)));
-		quickAction.addActionItem(new ActionItem(qaWaypointDelete, getString(R.string.menu_delete), resources.getDrawable(R.drawable.ic_action_trash)));
-
-		quickAction.setOnActionItemClickListener(waypointActionItemClickListener);
-		quickAction.setOnDismissListener(new PopupWindow.OnDismissListener() {
-			@Override
-			public void onDismiss()
-			{
-				try
-				{
-					ExpandableListView lv = getExpandableListView();
-					if (lv != null)
-					{
-						View v = lv.findViewWithTag("selected");
-						if (v != null)
-						{
-							v.setBackgroundDrawable(selectedBackground);
-							v.setTag(null);
-						}
-					}
-				}
-				catch (IllegalStateException ignore)
-				{
-					// Ignore dismissing view after list view was destroyed
-				}
-			}
-		});
-
-		setQuickAction = new QuickAction(activity);
-		setQuickAction.addActionItem(new ActionItem(qaWaypointSetClear, getString(R.string.menu_clear), resources.getDrawable(R.drawable.ic_action_document_clear)));
-		setQuickAction.addActionItem(new ActionItem(qaWaypointSetRemove, getString(R.string.menu_remove), resources.getDrawable(R.drawable.ic_action_cancel)));
-		setQuickAction.setOnActionItemClickListener(setActionItemClickListener);
 	}
 
 	@Override
@@ -177,6 +131,8 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 		Androzic application = Androzic.getApplication();
 		application.saveWaypoints();
 
+		application.registerReceiver(broadcastReceiver, new IntentFilter(Androzic.BROADCAST_WAYPOINT_REMOVED));
+
 		mSortMode = -1;
 		adapter.sort(0);
 		getExpandableListView().expandGroup(0);
@@ -187,6 +143,15 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 	{
 		super.onResume();
 		adapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onStop()
+	{
+		super.onStop();
+
+		Androzic application = Androzic.getApplication();
+		application.unregisterReceiver(broadcastReceiver);
 	}
 
 	@Override
@@ -201,8 +166,14 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 		int b = v.getPaddingBottom();
 		v.setBackgroundResource(R.drawable.list_selector_background_focus);
 		v.setPadding(l, t, r, b);
-		quickAction.show(v);
-		// quickAction.setAnimStyle(QuickAction.ANIM_GROW_FROM_LEFT);
+		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
+		MenuBuilder menu = new MenuBuilder(getActivity());
+		menu.setCallback(this);
+		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.name));
+		popup.setForceShowIcon(true);
+		popup.setCallback(this);
+		new SupportMenuInflater(getActivity()).inflate(R.menu.waypoint_menu, menu);
+		popup.show();
 		return true;
 	}
 
@@ -213,9 +184,14 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 		if (ExpandableListView.getPackedPositionType(pos) == ExpandableListView.PACKED_POSITION_TYPE_GROUP)
 		{
 			selectedSetKey = ExpandableListView.getPackedPositionGroup(pos);
-			setQuickAction.show(view);
+			// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
+			MenuBuilder menu = new MenuBuilder(getActivity());
+			menu.setCallback(this);
+			MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, view.findViewById(android.R.id.text1));
+			popup.setForceShowIcon(true);
+			new SupportMenuInflater(getActivity()).inflate(R.menu.waypointset_menu, menu);
+			popup.show();
 		}
-		// quickAction.setAnimStyle(QuickAction.ANIM_GROW_FROM_LEFT);
 		return true;
 	}
 
@@ -304,70 +280,80 @@ public class WaypointList extends ExpandableListFragment implements OnItemLongCl
 		adapter.notifyDataSetChanged();
 	}
 
-	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener() {
-		@Override
-		public void onItemClick(QuickAction source, int pos, int actionId)
-		{
-			Androzic application = Androzic.getApplication();
-			Waypoint waypoint = (Waypoint) adapter.getChild(ExpandableListView.getPackedPositionGroup(selectedKey), ExpandableListView.getPackedPositionChild(selectedKey));
+	@Override
+	public boolean onMenuItemSelected(MenuBuilder builder, MenuItem item)
+	{
+		Androzic application = Androzic.getApplication();
+		Waypoint waypoint = (Waypoint) adapter.getChild(ExpandableListView.getPackedPositionGroup(selectedKey), ExpandableListView.getPackedPositionChild(selectedKey));
 
-			switch (actionId)
+		switch (item.getItemId())
+		{
+			case R.id.action_view:
+				waypointActionsCallback.onWaypointView(waypoint);
+				return true;
+			case R.id.action_navigate:
+				waypointActionsCallback.onWaypointNavigate(waypoint);
+				return true;
+			case R.id.action_edit:
+				waypointActionsCallback.onWaypointEdit(waypoint);
+				return true;
+			case R.id.action_share:
+				waypointActionsCallback.onWaypointShare(waypoint);
+				return true;
+			case R.id.action_delete:
+				waypointActionsCallback.onWaypointRemove(waypoint);
+				adapter.notifyDataSetChanged();
+				return true;
+			case R.id.action_clear:
+				WaypointSet set = application.getWaypointSets().get(selectedSetKey);
+				application.clearWaypoints(set);
+				application.saveWaypoints(set);
+				adapter.notifyDataSetChanged();
+				return true;
+			case R.id.action_remove:
+				if (selectedSetKey > 0)
+				{
+					application.removeWaypointSet(selectedSetKey);
+					adapter.notifyDataSetChanged();
+				}
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void onMenuModeChange(MenuBuilder builder)
+	{
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
+	{
+		ListView lv = getListView();
+		if (allMenusAreClosing && lv != null)
+		{
+			View v = lv.findViewWithTag("selected");
+			if (v != null)
 			{
-				case qaWaypointVisible:
-					waypointActionsCallback.onWaypointView(waypoint);
-					break;
-				case qaWaypointNavigate:
-					waypointActionsCallback.onWaypointNavigate(waypoint);
-					break;
-				case qaWaypointProperties:
-					waypointActionsCallback.onWaypointEdit(waypoint);
-					break;
-				case qaWaypointShare:
-					waypointActionsCallback.onWaypointShare(waypoint);
-					break;
-				case qaWaypointDelete:
-					waypointActionsCallback.onWaypointRemove(waypoint);
-					adapter.notifyDataSetChanged();
-					break;
-				case qaWaypointSetClear:
-					WaypointSet set = application.getWaypointSets().get(selectedSetKey);
-					application.clearWaypoints(set);
-					application.saveWaypoints(set);
-					adapter.notifyDataSetChanged();
-					break;
-				case qaWaypointSetRemove:
-					if (selectedSetKey > 0)
-					{
-						application.removeWaypointSet(selectedSetKey);
-						adapter.notifyDataSetChanged();
-					}
-					break;
+				v.setBackgroundDrawable(selectedBackground);
+				v.setTag(null);
 			}
 		}
-	};
+	}
 
-	private OnActionItemClickListener setActionItemClickListener = new OnActionItemClickListener() {
+	@Override
+	public boolean onOpenSubMenu(MenuBuilder menu)
+	{
+		return false;
+	}
+
+	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
 		@Override
-		public void onItemClick(QuickAction source, int pos, int actionId)
+		public void onReceive(Context context, Intent intent)
 		{
-			Androzic application = Androzic.getApplication();
-
-			switch (actionId)
-			{
-				case qaWaypointSetClear:
-					WaypointSet set = application.getWaypointSets().get(selectedSetKey);
-					application.clearWaypoints(set);
-					application.saveWaypoints(set);
-					adapter.notifyDataSetChanged();
-					break;
-				case qaWaypointSetRemove:
-					if (selectedSetKey > 0)
-					{
-						application.removeWaypointSet(selectedSetKey);
-						adapter.notifyDataSetChanged();
-					}
-					break;
-			}
+			adapter.notifyDataSetChanged();
 		}
 	};
 

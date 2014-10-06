@@ -222,7 +222,6 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 			case R.id.action_navigate:
 				if (navigation)
 				{
-					//FIXME Why?
 					if (application.navigationService.navDirection == NavigationService.DIRECTION_REVERSE)
 						selectedKey = route.length() - selectedKey - 1;
 					application.navigationService.setRouteWaypoint(selectedKey);
@@ -241,6 +240,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	{
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
 	{

@@ -37,7 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
-
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -70,7 +70,6 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
@@ -101,6 +100,8 @@ import com.jhlabs.map.proj.ProjectionException;
 public class Androzic extends BaseApplication implements OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "Androzic";
+
+	public static final String BROADCAST_WAYPOINT_REMOVED = "com.androzic.waypointRemoved";
 
 	public static final int PATH_DATA = 0x001;
 	public static final int PATH_ICONS = 0x008;
@@ -138,6 +139,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public boolean gpsGeoid;
 	public boolean shouldEnableFollowing;
 	
+	@SuppressLint("UseSparseArrays")
 	private AbstractMap<Long, MapObject> mapObjects = new HashMap<Long, MapObject>();
 	private List<Waypoint> waypoints = new ArrayList<Waypoint>();
 	private List<WaypointSet> waypointSets = new ArrayList<WaypointSet>();

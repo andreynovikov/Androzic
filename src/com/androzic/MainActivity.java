@@ -455,8 +455,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 				WaypointSet wptset = waypoint.set;
 				application.removeWaypoint(waypoint);
 				application.saveWaypoints(wptset);
+				sendBroadcast(new Intent(Androzic.BROADCAST_WAYPOINT_REMOVED));
 			}
-
 		}).setNegativeButton(R.string.no, null).show();
 	}
 

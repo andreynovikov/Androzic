@@ -206,6 +206,7 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 	{
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
 	{
