@@ -61,12 +61,12 @@ import com.androzic.data.WaypointSet;
 import com.androzic.map.Map;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
+import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteList;
 import com.androzic.route.RouteProperties;
 import com.androzic.route.RouteSave;
 import com.androzic.route.RouteStart;
 import com.androzic.track.OnTrackActionListener;
-import com.androzic.track.TrackExportDialog;
 import com.androzic.track.TrackList;
 import com.androzic.track.TrackProperties;
 import com.androzic.track.TrackSave;
@@ -477,7 +477,12 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 	@Override
 	public void onRouteDetails(Route route)
 	{
-//		startActivityForResult(new Intent(this, RouteDetails.class).putExtra("index", application.getRouteIndex(route)), RESULT_ROUTE_DETAILS);
+		FragmentManager fm = getSupportFragmentManager();
+		RouteDetails routeDetails = (RouteDetails) fm.findFragmentByTag("route_details");
+		if (routeDetails == null)
+			routeDetails = (RouteDetails) Fragment.instantiate(this, RouteDetails.class.getName());
+		routeDetails.setRoute(route);
+		addFragment(routeDetails, "route_properties");
 	}
 
 	@Override
@@ -519,6 +524,17 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
         FragmentManager fm = getSupportFragmentManager();
         RouteSave routeSaveDialog = new RouteSave(route);
         routeSaveDialog.show(fm, "route_save");
+	}
+
+	@Override
+	public void onRouteWaypointEdit(Waypoint waypoint)
+	{
+		FragmentManager fm = getSupportFragmentManager();
+		WaypointProperties waypointProperties = (WaypointProperties) fm.findFragmentByTag("waypoint_properties");
+		if (waypointProperties == null)
+			waypointProperties = (WaypointProperties) Fragment.instantiate(this, WaypointProperties.class.getName());
+		waypointProperties.setRouteWaypoint(waypoint);
+		addFragment(waypointProperties, "waypoint_properties");
 	}
 
 	@Override

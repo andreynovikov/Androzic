@@ -65,7 +65,7 @@ import com.jhlabs.map.UTMReference;
 public class WaypointProperties extends Fragment implements AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener, MarkerPicker.OnMarkerPickerDialogListener
 {
 	private Waypoint waypoint;
-	private int route;
+	private boolean fromRoute;
 
 	private TabHost tabHost;
 
@@ -321,7 +321,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 					if (textColorValue != defTextColor)
 						waypoint.textcolor = textColorValue;
 
-					if (route == 0)
+					if (!fromRoute)
 					{
 						if (waypoint.set == null)
 						{
@@ -330,9 +330,9 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 						int set = waypointSet.getSelectedItemPosition();
 						waypoint.set = application.getWaypointSets().get(set);
-					}
 
-					application.saveWaypoints();
+						application.saveWaypoints();
+					}
 
 					// Hide keyboard
 					final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -354,14 +354,15 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 	public void setWaypoint(Waypoint waypoint)
 	{
 		this.waypoint = waypoint;
+		this.fromRoute = false;
 		if (isVisible())
 			updateWaypointProperties();
 	}
 
-	public void setWaypoint(Waypoint waypoint, int route)
+	public void setRouteWaypoint(Waypoint waypoint)
 	{
 		this.waypoint = waypoint;
-		this.route = route;
+		this.fromRoute = true;
 		if (isVisible())
 			updateWaypointProperties();
 	}
@@ -372,7 +373,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 		View rootView = getView();
 
-		int visible = route == 0 ? View.VISIBLE : View.GONE;
+		int visible = fromRoute ? View.GONE : View.VISIBLE;
 		// TODO Think about this case
 		// rootView.findViewById(R.id.advanced).setVisibility(visible);
 		rootView.findViewById(R.id.icon_container).setVisibility(visible);

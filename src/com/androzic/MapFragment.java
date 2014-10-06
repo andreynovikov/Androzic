@@ -66,6 +66,7 @@ import android.widget.TextView;
 import com.androzic.data.Waypoint;
 import com.androzic.location.LocationService;
 import com.androzic.navigation.NavigationService;
+import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteDetails;
 import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
@@ -77,6 +78,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private static final String TAG = "MapFragment";
 	
 	private OnWaypointActionListener waypointActionsCallback;
+	private OnRouteActionListener routeActionsCallback;
 
 	// Settings
 	/**
@@ -191,6 +193,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		satInfo.setOnClickListener(this);
 		currentFile.setOnClickListener(this);
 		mapZoom.setOnClickListener(this);
+		waypointName.setOnClickListener(this);
 
 		application.setMapHolder(this);
 
@@ -211,6 +214,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		catch (ClassCastException e)
 		{
 			throw new ClassCastException(activity.toString() + " must implement OnWaypointActionListener");
+		}
+		try
+		{
+			routeActionsCallback = (OnRouteActionListener) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement OnRouteActionListener");
 		}
 	}
 
@@ -847,6 +858,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		if (getString(R.string.pref_wakelock).equals(key))
 		{
 			keepScreenOn = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_wakelock));
+			map.setKeepScreenOn(keepScreenOn);
 		}
 		else if (getString(R.string.pref_showdistance_int).equals(key))
 		{
@@ -1005,8 +1017,11 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 			case R.id.sats:
 			{
-				GPSInfo dialog = new GPSInfo();
-				dialog.show(getFragmentManager(), "dialog");
+				if (application.gpsEnabled)
+				{
+					GPSInfo dialog = new GPSInfo();
+					dialog.show(getFragmentManager(), "dialog");
+				}
 				break;
 			}
 			case R.id.currentfile:
@@ -1016,6 +1031,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				break;
 			}
 			case R.id.currentzoom:
+			{
 				View mapButtons = getView().findViewById(R.id.mapbuttons);
 				boolean visible = mapButtons.isShown();
 				mapButtons.setVisibility(visible ? View.GONE : View.VISIBLE);
@@ -1024,6 +1040,15 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				editor.putBoolean(getString(R.string.ui_mapbuttons_shown), !visible);
 				editor.commit();
 				break;
+			}
+			case R.id.waypointname:
+			{
+				if (application.isNavigatingViaRoute())
+				{
+					routeActionsCallback.onRouteDetails(application.navigationService.navRoute);
+				}
+				break;
+			}
 		}
 	}
 

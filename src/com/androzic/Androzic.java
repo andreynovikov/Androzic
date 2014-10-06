@@ -1633,6 +1633,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	{
 		return navigationService != null && navigationService.isNavigating();		
 	}
+
 	public boolean isNavigatingViaRoute()
 	{
 		return navigationService != null && navigationService.isNavigatingViaRoute();
