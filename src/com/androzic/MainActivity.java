@@ -154,8 +154,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		// add supplementary items to drawer list
 		mDrawerItems.add(new DrawerItem());
 		icon = resources.getDrawable(R.drawable.ic_action_settings);
-		action = new Intent(this, PreferencesHC.class);
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), action).makeSupplementary());
+		fragment = Fragment.instantiate(this, PreferencesHC.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), fragment).makeSupplementary());
 		icon = resources.getDrawable(R.drawable.ic_action_info);
 		fragment = Fragment.instantiate(this, About.class.getName());
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_about), fragment).makeSupplementary());
@@ -732,7 +732,7 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		}
 	}
 
-	private void addFragment(Fragment fragment, String tag)
+	void addFragment(Fragment fragment, String tag)
 	{
 		FragmentManager fm = getSupportFragmentManager();
 		// Get topmost fragment

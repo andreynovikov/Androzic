@@ -2,6 +2,7 @@
 <resources>
     <style name="ApplicationTheme" parent="@style/Theme.AppCompat">
         <item name="horizontalPadding">6dip</item>
+        <item name="activatedBackgroundIndicator">@null</item>
     </style>
     <style name="Dialog" parent="@android:style/Theme.Dialog">
         <item name="horizontalPadding">6dip</item>
