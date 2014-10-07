@@ -154,9 +154,8 @@ public class NavigationService extends BaseNavigationService implements OnShared
 				int index = extras.getInt(EXTRA_ROUTE_INDEX);
 				int dir = extras.getInt(EXTRA_ROUTE_DIRECTION, DIRECTION_FORWARD);
 				int start = extras.getInt(EXTRA_ROUTE_START, -1);
-				activity.putExtra("launch", RouteDetails.class);
+				activity.putExtra("show", RouteDetails.class);
 				activity.putExtra("index", index);
-				activity.putExtra("nav", true);
 				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				navigateTo(application.getRoute(index), dir);
 				if (start != -1)

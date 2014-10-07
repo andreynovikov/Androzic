@@ -20,6 +20,7 @@
 
 package com.androzic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
@@ -206,6 +207,44 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		if (savedInstanceState == null)
 		{
 			mDrawerAdapter.setSelectedItem(-1);
+			selectItem(0);
+		}
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent)
+	{
+		Log.e(TAG, "onNewIntent()");
+		if (intent.hasExtra("launch"))
+		{
+			Serializable object = intent.getExtras().getSerializable("launch");
+			if (Class.class.isInstance(object))
+			{
+				Intent launch = new Intent(this, (Class<?>) object);
+				launch.putExtras(intent);
+				launch.removeExtra("launch");
+				startActivity(launch);
+			}
+		}
+		else if (intent.hasExtra("show"))
+		{
+			Serializable object = intent.getExtras().getSerializable("show");
+			if (Class.class.isInstance(object))
+			{
+				@SuppressWarnings("rawtypes")
+				String name = ((Class) object).getName();
+				Fragment f = Fragment.instantiate(this, name);
+				intent.removeExtra("show");
+				f.setArguments(intent.getExtras());
+				addFragment(f, name);
+			}
+		}
+		else if (intent.hasExtra("lat") && intent.hasExtra("lon"))
+		{
+			if (application.ensureVisible(intent.getExtras().getDouble("lat"), intent.getExtras().getDouble("lon")))
+				application.getMapHolder().mapChanged();
+			else
+				application.getMapHolder().conditionsChanged();
 			selectItem(0);
 		}
 	}

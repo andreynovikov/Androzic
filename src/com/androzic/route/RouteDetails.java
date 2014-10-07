@@ -123,6 +123,12 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	{
 		super.onStart();
 
+		if (route == null)
+		{
+			Bundle args = getArguments();
+			if (args != null)
+				setRoute(application.getRoute(args.getInt("index")));
+		}
 		if (route != null)
 			updateRouteDetails();
 	}
