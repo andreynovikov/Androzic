@@ -80,7 +80,7 @@ import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
 import com.androzic.waypoint.WaypointProperties;
 
-public class MainActivity extends ActionBarActivity implements OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener
+public class MainActivity extends ActionBarActivity implements FragmentHolder, OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "MainActivity";
 
@@ -721,8 +721,6 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
-						// TODO change context everywhere?
-						stopService(new Intent(MainActivity.this, NavigationService.class));
 						MainActivity.this.finish();
 					}
 				}).setNegativeButton(R.string.no, null).show();
@@ -732,7 +730,8 @@ public class MainActivity extends ActionBarActivity implements OnWaypointActionL
 		}
 	}
 
-	void addFragment(Fragment fragment, String tag)
+	@Override
+	public void addFragment(Fragment fragment, String tag)
 	{
 		FragmentManager fm = getSupportFragmentManager();
 		// Get topmost fragment

@@ -30,6 +30,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
@@ -76,6 +77,8 @@ import com.androzic.util.XmlUtils;
 
 public class PreferencesHC extends ListFragment
 {
+	private FragmentHolder fragmentHolderCallback;
+
 	private final ArrayList<Header> headers = new ArrayList<Header>();
 	private HeaderAdapter adapter;
 
@@ -127,6 +130,23 @@ public class PreferencesHC extends ListFragment
 	}
 
 	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try
+		{
+			fragmentHolderCallback = (FragmentHolder) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement FragmentHolder");
+		}
+	}
+
+	@Override
 	public void onListItemClick(ListView lv, View v, int position, long id)
 	{
 		Header header = adapter.getItem(position);
@@ -139,7 +159,7 @@ public class PreferencesHC extends ListFragment
 		args.putString("title", (String) header.getTitle(getResources()));
 		fragment.setArguments(args);
 		
-		((MainActivity) getActivity()).addFragment(fragment, header.fragment);
+		fragmentHolderCallback.addFragment(fragment, header.fragment);
 	}
 
 	/**
