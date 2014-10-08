@@ -225,7 +225,8 @@
     <string name="menu_resetindex">Reset index</string>
     <string name="menu_newwaypointset">New set</string>
     <string name="menu_clear_history">Clear search history</string>
-    
+    <string name="menu_whereami">Where am I?</string>
+
 	<string name="action_save">Save</string>
     <string name="action_add_waypoint">Add waypoint</string>
     <string name="action_follow">Follow</string>
@@ -290,6 +291,7 @@
     <string name="pref_orientation_title">Screen orientation</string>
     <string name="pref_locale_title">Language</string>
     <string name="pref_show_title">Display</string>
+	<string name="pref_mapcrosscolor_title">Position cross color</string>
     <string name="pref_scalebarcolor_title">Scale bar color</string>
 	<string name="pref_cursor_title">Moving cursor</string>
     <string name="pref_cursorcolor_title">Active color</string>	
@@ -367,6 +369,7 @@
 	<string name="pref_navigation_loadlast_summary">Mark to load not finished route at next application start</string>
 	<string name="pref_navigation_proximitycircle_title">Proximity circle</string>
 	<string name="pref_navigation_proximitycircle_summary">Mark to draw proximity circle around route waypoints during navigation</string>
+	<string name="pref_navigation_linecolor_title">Bearing line color</string>
 	<string name="pref_navigation_linewidth_title">Bearing line width</string>
 	<string name="pref_navigation_linewidth_summary">Width of a bearing line to current navigation waypoint</string>
 	<string name="pref_application_title">About and feedback</string>

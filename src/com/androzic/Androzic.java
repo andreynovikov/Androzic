@@ -1631,6 +1631,30 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.commit();
 	}
 	
+	public boolean viewLastKnownSystemLocation()
+	{
+		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		List<String> providers = lm.getProviders(true);
+		Location l = null;
+
+		for (int i = providers.size() - 1; i >= 0; i--)
+		{
+			l = lm.getLastKnownLocation(providers.get(i));
+			if (l != null)
+				break;
+		}
+
+		if (l != null)
+		{
+			double[] ll = new double[2];
+			ll[0] = l.getLatitude();
+			ll[1] = l.getLongitude();
+			return ensureVisible(ll[0], ll[1]);
+		}
+
+		return false;
+	}
+
 	public boolean isNavigating()
 	{
 		return navigationService != null && navigationService.isNavigating();		

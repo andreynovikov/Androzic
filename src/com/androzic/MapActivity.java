@@ -599,9 +599,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	{
 		switch (item.getItemId())
 		{
-			case R.id.menuSearch:
-				onSearchRequested();
-				return true;
 			case R.id.menuExportCurrentTrack:
 		        FragmentManager fm = getSupportFragmentManager();
 		        TrackExportDialog trackExportDialog = new TrackExportDialog(locationService);

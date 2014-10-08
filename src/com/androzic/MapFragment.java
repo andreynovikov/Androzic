@@ -241,6 +241,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_lookahead));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapbest));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapbestinterval));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcrosscolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorvector));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorcolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_navigation_proximity));
@@ -335,8 +336,10 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void onPrepareOptionsMenu(final Menu menu)
 	{
+		boolean fixed = map != null && map.isFixed();
+		
 		MenuItem follow = menu.findItem(R.id.action_follow);
-		if (following && map != null && ! map.getStrictUnfollow())
+		if (!fixed || following && map != null && ! map.getStrictUnfollow())
 		{
 			follow.setVisible(false);
 		}
@@ -351,6 +354,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			follow.setIcon(R.drawable.ic_action_lock_open);			
 			follow.setTitle(R.string.action_follow);
 		}
+
+		menu.findItem(R.id.action_locate).setVisible(!fixed);
+
 		menu.findItem(R.id.action_locating).setChecked(application.isLocating());
 		menu.findItem(R.id.action_tracking).setChecked(application.isTracking());
 		
@@ -422,7 +428,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				if (map.isMoving())
 				{
 					map.setMoving(false);
-					// FIXME Should we?
 					map.setFixed(false);
 				}
 			}
@@ -719,6 +724,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void setFollowing(boolean follow)
 	{
+		if (follow && ! map.isFixed())
+			return;
+
 		followOnLocation = false;
 		if (application.editingRoute == null && application.editingTrack == null)
 		{
@@ -891,6 +899,10 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		else if (getString(R.string.pref_mapbestinterval).equals(key))
 		{
 			map.setBestMapInterval(sharedPreferences.getInt(getString(R.string.pref_mapbestinterval), resources.getInteger(R.integer.def_mapbestinterval)) * 1000);
+		}
+		else if (getString(R.string.pref_mapcrosscolor).equals(key))
+		{
+			map.setCrossColor(sharedPreferences.getInt(key, resources.getColor(R.color.mapcross)));
 		}
 		else if (getString(R.string.pref_cursorvector).equals(key) || getString(R.string.pref_cursorvectormlpr).equals(key))
 		{
@@ -1136,6 +1148,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				return true;
 			case R.id.action_search:
 				getActivity().onSearchRequested();
+				return true;
+			case R.id.action_locate:
+				if (application.viewLastKnownSystemLocation())
+					mapChanged();
+				else
+					conditionsChanged();
 				return true;
 			case R.id.action_locating:
 				application.enableLocating(!application.isLocating());

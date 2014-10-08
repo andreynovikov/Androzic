@@ -40,7 +40,12 @@
         android:orderInCategory="1"
         android:title="@string/menu_search"
         app:showAsAction="ifRoom"/>
-
+    <item
+        android:id="@+id/action_locate"
+        android:icon="@drawable/ic_action_location_found"
+        android:orderInCategory="1"
+        android:title="@string/menu_whereami"/>
+    
     <group
         android:checkableBehavior="all"
         android:orderInCategory="1" >
