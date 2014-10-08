@@ -42,9 +42,6 @@
     <uses-feature
         android:name="android.hardware.location.gps"
         android:required="false" />
-    <uses-feature
-        android:name="android.hardware.location.network"
-        android:required="false" />
 
     <permission
         android:name="com.androzic.permission.RECEIVE_LOCATION"
@@ -77,7 +74,6 @@
         android:label="@string/perm_write_map_data_title"
         android:protectionLevel="dangerous" />
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

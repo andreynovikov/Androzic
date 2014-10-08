@@ -347,32 +347,20 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		// draw overlays
 		if (!scaled && ((penOX == 0 && penOY == 0) || !hideOnDrag))
 		{
-			// TODO Optimize getOverlays()
+			// FIXME Optimize getOverlays()
 			for (MapOverlay mo : application.overlayManager.getOverlays(OverlayManager.ORDER_DRAW_PREFERENCE))
 				mo.onManagedDraw(canvas, this, cx, cy);
 		}
 
 		// draw cursor (it is always topmost)
-		if (!scaled && currentLocation != null)
+		if (!scaled && isMoving)
 		{
 			canvas.save();
 			canvas.translate(-mapCenterXY[0] + currentLocationXY[0], -mapCenterXY[1] + currentLocationXY[1]);
-			if (isMoving)
-			{
-				canvas.rotate(bearing, 0, 0);
-				movingCursor.draw(canvas);
-				if (isFixed)
-					canvas.drawLine(0, 0, 0, -vectorLength, pointerPaint);
-			}
-			else
-			{
-				canvas.drawCircle(0, 0, 1, pointerPaint);
-				canvas.drawCircle(0, 0, 40, pointerPaint);
-				canvas.drawLine(20, 0, 60, 0, pointerPaint);
-				canvas.drawLine(-20, 0, -60, 0, pointerPaint);
-				canvas.drawLine(0, 20, 0, 60, pointerPaint);
-				canvas.drawLine(0, -20, 0, -60, pointerPaint);
-			}
+			canvas.rotate(bearing, 0, 0);
+			movingCursor.draw(canvas);
+			if (isFixed)
+				canvas.drawLine(0, 0, 0, -vectorLength, pointerPaint);
 			canvas.restore();
 
 			int sx = currentLocationXY[0] - mapCenterXY[0] + cx;
@@ -388,7 +376,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				canvas.drawLine(-10, -50, 10, -50, pointerPaint);
 				canvas.restore();
 			}
-
 		}
 
 		if (!scaled && !isFollowing)
@@ -720,6 +707,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			final int half = w > h ? h / 2 : w / 2;
 			lookAhead = (int) (half * ahead * 0.01);
 		}
+	}
+
+	public void setCrossColor(final int color)
+	{
+		crossPaint.setColor(color);
 	}
 
 	public void setCursorColor(final int color)
