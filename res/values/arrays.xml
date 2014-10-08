@@ -107,17 +107,4 @@
     	<item>Ukrainian localization</item>
     	<item>Portuguese localization</item>
     </string-array>
-    <string-array name="panel_action_names">
-        <item>Zoom in</item>
-        <item>Zoom out</item>
-        <item>More scaled map</item>
-        <item>Less scaled map</item>
-        <item>Maps at cursor</item>
-        <item>Manage waypoints</item>
-        <item>Show information</item>
-        <item>Follow/unfollow</item>
-        <item>Obtain location</item>
-        <item>Write track</item>
-        <item>Show/hide status bar</item>
-    </string-array>
 </resources>

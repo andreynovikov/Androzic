@@ -40,14 +40,6 @@
         androzic:defaultValue="@integer/def_lookahead"
         androzic:max="90" />
 
-    <com.androzic.ui.ImageMultiChoiceListPreference
-        android:defaultValue="@string/def_panelactions"
-        android:entries="@array/panel_action_names"
-        android:entryValues="@array/panel_action_values"
-        android:key="@string/pref_panelactions"
-        android:title="@string/pref_panelactions_title"
-        androzic:entryImages="@array/panel_action_images" />
-
     <PreferenceCategory android:title="@string/pref_map_title" >
         <com.androzic.ui.preference.HelpfulCheckBoxPreference
             android:defaultValue="@bool/def_mapcropborder"

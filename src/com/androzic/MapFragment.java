@@ -1134,14 +1134,18 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			case R.id.action_stop_navigation:
 				application.stopNavigation();
 				return true;
+			case R.id.action_search:
+				getActivity().onSearchRequested();
+				return true;
 			case R.id.action_locating:
 				application.enableLocating(!application.isLocating());
 				return true;
 			case R.id.action_tracking:
 				application.enableTracking(!application.isTracking());
 				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-		return false;
 	}
 
 	@Override

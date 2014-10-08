@@ -20,17 +20,11 @@
 
 package com.androzic;
 
-import java.io.File;
-import java.io.Serializable;
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
@@ -40,96 +34,63 @@ import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction3D;
 import net.londatiga.android.QuickAction3D.OnActionItemClickListener;
 
-import org.miscwidgets.interpolator.EasingType.Type;
-import org.miscwidgets.interpolator.ExpoInterpolator;
 import org.miscwidgets.widget.Panel;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.util.Pair;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.AnimationSet;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
-import com.androzic.data.WaypointSet;
-import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
 import com.androzic.map.MapInformation;
 import com.androzic.navigation.NavigationService;
-import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.RouteOverlay;
-import com.androzic.overlay.TrackOverlay;
 import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
 import com.androzic.track.TrackExportDialog;
 import com.androzic.util.Astro;
-import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
-import com.androzic.waypoint.WaypointFileList;
 import com.androzic.waypoint.WaypointInfo;
-import com.androzic.waypoint.WaypointProject;
 import com.androzic.waypoint.WaypointProperties;
 
-public class MapActivity extends ActionBarActivity implements MapHolder, View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener, Panel.OnPanelListener
+public class MapActivity extends ActionBarActivity implements MapHolder, View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener
 {
 	private static final String TAG = "MapActivity";
 
-	private static final int RESULT_MANAGE_WAYPOINTS = 0x200;
-	private static final int RESULT_LOAD_WAYPOINTS = 0x300;
 	private static final int RESULT_SAVE_WAYPOINT = 0x400;
 	private static final int RESULT_LOAD_MAP = 0x500;
 	private static final int RESULT_MANAGE_TRACKS = 0x600;
-	private static final int RESULT_MANAGE_ROUTES = 0x900;
 	private static final int RESULT_EDIT_ROUTE = 0x110;
-	private static final int RESULT_LOAD_MAP_ATPOSITION = 0x120;
-	private static final int RESULT_SAVE_WAYPOINTS = 0x140;
 
 	private static final int qaAddWaypointToRoute = 1;
 	private static final int qaNavigateToWaypoint = 2;
@@ -150,34 +111,9 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	protected boolean showAccuracy;
 	protected boolean followOnLocation;
 	protected int exitConfirmation;
-	private boolean secondBack;
-	private Toast backToast;
 
-	private TextView coordinates;
-	private TextView satInfo;
-
-	private TextView waypointName;
-	private TextView waypointExtra;
-	private TextView routeName;
-	private TextView routeExtra;
-
-	private TextView distanceValue;
-	private TextView distanceUnit;
-	private TextView bearingValue;
-	private TextView bearingUnit;
-	private TextView turnValue;
-
-	private TextView speedValue;
 	private TextView speedUnit;
-	private TextView trackValue;
-	private TextView trackUnit;
-	private TextView elevationValue;
 	private TextView elevationUnit;
-	private TextView xtkValue;
-	private TextView xtkUnit;
-
-	private TextView currentFile;
-	private TextView mapZoom;
 
 	protected SeekBar trackBar;
 	protected TextView waitBar;
@@ -190,7 +126,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	protected Androzic application;
 
 	protected ExecutorService executorThread = Executors.newSingleThreadExecutor();
-	private FinishHandler finishHandler;
 
 	private int waypointSelected = -1;
 	private int routeSelected = -1;
@@ -205,11 +140,8 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	protected long lastMagnetic = 0;
 	private boolean lastGeoid = true;
 
-	private boolean animationSet;
 	private boolean isFullscreen;
 	private boolean keepScreenOn;
-	private String[] panelActions;
-	private List<String> activeActions;
 	LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF555555);
 
 	protected boolean ready = false;
@@ -227,9 +159,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		ready = false;
 		isFullscreen = false;
 
-		backToast = Toast.makeText(this, R.string.backQuit, Toast.LENGTH_SHORT);
-		finishHandler = new FinishHandler(this);
-		
 		application = (Androzic) getApplication();
 
 		// check if called after crash
@@ -253,46 +182,14 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 		}
 
-		panelActions = getResources().getStringArray(R.array.panel_action_values);
-
 		setContentView(R.layout.act_main);
-		coordinates = (TextView) findViewById(R.id.coordinates);
-		satInfo = (TextView) findViewById(R.id.sats);
-		currentFile = (TextView) findViewById(R.id.currentfile);
-		mapZoom = (TextView) findViewById(R.id.currentzoom);
-		waypointName = (TextView) findViewById(R.id.waypointname);
-		waypointExtra = (TextView) findViewById(R.id.waypointextra);
-		routeName = (TextView) findViewById(R.id.routename);
-		routeExtra = (TextView) findViewById(R.id.routeextra);
-		speedValue = (TextView) findViewById(R.id.speed);
 		speedUnit = (TextView) findViewById(R.id.speedunit);
-		trackValue = (TextView) findViewById(R.id.track);
-		trackUnit = (TextView) findViewById(R.id.trackunit);
-		elevationValue = (TextView) findViewById(R.id.elevation);
 		elevationUnit = (TextView) findViewById(R.id.elevationunit);
-		distanceValue = (TextView) findViewById(R.id.distance);
-		distanceUnit = (TextView) findViewById(R.id.distanceunit);
-		xtkValue = (TextView) findViewById(R.id.xtk);
-		xtkUnit = (TextView) findViewById(R.id.xtkunit);
-		bearingValue = (TextView) findViewById(R.id.bearing);
-		bearingUnit = (TextView) findViewById(R.id.bearingunit);
-		turnValue = (TextView) findViewById(R.id.turn);
 		trackBar = (SeekBar) findViewById(R.id.trackbar);
 		waitBar = (TextView) findViewById(R.id.waitbar);
 		map = (MapView) findViewById(R.id.mapview);
 
 		// set button actions
-		findViewById(R.id.zoomin).setOnClickListener(this);
-		findViewById(R.id.zoomout).setOnClickListener(this);
-		findViewById(R.id.nextmap).setOnClickListener(this);
-		findViewById(R.id.prevmap).setOnClickListener(this);
-		findViewById(R.id.maps).setOnClickListener(this);
-		findViewById(R.id.waypoints).setOnClickListener(this);
-		findViewById(R.id.info).setOnClickListener(this);
-		findViewById(R.id.follow).setOnClickListener(this);
-		findViewById(R.id.locate).setOnClickListener(this);
-		findViewById(R.id.tracking).setOnClickListener(this);
-		findViewById(R.id.expand).setOnClickListener(this);
 		findViewById(R.id.finishedit).setOnClickListener(this);
 		findViewById(R.id.addpoint).setOnClickListener(this);
 		findViewById(R.id.insertpoint).setOnClickListener(this);
@@ -301,10 +198,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		findViewById(R.id.finishtrackedit).setOnClickListener(this);
 		findViewById(R.id.cutafter).setOnClickListener(this);
 		findViewById(R.id.cutbefore).setOnClickListener(this);
-
-		Panel panel = (Panel) findViewById(R.id.panel);
-		panel.setOnPanelListener(this);
-		panel.setInterpolator(new ExpoInterpolator(Type.OUT));
 
 		wptQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
 		wptQuickAction.addActionItem(new ActionItem(qaAddWaypointToRoute, getString(R.string.menu_addtoroute), resources.getDrawable(R.drawable.ic_action_add)));
@@ -352,28 +245,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	}
 
 	@Override
-	protected void onNewIntent(Intent intent)
-	{
-		Log.e(TAG, "onNewIntent()");
-		if (intent.hasExtra("launch"))
-		{
-			Serializable object = intent.getExtras().getSerializable("launch");
-			if (Class.class.isInstance(object))
-			{
-				Intent launch = new Intent(this, (Class<?>) object);
-				launch.putExtras(intent);
-				launch.removeExtra("launch");
-				startActivity(launch);
-			}
-		}
-		else if (intent.hasExtra("lat") && intent.hasExtra("lon"))
-		{
-			Androzic application = (Androzic) getApplication();
-			application.ensureVisible(intent.getExtras().getDouble("lat"), intent.getExtras().getDouble("lon"));
-		}
-	}
-
-	@Override
 	protected void onResume()
 	{
 		super.onResume();
@@ -416,14 +287,11 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		map.setProximity(Integer.parseInt(settings.getString(getString(R.string.pref_navigation_proximity), getString(R.string.def_navigation_proximity))));
 
 		// prepare views
-		customizeLayout(settings);
 		findViewById(R.id.editroute).setVisibility(application.editingRoute != null ? View.VISIBLE : View.GONE);
 		if (application.editingTrack != null)
 		{
 			startEditTrack(application.editingTrack);
 		}
-		updateGPSStatus();
-		updateNavigationStatus();
 
 		if (settings.getBoolean(getString(R.string.ui_drawer_open), false))
 		{
@@ -439,8 +307,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		{
 			if (lastKnownLocation.getProvider().equals(LocationManager.GPS_PROVIDER))
 			{
-				updateMovingInfo(lastKnownLocation, true);
-				updateNavigationInfo();
 				dimScreen(lastKnownLocation);
 			}
 			else if (lastKnownLocation.getProvider().equals(LocationManager.NETWORK_PROVIDER))
@@ -449,19 +315,11 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			}
 		}
 
-		bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
-		bindService(new Intent(this, NavigationService.class), navigationConnection, BIND_AUTO_CREATE);
-
-		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATUS));
-		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
 		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_LOCATING_STATUS));
 		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_TRACKING_STATUS));
-		registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-		registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
 
 		application.updateLocationMaps(true, map.isBestMapEnabled());
 
-		updateMapViewArea();
 		map.resume();
 		map.updateMapInfo();
 		map.update();
@@ -476,18 +334,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 		unregisterReceiver(broadcastReceiver);
 		map.pause();
-
-		if (navigationService != null)
-		{
-			unbindService(navigationConnection);
-			navigationService = null;
-		}
-		if (locationService != null)
-		{
-			locationService.unregisterLocationCallback(locationListener);
-			locationService = null;
-		}
-		unbindService(locationConnection);
 	}
 
 	@Override
@@ -515,53 +361,8 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		restarting = false;
 
 		application = null;
-
 		map = null;
-
-		coordinates = null;
-		satInfo = null;
-		currentFile = null;
-		mapZoom = null;
-		waypointName = null;
-		waypointExtra = null;
-		routeName = null;
-		routeExtra = null;
-		speedValue = null;
-		speedUnit = null;
-		trackValue = null;
-		elevationValue = null;
-		elevationUnit = null;
-		distanceValue = null;
-		distanceUnit = null;
-		xtkValue = null;
-		xtkUnit = null;
-		bearingValue = null;
-		turnValue = null;
-		trackBar = null;
 	}
-
-	private ServiceConnection navigationConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service)
-		{
-			navigationService = ((NavigationService.LocalBinder) service).getService();
-			runOnUiThread(new Runnable() {
-				public void run()
-				{
-					if (!ready)
-						return;
-					updateNavigationStatus();
-					updateNavigationInfo();
-				}
-			});
-			Log.d(TAG, "Navigation service connected");
-		}
-
-		public void onServiceDisconnected(ComponentName className)
-		{
-			navigationService = null;
-			Log.d(TAG, "Navigation service disconnected");
-		}
-	};
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -569,563 +370,21 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		{
 			String action = intent.getAction();
 			Log.e(TAG, "Broadcast: " + action);
-			if (action.equals(NavigationService.BROADCAST_NAVIGATION_STATE))
+			if (action.equals(LocationService.BROADCAST_TRACKING_STATUS))
 			{
-				final int state = intent.getExtras().getInt("state");
-				runOnUiThread(new Runnable() {
-					public void run()
-					{
-						if (!ready)
-							return;
-						if (state == NavigationService.STATE_REACHED)
-						{
-							Toast.makeText(getApplicationContext(), R.string.arrived, Toast.LENGTH_LONG).show();
-						}
-						updateNavigationStatus();
-					}
-				});
-			}
-			else if (action.equals(NavigationService.BROADCAST_NAVIGATION_STATUS))
-			{
-				runOnUiThread(new Runnable() {
-					public void run()
-					{
-						if (!ready)
-							return;
-						updateNavigationInfo();
-					}
-				});
-			}
-			else if (action.equals(LocationService.BROADCAST_TRACKING_STATUS))
-			{
-				updateMapButtons();
+				//updateMapButtons();
 			}
 			else if (action.equals(LocationService.BROADCAST_LOCATING_STATUS))
 			{
-				updateMapButtons();
+				//updateMapButtons();
 				if (locationService != null && !locationService.isLocating())
 					map.clearLocation();
 			}
-			// In fact this is not needed on modern devices through activity is always
-			// paused when the screen is turned off. But we will keep it, may be there
-			// exist some devices (ROMs) that do not pause activities.
-			else if (action.equals(Intent.ACTION_SCREEN_OFF))
-			{
-				map.pause();
-			}
-			else if (action.equals(Intent.ACTION_SCREEN_ON))
-			{
-				map.resume();
-			}
 		}
 	};
-
-	private ServiceConnection locationConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder binder)
-		{
-			locationService = (ILocationService) binder;
-			locationService.registerLocationCallback(locationListener);
-			Log.d(TAG, "Location service connected");
-		}
-
-		public void onServiceDisconnected(ComponentName className)
-		{
-			locationService = null;
-			Log.d(TAG, "Location service disconnected");
-		}
-	};
-
-	private ILocationListener locationListener = new ILocationListener() {
-		@Override
-		public void onGpsStatusChanged(String provider, final int status, final int fsats, final int tsats)
-		{
-			if (LocationManager.GPS_PROVIDER.equals(provider))
-			{
-				runOnUiThread(new Runnable() {
-					public void run()
-					{
-						if (!ready)
-							return;
-						switch (status)
-						{
-							case LocationService.GPS_OK:
-								if (!map.isFixed())
-								{
-									satInfo.setTextColor(getResources().getColor(R.color.gpsworking));
-									map.setMoving(true);
-									map.setFixed(true);
-									updateGPSStatus();
-								}
-								satInfo.setText(String.valueOf(fsats) + "/" + String.valueOf(tsats));
-								break;
-							case LocationService.GPS_OFF:
-								satInfo.setText(R.string.sat_stop);
-								satInfo.setTextColor(getResources().getColor(R.color.gpsdisabled));
-								map.setMoving(false);
-								map.setFixed(false);
-								updateGPSStatus();
-								break;
-							case LocationService.GPS_SEARCHING:
-								if (map.isFixed())
-								{
-									satInfo.setTextColor(getResources().getColor(R.color.gpsenabled));
-									map.setFixed(false);
-								}
-								satInfo.setText(String.valueOf(fsats) + "/" + String.valueOf(tsats));
-								break;
-						}
-					}
-				});
-			}
-		}
-
-		@Override
-		public void onLocationChanged(final Location location, final boolean continous, final boolean geoid, final float smoothspeed, final float avgspeed)
-		{
-			if (!ready)
-				return;
-
-			Log.d(TAG, "Location arrived");
-
-			final long lastLocationMillis = location.getTime();
-
-			boolean magnetic = false;
-			if (application.angleType == 1 && lastLocationMillis - lastMagnetic >= magInterval)
-			{
-				magnetic = true;
-				lastMagnetic = lastLocationMillis;
-			}
-
-			// update map
-			if (lastLocationMillis - lastRenderTime >= renderInterval)
-			{
-				lastRenderTime = lastLocationMillis;
-
-				//application.setLocation(location, magnetic);
-				map.setLocation(location);
-				final boolean enableFollowing = followOnLocation && lastKnownLocation == null;
-
-				lastKnownLocation = location;
-
-				if (application.overlayManager.accuracyOverlay != null && location.hasAccuracy())
-				{
-					application.overlayManager.accuracyOverlay.setAccuracy(location.getAccuracy());
-				}
-
-				runOnUiThread(new Runnable() {
-					public void run()
-					{
-						if (!LocationManager.GPS_PROVIDER.equals(location.getProvider()) && map.isMoving())
-						{
-							map.setMoving(false);
-							updateGPSStatus();
-						}
-						// Mock provider hack
-						if (!map.isFixed() && continous && LocationManager.GPS_PROVIDER.equals(location.getProvider()))
-						{
-							satInfo.setText(R.string.sat_start);
-							satInfo.setTextColor(getResources().getColor(R.color.gpsworking));
-							map.setMoving(true);
-							map.setFixed(true);
-							updateGPSStatus();
-						}
-
-						updateMovingInfo(location, geoid);
-
-						if (enableFollowing)
-							setFollowing(true);
-						else
-							map.update();
-
-						// auto dim
-						if (autoDim && dimInterval > 0 && lastLocationMillis - lastDim >= dimInterval)
-						{
-							dimScreen(location);
-							lastDim = lastLocationMillis;
-						}
-					}
-				});
-			}
-		}
-
-		@Override
-		public void onProviderChanged(String provider)
-		{
-		}
-
-		@Override
-		public void onProviderDisabled(String provider)
-		{
-			if (LocationManager.GPS_PROVIDER.equals(provider))
-			{
-				runOnUiThread(new Runnable() {
-					public void run()
-					{
-						if (!ready)
-							return;
-						satInfo.setText(R.string.sat_stop);
-						satInfo.setTextColor(getResources().getColor(R.color.gpsdisabled));
-						map.setMoving(false);
-						map.setFixed(false);
-						updateGPSStatus();
-					}
-				});
-			}
-		}
-
-		@Override
-		public void onProviderEnabled(String provider)
-		{
-			if (LocationManager.GPS_PROVIDER.equals(provider))
-			{
-				runOnUiThread(new Runnable() {
-					public void run()
-					{
-						if (!ready)
-							return;
-						if (!map.isFixed())
-						{
-							satInfo.setText(R.string.sat_start);
-							satInfo.setTextColor(getResources().getColor(R.color.gpsenabled));
-						}
-					}
-				});
-			}
-		}
-	};
-
-	private void updateMapViewArea()
-	{
-		final ViewTreeObserver vto = map.getViewTreeObserver();
-		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-			public void onGlobalLayout()
-			{
-				Rect area = new Rect();
-				map.getLocalVisibleRect(area);
-				View v = findViewById(R.id.topbar);
-				if (v != null)
-					area.top = v.getBottom();
-				v = findViewById(R.id.bottombar);
-				if (v != null)
-					area.bottom = v.getTop();
-				v = findViewById(R.id.rightbar);
-				if (v != null)
-					area.right = v.getLeft();
-				if (!area.isEmpty())
-					map.updateViewArea(area);
-				if (vto.isAlive())
-				{
-					vto.removeGlobalOnLayoutListener(this);
-				}
-				else
-				{
-					final ViewTreeObserver vto1 = map.getViewTreeObserver();
-					vto1.removeGlobalOnLayoutListener(this);
-				}
-			}
-		});
-	}
 
 	public void updateMap()
 	{
-		if (map != null)
-			map.postInvalidate();
-	}
-
-	private final void updateMapButtons()
-	{
-		ViewGroup container = (ViewGroup) findViewById(R.id.button_container);
-
-		for (String action : panelActions)
-		{
-			int id = getResources().getIdentifier(action, "id", getPackageName());
-			ImageButton aib = (ImageButton) container.findViewById(id);
-			if (aib != null)
-			{
-				if (activeActions.contains(action))
-				{
-					aib.setVisibility(View.VISIBLE);
-					switch (id)
-					{
-						case R.id.follow:
-							aib.setImageDrawable(getResources().getDrawable(map.isFollowing() ? R.drawable.cursor_drag_arrow : R.drawable.target));
-							break;
-						case R.id.locate:
-							boolean isLocating = locationService != null && locationService.isLocating();
-							aib.setImageDrawable(getResources().getDrawable(isLocating ? R.drawable.pin_map_no : R.drawable.pin_map));
-							break;
-						case R.id.tracking:
-							boolean isTracking = locationService != null && locationService.isTracking();
-							aib.setImageDrawable(getResources().getDrawable(isTracking ? R.drawable.doc_delete : R.drawable.doc_edit));
-							break;
-					}
-				}
-				else
-				{
-					aib.setVisibility(View.GONE);
-				}
-			}
-		}
-	}
-
-	public final void updateCoordinates(final double[] latlon)
-	{
-		// TODO strange situation, needs investigation
-		if (application != null)
-		{
-			final String pos = StringFormatter.coordinates(application.coordinateFormat, " ", latlon[0], latlon[1]);
-			this.runOnUiThread(new Runnable() {
-
-				@Override
-				public void run()
-				{
-					coordinates.setText(pos);
-				}
-			});
-		}
-	}
-
-	public final void updateFileInfo()
-	{
-		final String title = application.getMapTitle();
-		this.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run()
-			{
-				if (title != null)
-				{
-					currentFile.setText(title);
-				}
-				else
-				{
-					currentFile.setText("-no map-");
-				}
-
-				updateZoomInfo();
-			}
-		});
-	}
-
-	protected final void updateZoomInfo()
-	{
-		double zoom = application.getZoom() * 100;
-
-		if (zoom == 0.0)
-		{
-			mapZoom.setText("---%");
-		}
-		else
-		{
-			int rz = (int) Math.floor(zoom);
-			String zoomStr = zoom - rz != 0.0 ? String.format("%.1f", zoom) : String.valueOf(rz);
-			mapZoom.setText(zoomStr + "%");
-		}
-
-		ImageButton zoomin = (ImageButton) findViewById(R.id.zoomin);
-		ImageButton zoomout = (ImageButton) findViewById(R.id.zoomout);
-		zoomin.setEnabled(application.getNextZoom() != 0.0);
-		zoomout.setEnabled(application.getPrevZoom() != 0.0);
-
-		LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF444444);
-
-		zoomin.setColorFilter(zoomin.isEnabled() ? null : disable);
-		zoomout.setColorFilter(zoomout.isEnabled() ? null : disable);
-	}
-
-	protected void updateGPSStatus()
-	{
-		int v = map.isMoving() && application.editingRoute == null && application.editingTrack == null ? View.VISIBLE : View.GONE;
-		View view = findViewById(R.id.movinginfo);
-		if (view.getVisibility() != v)
-		{
-			view.setVisibility(v);
-			updateMapViewArea();
-		}
-	}
-
-	protected void updateNavigationStatus()
-	{
-		boolean isNavigating = navigationService != null && navigationService.isNavigating();
-		boolean isNavigatingViaRoute = isNavigating && navigationService.isNavigatingViaRoute();
-
-		// waypoint panel
-		findViewById(R.id.waypointinfo).setVisibility(isNavigating ? View.VISIBLE : View.GONE);
-		// route panel
-		findViewById(R.id.routeinfo).setVisibility(isNavigatingViaRoute ? View.VISIBLE : View.GONE);
-		// distance
-		distanceValue.setVisibility(isNavigating ? View.VISIBLE : View.GONE);
-		findViewById(R.id.distancelt).setVisibility(isNavigating ? View.VISIBLE : View.GONE);
-		// bearing
-		bearingValue.setVisibility(isNavigating ? View.VISIBLE : View.GONE);
-		findViewById(R.id.bearinglt).setVisibility(isNavigating ? View.VISIBLE : View.GONE);
-		// turn
-		turnValue.setVisibility(isNavigating ? View.VISIBLE : View.GONE);
-		findViewById(R.id.turnlt).setVisibility(isNavigating ? View.VISIBLE : View.GONE);
-		// xtk
-		xtkValue.setVisibility(isNavigatingViaRoute ? View.VISIBLE : View.GONE);
-		findViewById(R.id.xtklt).setVisibility(isNavigatingViaRoute ? View.VISIBLE : View.GONE);
-
-		// we hide elevation in portrait mode due to lack of space
-		if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)
-		{
-			if (isNavigatingViaRoute && elevationValue.getVisibility() == View.VISIBLE)
-			{
-				elevationValue.setVisibility(View.GONE);
-				findViewById(R.id.elevationlt).setVisibility(View.GONE);
-
-				ViewGroup row = (ViewGroup) findViewById(R.id.movingrow);
-				int pos = row.indexOfChild(elevationValue);
-				View xtklt = findViewById(R.id.xtklt);
-				row.removeView(xtkValue);
-				row.removeView(xtklt);
-				row.addView(xtklt, pos);
-				row.addView(xtkValue, pos);
-				row.getParent().requestLayout();
-			}
-			else if (!isNavigatingViaRoute && elevationValue.getVisibility() == View.GONE)
-			{
-				elevationValue.setVisibility(View.VISIBLE);
-				findViewById(R.id.elevationlt).setVisibility(View.VISIBLE);
-
-				ViewGroup row = (ViewGroup) findViewById(R.id.movingrow);
-				int pos = row.indexOfChild(xtkValue);
-				View elevationlt = findViewById(R.id.elevationlt);
-				row.removeView(elevationValue);
-				row.removeView(elevationlt);
-				row.addView(elevationlt, pos);
-				row.addView(elevationValue, pos);
-				row.getParent().requestLayout();
-			}
-		}
-
-		if (isNavigatingViaRoute)
-		{
-			routeName.setText("› " + navigationService.navRoute.name);
-		}
-		if (isNavigating)
-		{
-			waypointName.setText("» " + navigationService.navWaypoint.name);
-		}
-		else if (application.overlayManager.navigationOverlay != null)
-		{
-			application.overlayManager.navigationOverlay.onBeforeDestroy();
-			application.overlayManager.navigationOverlay = null;
-		}
-
-		updateMapViewArea();
-		map.update();
-	}
-
-	protected void updateNavigationInfo()
-	{
-		if (navigationService == null || !navigationService.isNavigating())
-			return;
-
-		double distance = navigationService.navDistance;
-		double bearing = navigationService.navBearing;
-		long turn = navigationService.navTurn;
-		double vmg = navigationService.navVMG * speedFactor;
-		int ete = navigationService.navETE;
-
-		String[] dist = StringFormatter.distanceC(distance, precisionFormat);
-		String extra = String.format(precisionFormat, vmg) + " " + speedAbbr + " | " + StringFormatter.timeH(ete);
-
-		String trnsym = "";
-		if (turn > 0)
-		{
-			trnsym = "R";
-		}
-		else if (turn < 0)
-		{
-			trnsym = "L";
-			turn = -turn;
-		}
-
-		bearing = application.fixDeclination(bearing);
-		distanceValue.setText(dist[0]);
-		distanceUnit.setText(dist[1]);
-		bearingValue.setText(String.valueOf(Math.round(bearing)));
-		turnValue.setText(String.valueOf(Math.round(turn)) + trnsym);
-		waypointExtra.setText(extra);
-
-		if (navigationService.isNavigatingViaRoute())
-		{
-			boolean hasNext = navigationService.hasNextRouteWaypoint();
-			if (distance < navigationService.navProximity * 3 && !animationSet)
-			{
-				AnimationSet animation = new AnimationSet(true);
-				animation.addAnimation(new AlphaAnimation(1.0f, 0.3f));
-				animation.addAnimation(new AlphaAnimation(0.3f, 1.0f));
-				animation.setDuration(500);
-				animation.setRepeatCount(10);
-				findViewById(R.id.waypointinfo).startAnimation(animation);
-				if (!hasNext)
-				{
-					findViewById(R.id.routeinfo).startAnimation(animation);
-				}
-				animationSet = true;
-			}
-			else if (animationSet)
-			{
-				findViewById(R.id.waypointinfo).setAnimation(null);
-				if (!hasNext)
-				{
-					findViewById(R.id.routeinfo).setAnimation(null);
-				}
-				animationSet = false;
-			}
-
-			if (navigationService.navXTK == Double.NEGATIVE_INFINITY)
-			{
-				xtkValue.setText("--");
-				xtkUnit.setText("--");
-			}
-			else
-			{
-				String xtksym = navigationService.navXTK == 0 ? "" : navigationService.navXTK > 0 ? "R" : "L";
-				String[] xtks = StringFormatter.distanceC(Math.abs(navigationService.navXTK));
-				xtkValue.setText(xtks[0] + xtksym);
-				xtkUnit.setText(xtks[1]);
-			}
-
-			double navDistance = navigationService.navRouteDistanceLeft();
-			int eta = navigationService.navRouteETE(navDistance);
-			if (eta < Integer.MAX_VALUE)
-				eta += navigationService.navETE;
-			extra = StringFormatter.distanceH(navDistance + distance, 1000) + " | " + StringFormatter.timeH(eta);
-			routeExtra.setText(extra);
-		}
-	}
-
-	protected void updateMovingInfo(final Location location, final boolean geoid)
-	{
-		double s = location.getSpeed() * speedFactor;
-		double e = location.getAltitude() * elevationFactor;
-		double track = application.fixDeclination(location.getBearing());
-		speedValue.setText(String.format(precisionFormat, s));
-		trackValue.setText(String.valueOf(Math.round(track)));
-		elevationValue.setText(String.valueOf(Math.round(e)));
-		// TODO set separate color
-		if (geoid != lastGeoid)
-		{
-			int color = geoid ? 0xffffffff : getResources().getColor(R.color.gpsenabled);
-			elevationValue.setTextColor(color);
-			elevationUnit.setTextColor(color);
-			((TextView) findViewById(R.id.elevationname)).setTextColor(color);
-			lastGeoid = geoid;
-		}
-	}
-
-	private final void customizeLayout(final SharedPreferences settings)
-	{
-		boolean slVisible = settings.getBoolean(getString(R.string.pref_showsatinfo), true);
-		boolean mlVisible = settings.getBoolean(getString(R.string.pref_showmapinfo), true);
-
-		findViewById(R.id.satinfo).setVisibility(slVisible ? View.VISIBLE : View.GONE);
-		findViewById(R.id.mapinfo).setVisibility(mlVisible ? View.VISIBLE : View.GONE);
-
-		updateMapViewArea();
 	}
 
 	private void startEditTrack(Track track)
@@ -1143,13 +402,13 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		onProgressChanged(trackBar, p, false);
 		findViewById(R.id.edittrack).setVisibility(View.VISIBLE);
 		findViewById(R.id.trackdetails).setVisibility(View.VISIBLE);
-		updateGPSStatus();
+		//updateGPSStatus();
 		if (showDistance > 0)
 			application.overlayManager.distanceOverlay.setEnabled(false);
 		map.setFocusable(false);
 		map.setFocusableInTouchMode(false);
 		trackBar.requestFocus();
-		updateMapViewArea();
+		//updateMapViewArea();
 	}
 
 	private void startEditRoute(Route route)
@@ -1174,11 +433,11 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			application.overlayManager.routeOverlays.add(newRoute);
 		}
 		findViewById(R.id.editroute).setVisibility(View.VISIBLE);
-		updateGPSStatus();
+		//updateGPSStatus();
 		application.routeEditingWaypoints = new Stack<Waypoint>();
 		if (showDistance > 0)
 			application.overlayManager.distanceOverlay.setEnabled(false);
-		updateMapViewArea();
+		//updateMapViewArea();
 	}
 
 
@@ -1209,110 +468,19 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		}
 	}
 
+	@Override
 	public void zoomMap(final float factor)
 	{
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				synchronized (map)
-				{
-					if (application.zoomBy(factor))
-						conditionsChanged();
-				}
-				finishHandler.sendEmptyMessage(0);
-			}
-		});
 	}
-
-	public void zoomIn()
-	{
-		//TODO Show toast here
-		if (application.getNextZoom() == 0.0)
-			return;
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				synchronized (map)
-				{
-					if (application.zoomIn())
-						conditionsChanged();
-				}
-				finishHandler.sendEmptyMessage(0);
-			}
-		});
-	}
-
-	public void zoomOut()
-	{
-		if (application.getPrevZoom() == 0.0)
-			return;
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				synchronized (map)
-				{
-					if (application.zoomOut())
-						conditionsChanged();
-				}
-				finishHandler.sendEmptyMessage(0);
-			}
-		});
-	}
-
-	public void previousMap()
-	{
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				synchronized (map)
-				{
-					if (application.prevMap())
-						mapChanged();
-				}
-				finishHandler.sendEmptyMessage(0);
-			}
-		});
-	}
-
-	public void nextMap()
-	{
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				synchronized (map)
-				{
-					if (application.nextMap())
-						mapChanged();
-				}
-				finishHandler.sendEmptyMessage(0);
-			}
-		});
-	}
-
 
 	@Override
 	public void conditionsChanged()
 	{
-		map.updateMapInfo();
-		map.update();
 	}
 
 	@Override
 	public void mapChanged()
 	{
-		map.suspendBestMap();
-		map.updateMapInfo();
-		map.update();
 	}
 
 	protected void dimScreen(Location location)
@@ -1399,26 +567,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu)
-	{
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.options_menu, menu);
-
-		// add plugins
-		SubMenu views = menu.findItem(R.id.menuView).getSubMenu();
-		Map<String, Pair<Drawable, Intent>> plugins = application.getPluginsViews();
-		for (String plugin : plugins.keySet())
-		{
-			MenuItem item = views.add(plugin);
-			item.setIntent(plugins.get(plugin).second);
-			if (plugins.get(plugin).first != null)
-				item.setIcon(plugins.get(plugin).first);
-		}
-
-		return true;
-	}
-
-	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu)
 	{
 		if (application.editingRoute != null || application.editingTrack != null)
@@ -1497,16 +645,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					application.overlayManager.distanceOverlay.setEnabled(true);
 				}
 				return true;
-			case R.id.menuPreferences:
-				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-				{
-					startActivity(new Intent(this, Preferences.class));
-				}
-				else
-				{
-					startActivity(new Intent(this, PreferencesHC.class));
-				}
-				return true;
 		}
 		return false;
 	}
@@ -1563,24 +701,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 		switch (requestCode)
 		{
-			case RESULT_MANAGE_WAYPOINTS:
-			{
-				application.saveWaypoints();
-				break;
-			}
-			case RESULT_LOAD_WAYPOINTS:
-			{
-				if (resultCode == RESULT_OK)
-				{
-					Bundle extras = data.getExtras();
-					int count = extras.getInt("count");
-					if (count > 0)
-					{
-						application.overlayManager.waypointsOverlay.clearBitmapCache();
-					}
-				}
-				break;
-			}
 			case RESULT_SAVE_WAYPOINT:
 			{
 				if (resultCode == RESULT_OK)
@@ -1593,23 +713,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				}
 				break;
 			}
-			case RESULT_SAVE_WAYPOINTS:
-				if (resultCode == RESULT_OK)
-				{
-					application.saveDefaultWaypoints();
-				}
-				break;
 			case RESULT_MANAGE_TRACKS:
-				for (Iterator<TrackOverlay> iter = application.overlayManager.fileTrackOverlays.iterator(); iter.hasNext();)
-				{
-					TrackOverlay to = iter.next();
-					to.onTrackPropertiesChanged();
-					if (to.getTrack().removed)
-					{
-						to.onBeforeDestroy();
-						iter.remove();
-					}
-				}
 				if (resultCode == RESULT_OK)
 				{
 					Bundle extras = data.getExtras();
@@ -1617,30 +721,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					startEditTrack(application.getTrack(index));
 				}
 				break;
-			case RESULT_MANAGE_ROUTES:
-			{
-				for (Iterator<RouteOverlay> iter = application.overlayManager.routeOverlays.iterator(); iter.hasNext();)
-				{
-					RouteOverlay ro = iter.next();
-					ro.onRoutePropertiesChanged();
-					if (ro.getRoute().removed)
-					{
-						ro.onBeforeDestroy();
-						iter.remove();
-					}
-				}
-				if (resultCode == RESULT_OK)
-				{
-					Bundle extras = data.getExtras();
-					int index = extras.getInt("index");
-					int dir = extras.getInt("dir");
-					if (dir != 0)
-						startService(new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE).putExtra(NavigationService.EXTRA_ROUTE_INDEX, index).putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, dir));
-					else
-						startEditRoute(application.getRoute(index));
-				}
-				break;
-			}
 			case RESULT_EDIT_ROUTE:
 				for (Iterator<RouteOverlay> iter = application.overlayManager.routeOverlays.iterator(); iter.hasNext();)
 				{
@@ -1664,65 +744,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					}
 				}
 				break;
-			case RESULT_LOAD_MAP_ATPOSITION:
-				if (resultCode == RESULT_OK)
-				{
-					Bundle extras = data.getExtras();
-					final int id = extras.getInt("id");
-					if (application.selectMap(id))
-					{
-						map.suspendBestMap();
-						map.updateMapInfo();
-						map.update();
-					}
-					else
-					{
-						map.update();
-					}
-				}
-				break;
-		}
-	}
-
-	final Handler backHandler = new Handler();
-
-	@Override
-	public void onBackPressed()
-	{
-		switch (exitConfirmation)
-		{
-			case 0:
-				// wait for second back
-				if (secondBack)
-				{
-					backToast.cancel();
-					MapActivity.this.finish();
-				}
-				else
-				{
-					secondBack = true;
-					backToast.show();
-					backHandler.postDelayed(new Runnable() {
-						@Override
-						public void run()
-						{
-							secondBack = false;
-						}
-					}, 2000);
-				}
-				return;
-			case 1:
-				// Ask the user if they want to quit
-				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.quitQuestion).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which)
-					{
-						MapActivity.this.finish();
-					}
-				}).setNegativeButton(R.string.no, null).show();
-				return;
-			default:
-				super.onBackPressed();
 		}
 	}
 
@@ -1790,12 +811,12 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				application.editingRoute = null;
 				application.routeEditingWaypoints = null;
 				findViewById(R.id.editroute).setVisibility(View.GONE);
-				updateGPSStatus();
+				//updateGPSStatus();
 				if (showDistance == 2)
 				{
 					application.overlayManager.distanceOverlay.setEnabled(true);
 				}
-				updateMapViewArea();
+				//updateMapViewArea();
 				map.requestFocus();
 				break;
 			case R.id.finishtrackedit:
@@ -1804,7 +825,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				application.editingTrack = null;
 				findViewById(R.id.edittrack).setVisibility(View.GONE);
 				findViewById(R.id.trackdetails).setVisibility(View.GONE);
-				updateGPSStatus();
+				//updateGPSStatus();
 				if (showDistance == 2)
 				{
 					application.overlayManager.distanceOverlay.setEnabled(true);
@@ -1953,7 +974,7 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		else if (getString(R.string.pref_exit).equals(key))
 		{
 			exitConfirmation = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			secondBack = false;
+			//secondBack = false;
 		}
 		else if (getString(R.string.pref_unitprecision).equals(key))
 		{
@@ -1965,51 +986,15 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		{
 			map.setCursorColor(sharedPreferences.getInt(key, resources.getColor(R.color.cursor)));
 		}
-		else if (getString(R.string.pref_panelactions).equals(key))
-		{
-			String pa = sharedPreferences.getString(key, resources.getString(R.string.def_panelactions));
-			activeActions = Arrays.asList(pa.split(","));
-		}
 	}
 
 	@Override
-	public void onPanelClosed(Panel panel)
+	public void updateCoordinates(double[] latlon)
 	{
-		// save panel state
-		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-		editor.putBoolean(getString(R.string.ui_drawer_open), false);
-		editor.commit();
 	}
 
 	@Override
-	public void onPanelOpened(Panel panel)
+	public void updateFileInfo()
 	{
-		updateMapButtons();
-		// save panel state
-		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-		editor.putBoolean(getString(R.string.ui_drawer_open), true);
-		editor.commit();
-	}
-	
-	@SuppressLint("HandlerLeak")
-	private class FinishHandler extends Handler
-	{
-		private final WeakReference<MapActivity> target;
-
-		FinishHandler(MapActivity activity)
-		{
-			this.target = new WeakReference<MapActivity>(activity);
-		}
-
-		@Override
-		public void handleMessage(Message msg)
-		{
-			MapActivity mapActivity = target.get();
-			if (mapActivity != null)
-			{
-				mapActivity.waitBar.setVisibility(View.INVISIBLE);
-				mapActivity.waitBar.setText("");
-			}
-		}
 	}
 }
