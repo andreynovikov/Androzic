@@ -130,7 +130,7 @@
             android:background="@null"
             android:padding="8dip"
             android:contentDescription="@string/next_map"
-            android:src="@drawable/ic_action_add" />
+            android:src="@drawable/ic_action_tiles_large" />
 
         <ImageButton
             android:id="@+id/prevmap"
@@ -139,7 +139,7 @@
             android:background="@null"
             android:padding="8dip"
             android:contentDescription="@string/prev_map"
-            android:src="@drawable/ic_action_cancel" />
+            android:src="@drawable/ic_action_tiles_small" />
     </LinearLayout>
 
     <include layout="@layout/inc_trackdetails" />
