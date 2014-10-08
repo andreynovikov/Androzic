@@ -398,6 +398,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					{
 						map.setMoving(true);
 						map.setFixed(true);
+						getActivity().supportInvalidateOptionsMenu();
 					}
 				}
 				switch (application.gpsStatus)
@@ -409,6 +410,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						{
 							map.setMoving(true);
 							map.setFixed(true);
+							getActivity().supportInvalidateOptionsMenu();
 						}
 						break;
 					case LocationService.GPS_SEARCHING:
@@ -417,6 +419,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						if (map.isFixed())
 						{
 							map.setFixed(false);
+							getActivity().supportInvalidateOptionsMenu();
 						}
 						break;
 				}
@@ -429,6 +432,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				{
 					map.setMoving(false);
 					map.setFixed(false);
+					getActivity().supportInvalidateOptionsMenu();
 				}
 			}
 

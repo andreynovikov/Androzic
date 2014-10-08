@@ -18,10 +18,9 @@
         android:key="@string/pref_showcurrenttrack"
         android:summary="@string/pref_showcurrenttrack_summary"
         android:title="@string/pref_showcurrenttrack_title" />
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showaccuracy"
-        android:summary="@string/pref_showaccuracy_summary"
         android:title="@string/pref_showaccuracy_title" />
 
     <ListPreference

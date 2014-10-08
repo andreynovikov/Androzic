@@ -13,7 +13,6 @@
    	<string name="pref_useonlinemap">useonlinemap</string>
    	<string name="pref_onlinemap">onlinemap</string>
    	<string name="pref_onlinemapscale">onlinemapscale</string>
-    <string name="pref_loc_usenetwork">loc_usenetwork</string>
     <string name="pref_loc_gpstimeout">loc_gpstimeout</string>
     <string name="pref_loc_store">loc_store</string>
     <string name="pref_folder_root">folderroot</string>
