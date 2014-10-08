@@ -113,6 +113,7 @@ public class NavigationOverlay extends MapOverlay
 		Resources resources = application.getResources();
 		proximity = Integer.parseInt(settings.getString(application.getString(R.string.pref_navigation_proximity), application.getString(R.string.def_navigation_proximity)));
 		drawCircle = settings.getBoolean(application.getString(R.string.pref_navigation_proximitycircle), resources.getBoolean(R.bool.def_navigation_proximitycircle));
+		paint.setColor(settings.getInt(application.getString(R.string.pref_navigation_linecolor), resources.getColor(R.color.navigationline)));
         paint.setStrokeWidth(settings.getInt(application.getString(R.string.pref_navigation_linewidth), resources.getInteger(R.integer.def_navigation_linewidth)));
 	}
 
