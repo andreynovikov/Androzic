@@ -3,7 +3,7 @@
 <color name="drawer_selected_text">#FFFFFFFF</color>
 <color name="cursor">#FFFF0000</color>
 <color name="currenttrack">#FFA565FE</color>
-<color name="mapcross">#99333333</color>
+<color name="mapcross">#AA333333</color>
 <color name="waypoint">#FFFFFF00</color>
 <color name="waypointbg">#AAFFFFFF</color>
 <color name="waypointtext">#FF000000</color>
