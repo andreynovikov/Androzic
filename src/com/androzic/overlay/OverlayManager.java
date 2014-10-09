@@ -38,14 +38,21 @@ public class OverlayManager
 	public OverlayManager()
 	{
 		application = Androzic.getApplication();
-		mapObjectsOverlay = new MapObjectsOverlay();
-		waypointsOverlay = new WaypointsOverlay();
-		scaleOverlay = new ScaleOverlay();
+		createOverlays();
 	}
 
 	public void init()
 	{
+		if (waypointsOverlay == null)
+			createOverlays();
 		waypointsOverlay.setWaypoints(application.getWaypoints());
+	}
+
+	private void createOverlays()
+	{
+		mapObjectsOverlay = new MapObjectsOverlay();
+		waypointsOverlay = new WaypointsOverlay();
+		scaleOverlay = new ScaleOverlay();
 	}
 
 	public void onWaypointsChanged()
@@ -270,7 +277,15 @@ public class OverlayManager
 		setCurrentTrackOverlayEnabled(false);
 		setAccuracyOverlayEnabled(false);
 		setDistanceOverlayEnabled(false);
-		
+
+		if (llGridOverlay != null)
+			llGridOverlay.onBeforeDestroy();
+		if (grGridOverlay != null)
+			grGridOverlay.onBeforeDestroy();
+
+		llGridOverlay = null;
+		grGridOverlay = null;
+
 		for (TrackOverlay to : fileTrackOverlays)
 		{
 			to.onBeforeDestroy();
@@ -289,10 +304,5 @@ public class OverlayManager
 		mapObjectsOverlay = null;
 		waypointsOverlay = null;
 		scaleOverlay = null;
-		navigationOverlay = null;
-		distanceOverlay = null;
-
-		llGridOverlay = null;
-		grGridOverlay = null;
 	}
 }
