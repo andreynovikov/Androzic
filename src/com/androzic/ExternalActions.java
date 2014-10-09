@@ -31,7 +31,6 @@ import android.widget.Toast;
 
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
-import com.androzic.overlay.RouteOverlay;
 
 /**
  * Executes intents from external applications.
@@ -49,7 +48,7 @@ public class ExternalActions extends Activity
 		Log.e("ANDROZIC","New intent: "+action);
 		
 		Androzic application = (Androzic) getApplication();
-		Intent activity = new Intent(this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent activity = new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		if (action.equals("com.androzic.PLOT_ROUTE"))
 		{

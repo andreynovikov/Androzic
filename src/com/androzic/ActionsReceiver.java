@@ -36,7 +36,7 @@ public class ActionsReceiver extends BroadcastReceiver
 		String action = intent.getAction();
 		Log.i(TAG, "Action received: " + action);
 
-		Intent activity = new Intent(context, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent activity = new Intent(context, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		if (action.equals("com.androzic.COORDINATES_RECEIVED"))
 		{
