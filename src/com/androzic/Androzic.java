@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -70,6 +71,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.WindowManager;
 import android.widget.Toast;
+
 import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
@@ -1631,7 +1633,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.commit();
 	}
 	
-	public boolean viewLastKnownSystemLocation()
+	/**
+	 * Retrieves last known location without enabling location providers.
+	 * @return Most precise last known location or null if it is not available
+	 */
+	public Location getLastKnownSystemLocation()
 	{
 		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		List<String> providers = lm.getProviders(true);
@@ -1644,15 +1650,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				break;
 		}
 
-		if (l != null)
-		{
-			double[] ll = new double[2];
-			ll[0] = l.getLatitude();
-			ll[1] = l.getLongitude();
-			return ensureVisible(ll[0], ll[1]);
-		}
-
-		return false;
+		return l;
 	}
 
 	public boolean isNavigating()

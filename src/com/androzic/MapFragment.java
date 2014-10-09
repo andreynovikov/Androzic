@@ -38,6 +38,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.internal.view.SupportMenuInflater;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.internal.view.menu.MenuPopupHelper;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -62,6 +64,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androzic.data.Waypoint;
 import com.androzic.location.LocationService;
@@ -756,17 +759,15 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void zoomMap(final float factor)
 	{
-		waitBar.setVisibility(View.VISIBLE);
-		waitBar.setText(R.string.msg_wait);
-		executorThread.execute(new Runnable() {
-			public void run()
+		wait(new Waitable() {
+			@Override
+			public void waitFor()
 			{
 				synchronized (map)
 				{
 					if (application.zoomBy(factor))
 						conditionsChanged();
 				}
-				finishHandler.sendEmptyMessage(0);
 			}
 		});
 	}
@@ -957,64 +958,56 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				// TODO Show toast here
 				if (application.getNextZoom() == 0.0)
 					return;
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
+				wait(new Waitable() {
+					@Override
+					public void waitFor()
 					{
 						synchronized (map)
 						{
 							if (application.zoomIn())
 								conditionsChanged();
 						}
-						finishHandler.sendEmptyMessage(0);
 					}
 				});
 				break;
 			case R.id.zoomout:
 				if (application.getPrevZoom() == 0.0)
 					return;
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
+				wait(new Waitable() {
+					@Override
+					public void waitFor()
 					{
 						synchronized (map)
 						{
 							if (application.zoomOut())
 								conditionsChanged();
 						}
-						finishHandler.sendEmptyMessage(0);
 					}
 				});
 				break;
 			case R.id.prevmap:
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
+				wait(new Waitable() {
+					@Override
+					public void waitFor()
 					{
 						synchronized (map)
 						{
 							if (application.prevMap())
 								mapChanged();
 						}
-						finishHandler.sendEmptyMessage(0);
 					}
 				});
 				break;
 			case R.id.nextmap:
-				waitBar.setVisibility(View.VISIBLE);
-				waitBar.setText(R.string.msg_wait);
-				executorThread.execute(new Runnable() {
-					public void run()
+				wait(new Waitable() {
+					@Override
+					public void waitFor()
 					{
 						synchronized (map)
 						{
 							if (application.nextMap())
 								mapChanged();
 						}
-						finishHandler.sendEmptyMessage(0);
 					}
 				});
 				break;
@@ -1097,10 +1090,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				int w = v.getWidth() >> 1;
 				if (dy > h * 0.8 && dy < h * 2 && dx < w)
 				{
-					waitBar.setVisibility(View.VISIBLE);
-					waitBar.setText(R.string.msg_wait);
-					executorThread.execute(new Runnable() {
-						public void run()
+					wait(new Waitable() {
+						@Override
+						public void waitFor()
 						{
 							synchronized (map)
 							{
@@ -1110,9 +1102,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 									map.update();
 								}
 							}
-							finishHandler.sendEmptyMessage(0);
-						}
-					});
+						}});
 					zoom100X = 0;
 					zoom100Y = 0;
 				}
@@ -1154,11 +1144,36 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				getActivity().onSearchRequested();
 				return true;
 			case R.id.action_locate:
-				if (application.viewLastKnownSystemLocation())
-					mapChanged();
+			{
+				final Location l = application.getLastKnownSystemLocation();
+				final long now = System.currentTimeMillis();
+				final long fixed = l != null ? l.getTime() : 0L;
+				if ((now - fixed) < 1000 * 60 * 60 * 12) // we do not take into account locations older then 12 hours
+				{
+					wait(new Waitable() {
+						@Override
+						public void waitFor()
+						{
+							if (application.ensureVisible(l.getLatitude(), l.getLongitude()))
+								mapChanged();
+							else
+								conditionsChanged();
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run()
+								{
+									Toast.makeText(application, DateUtils.getRelativeTimeSpanString(fixed, now, DateUtils.SECOND_IN_MILLIS), Toast.LENGTH_SHORT).show();
+								}
+							});
+						}
+					});
+				}
 				else
-					conditionsChanged();
+				{
+					Toast.makeText(application, getString(R.string.msg_nolastknownlocation), Toast.LENGTH_LONG).show();
+				}
 				return true;
+			}
 			case R.id.action_locating:
 				application.enableLocating(!application.isLocating());
 				return true;
@@ -1239,6 +1254,19 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 	}
 
+	private void wait(final Waitable w)
+	{
+		waitBar.setVisibility(View.VISIBLE);
+		waitBar.setText(R.string.msg_wait);
+		executorThread.execute(new Runnable() {
+			public void run()
+			{
+				w.waitFor();
+				finishHandler.sendEmptyMessage(0);
+			}
+		});
+	}
+
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent)
@@ -1295,5 +1323,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 		}
 	}
-
+	
+	private interface Waitable
+	{
+		public void waitFor();
+	}
 }
