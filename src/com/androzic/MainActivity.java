@@ -60,7 +60,6 @@ import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
 import com.androzic.map.Map;
-import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteList;

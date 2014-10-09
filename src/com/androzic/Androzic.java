@@ -1520,6 +1520,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.commit();
 	}
 
+	public ILocationService getLocationService()
+	{
+		return locationService;
+	}
+
 	public float getHDOP()
 	{
 		if (locationService != null)
@@ -1633,6 +1638,24 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.commit();
 	}
 	
+	public void expandCurrentTrack()
+	{
+		if (locationService != null)
+		{
+			Track track = locationService.getTrack();
+			track.show = true;
+			overlayManager.currentTrackOverlay.setTrack(track);
+		}
+	}
+
+	public void clearCurrentTrack()
+	{
+		if (overlayManager.currentTrackOverlay != null)
+			overlayManager.currentTrackOverlay.clear();
+		if (locationService != null)
+			locationService.clearTrack();
+	}
+
 	/**
 	 * Retrieves last known location without enabling location providers.
 	 * @return Most precise last known location or null if it is not available

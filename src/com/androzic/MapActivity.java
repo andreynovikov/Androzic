@@ -37,10 +37,8 @@ import net.londatiga.android.QuickAction3D.OnActionItemClickListener;
 import org.miscwidgets.widget.Panel;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -76,7 +74,6 @@ import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
-import com.androzic.track.TrackExportDialog;
 import com.androzic.util.Astro;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
@@ -572,23 +569,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		if (application.editingRoute != null || application.editingTrack != null)
 			return false;
 
-		boolean wpt = application.hasWaypoints();
-		boolean rts = application.hasRoutes();
-		boolean nvw = navigationService != null && navigationService.isNavigating();
-		boolean nvr = navigationService != null && navigationService.isNavigatingViaRoute();
-
-		menu.findItem(R.id.menuManageWaypoints).setEnabled(wpt);
-		menu.findItem(R.id.menuExportCurrentTrack).setEnabled(application.overlayManager.currentTrackOverlay != null);
-		menu.findItem(R.id.menuClearCurrentTrack).setEnabled(application.overlayManager.currentTrackOverlay != null);
-		menu.findItem(R.id.menuManageRoutes).setVisible(!nvr);
-		menu.findItem(R.id.menuStartNavigation).setVisible(!nvr);
-		menu.findItem(R.id.menuStartNavigation).setEnabled(rts);
-		menu.findItem(R.id.menuNavigationDetails).setVisible(nvr);
-		menu.findItem(R.id.menuNextNavPoint).setVisible(nvr);
-		menu.findItem(R.id.menuPrevNavPoint).setVisible(nvr);
-		menu.findItem(R.id.menuNextNavPoint).setEnabled(navigationService != null && navigationService.hasNextRouteWaypoint());
-		menu.findItem(R.id.menuPrevNavPoint).setEnabled(navigationService != null && navigationService.hasPrevRouteWaypoint());
-		menu.findItem(R.id.menuStopNavigation).setEnabled(nvw);
 		menu.findItem(R.id.menuSetAnchor).setVisible(showDistance > 0 && !map.isFollowing());
 
 		return true;
@@ -599,36 +579,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	{
 		switch (item.getItemId())
 		{
-			case R.id.menuExportCurrentTrack:
-		        FragmentManager fm = getSupportFragmentManager();
-		        TrackExportDialog trackExportDialog = new TrackExportDialog(locationService);
-		        trackExportDialog.show(fm, "track_export");
-				return true;
-			case R.id.menuExpandCurrentTrack:
-				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.warning).setMessage(R.string.msg_expandcurrenttrack).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which)
-					{
-						if (application.overlayManager.currentTrackOverlay != null)
-						{
-							Track track = locationService.getTrack();
-							track.show = true;
-							application.overlayManager.currentTrackOverlay.setTrack(track);
-						}
-					}
-				}).setNegativeButton(R.string.no, null).show();
-				return true;
-			case R.id.menuClearCurrentTrack:
-				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.warning).setMessage(R.string.msg_clearcurrenttrack).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which)
-					{
-						if (application.overlayManager.currentTrackOverlay != null)
-							application.overlayManager.currentTrackOverlay.clear();
-						locationService.clearTrack();
-					}
-				}).setNegativeButton(R.string.no, null).show();
-				return true;
 			case R.id.menuMapInfo:
 				startActivity(new Intent(this, MapInformation.class));
 				return true;

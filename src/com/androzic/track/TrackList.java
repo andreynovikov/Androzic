@@ -25,7 +25,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -132,16 +134,50 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 	}
 
 	@Override
+	public void onPrepareOptionsMenu(final Menu menu)
+	{
+		Androzic application = Androzic.getApplication();
+		boolean tracking = application.isTracking();
+		menu.findItem(R.id.action_export).setEnabled(tracking);
+		menu.findItem(R.id.action_clear).setEnabled(tracking);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(final MenuItem item)
 	{
 		switch (item.getItemId())
 		{
-			case R.id.menuLoadTrack:
+			case R.id.action_load:
 				TrackFileList fileListDialog = new TrackFileList(this);
-				fileListDialog.show(getFragmentManager(), "dialog");
+				fileListDialog.show(getFragmentManager(), "track_file_list");
 				return true;
+			case R.id.action_export:
+		        TrackExportDialog trackExportDialog = new TrackExportDialog();
+		        trackExportDialog.show(getFragmentManager(), "track_export");
+				return true;
+			case R.id.action_expand:
+				new AlertDialog.Builder(getActivity()).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.warning).setMessage(R.string.msg_expandcurrenttrack).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						Androzic application = Androzic.getApplication();
+						application.expandCurrentTrack();
+					}
+				}).setNegativeButton(R.string.no, null).show();
+				return true;
+			case R.id.action_clear:
+				new AlertDialog.Builder(getActivity()).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.warning).setMessage(R.string.msg_clearcurrenttrack).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						Androzic application = Androzic.getApplication();
+						application.clearCurrentTrack();
+					}
+				}).setNegativeButton(R.string.no, null).show();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-		return false;
 	}
 
 	@Override

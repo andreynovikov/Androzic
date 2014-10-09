@@ -54,12 +54,8 @@ public class TrackExportDialog extends DialogFragment implements TextWatcher
 
 	public TrackExportDialog()
 	{
-		throw new RuntimeException("Unimplemented initialization context");
-	}
-
-	public TrackExportDialog(ILocationService locationService)
-	{
-		this.locationService = locationService;
+		Androzic application = Androzic.getApplication();
+		locationService = application.getLocationService();
 		setRetainInstance(true);
 	}
 
