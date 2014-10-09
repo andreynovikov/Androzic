@@ -50,6 +50,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.internal.view.SupportMenuInflater;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.internal.view.menu.MenuPopupHelper;
+import android.support.v7.internal.view.menu.MenuPresenter;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,6 +64,7 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,7 +78,7 @@ import com.androzic.util.CoordinateParser;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
 
-public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, View.OnClickListener, View.OnTouchListener, MenuBuilder.Callback
+public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, View.OnClickListener, View.OnTouchListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
 	private static final String TAG = "MapFragment";
 	
@@ -128,12 +130,15 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private TextView xtkUnit;
 
 	private TextView waitBar;
+	private View anchor;
 
 	Androzic application;
 
 	private ExecutorService executorThread = Executors.newSingleThreadExecutor();
 	private FinishHandler finishHandler;
 	private Handler updateCallback = new Handler();
+
+	private long mapObjectSelected = -1;
 
 	protected long lastRenderTime = 0;
 	protected long lastDim = 0;
@@ -184,6 +189,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		turnValue = (TextView) view.findViewById(R.id.turn);
 		// trackBar = (SeekBar) findViewById(R.id.trackbar);
 		waitBar = (TextView) view.findViewById(R.id.waitbar);
+		anchor = view.findViewById(R.id.anchor);
 		map = (MapView) view.findViewById(R.id.mapview);
 		map.initialize(application, this);
 
@@ -721,10 +727,37 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		return false;
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public boolean mapObjectTapped(long id, int x, int y)
 	{
-		// TODO Auto-generated method stub
+		mapObjectSelected = id;
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		{
+			anchor.setX(x);
+			anchor.setY(y);
+		}
+		else
+		{
+			//TODO Test it!
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params.leftMargin = x;
+			params.topMargin = y;
+			anchor.setLayoutParams(params);
+		}
+
+		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
+		MenuBuilder menu;
+		MenuPopupHelper popup;
+		menu = new MenuBuilder(getActivity());
+		menu.setCallback(this);
+		popup = new MenuPopupHelper(getActivity(), menu, anchor);
+		popup.setForceShowIcon(true);
+		popup.setCallback(this);
+		new SupportMenuInflater(getActivity()).inflate(R.menu.mapobject_menu, menu);
+		popup.show();
+
 		return false;
 	}
 
@@ -1242,6 +1275,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				catch (IllegalArgumentException e)
 				{
 				}
+				return true;
+			}
+			case R.id.action_mapobject_navigate:
+			{
+				application.startNavigation(application.getMapObject(mapObjectSelected));				
+				return true;				
 			}
 		}
 		return false;
@@ -1250,8 +1289,18 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void onMenuModeChange(MenuBuilder builder)
 	{
-		// TODO Auto-generated method stub
+	}
 
+	@Override
+	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
+	{
+		mapObjectSelected = -1;		
+	}
+
+	@Override
+	public boolean onOpenSubMenu(MenuBuilder menu)
+	{
+		return false;
 	}
 
 	private void wait(final Waitable w)

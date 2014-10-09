@@ -1750,6 +1750,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.commit();
 	}
 
+	public void startNavigation(MapObject mapObject)
+	{
+		Intent i = new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT_WITH_ID);
+		i.putExtra(NavigationService.EXTRA_ID, mapObject._id);
+		startService(i);
+	}
+
 	public void startNavigation(Route route)
 	{
 		startNavigation(route, 0, -1);

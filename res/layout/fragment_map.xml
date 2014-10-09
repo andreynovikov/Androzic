@@ -145,5 +145,12 @@
     <include layout="@layout/inc_trackdetails" />
 
     <include layout="@layout/inc_wait" />
+    
+	<View
+	    android:id="@+id/anchor"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:background="@android:color/transparent"
+        android:visibility="gone" />
 
 </RelativeLayout>

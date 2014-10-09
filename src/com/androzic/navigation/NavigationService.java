@@ -259,7 +259,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 		return navRoute != null;
 	}
 
-	public void navigateTo(final MapObject waypoint)
+	private void navigateTo(final MapObject waypoint)
 	{
 		clearNavigation();
 		connect();
@@ -274,7 +274,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 			calculateNavigationStatus(lastKnownLocation, 0, 0);
 	}
 
-	public void navigateTo(final Route route, final int direction)
+	private void navigateTo(final Route route, final int direction)
 	{
 		clearNavigation();
 		connect();

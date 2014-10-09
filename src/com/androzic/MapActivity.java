@@ -126,7 +126,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 	private int waypointSelected = -1;
 	private int routeSelected = -1;
-	private long mapObjectSelected = -1;
 
 	private ILocationService locationService = null;
 	public NavigationService navigationService = null;
@@ -203,10 +202,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		rteQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
 		rteQuickAction.addActionItem(new ActionItem(qaNavigateToWaypoint, getString(R.string.menu_thisnavpoint), resources.getDrawable(R.drawable.ic_action_directions)));
 		rteQuickAction.setOnActionItemClickListener(routeActionItemClickListener);
-
-		mobQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
-		mobQuickAction.addActionItem(new ActionItem(qaNavigateToMapObject, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_directions)));
-		mobQuickAction.setOnActionItemClickListener(mapObjectActionItemClickListener);
 
 		trackBar.setOnSeekBarChangeListener(this);
 
@@ -556,13 +551,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		}
 	}
 
-	public boolean mapObjectTapped(long id, int x, int y)
-	{
-		mapObjectSelected = id;
-		mobQuickAction.show(map, x, y);
-		return true;
-	}
-
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu)
 	{
@@ -624,20 +612,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 					break;
 			}
 			waypointSelected = -1;
-		}
-	};
-
-	private OnActionItemClickListener mapObjectActionItemClickListener = new OnActionItemClickListener() {
-		@Override
-		public void onItemClick(QuickAction3D source, int pos, int actionId)
-		{
-			switch (actionId)
-			{
-				case qaNavigateToMapObject:
-					navigationService.navigateTo(application.getMapObject(mapObjectSelected));
-					break;
-			}
-			mapObjectSelected = -1;
 		}
 	};
 
@@ -863,7 +837,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 		waypointSelected = savedInstanceState.getInt("waypointSelected");
 		routeSelected = savedInstanceState.getInt("routeSelected");
-		mapObjectSelected = savedInstanceState.getLong("mapObjectSelected");
 
 		/*
 		 * double[] distAncor = savedInstanceState.getDoubleArray("distAncor");
@@ -888,7 +861,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 		outState.putInt("waypointSelected", waypointSelected);
 		outState.putInt("routeSelected", routeSelected);
-		outState.putLong("mapObjectSelected", mapObjectSelected);
 
 		if (application.overlayManager.distanceOverlay != null)
 		{
@@ -943,5 +915,12 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	@Override
 	public void updateFileInfo()
 	{
+	}
+
+	@Override
+	public boolean mapObjectTapped(long id, int x, int y)
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
