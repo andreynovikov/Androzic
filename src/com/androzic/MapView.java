@@ -413,7 +413,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			currentLocation[1] = loc.getLongitude();
 			currentLocationXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
 
-			lookAheadB = Math.round(bearing / 10) * 10;
+			float turn = lookAheadB - bearing;
+			if (Math.abs(turn) > 180)
+			{
+				turn = turn - Math.signum(turn) * 360;
+			}
+			if (Math.abs(turn) > 10)
+				lookAheadB = bearing;
 
 			long lastLocationMillis = loc.getTime();
 
