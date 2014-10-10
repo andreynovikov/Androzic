@@ -158,14 +158,17 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 	private boolean animationSet;
 
+	public MapFragment()
+	{
+		application = Androzic.getApplication();
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
-
-		application = Androzic.getApplication();
 
 		finishHandler = new FinishHandler(this);
 	}

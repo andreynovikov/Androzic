@@ -51,12 +51,16 @@ public class GPSInfo extends DialogFragment
 
 	protected Animation shake;
 
+	public GPSInfo()
+	{
+		application = Androzic.getApplication();
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-		application = Androzic.getApplication();
 	}
 
 	@SuppressLint("InflateParams")
