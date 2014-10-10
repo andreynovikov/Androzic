@@ -18,4 +18,5 @@
 <color name="gpsdisabled">#FFFF6666</color>
 <color name="gpsworking">#FFFFFFFF</color>
 <color name="scalebar">#FF000000</color>
+<color name="scalebarbg">#AAFFFFFF</color>
 </resources>

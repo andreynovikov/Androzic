@@ -45,17 +45,17 @@ import com.androzic.data.Waypoint;
 
 public class RouteOverlay extends MapOverlay
 {
-	Paint linePaint;
-	Paint borderPaint;
-	Paint fillPaint;
-	Paint textPaint;
-	Paint textFillPaint;
-	Route route;
-	Map<Waypoint, Bitmap> bitmaps;
+	private Paint linePaint;
+	private Paint borderPaint;
+	private Paint fillPaint;
+	private Paint textPaint;
+	private Paint textFillPaint;
+	private Route route;
+	private Map<Waypoint, Bitmap> bitmaps;
 
-	int pointWidth = 10;
-	int routeWidth = 2;
-	boolean showNames;
+	private int pointWidth = 10;
+	private int routeWidth = 2;
+	private boolean showNames;
 
 	private boolean preserveWidth = false;
 

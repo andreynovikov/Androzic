@@ -42,7 +42,9 @@
     <string name="pref_locale">locale</string>
 	<string name="pref_mapcrosscolor">mapcrosscolor</string>
     <string name="pref_scalebarcolor">scalecolor</string>
-	<string name="pref_cursorcolor">cursorcolor</string>
+    <string name="pref_scalebarbg">scalebg</string>
+    <string name="pref_scalebarbgcolor">scalebgcolor</string>
+    <string name="pref_cursorcolor">cursorcolor</string>
 	<string name="pref_cursorvector">cursorvector</string>
 	<string name="pref_cursorvectormlpr">cursorvectormlpr</string>
 	<string name="pref_showsatinfo">showsatinfo</string>

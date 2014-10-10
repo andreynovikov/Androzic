@@ -291,8 +291,11 @@
     <string name="pref_locale_title">Language</string>
     <string name="pref_show_title">Display</string>
 	<string name="pref_mapcrosscolor_title">Position cross color</string>
-    <string name="pref_scalebarcolor_title">Scale bar color</string>
-	<string name="pref_cursor_title">Moving cursor</string>
+    <string name="pref_scalebar_title">Scale bar</string>
+	<string name="pref_scalebarcolor_title">Scale bar color</string>
+    <string name="pref_scalebarbg_title">Draw scale bar background</string>
+    <string name="pref_scalebarbgcolor_title">Scale bar background color</string>
+    <string name="pref_cursor_title">Moving cursor</string>
     <string name="pref_cursorcolor_title">Active color</string>	
 	<string name="pref_cursorvector_title">Vector line type</string>
 	<string name="pref_cursorvector_summary">Select base for vector line length</string>
