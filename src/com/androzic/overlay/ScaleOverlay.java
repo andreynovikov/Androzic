@@ -206,7 +206,7 @@ public class ScaleOverlay extends MapOverlay
 			int httw = rect.width() / 2;
 			int th = rect.height();
 			int bt = cty > 0 ? cy : cy + cty - th;
-			int bb = cty > 0 ? cy + 10 + cty : cy + 10;
+			int bb = cty > 0 ? cy + cty : cy + 10;
 			rect = new Rect(cx-htw, bt, cx+x3+httw, bb);
 			rect.inset(-2, -2);
 			c.drawRect(rect, fillPaint);
