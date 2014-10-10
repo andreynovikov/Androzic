@@ -418,14 +418,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		{
 			updateCallback.postDelayed(this, updatePeriod);
 
-			if (application.lastKnownLocation == null)
-			{
-				// TODO Should we do anything else here?
-				return;
-			}
-
-			map.setLocation(application.lastKnownLocation);
-
 			if (application.gpsEnabled)
 			{
 				if (!map.isFixed())
@@ -474,6 +466,11 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					getActivity().supportInvalidateOptionsMenu();
 				}
 			}
+
+			if (application.lastKnownLocation == null)
+				return;
+
+			map.setLocation(application.lastKnownLocation);
 
 			double s = application.lastKnownLocation.getSpeed() * speedFactor;
 			double e = application.lastKnownLocation.getAltitude() * elevationFactor;
