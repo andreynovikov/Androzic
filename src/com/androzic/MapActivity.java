@@ -21,12 +21,9 @@
 package com.androzic;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Stack;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,23 +41,18 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -74,10 +66,8 @@ import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
-import com.androzic.util.Astro;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
-import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointProperties;
 
 public class MapActivity extends ActionBarActivity implements MapHolder, View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener
@@ -91,7 +81,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 	private static final int qaAddWaypointToRoute = 1;
 	private static final int qaNavigateToWaypoint = 2;
-	private static final int qaNavigateToMapObject = 2;
 
 	// main preferences
 	protected String precisionFormat = "%.0f";
@@ -101,9 +90,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	protected String elevationAbbr;
 	protected int renderInterval;
 	protected int magInterval;
-	protected boolean autoDim;
-	protected int dimInterval;
-	protected int dimValue;
 	protected int showDistance;
 	protected boolean showAccuracy;
 	protected boolean followOnLocation;
@@ -117,8 +103,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	protected MapView map;
 	protected QuickAction3D wptQuickAction;
 	protected QuickAction3D rteQuickAction;
-	protected QuickAction3D mobQuickAction;
-	private ViewGroup dimView;
 
 	protected Androzic application;
 
@@ -132,7 +116,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 	private Location lastKnownLocation;
 	protected long lastRenderTime = 0;
-	protected long lastDim = 0;
 	protected long lastMagnetic = 0;
 	private boolean lastGeoid = true;
 
@@ -207,8 +190,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 		map.initialize(application, this);
 
-		dimView = new RelativeLayout(this);
-
 		// set activity preferences
 		onSharedPreferenceChanged(settings, getString(R.string.pref_exit));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
@@ -226,14 +207,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			onNewIntent(getIntent());
 
 		ready = true;
-	}
-
-	@Override
-	protected void onStart()
-	{
-		super.onStart();
-		Log.e(TAG, "onStart()");
-		((ViewGroup) getWindow().getDecorView()).addView(dimView);
 	}
 
 	@Override
@@ -265,9 +238,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		followOnLocation = settings.getBoolean(getString(R.string.pref_mapfollowonloc), resources.getBoolean(R.bool.def_mapfollowonloc));
 		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
 		showDistance = Integer.parseInt(settings.getString(getString(R.string.pref_showdistance_int), getString(R.string.def_showdistance)));
-		autoDim = settings.getBoolean(getString(R.string.pref_mapdim), resources.getBoolean(R.bool.def_mapdim));
-		dimInterval = settings.getInt(getString(R.string.pref_mapdiminterval), resources.getInteger(R.integer.def_mapdiminterval)) * 1000;
-		dimValue = settings.getInt(getString(R.string.pref_mapdimvalue), resources.getInteger(R.integer.def_mapdimvalue));
 
 		map.setHideOnDrag(settings.getBoolean(getString(R.string.pref_maphideondrag), resources.getBoolean(R.bool.def_maphideondrag)));
 		map.setStrictUnfollow(!settings.getBoolean(getString(R.string.pref_unfollowontap), resources.getBoolean(R.bool.def_unfollowontap)));
@@ -294,19 +264,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		onSharedPreferenceChanged(settings, getString(R.string.pref_wakelock));
 		map.setKeepScreenOn(keepScreenOn);
 
-		// TODO move into application
-		if (lastKnownLocation != null)
-		{
-			if (lastKnownLocation.getProvider().equals(LocationManager.GPS_PROVIDER))
-			{
-				dimScreen(lastKnownLocation);
-			}
-			else if (lastKnownLocation.getProvider().equals(LocationManager.NETWORK_PROVIDER))
-			{
-				dimScreen(lastKnownLocation);
-			}
-		}
-
 		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_LOCATING_STATUS));
 		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_TRACKING_STATUS));
 
@@ -326,14 +283,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 
 		unregisterReceiver(broadcastReceiver);
 		map.pause();
-	}
-
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		Log.e(TAG, "onStop()");
-		((ViewGroup) getWindow().getDecorView()).removeView(dimView);
 	}
 
 	@Override
@@ -475,15 +424,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	{
 	}
 
-	protected void dimScreen(Location location)
-	{
-		int color = Color.TRANSPARENT;
-		Calendar now = GregorianCalendar.getInstance(TimeZone.getDefault());
-		if (autoDim && !Astro.isDaytime(application.getZenith(), location, now))
-			color = dimValue << 57; // value * 2 and shifted to transparency octet
-		dimView.setBackgroundColor(color);
-	}
-
 	public boolean waypointTapped(Waypoint waypoint, int x, int y)
 	{
 		try
@@ -493,28 +433,13 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				routeSelected = -1;
 				waypointSelected = application.getWaypointIndex(waypoint);
 				wptQuickAction.show(map, x, y);
-				return true;
-			}
-			else
-			{
-				Location loc = application.getLocationAsLocation();
-		        FragmentManager fm = getSupportFragmentManager();
-		        WaypointInfo waypointInfo = (WaypointInfo) fm.findFragmentByTag("waypoint_info");
-		        if (waypointInfo == null)
-		        	waypointInfo = new WaypointInfo();
-		        waypointInfo.setWaypoint(waypoint);
-				Bundle args = new Bundle();
-				args.putDouble("lat", loc.getLatitude());
-				args.putDouble("lon", loc.getLongitude());
-				waypointInfo.setArguments(args);
-				waypointInfo.show(fm, "waypoint_info");
-				return true;
 			}
 		}
 		catch (Exception e)
 		{
 			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -832,7 +757,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		lastKnownLocation = savedInstanceState.getParcelable("lastKnownLocation");
 		lastRenderTime = savedInstanceState.getLong("lastRenderTime");
 		lastMagnetic = savedInstanceState.getLong("lastMagnetic");
-		lastDim = savedInstanceState.getLong("lastDim");
 		lastGeoid = savedInstanceState.getBoolean("lastGeoid");
 
 		waypointSelected = savedInstanceState.getInt("waypointSelected");
@@ -856,7 +780,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		outState.putParcelable("lastKnownLocation", lastKnownLocation);
 		outState.putLong("lastRenderTime", lastRenderTime);
 		outState.putLong("lastMagnetic", lastMagnetic);
-		outState.putLong("lastDim", lastDim);
 		outState.putBoolean("lastGeoid", lastGeoid);
 
 		outState.putInt("waypointSelected", waypointSelected);
@@ -920,7 +843,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	@Override
 	public boolean mapObjectTapped(long id, int x, int y)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

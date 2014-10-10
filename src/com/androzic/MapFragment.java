@@ -22,7 +22,9 @@ package com.androzic;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,6 +39,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Location;
 import android.net.Uri;
@@ -73,6 +76,7 @@ import com.androzic.location.LocationService;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteDetails;
+import com.androzic.util.Astro;
 import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.StringFormatter;
@@ -94,6 +98,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private boolean followOnLocation;
 	private boolean keepScreenOn;
 	private int showDistance;
+	private boolean autoDim;
+	private int dimInterval;
+	private int dimValue;
 
 	private String precisionFormat = "%.0f";
 	private double speedFactor;
@@ -130,6 +137,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private TextView xtkUnit;
 
 	private TextView waitBar;
+
+	private ViewGroup dimView;
 	private View anchor;
 
 	Androzic application;
@@ -214,6 +223,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	{
 		super.onAttach(activity);
 		
+		dimView = new RelativeLayout(getActivity());
+
 		// This makes sure that the container activity has implemented
 		// the callback interface. If not, it throws an exception
 		try
@@ -235,6 +246,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
+	public void onStart()
+	{
+		super.onStart();
+		Log.e(TAG, "onStart()");
+		((ViewGroup) getActivity().getWindow().getDecorView()).addView(dimView);
+	}
+
+	@Override
 	public void onResume()
 	{
 		super.onResume();
@@ -246,6 +265,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_showdistance_int));
 
 		onSharedPreferenceChanged(settings, getString(R.string.pref_maphideondrag));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdiminterval));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdimvalue));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdim));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unfollowontap));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_lookahead));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapbest));
@@ -297,6 +319,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		updateCallback.removeCallbacks(updateUI);
 
 		PreferenceManager.getDefaultSharedPreferences(application).unregisterOnSharedPreferenceChangeListener(this);
+	}
+
+	@Override
+	public void onStop()
+	{
+		super.onStop();
+		Log.e(TAG, "onStop()");
+		((ViewGroup) getActivity().getWindow().getDecorView()).removeView(dimView);
 	}
 
 	@Override
@@ -472,14 +502,11 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 			updateGPSStatus();
 
-			// auto dim
-			/*
-			 * if (autoDim && dimInterval > 0 && lastLocationMillis - lastDim >= dimInterval)
-			 * {
-			 * dimScreen(location);
-			 * lastDim = lastLocationMillis;
-			 * }
-			 */
+			if (autoDim && dimInterval > 0 && application.lastKnownLocation.getTime() - lastDim >= dimInterval)
+			{
+				dimScreen();
+				lastDim = application.lastKnownLocation.getTime();
+			}
 		}
 	};
 
@@ -897,6 +924,18 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		});
 	}
 
+	private void dimScreen()
+	{
+		int color = Color.TRANSPARENT;
+		if (autoDim && application.lastKnownLocation != null)
+		{
+			Calendar now = GregorianCalendar.getInstance(TimeZone.getDefault());
+			if (!Astro.isDaytime(application.getZenith(), application.lastKnownLocation, now))
+				color = dimValue << 57; // value * 2 and shifted to transparency octet
+		}
+		dimView.setBackgroundColor(color);
+	}
+
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
@@ -921,6 +960,19 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		else if (getString(R.string.pref_maphideondrag).equals(key))
 		{
 			map.setHideOnDrag(sharedPreferences.getBoolean(getString(R.string.pref_maphideondrag), resources.getBoolean(R.bool.def_maphideondrag)));
+		}
+		else if (getString(R.string.pref_mapdiminterval).equals(key))
+		{
+			dimInterval = sharedPreferences.getInt(getString(R.string.pref_mapdiminterval), resources.getInteger(R.integer.def_mapdiminterval)) * 1000;
+		}
+		else if (getString(R.string.pref_mapdimvalue).equals(key))
+		{
+			dimValue = sharedPreferences.getInt(getString(R.string.pref_mapdimvalue), resources.getInteger(R.integer.def_mapdimvalue));
+		}		
+		else if (getString(R.string.pref_mapdim).equals(key))
+		{
+			autoDim = sharedPreferences.getBoolean(getString(R.string.pref_mapdim), resources.getBoolean(R.bool.def_mapdim));
+			dimScreen();
 		}
 		else if (getString(R.string.pref_unfollowontap).equals(key))
 		{
