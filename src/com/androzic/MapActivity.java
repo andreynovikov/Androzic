@@ -30,19 +30,11 @@ import java.util.concurrent.Executors;
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction3D;
 import net.londatiga.android.QuickAction3D.OnActionItemClickListener;
-
-import org.miscwidgets.widget.Panel;
-
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.graphics.LightingColorFilter;
-import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -59,8 +51,6 @@ import android.widget.TextView;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
-import com.androzic.location.ILocationService;
-import com.androzic.location.LocationService;
 import com.androzic.map.MapInformation;
 import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.RouteOverlay;
@@ -70,7 +60,7 @@ import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
 import com.androzic.waypoint.WaypointProperties;
 
-public class MapActivity extends ActionBarActivity implements MapHolder, View.OnClickListener, OnSharedPreferenceChangeListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener
+public class MapActivity extends ActionBarActivity implements MapHolder, View.OnClickListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener
 {
 	private static final String TAG = "MapActivity";
 
@@ -111,16 +101,12 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	private int waypointSelected = -1;
 	private int routeSelected = -1;
 
-	private ILocationService locationService = null;
 	public NavigationService navigationService = null;
 
-	private Location lastKnownLocation;
 	protected long lastRenderTime = 0;
 	protected long lastMagnetic = 0;
-	private boolean lastGeoid = true;
 
 	private boolean isFullscreen;
-	private boolean keepScreenOn;
 	LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF555555);
 
 	protected boolean ready = false;
@@ -152,8 +138,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		application.setMapHolder(this);
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		setRequestedOrientation(Integer.parseInt(settings.getString(getString(R.string.pref_orientation), "-1")));
-		settings.registerOnSharedPreferenceChangeListener(this);
 		Resources resources = getResources();
 
 		if (settings.getBoolean(getString(R.string.pref_hideactionbar), resources.getBoolean(R.bool.def_hideactionbar)))
@@ -189,19 +173,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		trackBar.setOnSeekBarChangeListener(this);
 
 		map.initialize(application, this);
-
-		// set activity preferences
-		onSharedPreferenceChanged(settings, getString(R.string.pref_exit));
-		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
-		// set map preferences
-		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
-		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
-		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdrawborder));
-		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorcolor));
-		onSharedPreferenceChanged(settings, getString(R.string.pref_grid_mapshow));
-		onSharedPreferenceChanged(settings, getString(R.string.pref_grid_usershow));
-		onSharedPreferenceChanged(settings, getString(R.string.pref_grid_preference));
-		onSharedPreferenceChanged(settings, getString(R.string.pref_panelactions));
 
 		if (getIntent().getExtras() != null)
 			onNewIntent(getIntent());
@@ -239,50 +210,12 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
 		showDistance = Integer.parseInt(settings.getString(getString(R.string.pref_showdistance_int), getString(R.string.def_showdistance)));
 
-		map.setHideOnDrag(settings.getBoolean(getString(R.string.pref_maphideondrag), resources.getBoolean(R.bool.def_maphideondrag)));
-		map.setStrictUnfollow(!settings.getBoolean(getString(R.string.pref_unfollowontap), resources.getBoolean(R.bool.def_unfollowontap)));
-		map.setLookAhead(settings.getInt(getString(R.string.pref_lookahead), resources.getInteger(R.integer.def_lookahead)));
-		map.setBestMapEnabled(settings.getBoolean(getString(R.string.pref_mapbest), resources.getBoolean(R.bool.def_mapbest)));
-		map.setBestMapInterval(settings.getInt(getString(R.string.pref_mapbestinterval), resources.getInteger(R.integer.def_mapbestinterval)) * 1000);
-		map.setCursorVector(Integer.parseInt(settings.getString(getString(R.string.pref_cursorvector), getString(R.string.def_cursorvector))),
-				settings.getInt(getString(R.string.pref_cursorvectormlpr), resources.getInteger(R.integer.def_cursorvectormlpr)));
-		map.setProximity(Integer.parseInt(settings.getString(getString(R.string.pref_navigation_proximity), getString(R.string.def_navigation_proximity))));
-
 		// prepare views
 		findViewById(R.id.editroute).setVisibility(application.editingRoute != null ? View.VISIBLE : View.GONE);
 		if (application.editingTrack != null)
 		{
 			startEditTrack(application.editingTrack);
 		}
-
-		if (settings.getBoolean(getString(R.string.ui_drawer_open), false))
-		{
-			Panel panel = (Panel) findViewById(R.id.panel);
-			panel.setOpen(true, false);
-		}
-
-		onSharedPreferenceChanged(settings, getString(R.string.pref_wakelock));
-		map.setKeepScreenOn(keepScreenOn);
-
-		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_LOCATING_STATUS));
-		registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_TRACKING_STATUS));
-
-		application.updateLocationMaps(true, map.isBestMapEnabled());
-
-		map.resume();
-		map.updateMapInfo();
-		map.update();
-		map.requestFocus();
-	}
-
-	@Override
-	protected void onPause()
-	{
-		super.onPause();
-		Log.e(TAG, "onPause()");
-
-		unregisterReceiver(broadcastReceiver);
-		map.pause();
 	}
 
 	@Override
@@ -291,8 +224,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		super.onDestroy();
 		Log.e(TAG, "onDestroy()");
 		ready = false;
-
-		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 
 		if (isFinishing() && !restarting)
 		{
@@ -304,25 +235,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		application = null;
 		map = null;
 	}
-
-	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			String action = intent.getAction();
-			Log.e(TAG, "Broadcast: " + action);
-			if (action.equals(LocationService.BROADCAST_TRACKING_STATUS))
-			{
-				//updateMapButtons();
-			}
-			else if (action.equals(LocationService.BROADCAST_LOCATING_STATUS))
-			{
-				//updateMapButtons();
-				if (locationService != null && !locationService.isLocating())
-					map.clearLocation();
-			}
-		}
-	};
 
 	public void updateMap()
 	{
@@ -747,87 +659,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar)
 	{
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState)
-	{
-		super.onRestoreInstanceState(savedInstanceState);
-		Log.e(TAG, "onRestoreInstanceState()");
-		lastKnownLocation = savedInstanceState.getParcelable("lastKnownLocation");
-		lastRenderTime = savedInstanceState.getLong("lastRenderTime");
-		lastMagnetic = savedInstanceState.getLong("lastMagnetic");
-		lastGeoid = savedInstanceState.getBoolean("lastGeoid");
-
-		waypointSelected = savedInstanceState.getInt("waypointSelected");
-		routeSelected = savedInstanceState.getInt("routeSelected");
-
-		/*
-		 * double[] distAncor = savedInstanceState.getDoubleArray("distAncor");
-		 * if (distAncor != null)
-		 * {
-		 * application.distanceOverlay = new DistanceOverlay(this);
-		 * application.distanceOverlay.setAncor(distAncor);
-		 * }
-		 */
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState)
-	{
-		super.onSaveInstanceState(outState);
-		Log.e(TAG, "onSaveInstanceState()");
-		outState.putParcelable("lastKnownLocation", lastKnownLocation);
-		outState.putLong("lastRenderTime", lastRenderTime);
-		outState.putLong("lastMagnetic", lastMagnetic);
-		outState.putBoolean("lastGeoid", lastGeoid);
-
-		outState.putInt("waypointSelected", waypointSelected);
-		outState.putInt("routeSelected", routeSelected);
-
-		if (application.overlayManager.distanceOverlay != null)
-		{
-			outState.putDoubleArray("distAncor", application.overlayManager.distanceOverlay.getAncor());
-		}
-	}
-
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-	{
-		Resources resources = getResources();
-		// application preferences
-		if (getString(R.string.pref_orientation).equals(key))
-		{
-			setRequestedOrientation(Integer.parseInt(sharedPreferences.getString(key, "-1")));
-		}
-		// activity preferences
-		else if (getString(R.string.pref_wakelock).equals(key))
-		{
-			keepScreenOn = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_wakelock));
-			android.view.Window wnd = getWindow();
-			if (wnd != null)
-			{
-				if (keepScreenOn)
-					wnd.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-				else
-					wnd.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-			}
-		}
-		else if (getString(R.string.pref_exit).equals(key))
-		{
-			exitConfirmation = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			//secondBack = false;
-		}
-		else if (getString(R.string.pref_unitprecision).equals(key))
-		{
-			boolean precision = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_unitprecision));
-			precisionFormat = precision ? "%.1f" : "%.0f";
-		}
-		// map preferences
-		else if (getString(R.string.pref_cursorcolor).equals(key))
-		{
-			map.setCursorColor(sharedPreferences.getInt(key, resources.getColor(R.color.cursor)));
-		}
 	}
 
 	@Override

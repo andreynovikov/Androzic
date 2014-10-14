@@ -77,12 +77,5 @@
             android:name="resource"
             android:value="pref_general" />
     </header>
-    <header
-        androzic:fragment="com.androzic.PreferencesHC$ApplicationPreferencesFragment"
-        androzic:title="@string/pref_application_title" >
-        <extra
-            android:name="resource"
-            android:value="pref_application" />
-    </header>
 
 </preference-headers>

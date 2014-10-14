@@ -3,6 +3,7 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     
+    <string name="playuri">market://details?id=com.androzic.donate</string>
     <string name="paypaluri">https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=novikov@gmail.com&amp;lc=GB&amp;item_name=Androzic&amp;currency_code=USD&amp;bn=PP-DonationsBF:btn_donateCC_LG_global.gif:NonHosted</string>
     <string name="googleplusuri">https://plus.google.com/communities/104267455273813373911</string>
     <string name="facebookuri">http://www.facebook.com/androzic</string>
@@ -91,15 +92,6 @@
 	<string name="pref_navigation_proximitycircle">navigation_proximitycircle</string>
 	<string name="pref_navigation_linecolor">navigation_linecolor</string>
 	<string name="pref_navigation_linewidth">navigation_linewidth_int</string>
-	<string name="pref_about">about</string>
-	<string name="pref_donategoogle">donategoogle</string>
-	<string name="pref_donatepaypal">donatepaypal</string>
-	<string name="pref_faq">faq</string>
-	<string name="pref_feature">feature</string>
-	<string name="pref_googleplus">googleplus</string>
-	<string name="pref_facebook">facebook</string>
-	<string name="pref_twitter">twitter</string>
-	<string name="pref_credits">credits</string>
 																																													
 	<string name="def_cursorvector">1</string>
 	<string name="def_showdistance">1</string>
@@ -112,7 +104,6 @@
 	<string name="def_folder_data">Androzic/data</string>
 	<string name="def_folder_prefix">Androzic</string>
 	<string name="def_onlinemap">osm</string>
-	<string name="def_panelactions">zoomin,zoomout,nextmap,prevmap,locate,tracking,info,follow</string>
 		
 	<string name="app_eulaaccepted">app_eulaaccepted</string>
 	<string name="app_lastuid">app_lastuid</string>

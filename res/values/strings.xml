@@ -27,13 +27,25 @@
     <string name="coordinates_name">New coordinates</string>
     <string name="maplist_name">Maps</string>
     <string name="search_name">Search results</string>
-    <string name="credits_name">Application credits</string>
     <string name="widget_name">Androzic Location</string>
     
-    <string name="version">Version: %s</string>
-    <string name="homepage">Homepage: http://androzic.com/</string>
-    <string name="send_me_bugs">If you run into bug which you want to get fixed or have any suggestion, don\'t hesitate to use issue tracker on project\'s homepage.</string>
     <string name="search_hint">Enter address or name</string>
+
+    <string name="version" formatted="false">Version: %s (build %d)</string>
+    <string name="homepage">Homepage</string>
+    <string name="faq">F.A.Q.</string>
+    <string name="feedback">Feedback and support</string>
+    <string name="about"><b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required). Works with SAS.Planet maps cache.</string>
+    <string name="donations">Donations</string>
+    <string name="donate">If you like this application you can donate for the further development using one of the following methods:</string>
+    <string name="donate_google">Donate via Google Play Store</string>
+	<string name="donate_paypal">Donate via PayPal</string>
+	<string name="communities">Communities</string>
+	<string name="googleplus">Google+</string>
+	<string name="facebook">Facebook</string>
+	<string name="twitter">Twitter</string>
+	<string name="license">License</string>
+	<string name="credits">Credits</string>
     
     <string name="msg_wait">Please wait&#8230;</string>
     <string name="msg_scansdcard">Scanning SD card</string>
@@ -374,17 +386,6 @@
 	<string name="pref_navigation_linecolor_title">Bearing line color</string>
 	<string name="pref_navigation_linewidth_title">Bearing line width</string>
 	<string name="pref_navigation_linewidth_summary">Width of a bearing line to current navigation waypoint</string>
-	<string name="pref_application_title">About and feedback</string>
-	<string name="pref_about_title">About Androzic</string>
-	<string name="pref_donate_google_title">Donate via Google Play Store</string>
-	<string name="pref_donate_paypal_title">Donate via PayPal</string>
-	<string name="pref_faq_title">F.A.Q.</string>
-	<string name="pref_feature_title">Feedback and support</string>
-	<string name="pref_googleplus_title">Join on Google+</string>
-	<string name="pref_facebook_title">Like on Facebook</string>
-	<string name="pref_twitter_title">Follow on Twitter</string>
-	<string name="pref_uri_summary">Press to follow a link to web site</string>
-	<string name="pref_credits_title">Credits</string>
 
 	<string name="notif_loc_short">Locating</string>
 	<string name="notif_loc_waiting">Androzic is waiting for location</string>

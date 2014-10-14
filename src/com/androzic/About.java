@@ -27,6 +27,10 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,16 +102,105 @@ public class About extends DialogFragment
 
 	private void updateAboutInfo(View view)
 	{
-		final TextView versionLabel = (TextView) view.findViewById(R.id.version_label);
+		// version
 		String versionName = null;
+		int versionBuild = 0;
 		try
 		{
 			versionName = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+			versionBuild = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionCode;
 		}
 		catch (NameNotFoundException ex)
 		{
 			versionName = "unable to retreive version";
 		}
-		versionLabel.setText(getString(R.string.version, versionName));
+		final TextView version = (TextView) view.findViewById(R.id.version);
+		version.setText(getString(R.string.version, versionName, versionBuild));
+
+		// home links
+		StringBuilder links = new StringBuilder();
+		links.append("<a href=\"");
+		links.append(": http://androzic.com");
+		links.append("\">");
+		links.append(getString(R.string.homepage));
+		links.append("</a><br /><a href=\"");
+		links.append(getString(R.string.faquri));
+		links.append("\">");
+		links.append(getString(R.string.faq));
+		links.append("</a><br /><a href=\"");
+		links.append(getString(R.string.featureuri));	
+		links.append("\">");
+		links.append(getString(R.string.feedback));
+		links.append("</a>");
+		final TextView homelinks = (TextView) view.findViewById(R.id.homelinks);
+		homelinks.setText(Html.fromHtml(links.toString()));
+		homelinks.setMovementMethod(LinkMovementMethod.getInstance());
+		
+		// community links
+		StringBuilder communities = new StringBuilder();
+		communities.append("<a href=\"");
+		communities.append(getString(R.string.googleplusuri));
+		communities.append("\">");
+		communities.append(getString(R.string.googleplus));
+		communities.append("</a><br /><a href=\"");
+		communities.append(getString(R.string.facebookuri));
+		communities.append("\">");
+		communities.append(getString(R.string.facebook));
+		communities.append("</a><br /><a href=\"");
+		communities.append(getString(R.string.twitteruri));
+		communities.append("\">");
+		communities.append(getString(R.string.twitter));
+		communities.append("</a>");
+		final TextView communitylinks = (TextView) view.findViewById(R.id.communitylinks);
+		communitylinks.setText(Html.fromHtml(communities.toString()));
+		communitylinks.setMovementMethod(LinkMovementMethod.getInstance());
+		
+		// donations
+		StringBuilder donations = new StringBuilder();
+		donations.append("<a href=\"");
+		donations.append(getString(R.string.playuri));
+		donations.append("\">");
+		donations.append(getString(R.string.donate_google));
+		donations.append("</a><br /><a href=\"");
+		donations.append(getString(R.string.paypaluri));
+		donations.append("\">");
+		donations.append(getString(R.string.donate_paypal));
+		donations.append("</a>");
+		
+		final TextView donationlinks = (TextView) view.findViewById(R.id.donationlinks);
+		donationlinks.setText(Html.fromHtml(donations.toString()));
+		donationlinks.setMovementMethod(LinkMovementMethod.getInstance());
+		
+		Androzic application = Androzic.getApplication();
+		if (application.isPaid)
+		{
+			view.findViewById(R.id.donations).setVisibility(View.GONE);
+			view.findViewById(R.id.donationtext).setVisibility(View.GONE);
+			donationlinks.setVisibility(View.GONE);
+		}
+
+		// license
+		final SpannableString message = new SpannableString(Html.fromHtml(getString(R.string.app_eula).replace("/n", "<br/>")));
+		Linkify.addLinks(message, Linkify.WEB_URLS);
+		final TextView license = (TextView) view.findViewById(R.id.license);
+		license.setText(message);
+		license.setMovementMethod(LinkMovementMethod.getInstance());
+
+		// credits
+		String[] names = getResources().getStringArray(R.array.credit_names);
+		String[] merits = getResources().getStringArray(R.array.credit_merits);
+
+		StringBuilder credits = new StringBuilder();
+		for (int i = 0; i < names.length; i++)
+		{
+			credits.append("<b>");
+			credits.append(merits[i]);
+			credits.append("</b> &mdash; ");
+			credits.append(names[i]);
+			credits.append("<br />");			
+		}
+		
+		final TextView creditlist = (TextView) view.findViewById(R.id.credits);
+		creditlist.setText(Html.fromHtml(credits.toString()));
 	}
 }

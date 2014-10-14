@@ -10,7 +10,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <!--  Left to remember how to use target API check -->
+    <!-- Left to remember how to use target API check -->
     <style name="MyActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:displayOptions" tools:targetApi="11">showHome|useLogo</item>
         <!-- Support library compatibility -->
@@ -26,6 +26,13 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/slider_back</item>
         <item name="android:layout_margin">3dp</item>
+    </style>
+
+    <style name="sectionHeader">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+		<item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
 </resources>
