@@ -14,9 +14,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
+            android:clickable="true"
             android:paddingBottom="10dip"
             android:text="@string/msg_dedicated"
-            android:textSize="9sp" />
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:paddingBottom="10dip"
+            android:contentDescription="@string/msg_dedicated"
+            android:src="@drawable/olya1"
+            android:visibility="gone" />
 
         <include layout="@layout/inc_logo" />
 
