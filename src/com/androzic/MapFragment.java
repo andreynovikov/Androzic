@@ -21,7 +21,9 @@
 package com.androzic;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -71,6 +73,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
 import com.androzic.location.LocationService;
 import com.androzic.navigation.NavigationService;
@@ -147,6 +150,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private FinishHandler finishHandler;
 	private Handler updateCallback = new Handler();
 
+	private int waypointSelected = -1;
 	private long mapObjectSelected = -1;
 
 	protected long lastRenderTime = 0;
@@ -166,6 +170,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		Log.e(TAG, "onCreate()");
+
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
@@ -176,6 +182,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
+		Log.e(TAG, "onCreateView()");
+
 		View view = inflater.inflate(R.layout.fragment_map, container, false);
 
 		coordinates = (TextView) view.findViewById(R.id.coordinates);
@@ -216,6 +224,13 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		mapZoom.setOnClickListener(this);
 		waypointName.setOnClickListener(this);
 
+		// set route edit button actions
+		view.findViewById(R.id.finishrouteedit).setOnClickListener(this);
+		view.findViewById(R.id.addpoint).setOnClickListener(this);
+		view.findViewById(R.id.insertpoint).setOnClickListener(this);
+		view.findViewById(R.id.removepoint).setOnClickListener(this);
+		view.findViewById(R.id.orderpoints).setOnClickListener(this);
+
 		application.setMapHolder(this);
 
 		return view;
@@ -225,6 +240,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	public void onAttach(Activity activity)
 	{
 		super.onAttach(activity);
+		Log.e(TAG, "onAttach()");
 		
 		dimView = new RelativeLayout(getActivity());
 
@@ -260,6 +276,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	public void onResume()
 	{
 		super.onResume();
+		Log.e(TAG, "onResume()");
+
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 		onSharedPreferenceChanged(settings, getString(R.string.pref_maprenderinterval));
@@ -287,6 +305,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 		PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(this);
 
+		updateEditStatus();
 		updateGPSStatus();
 		onUpdateNavigationState();
 		onUpdateNavigationStatus();
@@ -314,6 +333,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	public void onPause()
 	{
 		super.onPause();
+		Log.e(TAG, "onPause()");
 
 		application.unregisterReceiver(broadcastReceiver);
 		
@@ -336,6 +356,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	public void onDestroyView()
 	{
 		super.onDestroyView();
+		Log.e(TAG, "onDestroyView()");
 
 		map = null;
 		coordinates = null;
@@ -364,6 +385,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	public void onDestroy()
 	{
 		super.onDestroy();
+		Log.e(TAG, "onDestroy()");
 
 		application = null;
 	}
@@ -730,9 +752,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		{
 			if (application.editingRoute != null)
 			{
-				//routeSelected = -1;
-				//waypointSelected = application.getWaypointIndex(waypoint);
-				//wptQuickAction.show(map, x, y);
+				waypointSelected = application.getWaypointIndex(waypoint);
+				showPopupMenu(R.menu.routeeditwaypoint_menu, x, y);
 				return true;
 			}
 			else
@@ -748,43 +769,29 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
-	public boolean routeWaypointTapped(int route, int index, int x, int y)
+	public boolean routeWaypointTapped(Route route, int index, int x, int y)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if (route == application.editingRoute)
+		{
+			routeActionsCallback.onRouteWaypointEdit(route.getWaypoint(index));
+		}
+		else if (application.isNavigatingViaRoute() && application.navigationService.navRoute == route)
+		{
+			waypointSelected = index;
+			showPopupMenu(R.menu.routewaypointnavigationonmap_menu, x, y);
+		}
+		else
+		{
+			routeActionsCallback.onRouteDetails(route);
+		}
+		return true;
 	}
 
-	@SuppressLint("NewApi")
 	@Override
 	public boolean mapObjectTapped(long id, int x, int y)
 	{
 		mapObjectSelected = id;
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-		{
-			anchor.setX(x);
-			anchor.setY(y);
-		}
-		else
-		{
-			//TODO Test it!
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-			params.leftMargin = x;
-			params.topMargin = y;
-			anchor.setLayoutParams(params);
-		}
-
-		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
-		MenuBuilder menu;
-		MenuPopupHelper popup;
-		menu = new MenuBuilder(getActivity());
-		menu.setCallback(this);
-		popup = new MenuPopupHelper(getActivity(), menu, anchor);
-		popup.setForceShowIcon(true);
-		popup.setCallback(this);
-		new SupportMenuInflater(getActivity()).inflate(R.menu.mapobject_menu, menu);
-		popup.show();
-
+		showPopupMenu(R.menu.mapobject_menu, x, y);
 		return false;
 	}
 
@@ -849,6 +856,17 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		map.suspendBestMap();
 		map.updateMapInfo();
 		map.update();
+	}
+
+	private void updateEditStatus()
+	{
+		if (application.editingRoute != null)
+		{
+			getView().findViewById(R.id.editroute).setVisibility(View.VISIBLE);
+		//if (showDistance > 0)
+		//	application.overlayManager.distanceOverlay.setEnabled(false);
+			setFollowing(false);		
+		}
 	}
 
 	private void updateGPSStatus()
@@ -1098,15 +1116,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				break;
 			case R.id.coordinates:
 			{
-				// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
-				MenuBuilder mMenu;
-				MenuPopupHelper mPopup;
-				mMenu = new MenuBuilder(getActivity());
-				mMenu.setCallback(this);
-				mPopup = new MenuPopupHelper(getActivity(), mMenu, v);
-				mPopup.setForceShowIcon(true);
-				new SupportMenuInflater(getActivity()).inflate(R.menu.location_menu, mMenu);
-				mPopup.show();
+				showPopupMenu(R.menu.location_menu, v);
 				break;
 			}
 			case R.id.sats:
@@ -1141,6 +1151,52 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				{
 					routeActionsCallback.onRouteDetails(application.navigationService.navRoute);
 				}
+				break;
+			}
+			case R.id.addpoint:
+			{
+				double[] aloc = application.getMapCenter();
+				application.routeEditingWaypoints.push(application.editingRoute.addWaypoint("RWPT" + application.editingRoute.length(), aloc[0], aloc[1]));
+				break;
+			}
+			case R.id.insertpoint:
+			{
+				double[] iloc = application.getMapCenter();
+				application.routeEditingWaypoints.push(application.editingRoute.insertWaypoint("RWPT" + application.editingRoute.length(), iloc[0], iloc[1]));
+				break;
+			}
+			case R.id.removepoint:
+			{
+				if (!application.routeEditingWaypoints.empty())
+				{
+					application.editingRoute.removeWaypoint(application.routeEditingWaypoints.pop());
+				}
+				break;
+			}
+			case R.id.orderpoints:
+			{
+				//startActivityForResult(new Intent(this, RouteEdit.class).putExtra("INDEX", application.getRouteIndex(application.editingRoute)), RESULT_EDIT_ROUTE);
+				break;
+			}
+			case R.id.finishrouteedit:
+			{
+				if ("New route".equals(application.editingRoute.name))
+				{
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.getDefault());
+					application.editingRoute.name = formatter.format(new Date());
+				}
+				application.editingRoute.editing = false;
+				application.dispatchRoutePropertiesChanged(application.editingRoute);
+				application.editingRoute = null;
+				application.routeEditingWaypoints = null;
+				getView().findViewById(R.id.editroute).setVisibility(View.GONE);
+				updateGPSStatus();
+				if (showDistance == 2)
+				{
+					application.overlayManager.distanceOverlay.setEnabled(true);
+				}
+				updateMapViewArea();
+				map.requestFocus();
 				break;
 			}
 		}
@@ -1329,6 +1385,18 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				}
 				return true;
 			}
+			case R.id.action_add_to_route:
+			{
+				Waypoint wpt = application.getWaypoint(waypointSelected);
+				application.routeEditingWaypoints.push(application.editingRoute.addWaypoint(wpt.name, wpt.latitude, wpt.longitude));
+				map.invalidate();
+				return true;
+			}
+			case R.id.action_navigate:
+			{
+				application.navigationService.setRouteWaypoint(waypointSelected);
+				return true;				
+			}
 			case R.id.action_mapobject_navigate:
 			{
 				application.startNavigation(application.getMapObject(mapObjectSelected));				
@@ -1346,6 +1414,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
 	{
+		anchor.setVisibility(View.GONE);
+		waypointSelected = -1;
 		mapObjectSelected = -1;		
 	}
 
@@ -1353,6 +1423,41 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	public boolean onOpenSubMenu(MenuBuilder menu)
 	{
 		return false;
+	}
+
+	@SuppressLint("NewApi")
+	private void showPopupMenu(int resId, int x, int y)
+	{
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		{
+			anchor.setX(x);
+			anchor.setY(y);
+		}
+		else
+		{
+			//TODO Test it!
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params.leftMargin = x;
+			params.topMargin = y;
+			anchor.setLayoutParams(params);
+		}
+		anchor.setVisibility(View.VISIBLE);
+		showPopupMenu(resId, anchor);
+	}
+
+	private void showPopupMenu(int resId, View v)
+	{
+		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
+		MenuBuilder menu;
+		MenuPopupHelper popup;
+		Activity activity = getActivity();
+		menu = new MenuBuilder(activity);
+		menu.setCallback(this);
+		popup = new MenuPopupHelper(activity, menu, v);
+		popup.setCallback(this);
+		popup.setForceShowIcon(true);
+		new SupportMenuInflater(activity).inflate(resId, menu);
+		popup.show();
 	}
 
 	private void wait(final Waitable w)

@@ -184,9 +184,6 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 		{
 			View rootView = getView();
 
-			// waypoint = application.getRoute(route - 1).getWaypoints().get(index);
-			// waypoint = application.getWaypoint(index);
-
 			tabHost.setCurrentTabByTag(savedInstanceState.getString("tab"));
 
 			iconValue = savedInstanceState.getString("icon");
@@ -321,7 +318,11 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 					if (textColorValue != defTextColor)
 						waypoint.textcolor = textColorValue;
 
-					if (!fromRoute)
+					if (fromRoute)
+					{
+						//FIXME Clear route overlay cache
+					}
+					else
 					{
 						if (waypoint.set == null)
 						{

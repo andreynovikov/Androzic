@@ -224,6 +224,8 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 			case R.id.action_view:
     			route.show = true;
 				waypointActionsCallback.onWaypointView(route.getWaypoint(selectedKey));
+				// "Close" fragment
+				getFragmentManager().popBackStack();
 				return true;
 			case R.id.action_navigate:
 				if (navigation)

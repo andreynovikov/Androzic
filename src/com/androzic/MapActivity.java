@@ -23,13 +23,10 @@ package com.androzic;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction3D;
-import net.londatiga.android.QuickAction3D.OnActionItemClickListener;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,19 +45,14 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
 import com.androzic.map.MapInformation;
 import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.RouteOverlay;
-import com.androzic.route.RouteDetails;
-import com.androzic.route.RouteEdit;
 import com.androzic.util.StringFormatter;
-import com.androzic.waypoint.OnWaypointActionListener;
-import com.androzic.waypoint.WaypointProperties;
 
-public class MapActivity extends ActionBarActivity implements MapHolder, View.OnClickListener, OnWaypointActionListener, SeekBar.OnSeekBarChangeListener
+public class MapActivity extends ActionBarActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener
 {
 	private static final String TAG = "MapActivity";
 
@@ -68,9 +60,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	private static final int RESULT_LOAD_MAP = 0x500;
 	private static final int RESULT_MANAGE_TRACKS = 0x600;
 	private static final int RESULT_EDIT_ROUTE = 0x110;
-
-	private static final int qaAddWaypointToRoute = 1;
-	private static final int qaNavigateToWaypoint = 2;
 
 	// main preferences
 	protected String precisionFormat = "%.0f";
@@ -92,14 +81,12 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	protected TextView waitBar;
 	protected MapView map;
 	protected QuickAction3D wptQuickAction;
-	protected QuickAction3D rteQuickAction;
 
 	protected Androzic application;
 
 	protected ExecutorService executorThread = Executors.newSingleThreadExecutor();
 
 	private int waypointSelected = -1;
-	private int routeSelected = -1;
 
 	public NavigationService navigationService = null;
 
@@ -135,8 +122,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			return;
 		}
 
-		application.setMapHolder(this);
-
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		Resources resources = getResources();
 
@@ -149,30 +134,13 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		speedUnit = (TextView) findViewById(R.id.speedunit);
 		elevationUnit = (TextView) findViewById(R.id.elevationunit);
 		trackBar = (SeekBar) findViewById(R.id.trackbar);
-		waitBar = (TextView) findViewById(R.id.waitbar);
 		map = (MapView) findViewById(R.id.mapview);
 
-		// set button actions
-		findViewById(R.id.finishedit).setOnClickListener(this);
-		findViewById(R.id.addpoint).setOnClickListener(this);
-		findViewById(R.id.insertpoint).setOnClickListener(this);
-		findViewById(R.id.removepoint).setOnClickListener(this);
-		findViewById(R.id.orderpoints).setOnClickListener(this);
 		findViewById(R.id.finishtrackedit).setOnClickListener(this);
 		findViewById(R.id.cutafter).setOnClickListener(this);
 		findViewById(R.id.cutbefore).setOnClickListener(this);
 
-		wptQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
-		wptQuickAction.addActionItem(new ActionItem(qaAddWaypointToRoute, getString(R.string.menu_addtoroute), resources.getDrawable(R.drawable.ic_action_add)));
-		wptQuickAction.setOnActionItemClickListener(waypointActionItemClickListener);
-
-		rteQuickAction = new QuickAction3D(this, QuickAction3D.VERTICAL);
-		rteQuickAction.addActionItem(new ActionItem(qaNavigateToWaypoint, getString(R.string.menu_thisnavpoint), resources.getDrawable(R.drawable.ic_action_directions)));
-		rteQuickAction.setOnActionItemClickListener(routeActionItemClickListener);
-
 		trackBar.setOnSeekBarChangeListener(this);
-
-		map.initialize(application, this);
 
 		if (getIntent().getExtras() != null)
 			onNewIntent(getIntent());
@@ -211,7 +179,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		showDistance = Integer.parseInt(settings.getString(getString(R.string.pref_showdistance_int), getString(R.string.def_showdistance)));
 
 		// prepare views
-		findViewById(R.id.editroute).setVisibility(application.editingRoute != null ? View.VISIBLE : View.GONE);
 		if (application.editingTrack != null)
 		{
 			startEditTrack(application.editingTrack);
@@ -264,43 +231,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		//updateMapViewArea();
 	}
 
-	private void startEditRoute(Route route)
-	{
-		setFollowing(false);
-		application.editingRoute = route;
-		application.editingRoute.editing = true;
-
-		boolean newroute = true;
-		for (Iterator<RouteOverlay> iter = application.overlayManager.routeOverlays.iterator(); iter.hasNext();)
-		{
-			RouteOverlay ro = iter.next();
-			if (ro.getRoute().editing)
-			{
-				ro.onRoutePropertiesChanged();
-				newroute = false;
-			}
-		}
-		if (newroute)
-		{
-			RouteOverlay newRoute = new RouteOverlay(application.editingRoute);
-			application.overlayManager.routeOverlays.add(newRoute);
-		}
-		findViewById(R.id.editroute).setVisibility(View.VISIBLE);
-		//updateGPSStatus();
-		application.routeEditingWaypoints = new Stack<Waypoint>();
-		if (showDistance > 0)
-			application.overlayManager.distanceOverlay.setEnabled(false);
-		//updateMapViewArea();
-	}
-
-
-	@Override
-	public MapView getMapView()
-	{
-		return map;
-	}
-
-	@Override
 	public void setFollowing(boolean follow)
 	{
 		if (application.editingRoute == null && application.editingTrack == null)
@@ -321,28 +251,12 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		}
 	}
 
-	@Override
-	public void zoomMap(final float factor)
-	{
-	}
-
-	@Override
-	public void conditionsChanged()
-	{
-	}
-
-	@Override
-	public void mapChanged()
-	{
-	}
-
 	public boolean waypointTapped(Waypoint waypoint, int x, int y)
 	{
 		try
 		{
 			if (application.editingRoute != null)
 			{
-				routeSelected = -1;
 				waypointSelected = application.getWaypointIndex(waypoint);
 				wptQuickAction.show(map, x, y);
 			}
@@ -352,40 +266,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Performs action on a tapped route waypoint.
-	 * 
-	 * @param route
-	 *            route index
-	 * @param index
-	 *            waypoint index inside route
-	 * @param x
-	 *            view X coordinate
-	 * @param y
-	 *            view Y coordinate
-	 * @return true if any action was performed
-	 */
-	public boolean routeWaypointTapped(int route, int index, int x, int y)
-	{
-		if (application.editingRoute != null && application.editingRoute == application.getRoute(route))
-		{
-			startActivityForResult(new Intent(this, WaypointProperties.class).putExtra("INDEX", index).putExtra("ROUTE", route + 1), RESULT_EDIT_ROUTE);
-			return true;
-		}
-		else if (navigationService != null && navigationService.navRoute == application.getRoute(route))
-		{
-			// routeSelected = route;
-			waypointSelected = index;
-			rteQuickAction.show(map, x, y);
-			return true;
-		}
-		else
-		{
-			startActivity(new Intent(this, RouteDetails.class).putExtra("INDEX", route));
-			return true;
-		}
 	}
 
 	@Override
@@ -420,37 +300,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 		}
 		return false;
 	}
-
-	private OnActionItemClickListener waypointActionItemClickListener = new OnActionItemClickListener() {
-		@Override
-		public void onItemClick(QuickAction3D source, int pos, int actionId)
-		{
-			Waypoint wpt = application.getWaypoint(waypointSelected);
-
-			switch (actionId)
-			{
-				case qaAddWaypointToRoute:
-					application.routeEditingWaypoints.push(application.editingRoute.addWaypoint(wpt.name, wpt.latitude, wpt.longitude));
-					map.invalidate();
-					break;
-			}
-			waypointSelected = -1;
-		}
-	};
-
-	private OnActionItemClickListener routeActionItemClickListener = new OnActionItemClickListener() {
-		@Override
-		public void onItemClick(QuickAction3D source, int pos, int actionId)
-		{
-			switch (actionId)
-			{
-				case qaNavigateToWaypoint:
-					navigationService.setRouteWaypoint(waypointSelected);
-					break;
-			}
-			waypointSelected = -1;
-		}
-	};
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -537,46 +386,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				trackBar.setProgress(0);
 				trackBar.setProgress(na);
 				break;
-			case R.id.addpoint:
-				double[] aloc = application.getMapCenter();
-				application.routeEditingWaypoints.push(application.editingRoute.addWaypoint("RWPT" + application.editingRoute.length(), aloc[0], aloc[1]));
-				break;
-			case R.id.insertpoint:
-				double[] iloc = application.getMapCenter();
-				application.routeEditingWaypoints.push(application.editingRoute.insertWaypoint("RWPT" + application.editingRoute.length(), iloc[0], iloc[1]));
-				break;
-			case R.id.removepoint:
-				if (!application.routeEditingWaypoints.empty())
-				{
-					application.editingRoute.removeWaypoint(application.routeEditingWaypoints.pop());
-				}
-				break;
-			case R.id.orderpoints:
-				startActivityForResult(new Intent(this, RouteEdit.class).putExtra("INDEX", application.getRouteIndex(application.editingRoute)), RESULT_EDIT_ROUTE);
-				break;
-			case R.id.finishedit:
-				if ("New route".equals(application.editingRoute.name))
-				{
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
-					application.editingRoute.name = formatter.format(new Date());
-				}
-				application.editingRoute.editing = false;
-				for (Iterator<RouteOverlay> iter = application.overlayManager.routeOverlays.iterator(); iter.hasNext();)
-				{
-					RouteOverlay ro = iter.next();
-					ro.onRoutePropertiesChanged();
-				}
-				application.editingRoute = null;
-				application.routeEditingWaypoints = null;
-				findViewById(R.id.editroute).setVisibility(View.GONE);
-				//updateGPSStatus();
-				if (showDistance == 2)
-				{
-					application.overlayManager.distanceOverlay.setEnabled(true);
-				}
-				//updateMapViewArea();
-				map.requestFocus();
-				break;
 			case R.id.finishtrackedit:
 				application.editingTrack.editing = false;
 				application.editingTrack.editingPos = -1;
@@ -593,36 +402,6 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 				map.requestFocus();
 				break;
 		}
-	}
-
-	@Override
-	public void onWaypointView(Waypoint waypoint)
-	{
-	}
-
-	@Override
-	public void onWaypointShow(Waypoint waypoint)
-	{
-	}
-
-	@Override
-	public void onWaypointNavigate(final Waypoint waypoint)
-	{
-	}
-
-	@Override
-	public void onWaypointEdit(final Waypoint waypoint)
-	{
-	}
-
-	@Override
-	public void onWaypointShare(final Waypoint waypoint)
-	{
-	}
-
-	@Override
-	public void onWaypointRemove(final Waypoint waypoint)
-	{
 	}
 
 	@Override
@@ -659,21 +438,5 @@ public class MapActivity extends ActionBarActivity implements MapHolder, View.On
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar)
 	{
-	}
-
-	@Override
-	public void updateCoordinates(double[] latlon)
-	{
-	}
-
-	@Override
-	public void updateFileInfo()
-	{
-	}
-
-	@Override
-	public boolean mapObjectTapped(long id, int x, int y)
-	{
-		return false;
 	}
 }

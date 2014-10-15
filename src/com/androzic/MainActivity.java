@@ -22,6 +22,7 @@ package com.androzic;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -536,8 +537,12 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	@Override
 	public void onRouteEditPath(Route route)
 	{
-//		route.show = true;
-//		setResult(RESULT_OK, new Intent().putExtra("index", application.getRouteIndex(route)));
+		application.editingRoute = route;
+		application.editingRoute.show = true;
+		application.editingRoute.editing = true;
+		application.routeEditingWaypoints = new Stack<Waypoint>();
+		application.dispatchRoutePropertiesChanged(route);
+		selectItem(0);
 	}
 
 	@Override

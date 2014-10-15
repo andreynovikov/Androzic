@@ -1,5 +1,6 @@
 package com.androzic;
 
+import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
 
 public interface MapHolder
@@ -17,8 +18,8 @@ public interface MapHolder
 	void conditionsChanged();
 	void updateCoordinates(double[] latlon);
 	void updateFileInfo();
-	
+
 	boolean waypointTapped(Waypoint waypoint, int x, int y);
-	boolean routeWaypointTapped(int route, int index, int x, int y);
+	boolean routeWaypointTapped(Route route, int index, int x, int y);
 	boolean mapObjectTapped(long id, int x, int y);
 }

@@ -194,7 +194,7 @@ public class RouteOverlay extends MapOverlay
 				int[] pointXY = application.getXYbyLatLon(wpt.latitude, wpt.longitude);
 				if (mapTap.contains(pointXY[0], pointXY[1]))
 				{
-					return application.getMapHolder().routeWaypointTapped(application.getRouteIndex(route), i, (int) e.getX(), (int) e.getY());
+					return application.getMapHolder().routeWaypointTapped(route, i, (int) e.getX(), (int) e.getY());
 				}
 			}
 		}

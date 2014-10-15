@@ -213,6 +213,7 @@ public class About extends DialogFragment
 			@Override
 			public void onClick(View v)
 			{
+				clicks = 1;
 				dedicated.setVisibility(View.GONE);
 				View photo = view.findViewById(R.id.photo);
 				photo.setVisibility(View.VISIBLE);
@@ -221,7 +222,7 @@ public class About extends DialogFragment
 		});
 	}
 
-	private int clicks = 1;
+	private int clicks;
 
 	private View.OnClickListener redirect = new View.OnClickListener() {
 
@@ -237,7 +238,6 @@ public class About extends DialogFragment
 			else if (clicks == 0)
 			{
 				v.setVisibility(View.GONE);
-				clicks++;
 			}
 			else
 			{
