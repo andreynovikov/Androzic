@@ -79,6 +79,7 @@ import com.androzic.location.LocationService;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteDetails;
+import com.androzic.route.RouteEdit;
 import com.androzic.util.Astro;
 import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
@@ -1175,7 +1176,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 			case R.id.orderpoints:
 			{
-				//startActivityForResult(new Intent(this, RouteEdit.class).putExtra("INDEX", application.getRouteIndex(application.editingRoute)), RESULT_EDIT_ROUTE);
+				RouteEdit dialog = new RouteEdit(application.editingRoute);
+				dialog.show(getFragmentManager(), "dialog");
 				break;
 			}
 			case R.id.finishrouteedit:

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:panel="http://schemas.android.com/apk/res/com.androzic"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
@@ -119,22 +119,5 @@
 		</LinearLayout>
 	</LinearLayout>
 
-	<org.miscwidgets.widget.Panel android:id="@+id/panel" 
-	    android:layout_width="wrap_content" 
-	    android:layout_height="fill_parent" 
-		android:layout_alignParentLeft="true"
-	    android:layout_gravity="left"
-	    panel:handle="@+id/panelHandle"
-	    panel:content="@+id/panelContent"
-	    panel:position="left"
-	    panel:animationDuration="600"
-	    panel:openedHandle="@drawable/left_switcher_expanded_background"
-	    panel:closedHandle="@drawable/left_switcher_collapsed_background">
-
-		<include layout="@layout/inc_panelhandle" />
-		<include layout="@layout/inc_mapbuttons" />
-			    
-	</org.miscwidgets.widget.Panel>
-  
 	<include layout="@layout/inc_wait" />    
 </RelativeLayout>
