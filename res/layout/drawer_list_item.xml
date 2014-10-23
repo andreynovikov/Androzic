@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical"
     android:paddingLeft="8dp"
     android:paddingRight="16dp"
     style="?attr/dropdownListPreferredItemHeight" >
@@ -12,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
         android:paddingRight="10dp" />
 
     <TextView
@@ -19,6 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/drawerIcon"
+        android:layout_centerVertical="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
