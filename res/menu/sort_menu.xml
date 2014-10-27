@@ -5,5 +5,5 @@
 		  android:icon="@drawable/ic_action_sort_alpha" />
 	<item android:id="@+id/menuSortSize"
 		  android:title="@string/menu_sort_distance"
-		  android:icon="@drawable/ic_action_sort_size" />
+		  android:icon="@drawable/ic_sort_white_24dp" />
 </menu>

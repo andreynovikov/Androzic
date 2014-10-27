@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
@@ -19,8 +20,8 @@ import com.androzic.R;
 public class DrawerAdapter extends ArrayAdapter<DrawerItem>
 {
 	private static final int VIEW_TYPE_DIVIDER = 0;
-	private static final int VIEW_TYPE_TITLE = 1;
-	private static final int VIEW_TYPE_ACTION = 2;
+	private static final int VIEW_TYPE_MAJOR = 1;
+	private static final int VIEW_TYPE_MINOR = 2;
 
 	private Context mContext;
 	private int mSelectedItem;
@@ -70,13 +71,13 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>
 		{
 			return VIEW_TYPE_DIVIDER;
 		}
-		if (item.type == DrawerItem.ItemType.TITLE)
+		else if (item.minor)
 		{
-			return VIEW_TYPE_TITLE;
+			return VIEW_TYPE_MINOR;
 		}
 		else
 		{
-			return VIEW_TYPE_ACTION;
+			return VIEW_TYPE_MAJOR;
 		}
 	}
 
@@ -95,14 +96,15 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>
 			{
 				convertView = inflater.inflate(R.layout.drawer_list_divider, parent, false);
 			}
-			else if (type == VIEW_TYPE_TITLE)
-			{
-				convertView = inflater.inflate(R.layout.drawer_list_title, parent, false);
-				drawerHolder.title = (TextView) convertView.findViewById(R.id.drawerTitle);
-			}
-			else if (type == VIEW_TYPE_ACTION)
+			else if (type == VIEW_TYPE_MAJOR)
 			{
 				convertView = inflater.inflate(R.layout.drawer_list_item, parent, false);
+				drawerHolder.icon = (ImageView) convertView.findViewById(R.id.drawerIcon);
+				drawerHolder.name = (TextView) convertView.findViewById(R.id.drawerName);
+			}
+			else if (type == VIEW_TYPE_MINOR)
+			{
+				convertView = inflater.inflate(R.layout.drawer_list_item_aux, parent, false);
 				drawerHolder.icon = (ImageView) convertView.findViewById(R.id.drawerIcon);
 				drawerHolder.name = (TextView) convertView.findViewById(R.id.drawerName);
 			}
@@ -113,38 +115,31 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>
 			drawerHolder = (DrawerItemHolder) convertView.getTag();
 		}
 
-		if (type == VIEW_TYPE_DIVIDER)
+		if (type == VIEW_TYPE_MAJOR || type == VIEW_TYPE_MINOR)
 		{
-		}
-		else if (type == VIEW_TYPE_TITLE)
-		{
-			drawerHolder.title.setText(item.name);
-		}
-		else if (type == VIEW_TYPE_ACTION)
-		{
+			Resources resources = mContext.getResources();
 			drawerHolder.icon.setImageDrawable(item.icon);
 			drawerHolder.name.setText(item.name);
 			if (position == mSelectedItem)
 			{
-				drawerHolder.name.setTextColor(mContext.getResources().getColor(R.color.drawer_selected_text));
+				drawerHolder.name.setTextColor(resources.getColor(R.color.drawer_selected_text));
 				drawerHolder.name.setTypeface(Typeface.DEFAULT_BOLD);
 				drawerHolder.icon.setColorFilter(mActiveIconFilter);
 			}
 			else
 			{
-				drawerHolder.name.setTextColor(mContext.getResources().getColor(android.R.color.primary_text_dark));
+				drawerHolder.name.setTextColor(resources.getColor(android.R.color.primary_text_dark));
 				drawerHolder.name.setTypeface(Typeface.DEFAULT);
 				drawerHolder.icon.setColorFilter(null);
 			}
+			convertView.setBackgroundColor(resources.getColor(item.supplementary ? R.color.theme_primary_color : R.color.theme_primary_darker_color));
 		}
-		convertView.setBackgroundColor(item.supplementary ? 0x00000000 : 0xFF111111);
 
 		return convertView;
 	}
 
 	private static class DrawerItemHolder
 	{
-		TextView title;
 		TextView name;
 		ImageView icon;
 	}

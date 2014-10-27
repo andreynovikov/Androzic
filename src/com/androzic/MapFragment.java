@@ -410,13 +410,13 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 		else if (following)
 		{
-			follow.setIcon(R.drawable.ic_action_lock_closed);
+			follow.setIcon(R.drawable.ic_lock_outline_white_24dp);
 			follow.setTitle(R.string.action_unfollow);
 		}
 		else
 		{
 			follow.setVisible(true);
-			follow.setIcon(R.drawable.ic_action_lock_open);			
+			follow.setIcon(R.drawable.ic_lock_open_white_24dp);
 			follow.setTitle(R.string.action_follow);
 		}
 

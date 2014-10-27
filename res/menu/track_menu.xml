@@ -3,23 +3,23 @@
 
     <item
         android:id="@+id/action_edit"
-        android:icon="@drawable/ic_action_edit"
+        android:icon="@drawable/ic_edit_white_24dp"
         android:title="@string/menu_properties"/>
     <item
         android:id="@+id/action_edith_path"
-        android:icon="@drawable/ic_action_track"
+        android:icon="@drawable/ic_border_color_white_24dp"
         android:title="@string/menu_edit"/>
     <item
         android:id="@+id/action_track_to_route"
-        android:icon="@drawable/ic_action_directions"
+        android:icon="@drawable/ic_directions_white_24dp"
         android:title="@string/menu_track2route"/>
     <item
         android:id="@+id/action_save"
-        android:icon="@drawable/ic_action_save"
+        android:icon="@drawable/ic_save_white_24dp"
         android:title="@string/menu_save"/>
     <item
         android:id="@+id/action_remove"
-        android:icon="@drawable/ic_action_cancel"
+        android:icon="@drawable/ic_highlight_remove_white_24dp"
         android:title="@string/menu_remove"/>
 
 </menu>

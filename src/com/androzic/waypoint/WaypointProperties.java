@@ -126,7 +126,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 		iconValue = null;
 		ImageButton icon = (ImageButton) rootView.findViewById(R.id.icon_button);
-		icon.setImageDrawable(this.getResources().getDrawable(R.drawable.ic_action_halt));
+		icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_highlight_remove_white_24dp));
 		if (application.iconsEnabled)
 		{
 			if (waypoint.drawImage)
@@ -197,7 +197,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 			}
 			else
 			{
-				icon.setImageDrawable(this.getResources().getDrawable(R.drawable.ic_action_halt));
+				icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_highlight_remove_white_24dp));
 			}
 		}
 	}
@@ -428,7 +428,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 			case R.id.remove:
 				iconValue = null;
 				ImageButton icon = (ImageButton) getView().findViewById(R.id.icon_button);
-				icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_halt));
+				icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_highlight_remove_white_24dp));
 				break;
 		}
 		return true;

@@ -6,7 +6,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
 			android:layout_weight="1"
-			android:src="@drawable/ic_action_tick"
+			android:src="@drawable/ic_done_white_24dp"
 			android:id="@+id/finishedit" />
 		<ImageButton
 			android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
 			android:layout_weight="1"
-			android:src="@drawable/ic_action_list_2"
+			android:src="@drawable/ic_list_white_24dp"
 			android:id="@+id/orderpoints" />
 
 </merge>

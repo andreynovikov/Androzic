@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/action_navigate"
-        android:icon="@drawable/ic_action_navigate"
+        android:icon="@drawable/ic_navigation_white_24dp"
         android:title="@string/menu_thisnavpoint"/>
 
 </menu>

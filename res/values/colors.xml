@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="drawer_selected_text">#FFFFFFFF</color>
+<color name="theme_primary_color">#424242</color> <!-- Grey 800 -->
+<color name="theme_primary_darker_color">#212121</color> <!-- Grey 900 -->
+<color name="theme_accent_color">#33b5e5</color> <!-- Holo Blue Light -->
+<color name="drawer_selected_text">@color/theme_accent_color</color>
 <color name="cursor">#FFFF0000</color>
 <color name="currenttrack">#FFA565FE</color>
 <color name="mapcross">#AA333333</color>

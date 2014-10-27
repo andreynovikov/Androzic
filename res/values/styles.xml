@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="ApplicationTheme" parent="@style/Theme.AppCompat">
-        <item name="horizontalPadding">6dip</item>
+    <style name="Theme.Application" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/theme_primary_color</item>
+        <item name="colorPrimaryDark">@color/theme_primary_darker_color</item>
+        <item name="colorAccent">@color/theme_accent_color</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:windowBackground">@color/theme_primary_darker_color</item>
+        <item name="android:colorBackground">@color/theme_primary_darker_color</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="activatedBackgroundIndicator">@null</item>
+        <!-- The rest of your attributes -->
+        <item name="horizontalPadding">6dip</item>
     </style>
 
-    <style name="ApplicationTheme.NoActionBar" parent="@style/Theme.AppCompat">
+    <style name="ThemeOverlay.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:background">@color/theme_primary_color</item>
+    </style>
+
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
+    </style>
+
+    <style name="ApplicationTheme.NoActionBar" parent="Theme.AppCompat">
         <item name="android:windowNoTitle">true</item>
     </style>
 
@@ -31,7 +48,7 @@
     <style name="sectionHeader">
         <item name="android:layout_marginTop">16dp</item>
         <item name="android:layout_marginBottom">8dp</item>
-		<item name="android:textStyle">bold</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textSize">20sp</item>
     </style>
 

@@ -28,7 +28,7 @@ public class DrawerItem
 {
 	public static enum ItemType
 	{
-		DIVIDER, TITLE, ACTION, FRAGMENT
+		DIVIDER, ACTION, FRAGMENT
 	}
 	
 	public ItemType type;
@@ -36,17 +36,12 @@ public class DrawerItem
 	public String name;
 	public Fragment fragment;
 	public Intent action;
+	public boolean minor = false;
 	public boolean supplementary = false;
 
 	public DrawerItem()
 	{
 		this.type = ItemType.DIVIDER;
-	}
-
-	public DrawerItem(String name)
-	{
-		this.type = ItemType.TITLE;
-		this.name = name;
 	}
 
 	public DrawerItem(Drawable icon, String name, Fragment fragment)
@@ -63,6 +58,12 @@ public class DrawerItem
 		this.icon = icon;
 		this.name = name;
 		this.action = action;
+	}
+
+	public DrawerItem makeMinor()
+	{
+		this.minor = true;
+		return this;
 	}
 
 	public DrawerItem makeSupplementary()

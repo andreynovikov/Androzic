@@ -2,36 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menuWaypoints"
-        android:icon="@drawable/ic_action_location"
-        android:orderInCategory="0"
-        app:showAsAction="ifRoom"
-        android:title="@string/menu_waypoints">
-        <menu>
-            <item
-                android:id="@+id/menuNewWaypoint"
-                android:icon="@drawable/ic_action_add"
-                android:title="@string/menu_new"/>
-            <item
-                android:id="@+id/menuProjectWaypoint"
-                android:icon="@drawable/ic_action_arrow_right_top"
-                android:title="@string/menu_project"/>
-        </menu>
-    </item>
-    <item
         android:id="@+id/menuMaps"
-        android:icon="@drawable/ic_action_map"
         android:orderInCategory="0"
         app:showAsAction="ifRoom"
         android:title="@string/menu_maps">
         <menu>
             <item
                 android:id="@+id/menuMapInfo"
-                android:icon="@drawable/ic_action_info"
                 android:title="@string/menu_information"/>
             <item
                 android:id="@+id/menuAllMaps"
-                android:icon="@drawable/ic_action_list_2"
                 android:title="@string/menu_all"/>
         </menu>
     </item>

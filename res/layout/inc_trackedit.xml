@@ -6,7 +6,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="0"
-			android:src="@drawable/ic_action_tick"
+			android:src="@drawable/ic_done_white_24dp"
 			android:id="@+id/finishtrackedit" />
 		<SeekBar android:id="@+id/trackbar"
 			android:layout_width="fill_parent"

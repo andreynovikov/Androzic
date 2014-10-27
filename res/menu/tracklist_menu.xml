@@ -4,20 +4,20 @@
 
     <item
         android:id="@+id/action_load"
-        android:icon="@drawable/ic_action_import"
+        android:icon="@drawable/ic_folder_open_white_24dp"
         android:title="@string/menu_load"
         app:showAsAction="always"/>
     <item
         android:id="@+id/action_export"
-        android:icon="@drawable/ic_action_export"
+        android:icon="@drawable/ic_archive_white_24dp"
         android:title="@string/menu_exportcurrenttrack"/>
     <item
         android:id="@+id/action_expand"
-        android:icon="@drawable/ic_action_show"
+        android:icon="@drawable/ic_visibility_white_24dp"
         android:title="@string/menu_expandcurrenttrack"/>
     <item
         android:id="@+id/action_clear"
-        android:icon="@drawable/ic_action_trash"
+        android:icon="@drawable/ic_delete_white_24dp"
         android:title="@string/menu_clearcurrenttrack"/>
 
 </menu>

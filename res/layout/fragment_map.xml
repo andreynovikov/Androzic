@@ -102,7 +102,6 @@
             android:paddingLeft="8dip"
             android:paddingBottom="8dip"
             android:contentDescription="@string/expand"
-            android:src="@drawable/ic_action_collapse"
             android:visibility="gone" />
 
         <ImageButton
@@ -112,7 +111,7 @@
             android:background="@null"
             android:padding="8dip"
             android:contentDescription="@string/zoom_in"
-            android:src="@drawable/ic_action_zoom_in" />
+            android:src="@drawable/ic_add_circle_outline_white_24dp" />
 
         <ImageButton
             android:id="@+id/zoomout"
@@ -121,7 +120,7 @@
             android:background="@null"
             android:padding="8dip"
             android:contentDescription="@string/zoom_out"
-            android:src="@drawable/ic_action_zoom_out" />
+            android:src="@drawable/ic_remove_circle_outline_white_24dp" />
 
         <ImageButton
             android:id="@+id/nextmap"
@@ -130,7 +129,7 @@
             android:background="@null"
             android:padding="8dip"
             android:contentDescription="@string/next_map"
-            android:src="@drawable/ic_action_tiles_large" />
+            android:src="@drawable/ic_flip_to_front_white_24dp" />
 
         <ImageButton
             android:id="@+id/prevmap"
@@ -139,7 +138,7 @@
             android:background="@null"
             android:padding="8dip"
             android:contentDescription="@string/prev_map"
-            android:src="@drawable/ic_action_tiles_small" />
+            android:src="@drawable/ic_flip_to_back_white_24dp" />
     </LinearLayout>
 
     <include layout="@layout/inc_trackdetails" />

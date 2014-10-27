@@ -3,10 +3,10 @@
 
     <item
         android:id="@+id/action_view"
-        android:icon="@drawable/ic_action_show"
+        android:icon="@drawable/ic_visibility_white_24dp"
         android:title="@string/menu_view"/>
     <item
         android:id="@+id/action_edit"
-        android:icon="@drawable/ic_action_edit"
+        android:icon="@drawable/ic_edit_white_24dp"
         android:title="@string/menu_edit"/>
 </menu>

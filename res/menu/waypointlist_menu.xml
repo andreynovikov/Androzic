@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/action_sort"
-        android:icon="@drawable/ic_action_sort_alpha"
+        android:icon="@drawable/ic_sort_white_24dp"
         app:showAsAction="always"
         android:title="@string/menu_sort">
         <menu>
@@ -13,27 +13,27 @@
                 android:title="@string/action_bar_sort_alpha"/>
             <item
                 android:id="@+id/action_sort_size"
-                android:icon="@drawable/ic_action_sort_size"
+                android:icon="@drawable/ic_sort_white_24dp"
                 android:title="@string/action_bar_sort_distance"/>
         </menu>
     </item>
     <item
         android:id="@+id/action_load_waypoints"
-        android:icon="@drawable/ic_action_import"
+        android:icon="@drawable/ic_folder_open_white_24dp"
         app:showAsAction="ifRoom"
         android:title="@string/menu_load"/>
     <item
         android:id="@+id/action_new_waypoint_set"
-        android:icon="@drawable/ic_action_document_new"
+        android:icon="@drawable/ic_note_add_white_24dp"
         app:showAsAction="ifRoom|withText"
         android:title="@string/menu_newwaypointset"/>
     <item
         android:id="@+id/action_new_waypoint"
-        android:icon="@drawable/ic_action_pin"
+        android:icon="@drawable/ic_place_white_24dp"
         android:title="@string/menu_new_waypoint"/>
     <item
         android:id="@+id/action_project_waypoint"
-        android:icon="@drawable/ic_action_arrow_right_top"
+        android:icon="@drawable/ic_arrow_forward_white_24dp"
         android:title="@string/menu_project"/>
 
 </menu>

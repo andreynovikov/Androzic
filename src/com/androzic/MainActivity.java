@@ -38,13 +38,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -88,6 +89,8 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	private ListView mDrawerList;
 	private DrawerAdapter mDrawerAdapter;
 	private ActionBarDrawerToggle mDrawerToggle;
+	private Drawable mHomeDrawable;
+	private Toolbar mToolbar;
 
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
@@ -108,6 +111,9 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 
 		setContentView(R.layout.activity_main);
 
+	    mToolbar = (Toolbar) findViewById(R.id.action_toolbar);
+	    setSupportActionBar(mToolbar);
+
 		backToast = Toast.makeText(this, R.string.backQuit, Toast.LENGTH_SHORT);
 
 		application = Androzic.getApplication();
@@ -127,38 +133,38 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		Fragment fragment;
 
 		// add main items to drawer list
-		icon = resources.getDrawable(R.drawable.ic_action_mapmode);
+		icon = resources.getDrawable(R.drawable.ic_map_white_24dp);
 		fragment = Fragment.instantiate(this, MapFragment.class.getName());
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_map), fragment));
-		icon = resources.getDrawable(R.drawable.ic_action_location);
+		icon = resources.getDrawable(R.drawable.ic_place_white_24dp);
 		fragment = Fragment.instantiate(this, WaypointList.class.getName());
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_waypoints), fragment));
-		icon = resources.getDrawable(R.drawable.ic_action_directions);
+		icon = resources.getDrawable(R.drawable.ic_directions_white_24dp);
 		fragment = Fragment.instantiate(this, RouteList.class.getName());
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_routes), fragment));
-		icon = resources.getDrawable(R.drawable.ic_action_track);
+		icon = resources.getDrawable(R.drawable.ic_gesture_white_24dp);
 		fragment = Fragment.instantiate(this, TrackList.class.getName());
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_tracks), fragment));
 
 		// add plugins to drawer list
 		mDrawerItems.add(new DrawerItem());
-		icon = resources.getDrawable(R.drawable.ic_action_location_found);
+		icon = resources.getDrawable(R.drawable.ic_my_location_white_24dp);
 		action = new Intent(this, HSIActivity.class);
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_hsi), action));
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_hsi), action).makeMinor());
 		java.util.Map<String, Pair<Drawable, Intent>> plugins = application.getPluginsViews();
 		for (String plugin : plugins.keySet())
 		{
-			mDrawerItems.add(new DrawerItem(plugins.get(plugin).first, plugin, plugins.get(plugin).second));
+			mDrawerItems.add(new DrawerItem(plugins.get(plugin).first, plugin, plugins.get(plugin).second).makeMinor());
 		}
 
 		// add supplementary items to drawer list
 		mDrawerItems.add(new DrawerItem());
-		icon = resources.getDrawable(R.drawable.ic_action_settings);
+		icon = resources.getDrawable(R.drawable.ic_settings_white_24dp);
 		fragment = Fragment.instantiate(this, PreferencesHC.class.getName());
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), fragment).makeSupplementary());
-		icon = resources.getDrawable(R.drawable.ic_action_info);
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), fragment).makeMinor().makeSupplementary());
+		icon = resources.getDrawable(R.drawable.ic_info_white_24dp);
 		fragment = Fragment.instantiate(this, About.class.getName());
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_about), fragment).makeSupplementary());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_about), fragment).makeMinor().makeSupplementary());
 
 		mTitle = mDrawerTitle = getTitle();
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -171,24 +177,18 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		mDrawerList.setAdapter(mDrawerAdapter);
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-		// enable ActionBar app icon to behave as action to toggle nav drawer
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
-
-		// ActionBarDrawerToggle ties together the the proper interactions
-		// between the sliding drawer and the action bar app icon
-		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
-		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
-		R.string.drawer_open, /* "open drawer" description for accessibility */
-		R.string.drawer_close /* "close drawer" description for accessibility */
-		) {
+		
+		mHomeDrawable = getV7DrawerToggleDelegate().getThemeUpIndicator();
+		
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
 			public void onDrawerClosed(View drawerView)
 			{
 				if (drawerView == mDrawerList)
 				{
 					getSupportActionBar().setTitle(mTitle);
-					supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+					supportInvalidateOptionsMenu();
 				}
 			}
 
@@ -197,11 +197,12 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 				if (drawerView == mDrawerList)
 				{
 					getSupportActionBar().setTitle(mDrawerTitle);
-					supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+					supportInvalidateOptionsMenu();
 				}
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
+
 		getSupportFragmentManager().addOnBackStackChangedListener(mBackStackChangedListener);
 
 		if (savedInstanceState == null)
@@ -320,8 +321,6 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 				}
 				else
 				{
-					// The action bar home/up action should open or close the drawer.
-					// ActionBarDrawerToggle will take care of this.
 					if (mDrawerToggle.onOptionsItemSelected(item))
 					{
 						return true;
@@ -634,6 +633,12 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		if (fm.getBackStackEntryCount() > 0)
 		{
 			mDrawerToggle.setDrawerIndicatorEnabled(false);
+			
+			// FIXME This is the uggliest hack I have ever seen!
+			getV7DrawerToggleDelegate().setActionBarUpIndicator(mHomeDrawable, R.string.cancel);
+		    setSupportActionBar(mToolbar);
+		    // End of hack
+			
 			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerList);
 			FragmentManager.BackStackEntry bse = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
 			tag = bse.getName();
