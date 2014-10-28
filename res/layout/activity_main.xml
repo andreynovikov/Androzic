@@ -28,7 +28,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:layout_marginTop="?attr/actionBarSize"
-        android:background="@color/theme_primary_color"
+        android:background="@color/theme_primary_darker_color"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp" />

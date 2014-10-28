@@ -1,20 +1,20 @@
 package com.androzic.ui;
 
 import java.util.ArrayList;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.androzic.R;
 
 public class DrawerAdapter extends ArrayAdapter<DrawerItem>
@@ -81,6 +81,7 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>
 		}
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
@@ -132,7 +133,8 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>
 				drawerHolder.name.setTypeface(Typeface.DEFAULT);
 				drawerHolder.icon.setColorFilter(null);
 			}
-			convertView.setBackgroundColor(resources.getColor(item.supplementary ? R.color.theme_primary_color : R.color.theme_primary_darker_color));
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+				drawerHolder.name.setAllCaps(item.supplementary);
 		}
 
 		return convertView;

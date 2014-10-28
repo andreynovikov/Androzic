@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingBottom="4dp"
+    android:paddingTop="4dp"
+    android:background="@color/theme_primary_darker_color"
     android:orientation="vertical" >
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="1dp"
-        android:layout_marginTop="1dp"
-        android:background="#888888" />
+        android:background="@color/theme_primary_color" />
 
 </LinearLayout>
