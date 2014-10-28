@@ -34,7 +34,7 @@
 
     <uses-sdk
         android:minSdkVersion="7"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="21" />
 
     <uses-feature
         android:name="android.hardware.location"
@@ -144,9 +144,6 @@
         <activity
             android:name=".HSIActivity"
             android:label="@string/hsi_name" />
-        <activity
-            android:name=".Credits"
-            android:label="@string/credits_name" />
         <activity
             android:name=".MapList"
             android:label="@string/maplist_name"
