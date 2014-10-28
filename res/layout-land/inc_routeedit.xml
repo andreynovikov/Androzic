@@ -7,7 +7,7 @@
 			android:layout_height="fill_parent"
 			android:layout_weight="1"
 			android:src="@drawable/ic_done_white_24dp"
-			android:id="@+id/finishedit" />
+			android:id="@+id/finishrouteedit" />
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
