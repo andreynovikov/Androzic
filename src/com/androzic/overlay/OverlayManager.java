@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 
 import com.androzic.Androzic;
 import com.androzic.R;
+import com.androzic.map.Grid;
 import com.androzic.map.Map;
 
 public class OverlayManager
@@ -256,7 +257,7 @@ public class OverlayManager
 		{
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(application);
 			OtherGridOverlay ogo = new OtherGridOverlay();
-			Map.Grid grid = currentMap.new Grid();
+			Grid grid = new Grid();
 			grid.color1 = 0xFF0000FF;
 			grid.color2 = 0xFF0000FF;
 			grid.color3 = 0xFF0000FF;

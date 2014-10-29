@@ -500,7 +500,7 @@ public class MapLoader
 
 	private static void parseLLGrid(Map map, String[] fields)
 	{
-		Map.Grid grid = map.new Grid();
+		Grid grid = new Grid();
 		grid.enabled = "Yes".equals(fields[1]);
 		try
 		{
@@ -596,7 +596,7 @@ public class MapLoader
 
 	private static void parseOtherGrid(Map map, String[] fields)
 	{
-		Map.Grid grid = map.new Grid();
+		Grid grid = new Grid();
 		grid.enabled = "Yes".equals(fields[1]);
 		try
 		{

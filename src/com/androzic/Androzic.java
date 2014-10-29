@@ -27,12 +27,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -80,8 +80,10 @@ import com.androzic.data.WaypointSet;
 import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
+import com.androzic.map.Grid;
 import com.androzic.map.Map;
 import com.androzic.map.MapIndex;
+import com.androzic.map.MapPoint;
 import com.androzic.map.MockMap;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.TileProvider;
@@ -97,6 +99,10 @@ import com.androzic.util.FileUtils;
 import com.androzic.util.Geo;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.jhlabs.map.proj.Projection;
 import com.jhlabs.map.proj.ProjectionException;
 
 public class Androzic extends BaseApplication implements OnSharedPreferenceChangeListener
@@ -1124,7 +1130,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return currentMap;
 	}
 	
-	public List<Map> getMaps()
+	public Collection<Map> getMaps()
 	{
 		return maps.getMaps();
 	}
@@ -1857,21 +1863,30 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				FileInputStream fs = new FileInputStream(index);
-				ObjectInputStream in = new ObjectInputStream(fs);
-				maps = (MapIndex) in.readObject();
-				in.close();
-				int hash = MapIndex.getMapsHash(mapPath);
+				//com.esotericsoftware.minlog.Log.DEBUG();
+		    	Kryo kryo = new Kryo();
+		    	kryo.register(MapIndex.class);
+		    	kryo.register(Map.class);
+		    	kryo.register(Grid.class);
+		    	kryo.register(MapPoint.class);
+		    	kryo.register(MapPoint[].class);
+		    	kryo.register(Projection.class);
+		    	kryo.register(Integer.class);
+		    	kryo.register(String.class);
+		    	kryo.register(ArrayList.class);
+		    	kryo.register(HashSet.class);
+		    	kryo.register(HashMap.class);
+		    	Input input = new Input(new FileInputStream(index));
+		    	maps = kryo.readObject(input, MapIndex.class);
+		    	input.close();
+
+		    	int hash = MapIndex.getMapsHash(mapPath);
 				if (hash != maps.hashCode())
 				{
 					maps = null;
 				}
 			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			catch (ClassNotFoundException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
@@ -1910,10 +1925,21 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 			    try
 			    {
-			    	FileOutputStream fs = new FileOutputStream(index);
-			    	ObjectOutputStream out = new ObjectOutputStream(fs);
-			    	out.writeObject(maps);
-			    	out.close();
+			    	Kryo kryo = new Kryo();
+			    	kryo.register(MapIndex.class);
+			    	kryo.register(Map.class);
+			    	kryo.register(Grid.class);
+			    	kryo.register(MapPoint.class);
+			    	kryo.register(MapPoint[].class);
+			    	kryo.register(Projection.class);
+			    	kryo.register(Integer.class);
+			    	kryo.register(String.class);
+			    	kryo.register(ArrayList.class);
+			    	kryo.register(HashSet.class);
+			    	kryo.register(HashMap.class);
+			    	Output output = new Output(new FileOutputStream(index));
+			    	kryo.writeObject(output, maps);
+			    	output.close();
 			    }
 			    catch (IOException e)
 			    {
@@ -1972,7 +1998,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			onlineMap = new OnlineMap(curProvider, zoom);
 			maps.addMap(onlineMap);
 		}
-		suitableMaps = maps.getMaps();
+		suitableMaps = new ArrayList<Map>();
 		coveredAll = true;
 		coveringBestMap = true;
 		mapsInited = true;
