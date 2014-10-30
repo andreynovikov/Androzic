@@ -238,7 +238,7 @@
 	<string name="menu_sort_distance">Sort by distance</string>
     <string name="menu_track2route">Convert to route</string>
     <string name="menu_resetindex">Reset index</string>
-    <string name="menu_newwaypointset">New set</string>
+    <string name="menu_newwaypointset">New waypoint set</string>
     <string name="menu_clear_history">Clear search history</string>
     <string name="menu_whereami">Where am I?</string>
 

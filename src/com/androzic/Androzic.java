@@ -36,9 +36,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.Stack;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -61,6 +63,7 @@ import android.graphics.drawable.Drawable;
 import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -99,6 +102,7 @@ import com.androzic.util.FileUtils;
 import com.androzic.util.Geo;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
+import com.androzic.util.WaypointFileHelper;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -360,6 +364,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 	}
 	
+	// TODO Should we keep it? Not used anymore...
 	/**
 	 * Clear waypoints from specific waypoint set.
 	 * @param set waypoint set
@@ -397,22 +402,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public List<Waypoint> getWaypoints()
 	{
 		return waypoints;
-	}
-
-	public int getWaypointCount(WaypointSet set)
-	{
-		int n = 0;
-		synchronized (waypoints)
-		{
-			for (Waypoint wpt : waypoints)
-			{
-				if (wpt.set == set)
-				{
-					n++;
-				}
-			}
-		}
-		return n;
 	}
 
 	public List<Waypoint> getWaypoints(WaypointSet set)
@@ -1426,57 +1415,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 	}
 	
-	public void clear()
-	{
-		// send finalization broadcast
-		sendBroadcast(new Intent("com.androzic.plugins.action.FINALIZE"));
-
-		// clear services
-		unregisterReceiver(broadcastReceiver);
-
-		overlayManager.clear();
-
-		if (navigationService != null)
-		{
-			if (navigationService.isNavigatingViaRoute() && navigationService.navRoute.filepath != null)
-			{
-				// save active route point
-				Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-				editor.putInt(getString(R.string.nav_route_wpt), navigationService.navCurrentRoutePoint);
-				editor.commit();
-			}
-			unbindService(navigationConnection);
-			navigationService = null;
-		}
-
-		if (locationService != null)
-		{
-			locationService.unregisterLocationCallback(locationListener);
-			unbindService(locationConnection);
-			locationService = null;
-		}
-
-		stopService(new Intent(this, NavigationService.class));
-		stopService(new Intent(this, LocationService.class));
-
-		// clear data
-		clearRoutes();
-		clearTracks();
-		clearWaypoints();
-		clearWaypointSets();
-		clearMapObjects();
-		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
-		editor.commit();
-		
-		mapHolder = null;
-		currentMap = null;
-		suitableMaps = null;
-		maps = null;
-		mapsInited = false;
-		memmsg = false;
-	}
-
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent)
@@ -2141,6 +2079,51 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 	}
 	
+	/**
+	 * Load default and selected waypoint files.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public void initializeWaypoints()
+	{
+		if (waypoints.size() > 0)
+			return;
+
+		File wptFile = new File(dataPath, "myWaypoints.wpt");
+		if (wptFile.exists() && wptFile.canRead())
+		{
+			try
+			{
+				addWaypoints(OziExplorerFiles.loadWaypointsFromFile(wptFile, charset));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		{
+			// load selected waypoint sets
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+			Set<String> sets = settings.getStringSet(getString(R.string.wpt_sets), new HashSet<String>());
+			Log.e(TAG, "WPT: " + sets.toString());
+			for (String path : sets)
+			{
+				File file = new File(path);
+				try
+				{
+					if (file.exists() && file.canRead())
+						WaypointFileHelper.loadFile(file);
+				}
+				catch (Exception e)
+				{
+					// We ignore all exceptions on this stage
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	public void initializePlugins()
 	{
 		PackageManager packageManager = getPackageManager();
@@ -2364,6 +2347,73 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		settings.registerOnSharedPreferenceChangeListener(this);
 		
 		//navEnabled = navigationService != null && navigationService.isNavigating();
+	}
+	
+	@SuppressLint("NewApi")
+	public void clear()
+	{
+		// send finalization broadcast
+		sendBroadcast(new Intent("com.androzic.plugins.action.FINALIZE"));
+
+		// clear services
+		unregisterReceiver(broadcastReceiver);
+
+		overlayManager.clear();
+
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+
+		if (navigationService != null)
+		{
+			if (navigationService.isNavigatingViaRoute() && navigationService.navRoute.filepath != null)
+			{
+				// save active route point
+				editor.putInt(getString(R.string.nav_route_wpt), navigationService.navCurrentRoutePoint);
+			}
+			unbindService(navigationConnection);
+			navigationService = null;
+		}
+
+		if (locationService != null)
+		{
+			locationService.unregisterLocationCallback(locationListener);
+			unbindService(locationConnection);
+			locationService = null;
+		}
+
+		stopService(new Intent(this, NavigationService.class));
+		stopService(new Intent(this, LocationService.class));
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		{
+			// save opened waypoint sets
+			HashSet<String> sets = new HashSet<String>();
+			for (int i = 1; i < waypointSets.size(); i++)
+			{
+				WaypointSet set = waypointSets.get(i);
+				if (set.path != null)
+					sets.add(set.path);
+			}
+			Log.e(TAG, "WPT: " + sets.toString());
+			editor.putStringSet(getString(R.string.wpt_sets), sets);
+		}
+
+		// clear data
+		clearRoutes();
+		clearTracks();
+		clearWaypoints();
+		clearWaypointSets();
+		clearMapObjects();
+		
+		// save last location
+		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
+		editor.commit();
+		
+		mapHolder = null;
+		currentMap = null;
+		suitableMaps = null;
+		maps = null;
+		mapsInited = false;
+		memmsg = false;
 	}
 
 	private class MapActivationError implements Runnable

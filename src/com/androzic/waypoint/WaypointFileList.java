@@ -23,8 +23,6 @@ package com.androzic.waypoint;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -32,12 +30,8 @@ import org.xml.sax.SAXException;
 
 import com.androzic.Androzic;
 import com.androzic.R;
-import com.androzic.data.Waypoint;
-import com.androzic.data.WaypointSet;
 import com.androzic.ui.FileListDialog;
-import com.androzic.util.GpxFiles;
-import com.androzic.util.KmlFiles;
-import com.androzic.util.OziExplorerFiles;
+import com.androzic.util.WaypointFileHelper;
 import com.androzic.util.WaypointFilenameFilter;
 
 public class WaypointFileList extends FileListDialog
@@ -63,36 +57,10 @@ public class WaypointFileList extends FileListDialog
 	@Override
 	protected void loadFile(File file)
 	{
-		Androzic application = Androzic.getApplication();
-		List<Waypoint> waypoints = null;
-
 		try
 		{
-			WaypointSet wptset = new WaypointSet(file);
-			String lc = file.getName().toLowerCase(Locale.getDefault());
-			if (lc.endsWith(".wpt"))
-			{
-				waypoints = OziExplorerFiles.loadWaypointsFromFile(file, application.charset);
-			}
-			else if (lc.endsWith(".kml"))
-			{
-				wptset.path = null;
-				waypoints = KmlFiles.loadWaypointsFromFile(file);
-			}
-			else if (lc.endsWith(".gpx"))
-			{
-				wptset.path = null;
-				waypoints = GpxFiles.loadWaypointsFromFile(file);
-			}
-			if (waypoints != null)
-			{
-				for (Waypoint waypoint : waypoints)
-				{
-					waypoint.set = wptset;
-				}
-				int count = application.addWaypoints(waypoints, wptset);
-				onFileLoaded(count);
-			}
+			int count = WaypointFileHelper.loadFile(file);
+			onFileLoaded(count);
 		}
 		catch (IllegalArgumentException e)
 		{

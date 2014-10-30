@@ -370,19 +370,9 @@ public class Splash extends Activity implements OnClickListener
 			// start tracking service
 			application.enableTracking(settings.getBoolean(getString(R.string.lc_track), true));
 
-			// read default waypoints
-			File wptFile = new File(application.dataPath, "myWaypoints.wpt");
-			if (wptFile.exists() && wptFile.canRead())
-			{
-				try
-				{
-					application.addWaypoints(OziExplorerFiles.loadWaypointsFromFile(wptFile, application.charset));
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
+			// read waypoints
+			application.initializeWaypoints();
+
 			// read track tail
 			if (settings.getBoolean(getString(R.string.pref_showcurrenttrack), true))
 			{
