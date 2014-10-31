@@ -2106,7 +2106,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			// load selected waypoint sets
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 			Set<String> sets = settings.getStringSet(getString(R.string.wpt_sets), new HashSet<String>());
-			Log.e(TAG, "WPT: " + sets.toString());
 			for (String path : sets)
 			{
 				File file = new File(path);
@@ -2393,7 +2392,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				if (set.path != null)
 					sets.add(set.path);
 			}
-			Log.e(TAG, "WPT: " + sets.toString());
 			editor.putStringSet(getString(R.string.wpt_sets), sets);
 		}
 

@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,6 +34,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -60,6 +62,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
@@ -127,9 +130,9 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 
 		application.registerReceiver(broadcastReceiver, new IntentFilter(Androzic.BROADCAST_WAYPOINT_REMOVED));
 
-		// TODO Remember last sort mode
-		mSortMode = -1;
-		adapter.sort(0);
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(application);
+		mSortMode = settings.getInt(getString(R.string.wpt_sort), R.id.action_sort_size);
+		adapter.sort(1);
 	}
 
 	@Override
@@ -180,20 +183,24 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 	@Override
 	public void onPrepareOptionsMenu(final Menu menu)
 	{
+		Androzic application = Androzic.getApplication();
+		
 		if (mSortMode != -1)
 		{
 			Drawable icon = menu.findItem(mSortMode).getIcon();
 			menu.findItem(R.id.action_sort).setIcon(icon);
+			Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
+			editor.putInt(getString(R.string.wpt_sort), mSortMode);
+			editor.commit();
 		}
 		
-		Androzic application = Androzic.getApplication();
 		List<WaypointSet> sets = application.getWaypointSets();
 		if (sets.size() > 1)
 		{
 			menu.setGroupVisible(R.id.group_sets, true);
 			menu.removeGroup(R.id.group_sets);
 			for (int i = 1; i < sets.size(); i++)
-	        	menu.add(R.id.group_sets, i, Menu.NONE, sets.get(i).name).setChecked(true);
+				menu.add(R.id.group_sets, i, Menu.NONE, sets.get(i).name).setChecked(true);
 	        menu.setGroupCheckable(R.id.group_sets, true, false);
 		}
 	}

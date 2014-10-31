@@ -108,6 +108,7 @@
 	<string name="app_eulaaccepted">app_eulaaccepted</string>
 	<string name="app_lastuid">app_lastuid</string>
 	<string name="loc_last">loc_last</string>
+	<string name="wpt_sort">wpt_sort</string>
 	<string name="wpt_sets">wpt_sets</string>
 	<string name="trk_current">trk_current</string>
 	<string name="nav_wpt">nav_wpt</string>
