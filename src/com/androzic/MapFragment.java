@@ -142,6 +142,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 	private TextView waitBar;
 
+	private View mapButtons;
 	private ViewGroup dimView;
 	private View anchor;
 
@@ -209,6 +210,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		bearingUnit = (TextView) view.findViewById(R.id.bearingunit);
 		turnValue = (TextView) view.findViewById(R.id.turn);
 		// trackBar = (SeekBar) findViewById(R.id.trackbar);
+		mapButtons = view.findViewById(R.id.mapbuttons);
 		waitBar = (TextView) view.findViewById(R.id.waitbar);
 		anchor = view.findViewById(R.id.anchor);
 		map = (MapView) view.findViewById(R.id.mapview);
@@ -568,6 +570,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				v = root.findViewById(R.id.rightbar);
 				if (v != null)
 					area.right = v.getLeft();
+				if (mapButtons.isShown())
+					area.right = mapButtons.getLeft();
 				if (!area.isEmpty())
 					map.updateViewArea(area);
 				ViewTreeObserver ob;
@@ -1137,9 +1141,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 			case R.id.currentzoom:
 			{
-				View mapButtons = getView().findViewById(R.id.mapbuttons);
 				boolean visible = mapButtons.isShown();
 				mapButtons.setVisibility(visible ? View.GONE : View.VISIBLE);
+				updateMapViewArea();
 				// save panel state
 				Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
 				editor.putBoolean(getString(R.string.ui_mapbuttons_shown), !visible);
