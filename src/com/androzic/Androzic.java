@@ -1329,7 +1329,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 						}
 						catch (Exception e)
 						{
-							cma.remove(map);
+							icma.remove();
 							e.printStackTrace();
 						}
 					}
