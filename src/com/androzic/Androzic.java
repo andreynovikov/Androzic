@@ -1262,8 +1262,9 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			if (provider.equals(map.code))
 			{
-				boolean s = currentMap == onlineMap;					
-				maps.removeMap(onlineMap);
+				boolean s = currentMap == onlineMap;
+				if (onlineMap != null)
+					maps.removeMap(onlineMap);
 				byte zoom = (byte) PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.pref_onlinemapscale), getResources().getInteger(R.integer.def_onlinemapscale));
 				onlineMap = new OnlineMap(map, zoom);
 				maps.addMap(onlineMap);
