@@ -297,6 +297,9 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 		adapter = new WaypointListAdapter(activity, route);
 		setListAdapter(adapter);
 		
+		if (navigation)
+			getListView().setSelection(application.navigationService.navRouteCurrentIndex());
+
 		activity.supportInvalidateOptionsMenu();
 	}
 
@@ -450,7 +453,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 					if (progress == 0)
 					{
 						text = (TextView) v.findViewById(R.id.name);
-						text.setText("» " + text.getText());
+						text.setText("\u2192 " + text.getText());
 					}
 				}
 				else
