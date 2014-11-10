@@ -185,9 +185,10 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 	{
 		Androzic application = Androzic.getApplication();
 		
-		if (mSortMode != -1)
+		MenuItem sortItem = menu.findItem(mSortMode);
+		if (sortItem != null)
 		{
-			Drawable icon = menu.findItem(mSortMode).getIcon();
+			Drawable icon = sortItem.getIcon();
 			menu.findItem(R.id.action_sort).setIcon(icon);
 			Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
 			editor.putInt(getString(R.string.wpt_sort), mSortMode);
