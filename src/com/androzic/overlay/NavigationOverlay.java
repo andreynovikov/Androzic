@@ -69,18 +69,18 @@ public class NavigationOverlay extends MapOverlay
 	}
 	
 	@Override
-	protected void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
 	{
 		if (application.navigationService.navWaypoint == null)
 			return;
 		
-		final int[] cxy = mapView.mapCenterXY;
+		final int[] cxy = viewport.mapCenterXY;
 
 		int[] xy = application.getXYbyLatLon(application.navigationService.navWaypoint.latitude, application.navigationService.navWaypoint.longitude);
 
-        if (mapView.currentLocation != null)
+        if (viewport.location != null)
         {
-            final int[] lxy = mapView.currentLocationXY;
+            final int[] lxy = viewport.locationXY;
         	c.drawLine(lxy[0] - cxy[0], lxy[1] - cxy[1], xy[0] - cxy[0], xy[1] - cxy[1], paint);
         }
         if (drawCircle && application.navigationService.navRoute != null)
@@ -103,7 +103,7 @@ public class NavigationOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDrawFinished(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
 	{
 	}
 

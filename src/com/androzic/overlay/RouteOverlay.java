@@ -202,12 +202,12 @@ public class RouteOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(final Canvas c, final MapView mapView, int centerX, int centerY)
+	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
 	{
 		if (!route.show)
 			return;
 
-		final int[] cxy = mapView.mapCenterXY;
+		final int[] cxy = viewport.mapCenterXY;
 
 		final Path path = new Path();
 		int i = 0;
@@ -241,12 +241,12 @@ public class RouteOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDrawFinished(final Canvas c, final MapView mapView, int centerX, int centerY)
+	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
 	{
 		if (!route.show)
 			return;
 
-		final int[] cxy = mapView.mapCenterXY;
+		final int[] cxy = viewport.mapCenterXY;
 
 		final int half = Math.round(pointWidth / 2);
 

@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2013  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -20,7 +20,6 @@
 
 package com.androzic.overlay;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -47,23 +46,9 @@ public abstract class MapOverlay
 	 */
 	public abstract void onPreferencesChanged(final SharedPreferences settings);
 	
-	/**
-	 * Managed Draw calls gives Overlays the possibility to first draw manually and after 
-	 * that do a final draw. This is very useful, i sth. to be drawn needs to be <b>topmost</b>.
-	 */
-	@SuppressLint("WrongCall")
-	public void onManagedDraw(final Canvas c, final MapView mapView, int centerX, int centerY)
-	{
-		if (enabled)
-		{
-			onDraw(c, mapView, centerX, centerY);
-			onDrawFinished(c, mapView, centerX, centerY);
-		}
-	}
-
-	protected abstract void onDraw(final Canvas c, final MapView mapView, final int centerX, final int centerY);
+	public abstract void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c);
 		
-	protected abstract void onDrawFinished(final Canvas c, final MapView mapView, final int centerX, final int centerY);
+	public abstract void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c);
 	
 	public void onBeforeDestroy()
 	{
@@ -72,6 +57,11 @@ public abstract class MapOverlay
 
 	public void onMapChanged()
 	{
+	}
+
+	public boolean isEnabled()
+	{
+		return enabled;
 	}
 
 	public boolean setEnabled(boolean enabled)

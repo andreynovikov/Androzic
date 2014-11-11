@@ -68,27 +68,23 @@ public class AccuracyOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
 	{
-		final int[] cxy = mapView.mapCenterXY;
+		final int[] cxy = viewport.mapCenterXY;
 
-		if (radius > 0 && mapView.currentLocation != null)
+		if (radius > 0 && viewport.location != null)
 		{
-			c.drawCircle(mapView.currentLocationXY[0] - cxy[0], mapView.currentLocationXY[1] - cxy[1], radius, paint);
+			c.drawCircle(viewport.locationXY[0] - cxy[0], viewport.locationXY[1] - cxy[1], radius, paint);
 		}
 	}
 
 	@Override
-	protected void onDrawFinished(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
-		// TODO Auto-generated method stub
-
 	}
 }

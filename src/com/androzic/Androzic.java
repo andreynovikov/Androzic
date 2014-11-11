@@ -66,6 +66,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -174,7 +175,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	private boolean memmsg = false;
 	
 	private Locale locale = null;
-	private Handler handler = null;
 	public String charset;
 
 	public String dataPath;
@@ -197,7 +197,30 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	protected boolean cropMapBorder = true;
 	protected boolean drawMapBorder = false;
 
-	private Handler mapsHandler = new Handler();
+	private HandlerThread renderingThread;
+	private HandlerThread longOperationsThread;
+	private Handler mapsHandler;
+	private Handler uiHandler;
+
+	public Androzic()
+	{
+		super();
+		
+		uiHandler = new Handler();
+
+		renderingThread = new HandlerThread("RenderingThread");
+		renderingThread.start();
+		
+		longOperationsThread = new HandlerThread("RenderingThread");
+		longOperationsThread.start();
+		
+		mapsHandler = new Handler(longOperationsThread.getLooper());
+	}
+
+	public HandlerThread getRenderingThread()
+	{
+		return renderingThread;
+	}
 
 	public MapHolder getMapHolder()
 	{
@@ -216,7 +239,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			catch (final Throwable e)
 			{
 				e.printStackTrace();
-				handler.post(new MapActivationError(currentMap, e));
+				uiHandler.post(new MapActivationError(currentMap, e));
 			}
 		}
 		overlayManager.initGrids(currentMap);
@@ -479,7 +502,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	{
 		if (mapHolder != null)
 			mapHolder.setFollowing(false);
-		return setMapCenter(lat, lon, true, false);
+		return setMapCenter(lat, lon, true, true, false);
 	}
 	
 	public int addWaypointSet(final WaypointSet newWaypointSet)
@@ -932,11 +955,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		if (loc != null)
 		{
 			coordinate = CoordinateParser.parse(loc);
-			setMapCenter(coordinate[0], coordinate[1], true, true);
+			setMapCenter(coordinate[0], coordinate[1], true, true, true);
 		}
 		if (coordinate == null)
 		{
-			setMapCenter(0, 0, true, true);
+			setMapCenter(0, 0, true, true, true);
 		}
 	}
 	
@@ -952,15 +975,16 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	 * Sets map center to specified coordinates
 	 * @param lat New latitude
 	 * @param lon New longitude
+	 * @param checkcoverage Check if map covers specified location
 	 * @param reindex Recreate index of maps for new location
 	 * @param findbest Look for best map in new location
 	 * @return true if current map was changed
 	 */
-	public boolean setMapCenter(double lat, double lon, boolean reindex, boolean findbest)
+	public boolean setMapCenter(double lat, double lon, boolean checkcoverage, boolean reindex, boolean findbest)
 	{
 		mapCenter[0] = lat;
 		mapCenter[1] = lon;
-		return updateLocationMaps(reindex, findbest);
+		return checkcoverage ? updateLocationMaps(reindex, findbest) : false;
 	}
 
 	/**
@@ -997,7 +1021,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return setMap(newMap);
 	}
 	
-	public boolean scrollMap(int dx, int dy)
+	public boolean scrollMap(int dx, int dy, boolean checkcoverage)
 	{
 		if (currentMap != null)
 		{
@@ -1012,7 +1036,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			if (ll[1] > 180.0) ll[1] = 180.0;
 			if (ll[1] < -180.0) ll[1] = -180.0;
 			
-			return setMapCenter(ll[0], ll[1], false, false);
+			return setMapCenter(ll[0], ll[1], checkcoverage, false, false);
 		}
 		return false;
 	}
@@ -1020,11 +1044,16 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public int[] getXYbyLatLon(double lat, double lon)
 	{
 		int[] xy = new int[] {0, 0};
+		getXYbyLatLon(lat, lon, xy);
+		return xy;
+	}
+	
+	public void getXYbyLatLon(double lat, double lon, int[] xy)
+	{
 		if (currentMap != null)
 		{
 			currentMap.getXYByLatLon(lat, lon, xy);
 		}
-		return xy;
 	}
 	
 	public double getZoom()
@@ -1240,7 +1269,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				catch (final Throwable e)
 				{
 					e.printStackTrace();
-					handler.post(new MapActivationError(newMap, e));
+					uiHandler.post(new MapActivationError(newMap, e));
 					return false;
 				}
 			}
@@ -1352,7 +1381,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 	}
 	
-	public void drawMap(double[] loc, int[] lookAhead, boolean bestmap, int width, int height, Canvas c)
+	public void drawMap(MapView.Viewport viewport, boolean bestmap, Canvas c)
 	{
 		Map cm = currentMap;
 		
@@ -1360,45 +1389,45 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			if (adjacentMaps)
 			{
-				int l = -(width / 2 + lookAhead[0]);
-				int t = -(height / 2 + lookAhead[1]);
-				int r = l + width;
-				int b = t + height;
-				if (coveringMaps == null || loc[0] != coveringLoc[0] || loc[1] != coveringLoc[1] || coveringBestMap != bestmap || 
+				int l = -(viewport.width / 2 + viewport.lookAheadXY[0]);
+				int t = -(viewport.height / 2 + viewport.lookAheadXY[1]);
+				int r = l + viewport.width;
+				int b = t + viewport.height;
+				if (coveringMaps == null || viewport.location[0] != coveringLoc[0] || viewport.location[1] != coveringLoc[1] || coveringBestMap != bestmap || 
 					l != coveringScreen.left || t != coveringScreen.top || r != coveringScreen.right || b != coveringScreen.bottom)
 				{
 					coveringScreen.left = l;
 					coveringScreen.top = t;
 					coveringScreen.right = r;
 					coveringScreen.bottom = b;
-					coveringLoc[0] = loc[0];
-					coveringLoc[1] = loc[1];
+					coveringLoc[0] = viewport.location[0];
+					coveringLoc[1] = viewport.location[1];
 					coveringBestMap = bestmap;
 					updateCoveringMaps();
 				}
 			}
 			try
 			{
-				if (coveringMaps != null && ! coveringMaps.isEmpty())
+				if (coveringMaps != null && !coveringMaps.isEmpty())
 				{
 					boolean drawn = false;
 					for (Map map : coveringMaps)
 					{
 						if (! drawn && coveringBestMap && map.mpp < cm.mpp)
 						{
-							coveredAll = cm.drawMap(loc, lookAhead, width, height, cropMapBorder, drawMapBorder, c);
+							coveredAll = cm.drawMap(viewport.mapCenter, viewport.lookAheadXY, viewport.width, viewport.height, cropMapBorder, drawMapBorder, c);
 							drawn = true;
 						}
-						map.drawMap(loc, lookAhead, width, height, cropMapBorder, drawMapBorder, c);
+						map.drawMap(viewport.mapCenter, viewport.lookAheadXY, viewport.width, viewport.height, cropMapBorder, drawMapBorder, c);
 					}
 					if (! drawn)
 					{
-						coveredAll = cm.drawMap(loc, lookAhead, width, height, cropMapBorder, drawMapBorder, c);
+						coveredAll = cm.drawMap(viewport.mapCenter, viewport.lookAheadXY, viewport.width, viewport.height, cropMapBorder, drawMapBorder, c);
 					}
 				}
 				else
 				{
-					coveredAll = cm.drawMap(loc, lookAhead, width, height, cropMapBorder, drawMapBorder, c);
+					coveredAll = cm.drawMap(viewport.mapCenter, viewport.lookAheadXY, viewport.width, viewport.height, cropMapBorder, drawMapBorder, c);
 				}
 			}
 			catch (OutOfMemoryError err)
@@ -2312,7 +2341,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		Log.e("ANDROZIC","Application onCreate()");
 
 		setInstance(this);
-		handler = new Handler();
 		
         String intentToCheck = "com.androzic.donate";
         String myPackageName = getPackageName();

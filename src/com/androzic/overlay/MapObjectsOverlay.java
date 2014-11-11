@@ -263,16 +263,16 @@ public class MapObjectsOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(final Canvas c, final MapView mapVie, int centerX, int centerYw)
+	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
 	{
 	}
 
 	@Override
-	protected void onDrawFinished(final Canvas c, final MapView mapView, int centerX, int centerY)
+	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
 	{
 		Androzic application = Androzic.getApplication();
 
-		final int[] cxy = mapView.mapCenterXY;
+		final int[] cxy = viewport.mapCenterXY;
 
 		Iterator<MapObject> mapObjects = application.getMapObjects().iterator();
 		while (mapObjects.hasNext())

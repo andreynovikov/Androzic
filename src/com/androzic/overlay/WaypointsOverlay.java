@@ -64,14 +64,14 @@ public class WaypointsOverlay extends MapObjectsOverlay
 	}
 
 	@Override
-	protected void onDraw(final Canvas c, final MapView mapVie, int centerX, int centerYw)
+	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
 	{
 	}
 
 	@Override
-	protected void onDrawFinished(final Canvas c, final MapView mapView, int centerX, int centerY)
+	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
 	{
-		final int[] cxy = mapView.mapCenterXY;
+		final int[] cxy = viewport.mapCenterXY;
 
 		synchronized (waypoints)
 		{

@@ -101,20 +101,20 @@ public class DistanceOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
 	{
 		if (ancor == null)
 			return;
 		
-		final double[] loc = mapView.mapCenter;
-		final int[] cxy = mapView.mapCenterXY;
+		final double[] loc = viewport.mapCenter;
+		final int[] cxy = viewport.mapCenterXY;
 
-        int sx = ancorXY[0] - cxy[0] + centerX;
-        int sy = ancorXY[1] - cxy[1] + centerY;
+        int sx = ancorXY[0] - cxy[0] + viewport.width / 2;
+        int sy = ancorXY[1] - cxy[1] + viewport.height / 2;
         
         if (ancorXY[0] != cxy[0] || ancorXY[1] != cxy[1])
         {
-	        if (sx >= 0 && sy >= 0 && sx <= mapView.getWidth() && sy <= mapView.getHeight())
+	        if (sx >= 0 && sy >= 0 && sx <= viewport.width && sy <= viewport.height)
 	        {
 	        	c.drawLine(0, 0, ancorXY[0]-cxy[0], ancorXY[1]-cxy[1], linePaint);
 	        	c.drawCircle(ancorXY[0]-cxy[0], ancorXY[1]-cxy[1], linePaint.getStrokeWidth(), circlePaint);
@@ -124,19 +124,19 @@ public class DistanceOverlay extends MapOverlay
 	        	double bearing = Geo.bearing(loc[0], loc[1], ancor[0], ancor[1]);
 	        	c.save();
 	        	c.rotate((float) bearing, 0, 0);
-	        	c.drawLine(0, 0, 0, -centerY-centerX, linePaint);
+	        	c.drawLine(0, 0, 0, - viewport.height / 2 - viewport.width / 2, linePaint);
 	        	c.restore();
 	        }
         }
 	}
 
 	@Override
-	protected void onDrawFinished(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
 	{
 		if (ancor == null)
 			return;
 		
-		final double[] loc = mapView.mapCenter;
+		final double[] loc = viewport.mapCenter;
 		
 		double dist = Geo.distance(loc[0], loc[1], ancor[0], ancor[1]);
 		double bearing = Geo.bearing(loc[0], loc[1], ancor[0], ancor[1]);

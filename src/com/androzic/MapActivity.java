@@ -347,7 +347,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 						map.suspendBestMap();
 						setFollowing(false);
 						map.updateMapInfo();
-						map.update();
+						map.updateMapCenter();
 					}
 				}
 				break;
@@ -422,10 +422,10 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 				((TextView) findViewById(R.id.tp_longitude)).setText(StringFormatter.coordinate(application.coordinateFormat, tp.longitude));
 				((TextView) findViewById(R.id.tp_elevation)).setText(String.valueOf(Math.round(ele)) + " " + elevationAbbr);
 				((TextView) findViewById(R.id.tp_time)).setText(SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT).format(new Date(tp.time)));
-				boolean mapChanged = application.setMapCenter(tp.latitude, tp.longitude, false, false);
+				boolean mapChanged = application.setMapCenter(tp.latitude, tp.longitude, true, false, false);
 				if (mapChanged)
 					map.updateMapInfo();
-				map.update();
+				map.updateMapCenter();
 				break;
 		}
 	}

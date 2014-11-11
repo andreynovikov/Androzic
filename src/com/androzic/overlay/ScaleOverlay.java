@@ -90,13 +90,12 @@ public class ScaleOverlay extends MapOverlay
 	}
 	
 	@Override
-	protected void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
 	{
 		if (mpp == 0)
 			return;
 		
-		int w = mapView.getWidth();
-		int m = (int) (mpp * w / 6);
+		int m = (int) (mpp * viewport.width / 6);
 		if (m < 40)
 			m = m / 10 * 10;
 		else if (m < 80)
@@ -124,7 +123,7 @@ public class ScaleOverlay extends MapOverlay
 		
 		int x = (int) (m / mpp);
 		
-		if (x > w / 4)
+		if (x > viewport.width / 4)
 		{
 			x /= 2;
 			m /= 2;
@@ -135,16 +134,16 @@ public class ScaleOverlay extends MapOverlay
 		final int xd2 = x / 2;
 		final int xd4 = x / 4;
 		
-		int cx = - mapView.lookAheadXY[0] - centerX;
-		int cy = - mapView.lookAheadXY[1] - centerY;
+		int cx = - viewport.lookAheadXY[0] - viewport.width / 2;
+		int cy = - viewport.lookAheadXY[1] - viewport.height / 2;
 		int cty = -10;
 
 		int pos;
-		if (mapView.bearing >= 0 && mapView.bearing < 90)
+		if (viewport.bearing >= 0 && viewport.bearing < 90)
 			pos = 1;
-		else if (mapView.bearing >= 90 && mapView.bearing < 180)
+		else if (viewport.bearing >= 90 && viewport.bearing < 180)
 			pos = 2;
-		else if (mapView.bearing >= 180 && mapView.bearing < 270)
+		else if (viewport.bearing >= 180 && viewport.bearing < 270)
 			pos = 3;
 		else
 			pos = 4;
@@ -171,24 +170,24 @@ public class ScaleOverlay extends MapOverlay
 		if (pos == 1)
 		{
 			cx += 30;
-			cy += mapView.viewArea.bottom - 30;
+			cy += viewport.viewArea.bottom - 30;
 		}
 		else if (pos == 2)
 		{
 			cx += 30;
-			cy += mapView.viewArea.top + 10;
+			cy += viewport.viewArea.top + 10;
 			cty = 30;
 		}
 		else if (pos == 3)
 		{
-			cx += mapView.viewArea.right - x3 - 40;
-			cy += mapView.viewArea.top + 10;
+			cx += viewport.viewArea.right - x3 - 40;
+			cy += viewport.viewArea.top + 10;
 			cty = 30;
 		}
 		else
 		{
-			cx += mapView.viewArea.right - x3 - 40;
-			cy += mapView.viewArea.bottom - 30;
+			cx += viewport.viewArea.right - x3 - 40;
+			cy += viewport.viewArea.bottom - 30;
 		}
 
 		int t = 2000;
@@ -232,7 +231,7 @@ public class ScaleOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDrawFinished(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
 	{
 	}
 

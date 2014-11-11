@@ -327,7 +327,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		// Start updating UI
 		map.resume();
 		map.updateMapInfo();
-		map.update();
+		map.updateMapCenter();
 		map.requestFocus();
 		updateCallback.post(updateUI);
 	}
@@ -522,8 +522,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				if (followOnLocation)
 					setFollowing(true);
 			}
-			else
-				map.update();
 
 			updateGPSStatus();
 
@@ -659,7 +657,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 
 		updateMapViewArea();
-		map.update();
+		map.refreshMap();
 	}
 
 	private void onUpdateNavigationStatus()
@@ -850,7 +848,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		if (map == null)
 			return;
 		map.updateMapInfo();
-		map.update();
+		map.updateMapCenter();
 	}
 
 	@Override
@@ -860,7 +858,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			return;
 		map.suspendBestMap();
 		map.updateMapInfo();
-		map.update();
+		map.updateMapCenter();
 	}
 
 	private void updateEditStatus()
@@ -1246,7 +1244,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 								if (application.setZoom(1.))
 								{
 									map.updateMapInfo();
-									map.update();
+									map.updateMapCenter();
 								}
 							}
 						}});
@@ -1270,7 +1268,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				int wpt = application.addWaypoint(waypoint);
 				waypoint.name = "WPT" + wpt;
 				application.saveDefaultWaypoints();
-				map.update();
+				map.refreshMap();
 				return true;
 			case R.id.action_follow:
 				setFollowing(!following);
@@ -1378,10 +1376,10 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					double c[] = CoordinateParser.parse(text);
 					if (!Double.isNaN(c[0]) && !Double.isNaN(c[1]))
 					{
-						boolean mapChanged = application.setMapCenter(c[0], c[1], true, false);
+						boolean mapChanged = application.setMapCenter(c[0], c[1], true, true, false);
 						if (mapChanged)
 							map.updateMapInfo();
-						map.update();
+						map.updateMapCenter();
 						following = false;
 						map.setFollowing(false);
 					}

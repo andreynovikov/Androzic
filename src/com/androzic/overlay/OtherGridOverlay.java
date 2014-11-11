@@ -302,10 +302,10 @@ public class OtherGridOverlay extends MapOverlay
 	}
 
 	@Override
-	protected synchronized void onDraw(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
 	{
 		c.save();
-		c.translate(-mapView.mapCenterXY[0], -mapView.mapCenterXY[1]);
+		c.translate(-viewport.mapCenterXY[0], -viewport.mapCenterXY[1]);
 		if (clip != null)
 		{
 			c.clipRect(clip);
@@ -318,7 +318,7 @@ public class OtherGridOverlay extends MapOverlay
 	}
 
 	@Override
-	protected void onDrawFinished(Canvas c, MapView mapView, int centerX, int centerY)
+	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
 	{
 	}
 }
