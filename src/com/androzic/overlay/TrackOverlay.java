@@ -20,6 +20,7 @@
 
 package com.androzic.overlay;
 
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.SharedPreferences;
@@ -111,11 +112,12 @@ public class TrackOverlay extends MapOverlay
 	@Override
 	public void onMapChanged()
 	{
-		List<TrackPoint> trackpoints = track.getPoints();
-		synchronized (trackpoints)
+		for (Iterator<Track.TrackSegment> segments = track.getSegments().iterator(); segments.hasNext();)
 		{
-			for (TrackPoint tp : trackpoints)
+			Track.TrackSegment segment = segments.next();
+			for (Iterator<Track.TrackPoint> points = segment.getPoints().iterator(); points.hasNext();)
 			{
+				Track.TrackPoint tp = points.next();
 				tp.dirty = true;
 			}
 		}
@@ -140,7 +142,7 @@ public class TrackOverlay extends MapOverlay
 		boolean first = true;
 		boolean skipped = false;
 		int lastX = 0, lastY = 0;
-		List<TrackPoint> trackpoints = track.getPoints();
+		List<TrackPoint> trackpoints = track.getAllPoints();
 		synchronized (trackpoints)
 		{
 			for (TrackPoint tp : trackpoints)

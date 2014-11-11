@@ -394,7 +394,7 @@ public class OziExplorerFiles
 	
 		//-27.350436, 153.055540,1,-777,36169.6307194, 09-Jan-99, 3:08:14 
 	
-        List<TrackPoint> trackPoints = track.getPoints();
+        List<TrackPoint> trackPoints = track.getAllPoints();
         synchronized (trackPoints)
         {  
 	        for (TrackPoint tp : trackPoints)

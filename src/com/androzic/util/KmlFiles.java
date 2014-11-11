@@ -159,7 +159,7 @@ public class KmlFiles
 		int part = 1;
 		boolean first = true;
 		startTrackPart(serializer, part, track.name);
-		List<TrackPoint> trackPoints = track.getPoints();
+		List<TrackPoint> trackPoints = track.getAllPoints();
 		synchronized (trackPoints)
 		{
 			for (TrackPoint tp : trackPoints)
@@ -223,7 +223,7 @@ public class KmlFiles
 		{
 			Route route = new Route(track.name, track.description, track.show);
 			int i = 0;
-			for (Track.TrackPoint tp : track.getPoints())
+			for (Track.TrackPoint tp : track.getAllPoints())
 			{
 				String name = "RWPT"+i;
 				route.addWaypoint(name, tp.latitude, tp.longitude);

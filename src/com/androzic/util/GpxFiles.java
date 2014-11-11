@@ -134,28 +134,25 @@ public class GpxFiles
 		
 		boolean first = true;
 		serializer.startTag(GPX_NAMESPACE, GpxParser.TRKSEG);
-		List<TrackPoint> trackPoints = track.getPoints();
-		synchronized (trackPoints)
+		List<TrackPoint> trackPoints = track.getAllPoints();
+		for (TrackPoint tp : trackPoints)
 		{
-			for (TrackPoint tp : trackPoints)
+			if (!tp.continous && !first)
 			{
-				if (!tp.continous && !first)
-				{
-					serializer.endTag(GPX_NAMESPACE, GpxParser.TRKSEG);
-					serializer.startTag(GPX_NAMESPACE, GpxParser.TRKSEG);
-				}
-				serializer.startTag(GPX_NAMESPACE, GpxParser.TRKPT);
-				serializer.attribute("", GpxParser.LAT, String.valueOf(tp.latitude));
-				serializer.attribute("", GpxParser.LON, String.valueOf(tp.longitude));
-				serializer.startTag(GPX_NAMESPACE, GpxParser.ELE);
-				serializer.text(String.valueOf(tp.elevation));
-				serializer.endTag(GPX_NAMESPACE, GpxParser.ELE);
-				serializer.startTag(GPX_NAMESPACE, GpxParser.TIME);
-				serializer.text(GpxParser.trktime.format(new Date(tp.time)));
-				serializer.endTag(GPX_NAMESPACE, GpxParser.TIME);
-				serializer.endTag(GPX_NAMESPACE, GpxParser.TRKPT);
-				first = false;
+				serializer.endTag(GPX_NAMESPACE, GpxParser.TRKSEG);
+				serializer.startTag(GPX_NAMESPACE, GpxParser.TRKSEG);
 			}
+			serializer.startTag(GPX_NAMESPACE, GpxParser.TRKPT);
+			serializer.attribute("", GpxParser.LAT, String.valueOf(tp.latitude));
+			serializer.attribute("", GpxParser.LON, String.valueOf(tp.longitude));
+			serializer.startTag(GPX_NAMESPACE, GpxParser.ELE);
+			serializer.text(String.valueOf(tp.elevation));
+			serializer.endTag(GPX_NAMESPACE, GpxParser.ELE);
+			serializer.startTag(GPX_NAMESPACE, GpxParser.TIME);
+			serializer.text(GpxParser.trktime.format(new Date(tp.time)));
+			serializer.endTag(GPX_NAMESPACE, GpxParser.TIME);
+			serializer.endTag(GPX_NAMESPACE, GpxParser.TRKPT);
+			first = false;
 		}
 		serializer.endTag(GPX_NAMESPACE, GpxParser.TRKSEG);
 		serializer.endTag(GPX_NAMESPACE, GpxParser.TRK);

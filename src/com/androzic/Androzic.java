@@ -75,6 +75,7 @@ import android.util.Pair;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.androzic.data.Bounds;
 import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
@@ -593,7 +594,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public Route trackToRoute2(Track track, float sensitivity) throws IllegalArgumentException
 	{
 		Route route = new Route();
-		List<Track.TrackPoint> points = track.getPoints();
+		List<Track.TrackPoint> points = track.getAllPoints();
 		Track.TrackPoint tp = points.get(0);
 		route.addWaypoint("RWPT", tp.latitude, tp.longitude).proximity = 0;
 
@@ -683,7 +684,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public Route trackToRoute(Track track, float sensitivity) throws IllegalArgumentException
 	{
 		Route route = new Route();
-		List<Track.TrackPoint> points = track.getPoints();
+		List<Track.TrackPoint> points = track.getAllPoints();
 		Track.TrackPoint lrp = points.get(0);
 		route.addWaypoint("RWPT0", lrp.latitude, lrp.longitude);
 
@@ -1301,7 +1302,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				@Override
 				public void run()
 				{
-					Map.Bounds area = new Map.Bounds();
+					Bounds area = new Bounds();
 					int[] xy = new int[2];
 					double[] ll = new double[2];
 					currentMap.getXYByLatLon(mapCenter[0], mapCenter[1], xy);

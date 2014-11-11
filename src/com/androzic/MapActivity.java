@@ -212,7 +212,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		setFollowing(false);
 		application.editingTrack = track;
 		application.editingTrack.editing = true;
-		int n = application.editingTrack.getPoints().size() - 1;
+		int n = application.editingTrack.getAllPoints().size() - 1;
 		int p = application.editingTrack.editingPos >= 0 ? application.editingTrack.editingPos : n;
 		application.editingTrack.editingPos = p;
 		trackBar.setMax(n);
@@ -374,14 +374,14 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 				isFullscreen = !isFullscreen;
 				break;
 			case R.id.cutbefore:
-				application.editingTrack.cutBefore(trackBar.getProgress());
-				int nb = application.editingTrack.getPoints().size() - 1;
+				//application.editingTrack.cutBefore(trackBar.getProgress());
+				int nb = application.editingTrack.getAllPoints().size() - 1;
 				trackBar.setMax(nb);
 				trackBar.setProgress(0);
 				break;
 			case R.id.cutafter:
-				application.editingTrack.cutAfter(trackBar.getProgress());
-				int na = application.editingTrack.getPoints().size() - 1;
+				//application.editingTrack.cutAfter(trackBar.getProgress());
+				int na = application.editingTrack.getAllPoints().size() - 1;
 				trackBar.setMax(na);
 				trackBar.setProgress(0);
 				trackBar.setProgress(na);

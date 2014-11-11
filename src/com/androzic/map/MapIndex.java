@@ -33,6 +33,7 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 
+import com.androzic.data.Bounds;
 import com.androzic.util.FileList;
 import com.androzic.util.MapFilenameFilter;
 
@@ -103,7 +104,7 @@ public class MapIndex implements Serializable
 		if (! mapIndex.containsKey(map.id))
 		{
 			// TODO Use corner markers instead
-			Map.Bounds bounds = map.getBounds();
+			Bounds bounds = map.getBounds();
 			int minLat = (int) Math.floor(bounds.minLat);
 			int maxLat = (int) Math.ceil(bounds.maxLat);
 			int minLon = (int) Math.floor(bounds.minLon);
@@ -129,7 +130,7 @@ public class MapIndex implements Serializable
 	public void removeMap(Map map)
 	{
 		// TODO Use corner markers instead
-		Map.Bounds bounds = map.getBounds();
+		Bounds bounds = map.getBounds();
 		int minLat = (int) Math.floor(bounds.minLat);
 		int maxLat = (int) Math.ceil(bounds.maxLat);
 		int minLon = (int) Math.floor(bounds.minLon);
@@ -146,7 +147,7 @@ public class MapIndex implements Serializable
 		mapIndex.remove(map.id);
 	}
 
-	public List<Map> getCoveringMaps(Map refMap, Map.Bounds area, boolean covered, boolean bestmap)
+	public List<Map> getCoveringMaps(Map refMap, Bounds area, boolean covered, boolean bestmap)
 	{
 		List<Map> llmaps = new ArrayList<Map>();
 

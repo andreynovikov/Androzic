@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -42,7 +41,6 @@ public class TrackExportDialog extends DialogFragment implements TextWatcher
 {
 	private EditText nameText;
 	private Spinner formatSpinner;
-	private CheckBox skip;
 	private ColorButton color;
 	private SliderContainer fromSliderContainer;
 	private SliderContainer tillSliderContainer;
@@ -71,7 +69,6 @@ public class TrackExportDialog extends DialogFragment implements TextWatcher
 		nameText.addTextChangedListener(this);
 		formatSpinner = (Spinner) view.findViewById(R.id.format_spinner);
 
-		skip = (CheckBox) view.findViewById(R.id.skip_check);
 		color = (ColorButton) view.findViewById(R.id.color_button);
 		color.setColor(prefs.getInt(getString(R.string.pref_tracking_currentcolor), getResources().getColor(R.color.currenttrack)), Color.RED);
 
@@ -140,8 +137,6 @@ public class TrackExportDialog extends DialogFragment implements TextWatcher
 			new Thread(new Runnable() {
 				public void run()
 				{
-					boolean skipSingles = skip.isChecked();
-
 					String name = nameText.getText().toString();
 					String format = formatSpinner.getItemAtPosition(formatSpinner.getSelectedItemPosition()).toString();
 					String filename = FileUtils.sanitizeFilename(name) + format;
@@ -160,23 +155,9 @@ public class TrackExportDialog extends DialogFragment implements TextWatcher
 					long end = endTime.getTimeInMillis();
 					
 					Track track = locationService.getTrack(start, end);
-					List<Track.TrackPoint> points = track.getPoints();
-
-					if (skipSingles)
-					{
-						Track.TrackPoint pp = track.getLastPoint();
-						for (int i = points.size() - 2; i >= 0; i--)
-						{
-							Track.TrackPoint cp = points.get(i);
-							if (!pp.continous && !cp.continous)
-							{
-								track.removePoint(i + 1);
-							}
-							pp = cp;
-						}
-					}
+					List<Track.TrackPoint> points = track.getAllPoints();
 					
-					if (track.getPoints().size() < 2)
+					if (points.size() < 2)
 					{
 						activity.runOnUiThread(new Runnable() {
 							public void run()
