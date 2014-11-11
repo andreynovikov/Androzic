@@ -57,7 +57,6 @@ import android.widget.TextView;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.overlay.CurrentTrackOverlay;
-import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.AutoloadedRouteFilenameFilter;
 import com.androzic.util.FileList;
 import com.androzic.util.GpxFiles;
@@ -212,7 +211,7 @@ public class Splash extends Activity implements OnClickListener
 					gotit.setVisibility(View.VISIBLE);
 					break;
 				case MSG_FINISH:
-					startActivity(new Intent(Splash.this, MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
+					startActivity(new Intent(Splash.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
 					finish();
 					break;
 				case MSG_ERROR:
@@ -367,23 +366,13 @@ public class Splash extends Activity implements OnClickListener
 			// start tracking service
 			application.enableTracking(settings.getBoolean(getString(R.string.lc_track), true));
 
-			// read default waypoints
-			File wptFile = new File(application.dataPath, "myWaypoints.wpt");
-			if (wptFile.exists() && wptFile.canRead())
-			{
-				try
-				{
-					application.addWaypoints(OziExplorerFiles.loadWaypointsFromFile(wptFile, application.charset));
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
+			// read waypoints
+			application.initializeWaypoints();
+
 			// read track tail
 			if (settings.getBoolean(getString(R.string.pref_showcurrenttrack), true))
 			{
-				application.currentTrackOverlay = new CurrentTrackOverlay(Splash.this);
+				application.overlayManager.currentTrackOverlay = new CurrentTrackOverlay();
 				if (settings.getBoolean(getString(R.string.pref_tracking_currentload), resources.getBoolean(R.bool.def_tracking_currentload)))
 				{
 					int length = Integer.parseInt(settings.getString(getString(R.string.pref_tracking_currentlength), getString(R.string.def_tracking_currentlength)));
@@ -410,7 +399,7 @@ public class Splash extends Activity implements OnClickListener
 								track.addPoint(continous, latitude, longitude, altitude, speed, bearing, accuracy, time);
 							}
 							track.show = true;
-							application.currentTrackOverlay.setTrack(track);
+							application.overlayManager.currentTrackOverlay.setTrack(track);
 						}
 						cursor.close();
 						trackDB.close();
@@ -444,12 +433,10 @@ public class Splash extends Activity implements OnClickListener
 						{
 							routes = GpxFiles.loadRoutesFromFile(file);
 						}
-						application.addRoutes(routes);
 						for (Route route : routes)
 						{
 							route.show = !hide;
-							RouteOverlay newRoute = new RouteOverlay(Splash.this, route);
-							application.routeOverlays.add(newRoute);
+							application.addRoute(route);
 						}
 					}
 					catch (Exception e)
@@ -458,6 +445,8 @@ public class Splash extends Activity implements OnClickListener
 					}
 				}
 			}
+			
+			application.overlayManager.init();
 
 			total += PROGRESS_STEP;
 			msg = mHandler.obtainMessage(MSG_PROGRESS);
@@ -512,6 +501,9 @@ public class Splash extends Activity implements OnClickListener
 			// initialize current map
 			application.initializeMapCenter();
 
+			// initialize navigation
+			application.initializeNavigation();
+			
 			total += PROGRESS_STEP;
 			msg = mHandler.obtainMessage(MSG_PROGRESS);
 			b = new Bundle();

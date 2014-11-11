@@ -22,7 +22,6 @@ package com.androzic.overlay;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -30,11 +29,10 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.Log;
 
-import com.androzic.Androzic;
 import com.androzic.MapView;
 import com.androzic.R;
+import com.androzic.map.Grid;
 import com.androzic.map.Map;
-import com.androzic.map.Map.Grid;
 import com.androzic.util.Geo;
 
 public class OtherGridOverlay extends MapOverlay
@@ -45,14 +43,15 @@ public class OtherGridOverlay extends MapOverlay
 	int spacing = 100000;
 	int maxMPP = 0;
 	
-	public OtherGridOverlay(Activity activity)
+	public OtherGridOverlay()
 	{
-		super(activity);
+		super();
+
         linePaint = new Paint();
         linePaint.setAntiAlias(true);
         linePaint.setStrokeWidth(1);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setColor(context.getResources().getColor(R.color.distanceline));
+        linePaint.setColor(application.getResources().getColor(R.color.distanceline));
 	}
 
 	public void setGrid(Grid grid)
@@ -67,7 +66,6 @@ public class OtherGridOverlay extends MapOverlay
 	public synchronized void onMapChanged()
 	{
 		paths.clear();
-    	Androzic application = (Androzic) context.getApplication();
     	Map map = application.getCurrentMap();
     	if (map == null)
     		return;

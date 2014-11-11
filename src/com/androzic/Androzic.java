@@ -27,23 +27,29 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.Stack;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -56,8 +62,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.GeomagneticField;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -66,31 +75,28 @@ import android.util.Pair;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.androzic.data.Bounds;
 import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
+import com.androzic.location.ILocationListener;
+import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
+import com.androzic.map.Grid;
 import com.androzic.map.Map;
 import com.androzic.map.MapIndex;
+import com.androzic.map.MapPoint;
 import com.androzic.map.MockMap;
 import com.androzic.map.SASMapLoader;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.TileProvider;
 import com.androzic.navigation.NavigationService;
-import com.androzic.overlay.AccuracyOverlay;
-import com.androzic.overlay.CurrentTrackOverlay;
-import com.androzic.overlay.DistanceOverlay;
-import com.androzic.overlay.LatLonGridOverlay;
-import com.androzic.overlay.MapObjectsOverlay;
-import com.androzic.overlay.MapOverlay;
 import com.androzic.overlay.NavigationOverlay;
-import com.androzic.overlay.OtherGridOverlay;
+import com.androzic.overlay.OverlayManager;
 import com.androzic.overlay.RouteOverlay;
-import com.androzic.overlay.ScaleOverlay;
 import com.androzic.overlay.TrackOverlay;
-import com.androzic.overlay.WaypointsOverlay;
 import com.androzic.util.Astro.Zenith;
 import com.androzic.util.CSV;
 import com.androzic.util.CoordinateParser;
@@ -98,17 +104,23 @@ import com.androzic.util.FileUtils;
 import com.androzic.util.Geo;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
+import com.androzic.util.WaypointFileHelper;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.jhlabs.map.proj.Projection;
 import com.jhlabs.map.proj.ProjectionException;
 
-public class Androzic extends BaseApplication
+public class Androzic extends BaseApplication implements OnSharedPreferenceChangeListener
 {
+	private static final String TAG = "Androzic";
+
+	public static final String BROADCAST_WAYPOINT_REMOVED = "com.androzic.waypointRemoved";
+
 	public static final int PATH_DATA = 0x001;
 	public static final int PATH_SAS = 0x002;
 	public static final int PATH_ICONS = 0x008;
 	
-	public static final int ORDER_SHOW_PREFERENCE = 0;
-	public static final int ORDER_DRAW_PREFERENCE = 1;
-		
 	public int coordinateFormat = 0;
 	public int angleType = 0;
 	public int sunriseType = 0;
@@ -125,9 +137,24 @@ public class Androzic extends BaseApplication
 	private Rectangle coveringScreen = new Rectangle();
 	private double[] mapCenter = new double[] {0.0, 0.0};
 	private double[] location = new double[] {Double.NaN, Double.NaN};
-	private double[] shouldBeVisible = new double[] {Double.NaN, Double.NaN};
 	private double magneticDeclination = 0;
+
+	private ILocationService locationService = null;
+	private int magInterval;
+	private long lastMagnetic = 0;
+
+	public NavigationService navigationService = null;
+
+	public Location lastKnownLocation;
+	public boolean gpsEnabled;
+	public int gpsStatus;
+	public int gpsFSats;
+	public int gpsTSats;
+	public boolean gpsContinous;
+	public boolean gpsGeoid;
+	public boolean shouldEnableFollowing;
 	
+	@SuppressLint("UseSparseArrays")
 	private AbstractMap<Long, MapObject> mapObjects = new HashMap<Long, MapObject>();
 	private List<Waypoint> waypoints = new ArrayList<Waypoint>();
 	private List<WaypointSet> waypointSets = new ArrayList<WaypointSet>();
@@ -146,19 +173,6 @@ public class Androzic extends BaseApplication
 	
 	private boolean memmsg = false;
 	
-	// FIXME Put overlays in separate class
-	public LatLonGridOverlay llGridOverlay;
-	public OtherGridOverlay grGridOverlay;
-	public CurrentTrackOverlay currentTrackOverlay;
-	public NavigationOverlay navigationOverlay;
-	public MapObjectsOverlay mapObjectsOverlay;
-	public WaypointsOverlay waypointsOverlay;
-	public DistanceOverlay distanceOverlay;
-	public AccuracyOverlay accuracyOverlay;
-	public ScaleOverlay scaleOverlay;
-	public List<TrackOverlay> fileTrackOverlays = new ArrayList<TrackOverlay>();
-	public List<RouteOverlay> routeOverlays = new ArrayList<RouteOverlay>();
-	
 	private Locale locale = null;
 	private Handler handler = null;
 	public String charset;
@@ -169,7 +183,8 @@ public class Androzic extends BaseApplication
 	private String sasPath;
 	public String iconPath;
 	public boolean mapsInited = false;
-	public MapActivity mapActivity;
+	private MapHolder mapHolder;
+	protected OverlayManager overlayManager;
 	private int screenSize;
 	public Drawable customCursor = null;
 	public boolean iconsEnabled = false;
@@ -181,130 +196,30 @@ public class Androzic extends BaseApplication
 	protected boolean adjacentMaps = false;
 	protected boolean cropMapBorder = true;
 	protected boolean drawMapBorder = false;
-	protected boolean mapGrid = false;
-	protected boolean userGrid = false;
-	protected int gridPrefer = 0;
 
 	private Handler mapsHandler = new Handler();
 
-	protected void setMapActivity(MapActivity activity)
+	public MapHolder getMapHolder()
 	{
-		mapActivity = activity;
-		for (MapOverlay mo : fileTrackOverlays)
-		{
-			mo.setMapContext(mapActivity);
-		}
-		if (currentTrackOverlay != null)
-		{
-			currentTrackOverlay.setMapContext(mapActivity);
-		}
-		for (MapOverlay mo : routeOverlays)
-		{
-			mo.setMapContext(mapActivity);
-		}
-		if (navigationOverlay != null)
-		{
-			navigationOverlay.setMapContext(mapActivity);
-		}
-		if (waypointsOverlay != null)
-		{
-			waypointsOverlay.setMapContext(mapActivity);
-		}
-		if (distanceOverlay != null)
-		{
-			distanceOverlay.setMapContext(mapActivity);
-		}
-		if (accuracyOverlay != null)
-		{
-			accuracyOverlay.setMapContext(mapActivity);
-		}
-		if (mapObjectsOverlay != null)
-		{
-			mapObjectsOverlay.setMapContext(mapActivity);
-		}
-		if (scaleOverlay != null)
-		{
-			scaleOverlay.setMapContext(mapActivity);
-		}
-		initGrids();
+		return mapHolder;
 	}
-	
-	public List<MapOverlay> getOverlays(int order)
-	{
-		List<MapOverlay> overlays = new ArrayList<MapOverlay>();
-		if (order == ORDER_DRAW_PREFERENCE)
-		{
-			if (llGridOverlay != null)
-				overlays.add(llGridOverlay);
-			if (grGridOverlay != null)
-				overlays.add(grGridOverlay);
-			if (accuracyOverlay != null)
-				overlays.add(accuracyOverlay);
-			overlays.addAll(fileTrackOverlays);
-			if (currentTrackOverlay != null)
-				overlays.add(currentTrackOverlay);
-			overlays.addAll(routeOverlays);
-			if (navigationOverlay != null)
-				overlays.add(navigationOverlay);
-			if (waypointsOverlay != null)
-				overlays.add(waypointsOverlay);
-			if (scaleOverlay != null)
-				overlays.add(scaleOverlay);
-			if (mapObjectsOverlay != null)
-				overlays.add(mapObjectsOverlay);
-			if (distanceOverlay != null)
-				overlays.add(distanceOverlay);
-		}
-		else
-		{
-			if (accuracyOverlay != null)
-				overlays.add(accuracyOverlay);
-			if (distanceOverlay != null)
-				overlays.add(distanceOverlay);
-			if (scaleOverlay != null)
-				overlays.add(scaleOverlay);
-			if (navigationOverlay != null)
-				overlays.add(navigationOverlay);
-			if (currentTrackOverlay != null)
-				overlays.add(currentTrackOverlay);
-			overlays.addAll(routeOverlays);
-			if (waypointsOverlay != null)
-				overlays.add(waypointsOverlay);
-			overlays.addAll(fileTrackOverlays);
-			if (mapObjectsOverlay != null)
-				overlays.add(mapObjectsOverlay);
-			if (grGridOverlay != null)
-				overlays.add(grGridOverlay);
-			if (llGridOverlay != null)
-				overlays.add(llGridOverlay);
-		}
-		return overlays;
-	}
-	
-	private ExecutorService executorThread = Executors.newSingleThreadExecutor();
 
-	protected void notifyOverlays()
+	protected void setMapHolder(MapHolder holder)
 	{
-		final List<MapOverlay> overlays = getOverlays(ORDER_SHOW_PREFERENCE);
-		final boolean[] states = new boolean[overlays.size()];
-		int i = 0;
-    	for (MapOverlay mo : overlays)
-    	{
-   			states[i] = mo.setEnabled(false);
-   			i++;
-    	}
-		executorThread.execute(new Runnable() {
-			public void run()
+		mapHolder = holder;
+		if (currentMap != null && !currentMap.activated())
+		{
+			try
 			{
-				int j = 0;
-		    	for (MapOverlay mo : overlays)
-		    	{
-		   			mo.onMapChanged();
-	   				mo.setEnabled(states[j]);
-		   			j++;
-		    	}
+				currentMap.activate(mapHolder.getMapView(), screenSize);
 			}
-		});
+			catch (final Throwable e)
+			{
+				e.printStackTrace();
+				handler.post(new MapActivationError(currentMap, e));
+			}
+		}
+		overlayManager.initGrids(currentMap);
 	}
 	
 	public java.util.Map<String, Intent> getPluginsPreferences()
@@ -453,6 +368,7 @@ public class Androzic extends BaseApplication
 		}
 	}
 	
+	// TODO Should we keep it? Not used anymore...
 	/**
 	 * Clear waypoints from specific waypoint set.
 	 * @param set waypoint set
@@ -490,22 +406,6 @@ public class Androzic extends BaseApplication
 	public List<Waypoint> getWaypoints()
 	{
 		return waypoints;
-	}
-
-	public int getWaypointCount(WaypointSet set)
-	{
-		int n = 0;
-		synchronized (waypoints)
-		{
-			for (Waypoint wpt : waypoints)
-			{
-				if (wpt.set == set)
-				{
-					n++;
-				}
-			}
-		}
-		return n;
 	}
 
 	public List<Waypoint> getWaypoints(WaypointSet set)
@@ -562,6 +462,7 @@ public class Androzic extends BaseApplication
 		{
 			saveWaypoints(wptset);
 		}
+		overlayManager.onWaypointsChanged();
 	}
 
 	public void saveDefaultWaypoints()
@@ -569,33 +470,18 @@ public class Androzic extends BaseApplication
 		saveWaypoints(defWaypointSet);
 	}
 
-	public void ensureVisible(MapObject waypoint)
+	public boolean ensureVisible(MapObject waypoint)
 	{
-		ensureVisible(waypoint.latitude, waypoint.longitude);
+		return ensureVisible(waypoint.latitude, waypoint.longitude);
 	}
 
-	public void ensureVisible(double lat, double lon)
+	public boolean ensureVisible(double lat, double lon)
 	{
-		shouldBeVisible[0] = lat;
-		shouldBeVisible[1] = lon;
+		if (mapHolder != null)
+			mapHolder.setFollowing(false);
+		return setMapCenter(lat, lon, true, false);
 	}
 	
-	public boolean hasEnsureVisible()
-	{
-		return ! Double.isNaN(shouldBeVisible[0]);
-	}
-	
-	public double[] getEnsureVisible()
-	{
-		return shouldBeVisible;
-	}
-	
-	public void clearEnsureVisible()
-	{
-		shouldBeVisible[0] = Double.NaN;
-		shouldBeVisible[1] = Double.NaN;
-	}
-
 	public int addWaypointSet(final WaypointSet newWaypointSet)
 	{
 		waypointSets.add(newWaypointSet);
@@ -627,16 +513,47 @@ public class Androzic extends BaseApplication
 		waypointSets.clear();
 	}
 	
-	public int addTrack(final Track newTrack)
+	public int addTrack(final Track track)
 	{
-		tracks.add(newTrack);
-		return tracks.lastIndexOf(newTrack);
+		tracks.add(track);
+		TrackOverlay trackOverlay = new TrackOverlay(track);
+		overlayManager.fileTrackOverlays.add(trackOverlay);
+		return tracks.lastIndexOf(track);
 	}
 	
-	public boolean removeTrack(final Track delTrack)
+	/**
+	 * Notify overlay that track properties have changed
+	 * @param track Changed track
+	 */
+	public void dispatchTrackPropertiesChanged(Track track)
 	{
-		delTrack.removed = true;
-		return tracks.remove(delTrack);
+		for (Iterator<TrackOverlay> iter = overlayManager.fileTrackOverlays.iterator(); iter.hasNext();)
+		{
+			TrackOverlay to = iter.next();
+			if (to.getTrack() == track)
+			{
+				to.onTrackPropertiesChanged();
+			}
+		}
+	}
+
+	public boolean removeTrack(final Track track)
+	{
+		track.removed = true;
+		boolean removed = tracks.remove(track);
+		if (removed)
+		{
+			for (Iterator<TrackOverlay> iter = overlayManager.fileTrackOverlays.iterator(); iter.hasNext();)
+			{
+				TrackOverlay to = iter.next();
+				if (to.getTrack().removed)
+				{
+					to.onBeforeDestroy();
+					iter.remove();
+				}
+			}			
+		}
+		return removed;
 	}
 	
 	public void clearTracks()
@@ -646,6 +563,15 @@ public class Androzic extends BaseApplication
 			track.removed = true;			
 		}
 		tracks.clear();
+		for (Iterator<TrackOverlay> iter = overlayManager.fileTrackOverlays.iterator(); iter.hasNext();)
+		{
+			TrackOverlay to = iter.next();
+			if (to.getTrack().removed)
+			{
+				to.onBeforeDestroy();
+				iter.remove();
+			}
+		}			
 	}
 	
 	public Track getTrack(final int index)
@@ -671,7 +597,7 @@ public class Androzic extends BaseApplication
 	public Route trackToRoute2(Track track, float sensitivity) throws IllegalArgumentException
 	{
 		Route route = new Route();
-		List<Track.TrackPoint> points = track.getPoints();
+		List<Track.TrackPoint> points = track.getAllPoints();
 		Track.TrackPoint tp = points.get(0);
 		route.addWaypoint("RWPT", tp.latitude, tp.longitude).proximity = 0;
 
@@ -761,7 +687,7 @@ public class Androzic extends BaseApplication
 	public Route trackToRoute(Track track, float sensitivity) throws IllegalArgumentException
 	{
 		Route route = new Route();
-		List<Track.TrackPoint> points = track.getPoints();
+		List<Track.TrackPoint> points = track.getAllPoints();
 		Track.TrackPoint lrp = points.get(0);
 		route.addWaypoint("RWPT0", lrp.latitude, lrp.longitude);
 
@@ -863,25 +789,49 @@ public class Androzic extends BaseApplication
 		return route;
 	}
 	
-	public int addRoute(final Route newRoute)
+	public int addRoute(final Route route)
 	{
-		routes.add(newRoute);
-		return routes.lastIndexOf(newRoute);
-	}
-	
-	public boolean removeRoute(final Route delRoute)
-	{
-		delRoute.removed = true;
-		return routes.remove(delRoute);
-	}
-	
-	public void addRoutes(final Iterable<Route> newRoutes)
-	{
-		Iterator<Route> iterator = newRoutes.iterator();
-		while (iterator.hasNext())
-			routes.add(iterator.next());
+		routes.add(route);
+		RouteOverlay routeOverlay = new RouteOverlay(route);
+		overlayManager.routeOverlays.add(routeOverlay);
+		return routes.lastIndexOf(route);
 	}
 
+	/**
+	 * Notify overlay that route properties have changed
+	 * @param route Changed route
+	 */
+	public void dispatchRoutePropertiesChanged(Route route)
+	{
+		for (Iterator<RouteOverlay> iter = overlayManager.routeOverlays.iterator(); iter.hasNext();)
+		{
+			RouteOverlay to = iter.next();
+			if (to.getRoute() == route)
+			{
+				to.onRoutePropertiesChanged();
+			}
+		}
+	}
+
+	public boolean removeRoute(final Route route)
+	{
+		route.removed = true;
+		boolean removed = routes.remove(route);
+		if (removed)
+		{
+			for (Iterator<RouteOverlay> iter = overlayManager.routeOverlays.iterator(); iter.hasNext();)
+			{
+				RouteOverlay to = iter.next();
+				if (to.getRoute().removed)
+				{
+					to.onBeforeDestroy();
+					iter.remove();
+				}
+			}
+		}
+		return removed;
+	}
+	
 	public void clearRoutes()
 	{
 		for (Route route : routes)
@@ -889,6 +839,15 @@ public class Androzic extends BaseApplication
 			route.removed = true;
 		}
 		routes.clear();
+		for (Iterator<RouteOverlay> iter = overlayManager.routeOverlays.iterator(); iter.hasNext();)
+		{
+			RouteOverlay to = iter.next();
+			if (to.getRoute().removed)
+			{
+				to.onBeforeDestroy();
+				iter.remove();
+			}
+		}			
 	}
 	
 	public Route getRoute(final int index)
@@ -925,14 +884,20 @@ public class Androzic extends BaseApplication
 	{
 		if (angleType == 0)
 		{
-			float lat = (float) (Double.isNaN(location[0]) ? mapCenter[0] : location[0]);
-			float lon = (float) (Double.isNaN(location[1]) ? mapCenter[1] : location[1]);
-			GeomagneticField mag = new GeomagneticField(lat, lon, 0.0f, System.currentTimeMillis());
-			magneticDeclination = mag.getDeclination();
+			double lat = Double.isNaN(location[0]) ? mapCenter[0] : location[0];
+			double lon = Double.isNaN(location[1]) ? mapCenter[1] : location[1];
+			magneticDeclination = getDeclination(lat, lon);
 		}		
 		return magneticDeclination;
 	}
-	
+
+
+	public double getDeclination(double lat, double lon)
+	{
+		GeomagneticField mag = new GeomagneticField((float) lat, (float) lon, 0.0f, System.currentTimeMillis());
+		return mag.getDeclination();
+	}
+
 	public double fixDeclination(double declination)
 	{
 		if (angleType == 1)
@@ -959,17 +924,6 @@ public class Androzic extends BaseApplication
 		return loc;
 	}
 	
-	void setLocation(Location loc, boolean updatemag)
-	{
-		location[0] = loc.getLatitude();
-		location[1] = loc.getLongitude();
-		if (updatemag && angleType == 1)
-		{
-			GeomagneticField mag = new GeomagneticField((float) location[0], (float) location[1], (float) loc.getAltitude(), System.currentTimeMillis());
-			magneticDeclination = mag.getDeclination();
-		}
-	}
-	
 	public void initializeMapCenter()
 	{
 		double[] coordinate = null;
@@ -994,6 +948,14 @@ public class Androzic extends BaseApplication
 		return res;
 	}
 	
+	/**
+	 * Sets map center to specified coordinates
+	 * @param lat New latitude
+	 * @param lon New longitude
+	 * @param reindex Recreate index of maps for new location
+	 * @param findbest Look for best map in new location
+	 * @return true if current map was changed
+	 */
 	public boolean setMapCenter(double lat, double lon, boolean reindex, boolean findbest)
 	{
 		mapCenter[0] = lat;
@@ -1004,9 +966,10 @@ public class Androzic extends BaseApplication
 	/**
 	 * Updates available map list for current location
 	 * 
+	 * @param reindex
+	 *            Recreate index of maps for current location 
 	 * @param findbest
-	 *            Look for better map in current location
-	 * @param findbest2 
+	 *            Look for best map in current location
 	 * @return true if current map was changed
 	 */
 	public boolean updateLocationMaps(boolean reindex, boolean findbest)
@@ -1070,6 +1033,19 @@ public class Androzic extends BaseApplication
 			return currentMap.getZoom();
 		else
 			return 0.0;
+	}
+	
+	public boolean setZoom(double zoom)
+	{
+		if (zoom == getZoom())
+			return false;
+		if (currentMap != null)
+		{
+			currentMap.setZoom(zoom);
+			coveringMaps = null;
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean zoomIn()
@@ -1147,7 +1123,7 @@ public class Androzic extends BaseApplication
 		return currentMap;
 	}
 	
-	public List<Map> getMaps()
+	public Collection<Map> getMaps()
 	{
 		return maps.getMaps();
 	}
@@ -1157,7 +1133,7 @@ public class Androzic extends BaseApplication
 		return maps.getMaps(loc[0], loc[1]);
 	}
 	
-	public boolean nextMap()
+	public boolean prevMap()
 	{
 		updateLocationMaps(true, false);
 		int id = 0;
@@ -1179,7 +1155,7 @@ public class Androzic extends BaseApplication
 			return false;
 	}
 
-	public boolean prevMap()
+	public boolean nextMap()
 	{
 		updateLocationMaps(true, false);
 		int id = 0;
@@ -1201,6 +1177,11 @@ public class Androzic extends BaseApplication
 			return false;
 	}
 
+	/**
+	 * Sets map if it available for current location.
+	 * @param id ID of a map to set
+	 * @return true if map was changed
+	 */
 	public boolean selectMap(int id)
 	{
 		if (currentMap != null && currentMap.id == id)
@@ -1229,6 +1210,11 @@ public class Androzic extends BaseApplication
 				break;
 			}
 		}
+		return loadMap(newMap);
+	}
+
+	public boolean loadMap(Map newMap)
+	{
 		boolean newmap = setMap(newMap);
 		if (currentMap != null)
 		{
@@ -1239,60 +1225,24 @@ public class Androzic extends BaseApplication
 		return newmap;
 	}
 
-	protected void initGrids()
-	{
-		llGridOverlay = null;
-		grGridOverlay = null;
-		if (mapGrid && currentMap != null && currentMap.llGrid != null && currentMap.llGrid.enabled && mapActivity != null)
-		{
-			LatLonGridOverlay llgo = new LatLonGridOverlay(mapActivity);
-			llgo.setGrid(currentMap.llGrid);
-			llGridOverlay = llgo;
-		}
-		if (mapGrid && currentMap != null && currentMap.grGrid != null && currentMap.grGrid.enabled && mapActivity != null && (! userGrid || gridPrefer == 0))
-		{
-			OtherGridOverlay ogo = new OtherGridOverlay(mapActivity);
-			ogo.setGrid(currentMap.grGrid);
-			grGridOverlay = ogo;
-		}
-		else if (userGrid && currentMap != null && mapActivity != null)
-		{
-			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-			OtherGridOverlay ogo = new OtherGridOverlay(mapActivity);
-			Map.Grid grid = currentMap.new Grid();
-			grid.color1 = 0xFF0000FF;
-			grid.color2 = 0xFF0000FF;
-			grid.color3 = 0xFF0000FF;
-			grid.enabled = true;
-			grid.spacing = Integer.parseInt(settings.getString(getString(R.string.pref_grid_userscale), getResources().getString(R.string.def_grid_userscale)));
-			int distanceIdx = Integer.parseInt(settings.getString(getString(R.string.pref_grid_userunit), "0"));
-			grid.spacing *= Double.parseDouble(getResources().getStringArray(R.array.distance_factors_short)[distanceIdx]);
-			grid.maxMPP = Integer.parseInt(settings.getString(getString(R.string.pref_grid_usermpp), getResources().getString(R.string.def_grid_usermpp)));
-			ogo.setGrid(grid);
-			grGridOverlay = ogo;
-		}
-	}
-	
-	synchronized private boolean setMap(final Map newMap)
+	synchronized boolean setMap(final Map newMap)
 	{
 		// TODO should override equals()?
-		if (newMap != null && ! newMap.equals(currentMap) && mapActivity != null)
+		if (newMap != null && ! newMap.equals(currentMap))
 		{
-			Log.d("ANDROZIC", "Set map: " + newMap);
-			try
+			Log.i(TAG, "Set map: " + newMap);
+			if (mapHolder != null)
 			{
-				newMap.activate(mapActivity.map, screenSize);
-			}
-			catch (final Throwable e)
-			{
-				e.printStackTrace();
-				handler.post(new Runnable() {
-				    @Override
-				    public void run() {
-						Toast.makeText(Androzic.this, newMap.imagePath+": "+e.getMessage(), Toast.LENGTH_LONG).show();
-				    }
-				  });
-				return false;
+				try
+				{
+					newMap.activate(mapHolder.getMapView(), screenSize);
+				}
+				catch (final Throwable e)
+				{
+					e.printStackTrace();
+					handler.post(new MapActivationError(newMap, e));
+					return false;
+				}
 			}
 			if (currentMap != null)
 			{
@@ -1300,7 +1250,7 @@ public class Androzic extends BaseApplication
 			}
 			coveringMaps = null;
 			currentMap = newMap;
-			initGrids();
+			overlayManager.initGrids(currentMap);
 			return true;
 		}
 		return false;
@@ -1314,14 +1264,26 @@ public class Androzic extends BaseApplication
 		{
 			if (provider.equals(map.code))
 			{
-				boolean s = currentMap == onlineMap;					
-				maps.removeMap(onlineMap);
+				boolean s = currentMap == onlineMap;
+				if (onlineMap != null)
+					maps.removeMap(onlineMap);
 				byte zoom = (byte) PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.pref_onlinemapscale), getResources().getInteger(R.integer.def_onlinemapscale));
 				onlineMap = new OnlineMap(map, zoom);
 				maps.addMap(onlineMap);
 				if (s)
 					setMap(onlineMap);
 			}
+		}
+	}
+	
+	public void removeOnlineMap()
+	{
+		maps.removeMap(onlineMap);
+		if (currentMap == onlineMap)
+		{
+			updateLocationMaps(true, true);
+			onlineMap.deactivate();
+			onlineMap = null;
 		}
 	}
 	
@@ -1341,7 +1303,7 @@ public class Androzic extends BaseApplication
 				@Override
 				public void run()
 				{
-					Map.Bounds area = new Map.Bounds();
+					Bounds area = new Bounds();
 					int[] xy = new int[2];
 					double[] ll = new double[2];
 					currentMap.getXYByLatLon(mapCenter[0], mapCenter[1], xy);
@@ -1362,7 +1324,7 @@ public class Androzic extends BaseApplication
 						try
 						{
 							if (! map.activated())
-								map.activate(mapActivity.map, screenSize);
+								map.activate(mapHolder.getMapView(), screenSize);
 							double zoom = map.mpp / currentMap.mpp * currentMap.getZoom();
 							if (zoom != map.getZoom())
 								map.setTemporaryZoom(zoom);
@@ -1370,7 +1332,7 @@ public class Androzic extends BaseApplication
 						}
 						catch (Exception e)
 						{
-							cma.remove(map);
+							icma.remove();
 							e.printStackTrace();
 						}
 					}
@@ -1441,8 +1403,8 @@ public class Androzic extends BaseApplication
 			}
 			catch (OutOfMemoryError err)
 			{
-	        	if (! memmsg && mapActivity != null)
-	        		mapActivity.runOnUiThread(new Runnable() {
+	        	if (! memmsg && mapHolder != null)
+	        		mapHolder.getMapView().getHandler().post(new Runnable() {
 
 						@Override
 						public void run()
@@ -1456,45 +1418,344 @@ public class Androzic extends BaseApplication
 		}
 	}
 	
-	public void clear()
-	{
-		// send finalization broadcast
-		sendBroadcast(new Intent("com.androzic.plugins.action.FINALIZE"));
+	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			Log.e(TAG, "Broadcast: " + action);
+			if (action.equals(NavigationService.BROADCAST_NAVIGATION_STATE))
+			{
+				int state = intent.getExtras().getInt("state");
+				switch (state)
+				{
+					case NavigationService.STATE_STARTED:
+						if (overlayManager.navigationOverlay == null)
+						{
+							overlayManager.navigationOverlay = new NavigationOverlay();
+							if (mapHolder != null)
+								overlayManager.navigationOverlay.onMapChanged();
+						}
+						break;
+					case NavigationService.STATE_REACHED:
+						Toast.makeText(Androzic.this, R.string.arrived, Toast.LENGTH_LONG).show();
+					case NavigationService.STATE_STOPED:
+						if (overlayManager.navigationOverlay != null)
+						{
+							overlayManager.navigationOverlay.onBeforeDestroy();
+							overlayManager.navigationOverlay = null;
+						}
+						break;
+				}
+			}
+		}
+	};
 
-		clearRoutes();
-		clearTracks();
-		clearWaypoints();
-		clearWaypointSets();
-		clearMapObjects();
-		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
-		editor.commit();			
-		
-		stopService(new Intent(this, NavigationService.class));
-		stopService(new Intent(this, LocationService.class));
-		
-		llGridOverlay = null;
-		grGridOverlay = null;
-		mapActivity = null;
-		currentMap = null;
-		suitableMaps = null;
-		maps = null;
-		mapsInited = false;
-		memmsg = false;
+	public boolean isLocating()
+	{
+		return locationService != null && locationService.isLocating();
 	}
 
 	public void enableLocating(boolean enable)
 	{
+		if (locationService == null)
+			bindService(new Intent(this, LocationService.class), locationConnection, BIND_AUTO_CREATE);
 		String action = enable ? LocationService.ENABLE_LOCATIONS : LocationService.DISABLE_LOCATIONS;
 		startService(new Intent(this, LocationService.class).setAction(action));
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putBoolean(getString(R.string.lc_locate), enable);
+		editor.commit();
+	}
+
+	public ILocationService getLocationService()
+	{
+		return locationService;
+	}
+
+	public float getHDOP()
+	{
+		if (locationService != null)
+			return locationService.getHDOP();
+		else
+			return Float.NaN;
+	}
+
+	public float getVDOP()
+	{
+		if (locationService != null)
+			return locationService.getVDOP();
+		else
+			return Float.NaN;
+	}
+
+	private ServiceConnection locationConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder binder)
+		{
+			locationService = (ILocationService) binder;
+			locationService.registerLocationCallback(locationListener);
+			Log.d(TAG, "Location service connected");
+		}
+
+		public void onServiceDisconnected(ComponentName className)
+		{
+			locationService = null;
+			Log.d(TAG, "Location service disconnected");
+		}
+	};
+
+	private ILocationListener locationListener = new ILocationListener() {
+		@Override
+		public void onGpsStatusChanged(String provider, final int status, final int fsats, final int tsats)
+		{
+			if (LocationManager.GPS_PROVIDER.equals(provider))
+			{
+				gpsStatus = status;
+				gpsFSats = fsats;
+				gpsTSats = tsats;
+			}
+		}
+
+		@Override
+		public void onLocationChanged(final Location location, final boolean continous, final boolean geoid, final float smoothspeed, final float avgspeed)
+		{
+			Log.d(TAG, "Location arrived");
+
+			final long lastLocationMillis = location.getTime();
+
+			if (angleType == 1 && lastLocationMillis - lastMagnetic >= magInterval)
+			{
+				GeomagneticField mag = new GeomagneticField((float) location.getLatitude(), (float) location.getLongitude(), (float) location.getAltitude(), System.currentTimeMillis());
+				magneticDeclination = mag.getDeclination();
+				lastMagnetic = lastLocationMillis;
+			}
+
+			Androzic.this.location[0] = location.getLatitude();
+			Androzic.this.location[1] = location.getLongitude();
+
+			shouldEnableFollowing = shouldEnableFollowing || lastKnownLocation == null;
+
+			lastKnownLocation = location;
+			gpsEnabled = gpsEnabled || LocationManager.GPS_PROVIDER.equals(location.getProvider());
+			gpsContinous = continous;
+			gpsGeoid = geoid;
+
+			if (overlayManager.accuracyOverlay != null && location.hasAccuracy())
+			{
+				overlayManager.accuracyOverlay.setAccuracy(location.getAccuracy());
+			}
+		}
+
+		@Override
+		public void onProviderChanged(String provider)
+		{
+		}
+
+		@Override
+		public void onProviderDisabled(String provider)
+		{
+			if (LocationManager.GPS_PROVIDER.equals(provider))
+			{
+				Log.i(TAG, "GPS provider disabled");
+				gpsEnabled = false;
+			}
+		}
+
+		@Override
+		public void onProviderEnabled(String provider)
+		{
+			if (LocationManager.GPS_PROVIDER.equals(provider))
+			{
+				Log.i(TAG, "GPS provider enabled");
+				gpsEnabled = true;
+			}
+		}
+	};
+
+	public boolean isTracking()
+	{
+		return locationService != null && locationService.isTracking();
 	}
 
 	public void enableTracking(boolean enable)
 	{
 		String action = enable ? LocationService.ENABLE_TRACK : LocationService.DISABLE_TRACK;
 		startService(new Intent(this, LocationService.class).setAction(action));
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putBoolean(getString(R.string.lc_track), enable);
+		editor.commit();
 	}
 	
+	public void expandCurrentTrack()
+	{
+		if (locationService != null)
+		{
+			Track track = locationService.getTrack();
+			track.show = true;
+			overlayManager.currentTrackOverlay.setTrack(track);
+		}
+	}
+
+	public void clearCurrentTrack()
+	{
+		if (overlayManager.currentTrackOverlay != null)
+			overlayManager.currentTrackOverlay.clear();
+		if (locationService != null)
+			locationService.clearTrack();
+	}
+
+	/**
+	 * Retrieves last known location without enabling location providers.
+	 * @return Most precise last known location or null if it is not available
+	 */
+	public Location getLastKnownSystemLocation()
+	{
+		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		List<String> providers = lm.getProviders(true);
+		Location l = null;
+
+		for (int i = providers.size() - 1; i >= 0; i--)
+		{
+			l = lm.getLastKnownLocation(providers.get(i));
+			if (l != null)
+				break;
+		}
+
+		return l;
+	}
+
+	public boolean isNavigating()
+	{
+		return navigationService != null && navigationService.isNavigating();		
+	}
+
+	public boolean isNavigatingViaRoute()
+	{
+		return navigationService != null && navigationService.isNavigatingViaRoute();
+	}
+
+	public void initializeNavigation()
+	{
+		bindService(new Intent(this, NavigationService.class), navigationConnection, BIND_AUTO_CREATE);
+		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATUS));
+		registerReceiver(broadcastReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		String navWpt = settings.getString(getString(R.string.nav_wpt), "");
+		if (!"".equals(navWpt))
+		{
+			Waypoint waypoint = new Waypoint();
+			waypoint.name = navWpt;
+			waypoint.latitude = (double) settings.getFloat(getString(R.string.nav_wpt_lat), 0);
+			waypoint.longitude = (double) settings.getFloat(getString(R.string.nav_wpt_lon), 0);
+			waypoint.proximity = settings.getInt(getString(R.string.nav_wpt_prx), 0);
+			startNavigation(waypoint);
+		}
+
+		String navRoute = settings.getString(getString(R.string.nav_route), "");
+		if (!"".equals(navRoute) && settings.getBoolean(getString(R.string.pref_navigation_loadlast), getResources().getBoolean(R.bool.def_navigation_loadlast)))
+		{
+			int ndir = settings.getInt(getString(R.string.nav_route_dir), 0);
+			int nwpt = settings.getInt(getString(R.string.nav_route_wpt), -1);
+			try
+			{
+				Route route = getRouteByFile(navRoute);
+				if (route != null)
+				{
+					route.show = true;
+				}
+				else
+				{
+					File rtf = new File(navRoute);
+					// FIXME It's bad - it can be not a first route in a file
+					route = OziExplorerFiles.loadRoutesFromFile(rtf, charset).get(0);
+					addRoute(route);
+				}
+				startNavigation(route, ndir, nwpt);
+			}
+			catch (Exception e)
+			{
+				Log.e(TAG, "Failed to start navigation", e);
+			}
+		}
+	}
+
+	public void startNavigation(Waypoint waypoint)
+	{
+		Intent i = new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT);
+		i.putExtra(NavigationService.EXTRA_NAME, waypoint.name);
+		i.putExtra(NavigationService.EXTRA_LATITUDE, waypoint.latitude);
+		i.putExtra(NavigationService.EXTRA_LONGITUDE, waypoint.longitude);
+		i.putExtra(NavigationService.EXTRA_PROXIMITY, waypoint.proximity);
+		startService(i);
+
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putString(getString(R.string.nav_route), "");
+		editor.putString(getString(R.string.nav_wpt), waypoint.name);
+		editor.putInt(getString(R.string.nav_wpt_prx), waypoint.proximity);
+		editor.putFloat(getString(R.string.nav_wpt_lat), (float) waypoint.latitude);
+		editor.putFloat(getString(R.string.nav_wpt_lon), (float) waypoint.longitude);
+		editor.commit();
+	}
+
+	public void startNavigation(MapObject mapObject)
+	{
+		Intent i = new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_MAPOBJECT_WITH_ID);
+		i.putExtra(NavigationService.EXTRA_ID, mapObject._id);
+		startService(i);
+	}
+
+	public void startNavigation(Route route)
+	{
+		startNavigation(route, 0, -1);
+	}
+
+	public void startNavigation(Route route, int direction, int waypointIndex)
+	{
+    	route.show = true;
+		int rt = getRouteIndex(route);
+		Intent i = new Intent(this, NavigationService.class).setAction(NavigationService.NAVIGATE_ROUTE);
+		i.putExtra(NavigationService.EXTRA_ROUTE_INDEX, rt);
+		i.putExtra(NavigationService.EXTRA_ROUTE_DIRECTION, direction);
+		i.putExtra(NavigationService.EXTRA_ROUTE_START, waypointIndex);
+		startService(i);
+
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putString(getString(R.string.nav_wpt), "");
+		editor.putString(getString(R.string.nav_route), "");
+		if (route.filepath != null)
+		{
+			editor.putString(getString(R.string.nav_route), route.filepath);
+			editor.putInt(getString(R.string.nav_route_idx), getRouteIndex(route));
+			editor.putInt(getString(R.string.nav_route_dir), direction);
+			editor.putInt(getString(R.string.nav_route_wpt), waypointIndex);
+		}
+		editor.commit();
+	}
+
+	public void stopNavigation()
+	{
+		navigationService.stopNavigation();
+
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putString(getString(R.string.nav_wpt), "");
+		editor.putString(getString(R.string.nav_route), "");
+		editor.commit();
+	}
+
+	private ServiceConnection navigationConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service)
+		{
+			navigationService = ((NavigationService.LocalBinder) service).getService();
+			Log.d(TAG, "Navigation service connected");
+		}
+
+		public void onServiceDisconnected(ComponentName className)
+		{
+			navigationService = null;
+			Log.d(TAG, "Navigation service disconnected");
+		}
+	};
+
 	public void setRootPath(String path)
 	{
 		rootPath = path;
@@ -1545,21 +1806,30 @@ public class Androzic extends BaseApplication
 		{
 			try
 			{
-				FileInputStream fs = new FileInputStream(index);
-				ObjectInputStream in = new ObjectInputStream(fs);
-				maps = (MapIndex) in.readObject();
-				in.close();
-				int hash = MapIndex.getMapsHash(mapPath);
+				//com.esotericsoftware.minlog.Log.DEBUG();
+		    	Kryo kryo = new Kryo();
+		    	kryo.register(MapIndex.class);
+		    	kryo.register(Map.class);
+		    	kryo.register(Grid.class);
+		    	kryo.register(MapPoint.class);
+		    	kryo.register(MapPoint[].class);
+		    	kryo.register(Projection.class);
+		    	kryo.register(Integer.class);
+		    	kryo.register(String.class);
+		    	kryo.register(ArrayList.class);
+		    	kryo.register(HashSet.class);
+		    	kryo.register(HashMap.class);
+		    	Input input = new Input(new FileInputStream(index));
+		    	maps = kryo.readObject(input, MapIndex.class);
+		    	input.close();
+
+		    	int hash = MapIndex.getMapsHash(mapPath);
 				if (hash != maps.hashCode())
 				{
 					maps = null;
 				}
 			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			catch (ClassNotFoundException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
@@ -1598,10 +1868,21 @@ public class Androzic extends BaseApplication
 			{
 			    try
 			    {
-			    	FileOutputStream fs = new FileOutputStream(index);
-			    	ObjectOutputStream out = new ObjectOutputStream(fs);
-			    	out.writeObject(maps);
-			    	out.close();
+			    	Kryo kryo = new Kryo();
+			    	kryo.register(MapIndex.class);
+			    	kryo.register(Map.class);
+			    	kryo.register(Grid.class);
+			    	kryo.register(MapPoint.class);
+			    	kryo.register(MapPoint[].class);
+			    	kryo.register(Projection.class);
+			    	kryo.register(Integer.class);
+			    	kryo.register(String.class);
+			    	kryo.register(ArrayList.class);
+			    	kryo.register(HashSet.class);
+			    	kryo.register(HashMap.class);
+			    	Output output = new Output(new FileOutputStream(index));
+			    	kryo.writeObject(output, maps);
+			    	output.close();
 			    }
 			    catch (IOException e)
 			    {
@@ -1683,7 +1964,7 @@ public class Androzic extends BaseApplication
 			onlineMap = new OnlineMap(curProvider, zoom);
 			maps.addMap(onlineMap);
 		}
-		suitableMaps = maps.getMaps();
+		suitableMaps = new ArrayList<Map>();
 		coveredAll = true;
 		coveringBestMap = true;
 		mapsInited = true;
@@ -1826,6 +2107,50 @@ public class Androzic extends BaseApplication
 		}
 	}
 	
+	/**
+	 * Load default and selected waypoint files.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public void initializeWaypoints()
+	{
+		if (waypoints.size() > 0)
+			return;
+
+		File wptFile = new File(dataPath, "myWaypoints.wpt");
+		if (wptFile.exists() && wptFile.canRead())
+		{
+			try
+			{
+				addWaypoints(OziExplorerFiles.loadWaypointsFromFile(wptFile, charset));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		{
+			// load selected waypoint sets
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+			Set<String> sets = settings.getStringSet(getString(R.string.wpt_sets), new HashSet<String>());
+			for (String path : sets)
+			{
+				File file = new File(path);
+				try
+				{
+					if (file.exists() && file.canRead())
+						WaypointFileHelper.loadFile(file);
+				}
+				catch (Exception e)
+				{
+					// We ignore all exceptions on this stage
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	public void initializePlugins()
 	{
 		PackageManager packageManager = getPackageManager();
@@ -1883,6 +2208,91 @@ public class Androzic extends BaseApplication
 		}
 	}
 
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+	{
+		Resources resources = getResources();
+		
+		if (getString(R.string.pref_folder_data).equals(key))
+		{
+			setDataPath(Androzic.PATH_DATA, sharedPreferences.getString(key, resources.getString(R.string.def_folder_data)));
+		}
+		else if (getString(R.string.pref_folder_icon).equals(key))
+		{
+			setDataPath(Androzic.PATH_ICONS, sharedPreferences.getString(key, resources.getString(R.string.def_folder_icon)));
+		}
+		else if (getString(R.string.pref_unitcoordinate).equals(key))
+		{
+			coordinateFormat = Integer.parseInt(sharedPreferences.getString(key, "0"));			
+		}
+		else if (getString(R.string.pref_unitangle).equals(key))
+		{
+			angleType = Integer.parseInt(sharedPreferences.getString(key, "0"));
+		}
+		else if (getString(R.string.pref_grid_mapshow).equals(key))
+		{
+			overlayManager.mapGrid = sharedPreferences.getBoolean(key, false);
+			overlayManager.initGrids(currentMap);
+		}
+		else if (getString(R.string.pref_grid_usershow).equals(key))
+		{
+			overlayManager.userGrid = sharedPreferences.getBoolean(key, false);
+			overlayManager.initGrids(currentMap);
+		}
+		else if (getString(R.string.pref_grid_preference).equals(key))
+		{
+			overlayManager.gridPrefer = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			overlayManager.initGrids(currentMap);
+		}
+		else if (getString(R.string.pref_grid_userscale).equals(key) || getString(R.string.pref_grid_userunit).equals(key) || getString(R.string.pref_grid_usermpp).equals(key))
+		{
+			overlayManager.initGrids(currentMap);
+		}
+		else if (getString(R.string.pref_useonlinemap).equals(key))
+		{
+			boolean online = sharedPreferences.getBoolean(key, false);
+			if (online)
+				setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
+			else
+				removeOnlineMap();
+		}
+		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
+		{
+			setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
+		}
+		else if (getString(R.string.pref_mapadjacent).equals(key))
+		{
+			adjacentMaps = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapadjacent));
+		}
+		else if (getString(R.string.pref_mapcropborder).equals(key))
+		{
+			cropMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapcropborder));
+		}
+		else if (getString(R.string.pref_mapdrawborder).equals(key))
+		{
+			drawMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapdrawborder));
+		}
+		else if (getString(R.string.pref_showwaypoints).equals(key))
+		{
+			overlayManager.setWaypointsOverlayEnabled(sharedPreferences.getBoolean(key, true));
+		}
+		else if (getString(R.string.pref_showcurrenttrack).equals(key))
+		{
+			overlayManager.setCurrentTrackOverlayEnabled(sharedPreferences.getBoolean(key, true));
+		}
+		else if (getString(R.string.pref_showaccuracy).equals(key))
+		{
+			overlayManager.setAccuracyOverlayEnabled(sharedPreferences.getBoolean(key, true));
+		}
+		else if (getString(R.string.pref_showdistance_int).equals(key))
+		{
+			int showDistance = Integer.parseInt(sharedPreferences.getString(key, getString(R.string.def_showdistance)));
+			overlayManager.setDistanceOverlayEnabled(showDistance > 0);
+		}
+		overlayManager.onPreferencesChanged(sharedPreferences);
+	}	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig)
 	{
@@ -1933,7 +2343,8 @@ public class Androzic extends BaseApplication
 		}
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		Configuration config = getBaseContext().getResources().getConfiguration();
+		Resources resources = getBaseContext().getResources();
+		Configuration config = resources.getConfiguration();
 
 		charset = settings.getString(getString(R.string.pref_charset), "UTF-8");
 		String lang = settings.getString(getString(R.string.pref_locale), "");
@@ -1942,7 +2353,110 @@ public class Androzic extends BaseApplication
 			locale = new Locale(lang);
 		    Locale.setDefault(locale);
 		    config.locale = locale;
-		    getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+		    resources.updateConfiguration(config, resources.getDisplayMetrics());
 		}
-	}	
+		
+		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
+		
+		overlayManager = new OverlayManager();
+		
+		//TODO Initialize all suitable settings
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitcoordinate));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitangle));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdrawborder));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_showwaypoints));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_showcurrenttrack));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_showaccuracy));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_showdistance_int));
+
+		settings.registerOnSharedPreferenceChangeListener(this);
+		
+		//navEnabled = navigationService != null && navigationService.isNavigating();
+	}
+	
+	@SuppressLint("NewApi")
+	public void clear()
+	{
+		// send finalization broadcast
+		sendBroadcast(new Intent("com.androzic.plugins.action.FINALIZE"));
+
+		// clear services
+		unregisterReceiver(broadcastReceiver);
+
+		overlayManager.clear();
+
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+
+		if (navigationService != null)
+		{
+			if (navigationService.isNavigatingViaRoute() && navigationService.navRoute.filepath != null)
+			{
+				// save active route point
+				editor.putInt(getString(R.string.nav_route_wpt), navigationService.navCurrentRoutePoint);
+			}
+			unbindService(navigationConnection);
+			navigationService = null;
+		}
+
+		if (locationService != null)
+		{
+			locationService.unregisterLocationCallback(locationListener);
+			unbindService(locationConnection);
+			locationService = null;
+		}
+
+		stopService(new Intent(this, NavigationService.class));
+		stopService(new Intent(this, LocationService.class));
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		{
+			// save opened waypoint sets
+			HashSet<String> sets = new HashSet<String>();
+			for (int i = 1; i < waypointSets.size(); i++)
+			{
+				WaypointSet set = waypointSets.get(i);
+				if (set.path != null)
+					sets.add(set.path);
+			}
+			editor.putStringSet(getString(R.string.wpt_sets), sets);
+		}
+
+		// clear data
+		clearRoutes();
+		clearTracks();
+		clearWaypoints();
+		clearWaypointSets();
+		clearMapObjects();
+		
+		// save last location
+		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
+		editor.commit();
+		
+		mapHolder = null;
+		currentMap = null;
+		suitableMaps = null;
+		maps = null;
+		mapsInited = false;
+		memmsg = false;
+	}
+
+	private class MapActivationError implements Runnable
+	{
+		private Map map;
+		private Throwable e;
+
+		MapActivationError(Map map, Throwable e)
+		{
+			this.map = map;
+			this.e = e;
+		}
+
+		@Override
+		public void run()
+		{
+			Toast.makeText(Androzic.this, map.imagePath + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
 }

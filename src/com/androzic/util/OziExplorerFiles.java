@@ -394,7 +394,7 @@ public class OziExplorerFiles
 	
 		//-27.350436, 153.055540,1,-777,36169.6307194, 09-Jan-99, 3:08:14 
 	
-        List<TrackPoint> trackPoints = track.getPoints();
+        List<TrackPoint> trackPoints = track.getAllPoints();
         synchronized (trackPoints)
         {  
 	        for (TrackPoint tp : trackPoints)
@@ -456,6 +456,15 @@ public class OziExplorerFiles
 			Route route = new Route();
 			routes.add(route);
 			route.name = fields[1].replace((char) 209, ',');
+    		try
+    		{
+    			int width = Integer.parseInt(fields[2]);
+    			if (width > 0)
+    				route.width = width;
+    		}
+    		catch (NumberFormatException e)
+    		{
+    		}
     		try
     		{
     			int color = Integer.parseInt(fields[3]);
@@ -594,9 +603,10 @@ public class OziExplorerFiles
 
 		// Field 1 : H3
 		// Field 2 : route name (no commas allowed)
-		// Field 3 : ???
+		// Field 3 : ??? (we use it for route line width)
 		// Field 4 : route color (RGB)
-		writer.write("H3,"+route.name.replace(',', (char) 209)+",,"+
+		writer.write("H3,"+route.name.replace(',', (char) 209)+","+
+				String.valueOf(route.width)+","+
 				String.valueOf(rgb2bgr(route.lineColor))+"\n");
 	
 		//Field 1 : W

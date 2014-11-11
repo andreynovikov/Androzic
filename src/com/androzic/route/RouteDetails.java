@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -20,20 +20,23 @@
 
 package com.androzic.route;
 
-import net.londatiga.android.ActionItem;
-import net.londatiga.android.QuickAction;
-import net.londatiga.android.QuickAction.OnActionItemClickListener;
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ListFragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.internal.view.SupportMenuInflater;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.internal.view.menu.MenuPopupHelper;
+import android.support.v7.internal.view.menu.MenuPresenter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,10 +44,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,91 +55,131 @@ import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
 import com.androzic.navigation.NavigationService;
 import com.androzic.util.StringFormatter;
-import com.androzic.waypoint.WaypointProperties;
+import com.androzic.waypoint.OnWaypointActionListener;
 
-public class RouteDetails extends ListActivity implements OnItemClickListener
+public class RouteDetails extends ListFragment implements OnSharedPreferenceChangeListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
 	private static final String TAG = "RouteDetails";
 
-	private static final int RESULT_START_ROUTE = 1;
+	Androzic application;
+	private OnRouteActionListener routeActionsCallback;
+	private OnWaypointActionListener waypointActionsCallback;
 	
-	private static final int qaWaypointVisible = 1;
-	private static final int qaWaypointNavigate = 2;
-	private static final int qaWaypointProperties = 3;
-
-	private NavigationService navigationService;
 	private WaypointListAdapter adapter;
-    private QuickAction quickAction;
+	private int selectedKey;
+	private Drawable selectedBackground;
     
 	private Route route;
 	private boolean navigation;
-	private int selectedPosition;
+
+	private CharSequence oldTitle;
+
+	public RouteDetails()
+	{
+		application = Androzic.getApplication();
+	}
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
-		int index = getIntent().getExtras().getInt("index");
-		navigation = getIntent().getExtras().getBoolean("nav");
-
-		Androzic application = (Androzic) getApplication();
-		route = application.getRoute(index);
-		
-		setTitle(navigation ? "› " + route.name : route.name);
-
-		adapter = new WaypointListAdapter(this, route);
-		setListAdapter(adapter);
-		
-		Resources resources = getResources();
-		quickAction = new QuickAction(this);
-		quickAction.addActionItem(new ActionItem(qaWaypointVisible, getString(R.string.menu_view), resources.getDrawable(R.drawable.ic_action_show)));
-		if (navigation)
-		{
-			quickAction.addActionItem(new ActionItem(qaWaypointNavigate, getString(R.string.menu_navigate), resources.getDrawable(R.drawable.ic_action_directions)));
-		}
-		else
-		{
-			quickAction.addActionItem(new ActionItem(qaWaypointProperties, getString(R.string.menu_edit), resources.getDrawable(R.drawable.ic_action_edit)));
-		}
-		quickAction.setOnActionItemClickListener(actionItemClickListener);
-		
-		getListView().setOnItemClickListener(this);
+		setHasOptionsMenu(true);
+		setRetainInstance(true);
 	}
 
 	@Override
-	protected void onResume()
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		return inflater.inflate(R.layout.list_with_empty_view, container, false);
+	}
+
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try
+		{
+			routeActionsCallback = (OnRouteActionListener) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement OnRouteActionListener");
+		}
+		try
+		{
+			waypointActionsCallback = (OnWaypointActionListener) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement OnWaypointActionListener");
+		}
+	}
+
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+
+		if (route == null)
+		{
+			Bundle args = getArguments();
+			if (args != null)
+				setRoute(application.getRoute(args.getInt("index")));
+		}
+		if (route != null)
+			updateRouteDetails();
+	}
+
+	@Override
+	public void onResume()
 	{
 		super.onResume();
+
 		if (navigation)
 		{
-			bindService(new Intent(this, NavigationService.class), navigationConnection, BIND_AUTO_CREATE);
-			boolean lock = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_wakelock), getResources().getBoolean(R.bool.def_wakelock));
-			if (lock)
-				getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			application.registerReceiver(navigationReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATUS));
+			application.registerReceiver(navigationReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
 		}
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		onSharedPreferenceChanged(settings, getString(R.string.pref_wakelock));
+		PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(this);
+
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override
-	protected void onPause()
+	public void onPause()
 	{
 		super.onPause();
+
 		if (navigation)
 		{
-			unregisterReceiver(navigationReceiver);
-			unbindService(navigationConnection);
+			application.unregisterReceiver(navigationReceiver);
 		}
+		
+		if (oldTitle != null)
+		{
+			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
+			oldTitle = null;
+		}
+		
+		PreferenceManager.getDefaultSharedPreferences(application).unregisterOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu)
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
-		if (! navigation)
-		{
-			MenuInflater inflater = getMenuInflater();
-			inflater.inflate(R.menu.routedetails_menu, menu);
-		}
-		return true;
+		inflater.inflate(R.menu.routedetails_menu, menu);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(final Menu menu)
+	{
+		menu.findItem(R.id.action_navigate).setVisible(!navigation);
 	}
 
 	@Override
@@ -146,90 +187,131 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 	{
 		switch (item.getItemId())
 		{
-			case R.id.menuStartNavigation:
-				Androzic application = (Androzic) getApplication();
-				int index = application.getRouteIndex(route);
-				startActivityForResult(new Intent(this, RouteStart.class).putExtra("index", index), RESULT_START_ROUTE);
+			case R.id.action_navigate:
+				routeActionsCallback.onRouteNavigate(route);
 				return true;
 		}
 		return false;
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	public void onListItemClick(ListView lv, View v, int position, long id)
 	{
-		super.onActivityResult(requestCode, resultCode, data);
+		v.setTag("selected");
+		selectedKey = position;
+		selectedBackground = v.getBackground();
+		int l = v.getPaddingLeft();
+		int t = v.getPaddingTop();
+		int r = v.getPaddingRight();
+		int b = v.getPaddingBottom();
+		v.setBackgroundResource(R.drawable.list_selector_background_focus);
+		v.setPadding(l, t, r, b);
+		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
+		MenuBuilder menu = new MenuBuilder(getActivity());
+		menu.setCallback(this);
+		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.name));
+		popup.setForceShowIcon(true);
+		popup.setCallback(this);
+		new SupportMenuInflater(getActivity()).inflate(navigation? R.menu.routewaypointnavigation_menu : R.menu.routewaypoint_menu, menu);
+		popup.show();
+	}
 
-		switch (requestCode)
+	@Override
+	public boolean onMenuItemSelected(MenuBuilder builder, MenuItem item)
+	{
+		switch (item.getItemId())
 		{
-			case RESULT_START_ROUTE:
-				if (resultCode == RESULT_OK)
+			case R.id.action_view:
+    			route.show = true;
+				waypointActionsCallback.onWaypointView(route.getWaypoint(selectedKey));
+				// "Close" fragment
+				getFragmentManager().popBackStack();
+				return true;
+			case R.id.action_navigate:
+				if (navigation)
 				{
-					setResult(RESULT_OK);
-					finish();
+					if (application.navigationService.navDirection == NavigationService.DIRECTION_REVERSE)
+						selectedKey = route.length() - selectedKey - 1;
+					application.navigationService.setRouteWaypoint(selectedKey);
+	    			adapter.notifyDataSetChanged();
 				}
-				break;
+				return true;
+			case R.id.action_edit:
+				routeActionsCallback.onRouteWaypointEdit(route.getWaypoint(selectedKey));
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void onMenuModeChange(MenuBuilder builder)
+	{
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
+	{
+		try
+		{
+			ListView lv = getListView();
+			if (allMenusAreClosing && lv != null)
+			{
+				View v = lv.findViewWithTag("selected");
+				if (v != null)
+				{
+					v.setBackgroundDrawable(selectedBackground);
+					v.setTag(null);
+				}
+			}
+		}
+		catch (IllegalStateException ignore)
+		{
+			// Ignore dismissing view after list view was destroyed
 		}
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
+	public boolean onOpenSubMenu(MenuBuilder menu)
 	{
-		selectedPosition = position;
-		quickAction.show(view);
+		return false;
 	}
 
-	private OnActionItemClickListener actionItemClickListener = new OnActionItemClickListener(){
-		@Override
-		public void onItemClick(QuickAction source, int pos, int actionId)
-		{
-			Androzic application = Androzic.getApplication();
-	    	switch (actionId)
-	    	{
-	    		case qaWaypointVisible:
-	    			route.show = true;
-	    			application.ensureVisible(route.getWaypoint(selectedPosition));
-	    			setResult(RESULT_OK);
-					finish();
-	    			break;
-				case qaWaypointNavigate:
-					if (navigationService != null)
-					{
-						if (navigationService.navDirection == NavigationService.DIRECTION_REVERSE)
-							selectedPosition = route.length() - selectedPosition - 1;
-						navigationService.setRouteWaypoint(selectedPosition);
-		    			adapter.notifyDataSetChanged();
-					}
-					break;
-	    		case qaWaypointProperties:
-	    			int index = application.getRouteIndex(route);
-	    			startActivity(new Intent(RouteDetails.this, WaypointProperties.class).putExtra("INDEX", selectedPosition).putExtra("ROUTE", index + 1));
-	    	        break;
-	    	}
-		}
-	};
+	public void setRoute(Route route)
+	{
+		this.route = route;
+		
+		navigation = application.isNavigatingViaRoute() && application.navigationService.navRoute == route;
+		
+		if (isVisible())
+			updateRouteDetails();
+	}
 
-	private ServiceConnection navigationConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service)
-		{
-			navigationService = ((NavigationService.LocalBinder) service).getService();
-			registerReceiver(navigationReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATUS));
-			registerReceiver(navigationReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
-			Log.d(TAG, "Navigation broadcast receiver registered");
-			runOnUiThread(new Runnable() {
-				public void run()
-				{
-					adapter.notifyDataSetChanged();
-				}
-			});
-		}
+	private void updateRouteDetails()
+	{
+		ActionBarActivity activity = (ActionBarActivity) getActivity();
+		if (oldTitle == null)
+			oldTitle = activity.getSupportActionBar().getTitle();
+		activity.getSupportActionBar().setTitle(navigation ? "\u21d2 " + route.name : route.name);
+		
+		adapter = new WaypointListAdapter(activity, route);
+		setListAdapter(adapter);
+		
+		if (navigation)
+			getListView().setSelection(application.navigationService.navRouteCurrentIndex());
 
-		public void onServiceDisconnected(ComponentName className)
+		activity.supportInvalidateOptionsMenu();
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+	{
+		Resources resources = getResources();
+		if (getString(R.string.pref_wakelock).equals(key))
 		{
-			unregisterReceiver(navigationReceiver);
-			navigationService = null;
+			getListView().setKeepScreenOn(navigation && sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_wakelock)));
 		}
-	};
+	}
 
 	private BroadcastReceiver navigationReceiver = new BroadcastReceiver() {
 
@@ -240,26 +322,17 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 			if (intent.getAction().equals(NavigationService.BROADCAST_NAVIGATION_STATE))
 			{
 				final int state = intent.getExtras().getInt("state");
-				runOnUiThread(new Runnable() {
-					public void run()
-					{
-						if (state == NavigationService.STATE_REACHED)
-						{
-							Toast.makeText(getApplicationContext(), R.string.arrived, Toast.LENGTH_LONG).show();
-							navigation = false;
-						}
-						adapter.notifyDataSetChanged();
-					}
-				});
+				if (state == NavigationService.STATE_REACHED)
+				{
+					Toast.makeText(getActivity(), R.string.arrived, Toast.LENGTH_LONG).show();
+					navigation = false;
+					getActivity().supportInvalidateOptionsMenu();
+				}
+				adapter.notifyDataSetChanged();
 			}
 			if (intent.getAction().equals(NavigationService.BROADCAST_NAVIGATION_STATUS))
 			{
-				runOnUiThread(new Runnable() {
-					public void run()
-					{
-						adapter.notifyDataSetChanged();
-					}
-				});
+				adapter.notifyDataSetChanged();
 			}
 		}
 	};
@@ -279,7 +352,7 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 
 		public Waypoint getItem(int position)
 		{
-			if (navigation && navigationService != null && navigationService.navDirection  == NavigationService.DIRECTION_REVERSE)
+			if (navigation && application.navigationService.navDirection == NavigationService.DIRECTION_REVERSE)
 				position = mRoute.length() - position - 1;
 			return mRoute.getWaypoint(position);
 		}
@@ -287,7 +360,7 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 		@Override
 		public long getItemId(int position)
 		{
-			if (navigation && navigationService != null && navigationService.navDirection  == NavigationService.DIRECTION_REVERSE)
+			if (navigation && application.navigationService.navDirection  == NavigationService.DIRECTION_REVERSE)
 				position = mRoute.length() - position - 1;
 			return position;
 		}
@@ -317,12 +390,12 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 			{
 				text.setText(wpt.name);
 			}
-			if (navigation && navigationService != null && navigationService.isNavigatingViaRoute())
+			if (navigation && application.navigationService.isNavigatingViaRoute())
 			{
-				int progress = position - navigationService.navRouteCurrentIndex();
+				int progress = position - application.navigationService.navRouteCurrentIndex();
 				if (position > 0)
 				{
-					double dist = progress == 0 ? navigationService.navDistance : mRoute.distanceBetween(position - 1, position);
+					double dist = progress == 0 ? application.navigationService.navDistance : mRoute.distanceBetween(position - 1, position);
 					String distance = StringFormatter.distanceH(dist);
 					text = (TextView) v.findViewById(R.id.distance);
 					if (text != null)
@@ -333,8 +406,8 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 					}
 					double crs;
 					if (progress == 0)
-						crs = navigationService.navBearing;
-					else if (navigationService.navDirection == NavigationService.DIRECTION_FORWARD)
+						crs = application.navigationService.navBearing;
+					else if (application.navigationService.navDirection == NavigationService.DIRECTION_FORWARD)
 						crs = mRoute.course(position - 1, position);
 					else
 						crs = mRoute.course(position, position - 1);
@@ -347,26 +420,26 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 				}
 				if (progress >= 0)
 				{
-					double dist = navigationService.navDistance;
+					double dist = application.navigationService.navDistance;
 					if (progress > 0)
-						dist += navigationService.navRouteDistanceLeftTo(position);
+						dist += application.navigationService.navRouteDistanceLeftTo(position);
 					String distance = StringFormatter.distanceH(dist);
 					text = (TextView) v.findViewById(R.id.total_distance);
 					if (text != null)
 					{
 						text.setText(distance);
 					}
-					int ete = progress == 0 ? navigationService.navETE : navigationService.navRouteWaypointETE(position);
+					int ete = progress == 0 ? application.navigationService.navETE : application.navigationService.navRouteWaypointETE(position);
 					String s = StringFormatter.timeR(ete);
 					text = (TextView) v.findViewById(R.id.ete);
 					if (text != null)
 					{
 						text.setText(s);
 					}
-					int eta = navigationService.navETE;
+					int eta = application.navigationService.navETE;
 					if (progress > 0 && eta < Integer.MAX_VALUE)
 					{
-						int t = navigationService.navRouteETETo(position);
+						int t = application.navigationService.navRouteETETo(position);
 						if (t < Integer.MAX_VALUE)
 							eta += t;
 					}
@@ -380,7 +453,7 @@ public class RouteDetails extends ListActivity implements OnItemClickListener
 					if (progress == 0)
 					{
 						text = (TextView) v.findViewById(R.id.name);
-						text.setText("» " + text.getText());
+						text.setText("\u2192 " + text.getText());
 					}
 				}
 				else

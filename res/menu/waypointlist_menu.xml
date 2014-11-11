@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
         android:id="@+id/action_sort"
-        android:icon="@drawable/ic_action_sort_alpha"
-        app:showAsAction="always"
-        android:title="@string/menu_sort">
+        android:icon="@drawable/ic_sort_white_24dp"
+        android:title="@string/menu_sort"
+        app:showAsAction="always">
         <menu>
             <item
                 android:id="@+id/action_sort_alpha"
@@ -13,27 +14,34 @@
                 android:title="@string/action_bar_sort_alpha"/>
             <item
                 android:id="@+id/action_sort_size"
-                android:icon="@drawable/ic_action_sort_size"
+                android:icon="@drawable/ic_sort_white_24dp"
                 android:title="@string/action_bar_sort_distance"/>
         </menu>
     </item>
     <item
-        android:id="@+id/menuLoadWaypoints"
-        android:icon="@drawable/ic_action_import"
-        app:showAsAction="ifRoom"
-        android:title="@string/menu_load"/>
+        android:id="@+id/action_load_waypoints"
+        android:icon="@drawable/ic_folder_open_white_24dp"
+        android:title="@string/menu_load"
+        app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/menuNewWaypointSet"
-        android:icon="@drawable/ic_action_document_new"
-        app:showAsAction="ifRoom|withText"
-        android:title="@string/menu_newwaypointset"/>
-    <item
-        android:id="@+id/menuNewWaypoint"
-        android:icon="@drawable/ic_action_pin"
+        android:id="@+id/action_new_waypoint"
+        android:icon="@drawable/ic_place_white_24dp"
         android:title="@string/menu_new_waypoint"/>
     <item
-        android:id="@+id/menuProjectWaypoint"
-        android:icon="@drawable/ic_action_arrow_right_top"
+        android:id="@+id/action_project_waypoint"
+        android:icon="@drawable/ic_arrow_forward_white_24dp"
         android:title="@string/menu_project"/>
+
+    <group
+        android:id="@+id/group_sets"
+        android:checkableBehavior="all"
+        android:visible="false" >
+    </group>
+
+    <item
+        android:id="@+id/action_new_waypoint_set"
+        android:icon="@drawable/ic_note_add_white_24dp"
+        android:orderInCategory="1"
+        android:title="@string/menu_newwaypointset"/>
 
 </menu>

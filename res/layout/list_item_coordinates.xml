@@ -6,7 +6,7 @@
 
     <ImageView
         android:id="@+id/icon"
-        android:src="@drawable/ic_action_location"
+        android:src="@drawable/ic_place_white_24dp"
         android:layout_width="40dip"
         android:padding="5dip"
         android:layout_height="fill_parent"

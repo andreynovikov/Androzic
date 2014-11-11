@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -20,13 +20,23 @@
 
 package com.androzic.route;
 
-import android.app.Activity;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,76 +45,147 @@ import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.ui.ColorButton;
 
-public class RouteProperties extends Activity
+public class RouteProperties extends Fragment
 {
 	private Route route;
 	
 	private TextView name;
-	//private TextView description;
 	private CheckBox show;
 	private ColorButton color;
+	private Spinner width;
+	private ArrayAdapter<String> widthAdapter;
 	
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        // FIXME Should have its own layout
-        setContentView(R.layout.act_track_properties);
-
-        int index = getIntent().getExtras().getInt("index");
-        
-		Androzic application = (Androzic) getApplication();
-		route = application.getRoute(index);
-		
-		name = (TextView) findViewById(R.id.name_text);
-		name.setText(route.name);
-		/*
-		description = (TextView) findViewById(R.id.description_text);
-		description.setText(track.description);
-		*/
-		show = (CheckBox) findViewById(R.id.show_check);
-        show.setChecked(route.show);
-        color = (ColorButton) findViewById(R.id.color_button);
-        color.setColor(route.lineColor, getResources().getColor(R.color.routeline));
-
-		ViewGroup width = (ViewGroup) findViewById(R.id.width_layout);
-		width.setVisibility(View.GONE);
-
-	    Button save = (Button) findViewById(R.id.done_button);
-	    save.setOnClickListener(saveOnClickListener);
-
-	    Button cancel = (Button) findViewById(R.id.cancel_button);
-	    cancel.setOnClickListener(new OnClickListener() { public void onClick(View v) { finish(); } });
-    }
-
-	private OnClickListener saveOnClickListener = new OnClickListener()
-	{
-        public void onClick(View v)
-        {
-        	try
-        	{
-        		route.name = name.getText().toString();
-        		//route.description = description.getText().toString();
-        		route.show = show.isChecked();
-        		route.lineColor = color.getColor();
-    			setResult(RESULT_OK);
-        		finish();
-        	}
-        	catch (Exception e)
-        	{
-    			Toast.makeText(getBaseContext(), "Error saving route", Toast.LENGTH_LONG).show();        		
-        	}
-        }
-    };
+	private CharSequence oldTitle;
 
 	@Override
-	protected void onDestroy()
+	public void onCreate(Bundle savedInstanceState)
 	{
-		super.onDestroy();
-		route = null;
-		name = null;
-		show = null;
-		color = null;
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+		setHasOptionsMenu(true);
 	}
 
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+        // FIXME Should have its own layout
+		View rootView = inflater.inflate(R.layout.act_track_properties, container, false);
+
+		name = (TextView) rootView.findViewById(R.id.name_text);
+		name.setText(route.name);
+		show = (CheckBox) rootView.findViewById(R.id.show_check);
+        show.setChecked(route.show);
+        color = (ColorButton) rootView.findViewById(R.id.color_button);
+        color.setColor(route.lineColor, getResources().getColor(R.color.routeline));
+		width = (Spinner) rootView.findViewById(R.id.width_spinner);
+		widthAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item);
+		widthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		width.setAdapter(widthAdapter);
+
+		return rootView;
+	}
+
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+
+		if (route != null)
+			updateRouteProperties();
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		ActionBarActivity activity = (ActionBarActivity) getActivity();
+		if (oldTitle == null)
+			oldTitle = activity.getSupportActionBar().getTitle();
+		activity.getSupportActionBar().setTitle(R.string.trackproperties_name);
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		if (oldTitle != null)
+		{
+			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
+			oldTitle = null;
+		}
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+	{
+		inflater.inflate(R.menu.itemsave_menu, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.action_save:
+				try
+	        	{
+	        		route.name = name.getText().toString();
+	        		route.show = show.isChecked();
+	        		route.lineColor = color.getColor();
+					String w = (String) width.getItemAtPosition(width.getSelectedItemPosition());
+					route.width = Integer.valueOf(w.trim());
+
+					final Androzic application = Androzic.getApplication();
+					application.dispatchRoutePropertiesChanged(route);
+
+					// Hide keyboard
+					final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+					// "Close" fragment
+					getFragmentManager().popBackStack();
+	        	}
+	        	catch (Exception e)
+	        	{
+	    			Toast.makeText(getActivity(), "Error saving route", Toast.LENGTH_LONG).show();        		
+	        	}
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+    };
+
+	public void setRoute(Route route)
+	{
+		this.route = route;
+		if (isVisible())
+			updateRouteProperties();
+	}
+
+	private void updateRouteProperties()
+	{
+		name.setText(route.name);
+		show.setChecked(route.show);
+		color.setColor(route.lineColor, getResources().getColor(R.color.routeline));
+
+		int sel = -1;
+		List<String> widths = new ArrayList<String>(30);
+		for (int i = 1; i <= 30; i++)
+		{
+			widths.add(String.format("   %d    ", i));
+			if (route.width == i)
+				sel = i - 1;
+		}
+		if (sel == -1)
+		{
+			widths.add(String.valueOf(route.width));
+			sel = widths.size() - 1;
+		}
+
+		widthAdapter.clear();
+		for (String w : widths)
+		{
+			widthAdapter.add(w);
+		}
+		width.setSelection(sel);
+	}
 }

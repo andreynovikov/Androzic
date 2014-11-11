@@ -164,8 +164,7 @@
         <item>Mike Reedell</item>
         <item>Eric Harlow</item>
         <item>Luke Hutchison</item>
-        <item>Alex Curran</item>
-        <item>Guenther Beyer, Gentleface</item>
+        <item>Guenther Beyer</item>
         <item>Nicolas Mollet</item>
         <item>Michael Rajek, Daniel Chvátal, Petr Gregor</item>
         <item>Romain Gouyet, Laurent Bonnaud</item>
@@ -179,25 +178,6 @@
         <item>Sashko Omelchenko</item>
         <item>Lupus McLupy, Sergio Ribeiro</item>
     </string-array>
-    <string-array name="panel_action_values">
-        <item>zoomin</item>
-        <item>zoomout</item>
-        <item>nextmap</item>
-        <item>prevmap</item>
-        <item>maps</item>
-        <item>waypoints</item>
-        <item>info</item>
-        <item>follow</item>
-        <item>locate</item>
-        <item>tracking</item>
-        <item>expand</item>
-    </string-array>
-
-    <array name="panel_action_images">
-        <item>@drawable/arrow_left</item>
-        <item>@drawable/arrow_right</item>
-        <item>@drawable/expand</item>
-    </array>
 
     <string-array name="online_maps">
         <item><![CDATA[OpenStreetMap Mapnik,osm,0,18,,http://{$s}.tile.openstreetmap.org/{$z}/{$x}/{$y}.png,a,b,c]]></item>

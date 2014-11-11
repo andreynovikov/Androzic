@@ -20,16 +20,16 @@
 
 package com.androzic.overlay;
 
+import java.util.Iterator;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.preference.PreferenceManager;
 
-import com.androzic.Androzic;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Track;
@@ -43,9 +43,9 @@ public class TrackOverlay extends MapOverlay
 	private boolean preserveWidth = false;
 	private boolean preserveColor = false;
 
-	public TrackOverlay(final Activity mapActivity)
+	public TrackOverlay()
 	{
-		super(mapActivity);
+		super();
 
 		track = new Track();
 
@@ -54,14 +54,14 @@ public class TrackOverlay extends MapOverlay
 		paint.setStrokeWidth(3);
 		paint.setStyle(Paint.Style.STROKE);
 
-		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
+		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(application));
 
 		enabled = true;
 	}
 
-	public TrackOverlay(final Activity mapActivity, final Track aTrack)
+	public TrackOverlay(final Track aTrack)
 	{
-		this(mapActivity);
+		this();
 
 		track = aTrack;
 		if (track.width > 0)
@@ -112,11 +112,12 @@ public class TrackOverlay extends MapOverlay
 	@Override
 	public void onMapChanged()
 	{
-		List<TrackPoint> trackpoints = track.getPoints();
-		synchronized (trackpoints)
+		for (Iterator<Track.TrackSegment> segments = track.getSegments().iterator(); segments.hasNext();)
 		{
-			for (TrackPoint tp : trackpoints)
+			Track.TrackSegment segment = segments.next();
+			for (Iterator<Track.TrackPoint> points = segment.getPoints().iterator(); points.hasNext();)
 			{
+				Track.TrackPoint tp = points.next();
 				tp.dirty = true;
 			}
 		}
@@ -127,8 +128,6 @@ public class TrackOverlay extends MapOverlay
 	{
 		if (!track.show)
 			return;
-
-		Androzic application = (Androzic) context.getApplication();
 
 		final int[] cxy = mapView.mapCenterXY;
 
@@ -143,7 +142,7 @@ public class TrackOverlay extends MapOverlay
 		boolean first = true;
 		boolean skipped = false;
 		int lastX = 0, lastY = 0;
-		List<TrackPoint> trackpoints = track.getPoints();
+		List<TrackPoint> trackpoints = track.getAllPoints();
 		synchronized (trackpoints)
 		{
 			for (TrackPoint tp : trackpoints)
@@ -205,10 +204,11 @@ public class TrackOverlay extends MapOverlay
 	@Override
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
+		Resources resources = application.getResources();		
 		if (!preserveWidth)
-			paint.setStrokeWidth(settings.getInt(context.getString(R.string.pref_tracking_linewidth), context.getResources().getInteger(R.integer.def_track_linewidth)));
+			paint.setStrokeWidth(settings.getInt(application.getString(R.string.pref_tracking_linewidth), resources.getInteger(R.integer.def_track_linewidth)));
 		if (!preserveColor)
-			paint.setColor(settings.getInt(context.getString(R.string.pref_tracking_currentcolor), context.getResources().getColor(R.color.currenttrack)));
+			paint.setColor(settings.getInt(application.getString(R.string.pref_tracking_currentcolor), resources.getColor(R.color.currenttrack)));
 	}
 
 }

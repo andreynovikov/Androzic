@@ -31,8 +31,6 @@ import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,9 +41,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import com.androzic.map.online.TileProvider;
 import com.androzic.ui.SeekbarPreference;
@@ -101,10 +96,6 @@ public class Preferences extends PreferenceActivity
 		else if ("pref_plugins".equals(key))
 		{
 			activity = Preferences.PluginsPreferences.class;
-		}
-		else if ("pref_application".equals(key))
-		{
-			activity = Preferences.ApplicationPreferences.class;
 		}
 		else
 		{
@@ -349,115 +340,4 @@ public class Preferences extends PreferenceActivity
 			super.onResume();
 		}
 	}
-
-	public static class ApplicationPreferences extends Preferences.InnerPreferences
-	{
-		@Override
-		public void onCreate(Bundle savedInstanceState)
-		{
-			super.onCreate(savedInstanceState);
-
-			Preference prefAbout = (Preference) findPreference(getString(R.string.pref_about));
-			prefAbout.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				public boolean onPreferenceClick(Preference preference)
-				{
-					final LayoutInflater factory = LayoutInflater.from(ApplicationPreferences.this);
-					final View aboutView = factory.inflate(R.layout.dlg_about, null);
-					final TextView versionLabel = (TextView) aboutView.findViewById(R.id.version_label);
-					String versionName = null;
-					try
-					{
-						versionName = ApplicationPreferences.this.getPackageManager().getPackageInfo(ApplicationPreferences.this.getPackageName(), 0).versionName;
-					}
-					catch (NameNotFoundException ex)
-					{
-						versionName = "unable to retreive version";
-					}
-					versionLabel.setText(getString(R.string.version, versionName));
-					new AlertDialog.Builder(ApplicationPreferences.this).setIcon(R.drawable.icon).setTitle(R.string.app_name).setView(aboutView).setPositiveButton("OK", null).create().show();
-					return true;
-				}
-			});
-
-			Preference prefDonateGoogle = (Preference) findPreference(getString(R.string.pref_donategoogle));
-			prefDonateGoogle.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				public boolean onPreferenceClick(Preference preference)
-				{
-					Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.androzic.donate"));
-					startActivity(marketIntent);
-					return true;
-				}
-			});
-			Preference prefDonatePaypal = (Preference) findPreference(getString(R.string.pref_donatepaypal));
-			prefDonatePaypal.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				public boolean onPreferenceClick(Preference preference)
-				{
-					startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.paypaluri))));
-					return true;
-				}
-			});
-
-			Androzic application = (Androzic) getApplication();
-			if (application.isPaid)
-			{
-				ApplicationPreferences.this.getPreferenceScreen().removePreference(prefDonateGoogle);
-				ApplicationPreferences.this.getPreferenceScreen().removePreference(prefDonatePaypal);
-			}
-
-			Preference prefGooglePlus = (Preference) findPreference(getString(R.string.pref_googleplus));
-			prefGooglePlus.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				public boolean onPreferenceClick(Preference preference)
-				{
-					startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.googleplusuri))));
-					return true;
-				}
-			});
-
-			Preference prefFacebook = (Preference) findPreference(getString(R.string.pref_facebook));
-			prefFacebook.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				public boolean onPreferenceClick(Preference preference)
-				{
-					startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.facebookuri))));
-					return true;
-				}
-			});
-
-			Preference prefTwitter = (Preference) findPreference(getString(R.string.pref_twitter));
-			prefTwitter.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				public boolean onPreferenceClick(Preference preference)
-				{
-					startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.twitteruri))));
-					return true;
-				}
-			});
-
-			Preference prefFaq = (Preference) findPreference(getString(R.string.pref_faq));
-			prefFaq.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				public boolean onPreferenceClick(Preference preference)
-				{
-					startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.faquri))));
-					return true;
-				}
-			});
-
-			Preference prefFeature = (Preference) findPreference(getString(R.string.pref_feature));
-			prefFeature.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				public boolean onPreferenceClick(Preference preference)
-				{
-					startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.featureuri))));
-					return true;
-				}
-			});
-
-			Preference prefCredits = (Preference) findPreference(getString(R.string.pref_credits));
-			prefCredits.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				public boolean onPreferenceClick(Preference preference)
-				{
-					startActivity(new Intent(ApplicationPreferences.this, Credits.class));
-					return true;
-				}
-			});
-		}
-	}
-
 }

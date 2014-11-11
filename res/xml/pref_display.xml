@@ -18,10 +18,10 @@
         android:key="@string/pref_showcurrenttrack"
         android:summary="@string/pref_showcurrenttrack_summary"
         android:title="@string/pref_showcurrenttrack_title" />
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showaccuracy"
-        android:summary="@string/pref_showaccuracy_summary"
         android:title="@string/pref_showaccuracy_title" />
 
     <ListPreference
@@ -31,22 +31,6 @@
         android:entryValues="@array/showdistance_values"
         android:key="@string/pref_showdistance_int"
         android:title="@string/pref_showdistance_title" />
-
-    <com.androzic.ui.preference.HelpfulSeekbarPreference
-        android:key="@string/pref_lookahead"
-        android:summary="@string/pref_lookahead_summary"
-        android:text=" %"
-        android:title="@string/pref_lookahead_title"
-        androzic:defaultValue="@integer/def_lookahead"
-        androzic:max="90" />
-
-    <com.androzic.ui.ImageMultiChoiceListPreference
-        android:defaultValue="@string/def_panelactions"
-        android:entries="@array/panel_action_names"
-        android:entryValues="@array/panel_action_values"
-        android:key="@string/pref_panelactions"
-        android:title="@string/pref_panelactions_title"
-        androzic:entryImages="@array/panel_action_images" />
 
     <PreferenceCategory android:title="@string/pref_map_title" >
         <com.androzic.ui.preference.HelpfulCheckBoxPreference
@@ -66,13 +50,42 @@
             android:title="@string/pref_maphideondrag_title" />
 
         <com.androzic.ui.ColorPreference
+            android:defaultValue="@color/mapcross"
+            android:dialogTitle="@string/pref_mapcrosscolor_title"
+            android:key="@string/pref_mapcrosscolor"
+            android:title="@string/pref_mapcrosscolor_title"
+            androzic:defaultColor="@color/mapcross" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_scalebar_title" >
+        <com.androzic.ui.ColorPreference
             android:defaultValue="@color/scalebar"
             android:dialogTitle="@string/pref_scalebarcolor_title"
             android:key="@string/pref_scalebarcolor"
             android:title="@string/pref_scalebarcolor_title"
             androzic:defaultColor="@color/scalebar" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/def_scalebarbg"
+            android:key="@string/pref_scalebarbg"
+            android:title="@string/pref_scalebarbg_title" />
+
+        <com.androzic.ui.ColorPreference
+            android:defaultValue="@color/scalebarbg"
+            android:dependency="@string/pref_scalebarbg"
+            android:dialogTitle="@string/pref_scalebarbgcolor_title"
+            android:key="@string/pref_scalebarbgcolor"
+            android:title="@string/pref_scalebarbgcolor_title"
+            androzic:defaultColor="@color/scalebarbg" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_cursor_title" >
+        <com.androzic.ui.preference.HelpfulSeekbarPreference
+            android:key="@string/pref_lookahead"
+            android:summary="@string/pref_lookahead_summary"
+            android:text=" %"
+            android:title="@string/pref_lookahead_title"
+            androzic:defaultValue="@integer/def_lookahead"
+            androzic:max="90" />
+
         <com.androzic.ui.ColorPreference
             android:defaultValue="@color/cursor"
             android:dialogTitle="@string/pref_cursorcolor_title"

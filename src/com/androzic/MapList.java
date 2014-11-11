@@ -21,6 +21,7 @@
 package com.androzic;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +30,7 @@ import java.util.concurrent.Executors;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -43,7 +42,7 @@ import android.widget.SimpleAdapter;
 
 public class MapList extends ListActivity
 {
-	List<com.androzic.map.Map> maps;
+	Collection<com.androzic.map.Map> maps;
 	List<Map<String, String>> mapData = new ArrayList<Map<String, String>>();
 	
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
@@ -71,17 +70,7 @@ public class MapList extends ListActivity
 			public void run() 
 			{
 				Androzic application = (Androzic) getApplication();
-	   			Bundle extras = getIntent().getExtras();
-	   	        
-	   	        if (extras != null && extras.getBoolean("pos"))
-	   	        {
-	   	        	double[] loc = application.getMapCenter();
-	   	        	maps = application.getMaps(loc);
-	   	        }
-	   	        else
-	   	        {
-					maps = application.getMaps();
-	   	        }
+				maps = application.getMaps();
 	   	        
 				Map<String, String> group;
 	   			mapData.clear();
@@ -128,7 +117,7 @@ public class MapList extends ListActivity
 	protected void onListItemClick(ListView l, View v, int position, long id) 
 	{
 		super.onListItemClick(l, v, position, id);
-		setResult(RESULT_OK, new Intent().putExtra("id", maps.get(position).id));
+		//setResult(RESULT_OK, new Intent().putExtra("id", maps.get(position).id));
 		finish();
 	}
 

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    
+    <string name="playuri">market://details?id=com.androzic.donate</string>
     <string name="paypaluri">https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=novikov@gmail.com&amp;lc=GB&amp;item_name=Androzic&amp;currency_code=USD&amp;bn=PP-DonationsBF:btn_donateCC_LG_global.gif:NonHosted</string>
     <string name="googleplusuri">https://plus.google.com/communities/104267455273813373911</string>
     <string name="facebookuri">http://www.facebook.com/androzic</string>
@@ -10,7 +14,6 @@
    	<string name="pref_useonlinemap">useonlinemap</string>
    	<string name="pref_onlinemap">onlinemap</string>
    	<string name="pref_onlinemapscale">onlinemapscale</string>
-    <string name="pref_loc_usenetwork">loc_usenetwork</string>
     <string name="pref_loc_gpstimeout">loc_gpstimeout</string>
     <string name="pref_loc_store">loc_store</string>
     <string name="pref_folder_root">folderroot</string>
@@ -27,6 +30,7 @@
     <string name="pref_mapfollowonloc">mapfollowonloc</string>
 	<string name="pref_wakelock">wakelock</string>
 	<string name="pref_hideactionbar">hideactionbar</string>
+	<string name="pref_hidestatusbar">hidestatusbar</string>
 	<string name="pref_exit">exit</string>
     <string name="pref_mapdim">mapdim</string>
     <string name="pref_mapdimvalue">mapdimvalue</string>
@@ -38,8 +42,11 @@
     <string name="pref_charset">charset</string>
     <string name="pref_orientation">orientation</string>
     <string name="pref_locale">locale</string>
+	<string name="pref_mapcrosscolor">mapcrosscolor</string>
     <string name="pref_scalebarcolor">scalecolor</string>
-	<string name="pref_cursorcolor">cursorcolor</string>
+    <string name="pref_scalebarbg">scalebg</string>
+    <string name="pref_scalebarbgcolor">scalebgcolor</string>
+    <string name="pref_cursorcolor">cursorcolor</string>
 	<string name="pref_cursorvector">cursorvector</string>
 	<string name="pref_cursorvectormlpr">cursorvectormlpr</string>
 	<string name="pref_showsatinfo">showsatinfo</string>
@@ -84,16 +91,8 @@
 	<string name="pref_navigation_traverse">navigation_traverse</string>
 	<string name="pref_navigation_loadlast">navigation_loadlast</string>
 	<string name="pref_navigation_proximitycircle">navigation_proximitycircle</string>
+	<string name="pref_navigation_linecolor">navigation_linecolor</string>
 	<string name="pref_navigation_linewidth">navigation_linewidth_int</string>
-	<string name="pref_about">about</string>
-	<string name="pref_donategoogle">donategoogle</string>
-	<string name="pref_donatepaypal">donatepaypal</string>
-	<string name="pref_faq">faq</string>
-	<string name="pref_feature">feature</string>
-	<string name="pref_googleplus">googleplus</string>
-	<string name="pref_facebook">facebook</string>
-	<string name="pref_twitter">twitter</string>
-	<string name="pref_credits">credits</string>
 																																													
 	<string name="def_cursorvector">1</string>
 	<string name="def_showdistance">1</string>
@@ -107,11 +106,12 @@
 	<string name="def_folder_data">Androzic/data</string>
 	<string name="def_folder_prefix">Androzic</string>
 	<string name="def_onlinemap">osm</string>
-	<string name="def_panelactions">zoomin,zoomout,nextmap,prevmap,locate,tracking,info,follow</string>
 		
 	<string name="app_eulaaccepted">app_eulaaccepted</string>
 	<string name="app_lastuid">app_lastuid</string>
 	<string name="loc_last">loc_last</string>
+	<string name="wpt_sort">wpt_sort</string>
+	<string name="wpt_sets">wpt_sets</string>
 	<string name="trk_current">trk_current</string>
 	<string name="nav_wpt">nav_wpt</string>
 	<string name="nav_wpt_prx">nav_wpt_prx</string>
@@ -124,6 +124,7 @@
 	<string name="lc_locate">lc_locate</string>
 	<string name="lc_track">lc_track</string>
 	<string name="ui_drawer_open">ui_drawer_open</string>
+	<string name="ui_mapbuttons_shown">ui_mapbuttons_shown</string>
 		
 	<string name="root_path">Androzic</string>
 </resources>

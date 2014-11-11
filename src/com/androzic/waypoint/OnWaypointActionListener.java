@@ -24,7 +24,14 @@ import com.androzic.data.Waypoint;
 
 public interface OnWaypointActionListener
 {
+	/**
+	 * Position map so that waypoint is visible
+	 */
 	void onWaypointView(Waypoint waypoint);
+	/**
+	 * Open waypoint information dialog
+	 */
+	void onWaypointShow(Waypoint waypoint);
 	void onWaypointNavigate(Waypoint waypoint);
 	void onWaypointEdit(Waypoint waypoint);
 	void onWaypointShare(Waypoint waypoint);

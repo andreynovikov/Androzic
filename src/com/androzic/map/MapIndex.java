@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2013  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -24,11 +24,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 
+import android.annotation.SuppressLint;
+
+import com.androzic.data.Bounds;
 import com.androzic.util.FileList;
 import com.androzic.util.MapFilenameFilter;
 
@@ -36,14 +42,22 @@ public class MapIndex implements Serializable
 {
 	private static final long serialVersionUID = 6L;
 	
-	private ArrayList<Map> maps;
+	private HashSet<Integer>[][] maps;
+	private HashMap<Integer,Map> mapIndex;
 	private String mapsRoot;
 	private int hashCode;
-	private Comparator<Map> comparator = new MapComparator();
+	private transient Comparator<Map> comparator = new MapComparator();
 	
+	public MapIndex()
+	{
+	}
+
+	@SuppressLint("UseSparseArrays")
+	@SuppressWarnings("unchecked")
 	public MapIndex(String path, String charset)
 	{
-		maps = new ArrayList<Map>();
+		maps = new HashSet[181][361];
+		mapIndex = new HashMap<Integer,Map>();
 		mapsRoot = path;
 		File root = new File(mapsRoot);
 		List<File> files = FileList.getFileListing(root, new MapFilenameFilter());
@@ -51,7 +65,8 @@ public class MapIndex implements Serializable
 		{
 			try
 			{
-				maps.add(MapLoader.load(file, charset));
+				Map map = MapLoader.load(file, charset);
+				addMap(map);
 			}
 			catch (IOException e)
 			{
@@ -87,38 +102,79 @@ public class MapIndex implements Serializable
 
 	public void addMap(Map map)
 	{
-		if (! maps.contains(map))
+		if (! mapIndex.containsKey(map.id))
 		{
-			ListIterator<Map> iter = maps.listIterator();
-			iter.add(map);
+			// TODO Use corner markers instead
+			Bounds bounds = map.getBounds();
+			int minLat = (int) Math.floor(bounds.minLat);
+			int maxLat = (int) Math.ceil(bounds.maxLat);
+			int minLon = (int) Math.floor(bounds.minLon);
+			int maxLon = (int) Math.ceil(bounds.maxLon);
+			for (int lat = minLat; lat <= maxLat; lat++)
+			{
+				for (int lon = minLon; lon <= maxLon; lon++)
+				{
+					//Log.e("MAP", lat + " " + lon + "|" + (lat+90) + " " + (lon+180));
+					HashSet<Integer> lli = maps[lat+90][lon+180];
+					if (lli == null)
+					{
+						lli = new HashSet<Integer>();
+						maps[lat+90][lon+180] = lli;
+					}
+					lli.add(map.id);
+				}
+			}
+			mapIndex.put(map.id, map);
 		}
 	}
 
 	public void removeMap(Map map)
 	{
-		for (ListIterator<Map> iter = maps.listIterator(); iter.hasNext();)
+		// TODO Use corner markers instead
+		Bounds bounds = map.getBounds();
+		int minLat = (int) Math.floor(bounds.minLat);
+		int maxLat = (int) Math.ceil(bounds.maxLat);
+		int minLon = (int) Math.floor(bounds.minLon);
+		int maxLon = (int) Math.ceil(bounds.maxLon);
+		for (int lat = minLat; lat <= maxLat; lat++)
 		{
-			Map m = iter.next();
-			if (m.equals(map))
+			for (int lon = minLon; lon <= maxLon; lon++)
 			{
-				iter.remove();
-				return;
+				HashSet<Integer> lli = maps[lat+90][lon+180];
+				if (lli != null)
+					lli.remove(map.id);
 			}
 		}
+		mapIndex.remove(map.id);
 	}
 
-	public List<Map> getCoveringMaps(Map refMap, Map.Bounds area, boolean covered, boolean bestmap)
+	public List<Map> getCoveringMaps(Map refMap, Bounds area, boolean covered, boolean bestmap)
 	{
 		List<Map> llmaps = new ArrayList<Map>();
 
-		for (Map map : maps)
+		int minLat = (int) Math.floor(area.minLat);
+		int maxLat = (int) Math.ceil(area.maxLat);
+		int minLon = (int) Math.floor(area.minLon);
+		int maxLon = (int) Math.ceil(area.maxLon);
+		for (int lat = minLat; lat <= maxLat; lat++)
 		{
-			if (map.mpp > 200 || map.equals(refMap))
-				continue;
-			double ratio = refMap.mpp / map.mpp;
-			if (((! covered && ratio > 0.2) || ratio > 1) && ((bestmap || ! covered) && ratio < 5) && map.containsArea(area))
+			for (int lon = minLon; lon <= maxLon; lon++)
 			{
-				llmaps.add(map);
+				HashSet<Integer> lli = maps[lat+90][lon+180];
+				if (lli != null)
+				{
+					for (Integer id : lli)
+					{
+						Map map = mapIndex.get(id);
+						if (map.mpp > 200 || map.equals(refMap))
+							continue;
+						double ratio = refMap.mpp / map.mpp;
+						if (((! covered && ratio > 0.2) || ratio > 1) && ((bestmap || ! covered) && ratio < 5) && map.containsArea(area))
+						{
+							llmaps.add(map);
+						}
+					}
+				}
 			}
 		}
 
@@ -128,15 +184,31 @@ public class MapIndex implements Serializable
 		return llmaps;		
 	}
 
-	public List<Map> getMaps(double lat, double lon)
+	public List<Map> getMaps(double latitude, double longitude)
 	{
 		List<Map> llmaps = new ArrayList<Map>();
 		
-		for (Map map : maps)
+		int minLat = (int) Math.floor(latitude);
+		int maxLat = (int) Math.ceil(latitude);
+		int minLon = (int) Math.floor(longitude);
+		int maxLon = (int) Math.ceil(longitude);
+
+		for (int lat = minLat; lat <= maxLat; lat++)
 		{
-			if (map.coversLatLon(lat, lon))
+			for (int lon = minLon; lon <= maxLon; lon++)
 			{
-				llmaps.add(map);
+				HashSet<Integer> lli = maps[lat+90][lon+180];
+				if (lli != null)
+				{
+					for (Integer id : lli)
+					{
+						Map map = mapIndex.get(id);
+						if (!llmaps.contains(map) && map.coversLatLon(latitude, longitude))
+						{
+							llmaps.add(map);
+						}
+					}
+				}
 			}
 		}
 		
@@ -145,21 +217,27 @@ public class MapIndex implements Serializable
 		return llmaps;		
 	}
 
-	public List<Map> getMaps()
+	public Collection<Map> getMaps()
 	{
-		return maps;
+		return mapIndex.values();
 	}
 
 	public void cleanBadMaps()
 	{
-		for (ListIterator<Map> iter = maps.listIterator(); iter.hasNext();)
+		HashSet<Map> badMaps = new HashSet<Map>();
+		
+		for (Integer id : mapIndex.keySet())
 		{
-			Map map = iter.next();
+			Map map = mapIndex.get(id);
 			if (map.loadError != null)
 			{
-				iter.remove();
+				badMaps.add(map);
 			}
 		}
+		for (Map map : badMaps)
+		{
+			removeMap(map);
+		}		
 	}
 	
 	private class MapComparator implements Comparator<Map>, Serializable

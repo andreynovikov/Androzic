@@ -24,8 +24,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.WeakHashMap;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -37,7 +37,6 @@ import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
 import com.androzic.Androzic;
-import com.androzic.MapActivity;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.MapObject;
@@ -57,21 +56,24 @@ public class MapObjectsOverlay extends MapOverlay
 	private boolean showNames;
 	private double mpp;
 
-	public MapObjectsOverlay(final Activity mapActivity)
+	public MapObjectsOverlay()
 	{
-		super(mapActivity);
+		super();
+
 		enabled = true;
+		
+		Resources resources = application.getResources();
 		
 		fillPaint = new Paint();
 		fillPaint.setAntiAlias(false);
 		fillPaint.setStrokeWidth(1);
 		fillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-		fillPaint.setColor(context.getResources().getColor(R.color.waypoint));
+		fillPaint.setColor(resources.getColor(R.color.waypoint));
 		borderPaint = new Paint();
 		borderPaint.setAntiAlias(false);
 		borderPaint.setStrokeWidth(1);
 		borderPaint.setStyle(Paint.Style.STROKE);
-		borderPaint.setColor(context.getResources().getColor(R.color.waypointtext));
+		borderPaint.setColor(resources.getColor(R.color.waypointtext));
 		textPaint = new Paint();
 		textPaint.setAntiAlias(true);
 		textPaint.setStrokeWidth(2);
@@ -79,23 +81,23 @@ public class MapObjectsOverlay extends MapOverlay
 		textPaint.setTextAlign(Align.LEFT);
 		textPaint.setTextSize(10);
 		textPaint.setTypeface(Typeface.SANS_SERIF);
-		textPaint.setColor(context.getResources().getColor(R.color.waypointtext));
+		textPaint.setColor(resources.getColor(R.color.waypointtext));
 		textFillPaint = new Paint();
 		textFillPaint.setAntiAlias(false);
 		textFillPaint.setStrokeWidth(1);
 		textFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-		textFillPaint.setColor(context.getResources().getColor(R.color.waypointbg));
+		textFillPaint.setColor(resources.getColor(R.color.waypointbg));
 		proximityPaint = new Paint();
 		proximityPaint.setAntiAlias(false);
 		proximityPaint.setStrokeWidth(1);
 		proximityPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-		proximityPaint.setColor(context.getResources().getColor(R.color.proximity));
+		proximityPaint.setColor(resources.getColor(R.color.proximity));
 
 		mpp = 0;
 
 		bitmaps = new WeakHashMap<MapObject, Bitmap>();
 
-		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
+		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(application));
 	}
 
 	public void clearBitmapCache()
@@ -113,7 +115,6 @@ public class MapObjectsOverlay extends MapOverlay
 	@Override
 	public synchronized void onMapChanged()
 	{
-		Androzic application = (Androzic) context.getApplication();
 		Map map = application.getCurrentMap();
 		if (map == null)
 			return;
@@ -124,7 +125,6 @@ public class MapObjectsOverlay extends MapOverlay
 	@Override
 	public boolean onSingleTap(MotionEvent e, Rect mapTap, MapView mapView)
 	{
-		Androzic application = (Androzic) context.getApplication();
 		Iterator<MapObject> mapObjects = application.getMapObjects().iterator();
 		while (mapObjects.hasNext())
 		{
@@ -132,9 +132,9 @@ public class MapObjectsOverlay extends MapOverlay
 			synchronized (mo)
 			{
 				int[] pointXY = application.getXYbyLatLon(mo.latitude, mo.longitude);
-				if (mapTap.contains(pointXY[0], pointXY[1]) && context instanceof MapActivity)
+				if (mapTap.contains(pointXY[0], pointXY[1]))
 				{
-					return ((MapActivity) context).mapObjectTapped(mo._id, (int) e.getX(), (int) e.getY());
+					return application.getMapHolder().mapObjectTapped(mo._id, (int) e.getX(), (int) e.getY());
 				}
 			}
 		}
@@ -270,7 +270,7 @@ public class MapObjectsOverlay extends MapOverlay
 	@Override
 	protected void onDrawFinished(final Canvas c, final MapView mapView, int centerX, int centerY)
 	{
-		Androzic application = (Androzic) context.getApplication();
+		Androzic application = Androzic.getApplication();
 
 		final int[] cxy = mapView.mapCenterXY;
 
@@ -288,14 +288,15 @@ public class MapObjectsOverlay extends MapOverlay
 	@Override
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
-		pointWidth = settings.getInt(context.getString(R.string.pref_waypoint_width), context.getResources().getInteger(R.integer.def_waypoint_width));
-		showNames = settings.getBoolean(context.getString(R.string.pref_waypoint_showname), true);
-		fillPaint.setColor(settings.getInt(context.getString(R.string.pref_waypoint_color), context.getResources().getColor(R.color.waypoint)));
+		Resources resources = application.getResources();
+		pointWidth = settings.getInt(application.getString(R.string.pref_waypoint_width), resources.getInteger(R.integer.def_waypoint_width));
+		showNames = settings.getBoolean(application.getString(R.string.pref_waypoint_showname), true);
+		fillPaint.setColor(settings.getInt(application.getString(R.string.pref_waypoint_color), resources.getColor(R.color.waypoint)));
 		int alpha = textFillPaint.getAlpha();
-		textFillPaint.setColor(settings.getInt(context.getString(R.string.pref_waypoint_bgcolor), context.getResources().getColor(R.color.waypointbg)));
+		textFillPaint.setColor(settings.getInt(application.getString(R.string.pref_waypoint_bgcolor), resources.getColor(R.color.waypointbg)));
 		textFillPaint.setAlpha(alpha);
-		borderPaint.setColor(settings.getInt(context.getString(R.string.pref_waypoint_namecolor), context.getResources().getColor(R.color.waypointtext)));
-		textPaint.setColor(settings.getInt(context.getString(R.string.pref_waypoint_namecolor), context.getResources().getColor(R.color.waypointtext)));
+		borderPaint.setColor(settings.getInt(application.getString(R.string.pref_waypoint_namecolor), resources.getColor(R.color.waypointtext)));
+		textPaint.setColor(settings.getInt(application.getString(R.string.pref_waypoint_namecolor), resources.getColor(R.color.waypointtext)));
 		textPaint.setTextSize(pointWidth * 1.5f);
 		clearBitmapCache();
 	}

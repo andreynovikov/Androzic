@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -21,14 +21,15 @@
 package com.androzic.track;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
-import android.app.Activity;
+import android.app.Dialog;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,23 +40,28 @@ import com.androzic.data.Track;
 import com.androzic.util.FileUtils;
 import com.androzic.util.OziExplorerFiles;
 
-public class TrackSave extends Activity
+public class TrackSave extends DialogFragment
 {
 	private TextView filename;
 	private Track track;
 	
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_save);
+	public TrackSave()
+	{
+		throw new RuntimeException("Unimplemented initialization context");
+	}
 
-		filename = (TextView) findViewById(R.id.filename_text);
+	public TrackSave(Track track)
+	{
+		this.track = track;
+		setRetainInstance(true);
+	}
 
-		int index = getIntent().getExtras().getInt("INDEX");
-        
-		Androzic application = (Androzic) getApplication();
-		track = application.getTrack(index);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		View rootView = inflater.inflate(R.layout.act_save, container);
+
+		filename = (TextView) rootView.findViewById(R.id.filename_text);
 
 		if (track.filepath != null)
 		{
@@ -66,14 +72,34 @@ public class TrackSave extends Activity
 		{
 			filename.setText(FileUtils.sanitizeFilename(track.name) + ".plt");
 		}
-		
-	    Button save = (Button) findViewById(R.id.save_button);
-	    save.setOnClickListener(saveOnClickListener);
 
-	    Button cancel = (Button) findViewById(R.id.cancel_button);
-	    cancel.setOnClickListener(new OnClickListener() { public void onClick(View v) { finish(); } });
-    }
+		final Dialog dialog = getDialog();
+
+		Button cancelButton = (Button) rootView.findViewById(R.id.cancel_button);
+		cancelButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				dialog.cancel();
+			}
+		});
+		Button saveButton = (Button) rootView.findViewById(R.id.save_button);
+		saveButton.setOnClickListener(saveOnClickListener);
+
+		dialog.setTitle(R.string.savetrack_name);
+		dialog.setCanceledOnTouchOutside(false);
+
+		return rootView;
+	}
 	
+	@Override
+	public void onDestroyView()
+	{
+		if (getDialog() != null && getRetainInstance())
+			getDialog().setDismissMessage(null);
+		super.onDestroyView();
+	}
+
 	private OnClickListener saveOnClickListener = new OnClickListener()
 	{
         public void onClick(View v)
@@ -84,11 +110,7 @@ public class TrackSave extends Activity
     		
     		try
     		{
-    			String state = Environment.getExternalStorageState();
-    			if (! Environment.MEDIA_MOUNTED.equals(state))
-    				throw new FileNotFoundException(getString(R.string.err_nosdcard));
-    			
-    			Androzic application = (Androzic) getApplication();
+    			Androzic application = Androzic.getApplication();
     			File dir = new File(application.dataPath);
     			if (! dir.exists())
     				dir.mkdirs();
@@ -102,22 +124,13 @@ public class TrackSave extends Activity
     				OziExplorerFiles.saveTrackToFile(file, application.charset, track);
     				track.filepath = file.getAbsolutePath();
     			}
-        		finish();
+        		dismiss();
     		}
     		catch (Exception e)
     		{
-    			Toast.makeText(TrackSave.this, R.string.err_write, Toast.LENGTH_LONG).show();
+    			Toast.makeText(getActivity(), R.string.err_write, Toast.LENGTH_LONG).show();
     			Log.e("ANDROZIC", e.toString(), e);
     		}
         }
     };
-
-	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		track = null;
-		filename = null;
-	}
-
 }

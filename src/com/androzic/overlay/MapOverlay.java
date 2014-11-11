@@ -21,28 +21,24 @@
 package com.androzic.overlay;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+
+import com.androzic.Androzic;
 import com.androzic.MapView;
 
 public abstract class MapOverlay
 {
-	Activity context;
+	Androzic application;
 	boolean enabled;
 	
-	MapOverlay(final Activity activity)
+	MapOverlay()
 	{
-		context = activity;
+		application = Androzic.getApplication();
 		enabled = false;
-	}
-	
-	public void setMapContext(final Activity activity)
-	{
-		context = activity;
 	}
 	
 	/**

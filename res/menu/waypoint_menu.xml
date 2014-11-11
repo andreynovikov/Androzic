@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/action_view"
+        android:icon="@drawable/ic_visibility_white_24dp"
+        android:title="@string/menu_view"/>
+    <item
+        android:id="@+id/action_navigate"
+        android:icon="@drawable/ic_navigation_white_24dp"
+        android:title="@string/menu_navigate"/>
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_edit_white_24dp"
+        android:title="@string/menu_edit"/>
+    <item
+        android:id="@+id/action_share"
+        android:icon="@drawable/ic_share_white_24dp"
+        android:title="@string/menu_share"/>
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_delete_white_24dp"
+        android:title="@string/menu_delete"/>
+
+</menu>

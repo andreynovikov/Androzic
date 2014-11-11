@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:orderInCategory="1"
+        android:title="@string/menu_search"
+        app:showAsAction="ifRoom"/>
+
+    <group
+        android:checkableBehavior="all"
+        android:orderInCategory="1" >
+        <item
+            android:id="@+id/action_locating"
+            android:title="@string/action_locating"/>
+        <item
+            android:id="@+id/action_tracking"
+            android:title="@string/action_tracking"/>
+    </group>
+
+</menu>

@@ -3,12 +3,12 @@
 
     <item
         android:id="@+id/menuNewRoute"
-        android:icon="@drawable/ic_action_add"
+        android:icon="@drawable/ic_note_add_white_24dp"
         app:showAsAction="always"
         android:title="@string/menu_newroute"/>
     <item
         android:id="@+id/menuLoadRoute"
-        android:icon="@drawable/ic_action_import"
+        android:icon="@drawable/ic_folder_open_white_24dp"
         app:showAsAction="always"
         android:title="@string/menu_load"/>
 

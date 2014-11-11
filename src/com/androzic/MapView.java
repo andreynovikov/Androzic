@@ -53,6 +53,7 @@ import android.widget.Toast;
 
 import com.androzic.map.Map;
 import com.androzic.overlay.MapOverlay;
+import com.androzic.overlay.OverlayManager;
 import com.androzic.util.Geo;
 
 public class MapView extends SurfaceView implements SurfaceHolder.Callback, MultiTouchObjectCanvas<Object>
@@ -125,6 +126,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private PorterDuffColorFilter active = null;
 
 	private Androzic application;
+	private MapHolder mapHolder;
 
 	private SurfaceHolder cachedHolder;
 	private DrawingThread drawingThread;
@@ -153,9 +155,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		setWillNotDraw(false);
 	}
 
-	public void initialize(Androzic application)
+	public void initialize(Androzic application, MapHolder holder)
 	{
 		this.application = application;
+		this.mapHolder = holder;
 
 		getHolder().addCallback(this);
 
@@ -344,32 +347,20 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		// draw overlays
 		if (!scaled && ((penOX == 0 && penOY == 0) || !hideOnDrag))
 		{
-			// TODO Optimize getOverlays()
-			for (MapOverlay mo : application.getOverlays(Androzic.ORDER_DRAW_PREFERENCE))
+			// FIXME Optimize getOverlays()
+			for (MapOverlay mo : application.overlayManager.getOverlays(OverlayManager.ORDER_DRAW_PREFERENCE))
 				mo.onManagedDraw(canvas, this, cx, cy);
 		}
 
 		// draw cursor (it is always topmost)
-		if (!scaled && currentLocation != null)
+		if (!scaled && isMoving)
 		{
 			canvas.save();
 			canvas.translate(-mapCenterXY[0] + currentLocationXY[0], -mapCenterXY[1] + currentLocationXY[1]);
-			if (isMoving)
-			{
-				canvas.rotate(bearing, 0, 0);
-				movingCursor.draw(canvas);
-				if (isFixed)
-					canvas.drawLine(0, 0, 0, -vectorLength, pointerPaint);
-			}
-			else
-			{
-				canvas.drawCircle(0, 0, 1, pointerPaint);
-				canvas.drawCircle(0, 0, 40, pointerPaint);
-				canvas.drawLine(20, 0, 60, 0, pointerPaint);
-				canvas.drawLine(-20, 0, -60, 0, pointerPaint);
-				canvas.drawLine(0, 20, 0, 60, pointerPaint);
-				canvas.drawLine(0, -20, 0, -60, pointerPaint);
-			}
+			canvas.rotate(bearing, 0, 0);
+			movingCursor.draw(canvas);
+			if (isFixed)
+				canvas.drawLine(0, 0, 0, -vectorLength, pointerPaint);
 			canvas.restore();
 
 			int sx = currentLocationXY[0] - mapCenterXY[0] + cx;
@@ -385,7 +376,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				canvas.drawLine(-10, -50, 10, -50, pointerPaint);
 				canvas.restore();
 			}
-
 		}
 
 		if (!scaled && !isFollowing)
@@ -423,7 +413,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			currentLocation[1] = loc.getLongitude();
 			currentLocationXY = application.getXYbyLatLon(currentLocation[0], currentLocation[1]);
 
-			lookAheadB = Math.round(bearing / 10) * 10;
+			float turn = lookAheadB - bearing;
+			if (Math.abs(turn) > 180)
+			{
+				turn = turn - Math.signum(turn) * 360;
+			}
+			if (Math.abs(turn) > 10)
+				lookAheadB = bearing;
 
 			long lastLocationMillis = loc.getTime();
 
@@ -475,11 +471,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				mpp = map.mpp / map.getZoom();
 		}
 		calculateVectorLength();
-		application.notifyOverlays();
+		application.overlayManager.notifyOverlays();
 		try
 		{
-			MapActivity androzic = (MapActivity) getContext();
-			androzic.updateFileInfo();
+			mapHolder.updateFileInfo();
 		}
 		finally
 		{
@@ -641,8 +636,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		{
 			try
 			{
-				MapActivity androzic = (MapActivity) getContext();
-				androzic.setFollowing(!isFollowing);
+				mapHolder.setFollowing(!isFollowing);
 			}
 			catch (Exception e)
 			{
@@ -721,6 +715,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 	}
 
+	public void setCrossColor(final int color)
+	{
+		crossPaint.setColor(color);
+	}
+
 	public void setCursorColor(final int color)
 	{
 		active = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
@@ -771,8 +770,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 		try
 		{
-			MapActivity activity = (MapActivity) getContext();
-			activity.updateCoordinates(mapCenter);
+			mapHolder.updateCoordinates(mapCenter);
 		}
 		finally
 		{
@@ -808,7 +806,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 			int dt = GESTURE_THRESHOLD_DP / 2;
 			Rect tap = new Rect(mapTapX - dt, mapTapY - dt, mapTapX + dt, mapTapY + dt);
-			for (MapOverlay mo : application.getOverlays(Androzic.ORDER_SHOW_PREFERENCE))
+			for (MapOverlay mo : application.overlayManager.getOverlays(OverlayManager.ORDER_SHOW_PREFERENCE))
 				if (mo.onSingleTap(upEvent, tap, this))
 					break;
 		}
@@ -1170,8 +1168,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			Log.e(TAG, "Scale: " + scale);
 			try
 			{
-				MapActivity androzic = (MapActivity) this.getContext();
-				androzic.zoomMap(scale);
+				mapHolder.zoomMap(scale);
 			}
 			finally
 			{

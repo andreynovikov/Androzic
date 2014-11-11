@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -25,11 +25,16 @@ import java.util.concurrent.Executors;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 
@@ -37,71 +42,81 @@ import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
-import com.androzic.overlay.RouteOverlay;
 
-public class TrackToRoute extends Activity
+public class TrackToRoute extends DialogFragment
 {
-	private ProgressDialog dlgWait;
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
 	
 	private RadioButton algA;
-	private RadioButton algB;
+	//private RadioButton algB;
+	private SeekBar sensitivity;
 	
-	private int index;
+	private Track track;
 	
+	public TrackToRoute()
+	{
+		throw new RuntimeException("Unimplemented initialization context");
+	}
+
+	public TrackToRoute(Track track)
+	{
+		this.track = track;
+		setRetainInstance(true);
+	}
+
 	@Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_track_to_route);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		View rootView = inflater.inflate(R.layout.act_track_to_route, container);
 
-        index = getIntent().getExtras().getInt("INDEX");
-
-		algA = (RadioButton) findViewById(R.id.alg_a);
-		algB = (RadioButton) findViewById(R.id.alg_b);
-
+		algA = (RadioButton) rootView.findViewById(R.id.alg_a);
+		//algB = (RadioButton) rootView.findViewById(R.id.alg_b);
 		algA.setChecked(true);
 
-	    Button generate = (Button) findViewById(R.id.generate_button);
+    	sensitivity = (SeekBar) rootView.findViewById(R.id.sensitivity);
+
+	    Button generate = (Button) rootView.findViewById(R.id.generate_button);
 	    generate.setOnClickListener(saveOnClickListener);
+
+		final Dialog dialog = getDialog();
+
+	    dialog.setTitle(R.string.savetrack_name);
+		dialog.setCanceledOnTouchOutside(false);
+	    
+	    return rootView;
     }
 
 	@Override
-	protected void onDestroy()
+	public void onDestroyView()
 	{
-		super.onDestroy();
-		algA = null;
-		algB = null;
-	}
-	
-	@Override
-	protected Dialog onCreateDialog(int id) 
-	{
-		switch (id) 
-		{
-    		case 0:
-    		{
-    			dlgWait = new ProgressDialog(this);
-    			dlgWait.setMessage(getString(R.string.msg_wait));
-    			dlgWait.setIndeterminate(true);
-    			dlgWait.setCancelable(false);
-    			return dlgWait;
-    		}
-		}
-		return null;
+		if (getDialog() != null && getRetainInstance())
+			getDialog().setDismissMessage(null);
+		super.onDestroyView();
 	}
 
 	private OnClickListener saveOnClickListener = new OnClickListener()
 	{
         public void onClick(View v)
         {
-        	showDialog(0);
-
-        	final Androzic application = (Androzic) getApplication();
-			final Track track = application.getTrack(index);
+        	final Androzic application = Androzic.getApplication();
         	final int alg = algA.isChecked() ? 1 : 2;
-        	final int s = ((SeekBar) findViewById(R.id.sensitivity)).getProgress();
+        	final int s = sensitivity.getProgress();
         	final float sensitivity = (s + 1) / 2f;
+
+    		ProgressBar progress = new ProgressBar(getActivity(), null, android.R.attr.progressBarStyleLarge);
+    		progress.setIndeterminate(true);
+    		
+    		ViewGroup rootView = (ViewGroup) getView();
+    		rootView.setMinimumWidth(rootView.getWidth());
+    		rootView.setMinimumHeight(rootView.getHeight());
+    		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) rootView.getLayoutParams();
+    		params.gravity = Gravity.CENTER;
+    		rootView.removeAllViews();
+    		rootView.setLayoutParams(params);
+    		
+    		params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+    		params.gravity = Gravity.CENTER;
+    		rootView.addView(progress, params);
 
     		threadPool.execute(new Runnable() 
     		{
@@ -118,16 +133,9 @@ public class TrackToRoute extends Activity
     	    				break;
     				}
     				application.addRoute(route);
-    				// TODO it's a hack
-    				RouteOverlay newRoute = new RouteOverlay(application.mapActivity, route);
-    				application.routeOverlays.add(newRoute);
-    				dlgWait.dismiss();
-    	    		finish();
+    	    		dismiss();
     			};
     		});
         }
     };
-
-/*
-*/
 }

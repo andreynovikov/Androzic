@@ -55,7 +55,6 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.androzic.Androzic;
 import com.androzic.R;
@@ -83,7 +82,7 @@ public class LocationService extends BaseLocationService implements LocationList
 	public static final String BROADCAST_TRACKING_STATUS = "com.androzic.trackingStatusChanged";
 
 	private boolean locationsEnabled = false;
-	private boolean useNetwork = true;
+	//FIXME Use this to permanently loose location
 	private int gpsLocationTimeout = 120000;
 
 	private LocationManager locationManager = null;
@@ -136,7 +135,6 @@ public class LocationService extends BaseLocationService implements LocationList
 
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		// Location preferences
-		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_usenetwork));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_loc_gpstimeout));
 		// Tracking preferences
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_tracking_mintime));
@@ -168,7 +166,6 @@ public class LocationService extends BaseLocationService implements LocationList
 			locationsEnabled = false;
 			disconnect();
 			updateProvider(LocationManager.GPS_PROVIDER, false);
-			updateProvider(LocationManager.NETWORK_PROVIDER, false);
 			sendBroadcast(new Intent(BROADCAST_LOCATING_STATUS));
 			if (trackingEnabled)
 			{
@@ -263,11 +260,7 @@ public class LocationService extends BaseLocationService implements LocationList
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
-		if (getString(R.string.pref_loc_usenetwork).equals(key))
-		{
-			useNetwork = sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_loc_usenetwork));
-		}
-		else if (getString(R.string.pref_loc_gpstimeout).equals(key))
+		if (getString(R.string.pref_loc_gpstimeout).equals(key))
 		{
 			gpsLocationTimeout = 1000 * sharedPreferences.getInt(key, getResources().getInteger(R.integer.def_loc_gpstimeout));
 		}
@@ -310,18 +303,6 @@ public class LocationService extends BaseLocationService implements LocationList
 			smoothSpeed = 0.0f;
 			avgSpeed = 0.0f;
 			locationManager.addGpsStatusListener(this);
-			if (useNetwork)
-			{
-				try
-				{
-					locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-					Log.d(TAG, "Network provider set");
-				}
-				catch (IllegalArgumentException e)
-				{
-					Toast.makeText(this, getString(R.string.err_no_network_provider), Toast.LENGTH_LONG).show();
-				}
-			}
 			try
 			{
 				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -766,131 +747,103 @@ public class LocationService extends BaseLocationService implements LocationList
 	{
 		tics++;
 
-		boolean fromGps = false;
 		boolean sendUpdate = false;
 
 		long time = SystemClock.elapsedRealtime();
 
 		// Log.i(TAG, "Location arrived: "+location.toString());
 
-		if (LocationManager.NETWORK_PROVIDER.equals(location.getProvider()))
+		Log.d(TAG, "Fix arrived");
+
+		long prevLocationMillis = lastLocationMillis;
+		float prevSpeed = lastKnownLocation.getSpeed();
+
+		lastKnownLocation = location;
+		lastLocationMillis = time;
+		sendUpdate = true;
+
+		if (!Float.isNaN(nmeaGeoidHeight))
 		{
-			if (useNetwork && (gpsStatus == GPS_OFF || (gpsStatus == GPS_SEARCHING && time > lastLocationMillis + gpsLocationTimeout)))
-			{
-				Log.d(TAG, "New location");
-				lastKnownLocation = location;
-				lastLocationMillis = time;
-				isContinous = false;
-				sendUpdate = true;
-			}
-			else
-			{
-				return;
-			}
+			location.setAltitude(location.getAltitude() + nmeaGeoidHeight);
 		}
+
+		if (justStarted)
+		{
+			justStarted = prevSpeed == 0;
+		}
+		else if (lastKnownLocation.getSpeed() > 0)
+		{
+			// filter speed outrages
+			double a = 2 * 9.8 * (lastLocationMillis - prevLocationMillis) / 1000;
+			if (Math.abs(lastKnownLocation.getSpeed() - prevSpeed) > a)
+				lastKnownLocation.setSpeed(prevSpeed);
+		}
+
+		// smooth speed
+		float smoothspeed = 0;
+		float curspeed = lastKnownLocation.getSpeed();
+		for (int i = speed.length - 1; i > 1; i--)
+		{
+			smoothspeed += speed[i];
+			speed[i] = speed[i - 1];
+		}
+		smoothspeed += speed[1];
+		if (speed[1] < speed[0] && speed[0] > curspeed)
+		{
+			speed[0] = (speed[1] + curspeed) / 2;
+		}
+		smoothspeed += speed[0];
+		speed[1] = speed[0];
+		lastKnownLocation.setSpeed(speed[1]);
+		speed[0] = curspeed;
+		if (speed[0] == 0 && speed[1] == 0)
+			smoothspeed = 0;
 		else
+			smoothspeed = smoothspeed / speed.length;
+
+		// average speed
+		float avspeed = 0;
+		for (int i = speedav.length - 1; i >= 0; i--)
 		{
-			fromGps = true;
-
-			Log.d(TAG, "Fix arrived");
-
-			long prevLocationMillis = lastLocationMillis;
-			float prevSpeed = lastKnownLocation.getSpeed();
-			float prevTrack = lastKnownLocation.getBearing();
-
-			lastKnownLocation = location;
-
-			if (lastKnownLocation.getSpeed() == 0 && prevTrack != 0)
-			{
-				lastKnownLocation.setBearing(prevTrack);
-			}
-
-			lastLocationMillis = time;
-			sendUpdate = true;
-
-			if (!Float.isNaN(nmeaGeoidHeight))
-			{
-				lastKnownLocation.setAltitude(lastKnownLocation.getAltitude() + nmeaGeoidHeight);
-			}
-
-			if (justStarted)
-			{
-				justStarted = prevSpeed == 0;
-			}
-			else if (lastKnownLocation.getSpeed() > 0)
-			{
-				// filter speed outrages
-				double a = 2 * 9.8 * (lastLocationMillis - prevLocationMillis) / 1000;
-				if (Math.abs(lastKnownLocation.getSpeed() - prevSpeed) > a)
-					lastKnownLocation.setSpeed(prevSpeed);
-			}
-
-			// smooth speed
-			float smoothspeed = 0;
-			float curspeed = lastKnownLocation.getSpeed();
-			for (int i = speed.length - 1; i > 1; i--)
-			{
-				smoothspeed += speed[i];
-				speed[i] = speed[i - 1];
-			}
-			smoothspeed += speed[1];
-			if (speed[1] < speed[0] && speed[0] > curspeed)
-			{
-				speed[0] = (speed[1] + curspeed) / 2;
-			}
-			smoothspeed += speed[0];
-			speed[1] = speed[0];
-			lastKnownLocation.setSpeed(speed[1]);
-			speed[0] = curspeed;
-			if (speed[0] == 0 && speed[1] == 0)
-				smoothspeed = 0;
-			else
-				smoothspeed = smoothspeed / speed.length;
-
-			// average speed
-			float avspeed = 0;
-			for (int i = speedav.length - 1; i >= 0; i--)
-			{
-				avspeed += speedav[i];
-			}
-			avspeed = avspeed / speedav.length;
-			if (tics % pause == 0)
-			{
-				if (avspeed > 0)
-				{
-					float diff = curspeed / avspeed;
-					if (0.95 < diff && diff < 1.05)
-					{
-						for (int i = speedav.length - 1; i > 0; i--)
-						{
-							speedav[i] = speedav[i - 1];
-						}
-						speedav[0] = curspeed;
-					}
-				}
-				float fluct = 0;
-				for (int i = speedavex.length - 1; i > 0; i--)
-				{
-					fluct += speedavex[i] / curspeed;
-					speedavex[i] = speedavex[i - 1];
-				}
-				fluct += speedavex[0] / curspeed;
-				speedavex[0] = curspeed;
-				fluct = fluct / speedavex.length;
-				if (0.95 < fluct && fluct < 1.05)
-				{
-					for (int i = speedav.length - 1; i >= 0; i--)
-					{
-						speedav[i] = speedavex[i];
-					}
-					if (pause < 5)
-						pause++;
-				}
-			}
-
-			smoothSpeed = smoothspeed;
-			avgSpeed = avspeed;
+			avspeed += speedav[i];
 		}
+		avspeed = avspeed / speedav.length;
+		if (tics % pause == 0)
+		{
+			if (avspeed > 0)
+			{
+				float diff = curspeed / avspeed;
+				if (0.95 < diff && diff < 1.05)
+				{
+					for (int i = speedav.length - 1; i > 0; i--)
+					{
+						speedav[i] = speedav[i - 1];
+					}
+					speedav[0] = curspeed;
+				}
+			}
+			float fluct = 0;
+			for (int i = speedavex.length - 1; i > 0; i--)
+			{
+				fluct += speedavex[i] / curspeed;
+				speedavex[i] = speedavex[i - 1];
+			}
+			fluct += speedavex[0] / curspeed;
+			speedavex[0] = curspeed;
+			fluct = fluct / speedavex.length;
+			if (0.95 < fluct && fluct < 1.05)
+			{
+				for (int i = speedav.length - 1; i >= 0; i--)
+				{
+					speedav[i] = speedavex[i];
+				}
+				if (pause < 5)
+					pause++;
+			}
+		}
+
+		smoothSpeed = smoothspeed;
+		avgSpeed = avspeed;
 
 		/*
 		 * lastKnownLocation.setSpeed(20); lastKnownLocation.setBearing(55);
@@ -902,7 +855,7 @@ public class LocationService extends BaseLocationService implements LocationList
 		if (sendUpdate)
 			updateLocation();
 
-		isContinous = fromGps;
+		isContinous = true;
 	}
 
 	@Override

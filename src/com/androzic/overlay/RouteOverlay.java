@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -38,8 +38,6 @@ import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
-import com.androzic.Androzic;
-import com.androzic.MapActivity;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Route;
@@ -47,40 +45,44 @@ import com.androzic.data.Waypoint;
 
 public class RouteOverlay extends MapOverlay
 {
-	Paint linePaint;
-	Paint borderPaint;
-	Paint fillPaint;
-	Paint textPaint;
-	Paint textFillPaint;
-	Route route;
-	Map<Waypoint, Bitmap> bitmaps;
+	private Paint linePaint;
+	private Paint borderPaint;
+	private Paint fillPaint;
+	private Paint textPaint;
+	private Paint textFillPaint;
+	private Route route;
+	private Map<Waypoint, Bitmap> bitmaps;
 
-	int pointWidth = 10;
-	int routeWidth = 2;
-	boolean showNames;
+	private int pointWidth = 10;
+	private int routeWidth = 2;
+	private boolean showNames;
 
-	public RouteOverlay(final Activity mapActivity)
+	private boolean preserveWidth = false;
+
+	public RouteOverlay(final Route route)
 	{
-		super(mapActivity);
+		super();
 
-		route = new Route();
+		this.route = route;
 		bitmaps = new WeakHashMap<Waypoint, Bitmap>();
+
+		Resources resources = application.getResources();
 
 		linePaint = new Paint();
 		linePaint.setAntiAlias(true);
 		linePaint.setStrokeWidth(routeWidth);
 		linePaint.setStyle(Paint.Style.STROKE);
-		linePaint.setColor(context.getResources().getColor(R.color.routeline));
+		linePaint.setColor(resources.getColor(R.color.routeline));
 		fillPaint = new Paint();
 		fillPaint.setAntiAlias(false);
 		fillPaint.setStrokeWidth(1);
 		fillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-		fillPaint.setColor(context.getResources().getColor(R.color.routewaypoint));
+		fillPaint.setColor(resources.getColor(R.color.routewaypoint));
 		borderPaint = new Paint();
 		borderPaint.setAntiAlias(false);
 		borderPaint.setStrokeWidth(1);
 		borderPaint.setStyle(Paint.Style.STROKE);
-		borderPaint.setColor(context.getResources().getColor(R.color.routeline));
+		borderPaint.setColor(resources.getColor(R.color.routeline));
 		textPaint = new Paint();
 		textPaint.setAntiAlias(true);
 		textPaint.setStrokeWidth(2);
@@ -88,28 +90,26 @@ public class RouteOverlay extends MapOverlay
 		textPaint.setTextAlign(Align.LEFT);
 		textPaint.setTextSize(pointWidth * 1.5f);
 		textPaint.setTypeface(Typeface.SANS_SERIF);
-		textPaint.setColor(context.getResources().getColor(R.color.routewaypointtext));
+		textPaint.setColor(resources.getColor(R.color.routewaypointtext));
 		textFillPaint = new Paint();
 		textFillPaint.setAntiAlias(false);
 		textFillPaint.setStrokeWidth(1);
 		textFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-		textFillPaint.setColor(context.getResources().getColor(R.color.routeline));
+		textFillPaint.setColor(resources.getColor(R.color.routeline));
 
-		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
+		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(application));
 
 		enabled = true;
-	}
 
-	public RouteOverlay(final Activity mapActivity, final Route aRoute)
-	{
-		this(mapActivity);
+		if (route.width <= 0)
+			route.width = (int) linePaint.getStrokeWidth();
 
-		route = aRoute;
 		if (route.lineColor == -1)
 			route.lineColor = linePaint.getColor();
+		
 		onRoutePropertiesChanged();
 	}
-	
+
 	private void initRouteColors()
 	{
 		linePaint.setColor(route.lineColor);
@@ -146,6 +146,11 @@ public class RouteOverlay extends MapOverlay
 
 	public void onRoutePropertiesChanged()
 	{
+		if (linePaint.getStrokeWidth() != route.width)
+		{
+			routeWidth = route.width;
+			preserveWidth = true;
+		}
 		if (linePaint.getColor() != route.lineColor)
 		{
 			initRouteColors();
@@ -180,8 +185,6 @@ public class RouteOverlay extends MapOverlay
 		if (! route.show)
 			return false;
 
-		Androzic application = (Androzic) context.getApplication();
-
 		List<Waypoint> waypoints = route.getWaypoints();
 		synchronized (waypoints)
 		{
@@ -189,9 +192,9 @@ public class RouteOverlay extends MapOverlay
 			{
 				Waypoint wpt = waypoints.get(i);
 				int[] pointXY = application.getXYbyLatLon(wpt.latitude, wpt.longitude);
-				if (mapTap.contains(pointXY[0], pointXY[1]) && context instanceof MapActivity)
+				if (mapTap.contains(pointXY[0], pointXY[1]))
 				{
-					return ((MapActivity) context).routeWaypointTapped(application.getRouteIndex(route), i, (int) e.getX(), (int) e.getY());
+					return application.getMapHolder().routeWaypointTapped(route, i, (int) e.getX(), (int) e.getY());
 				}
 			}
 		}
@@ -203,8 +206,6 @@ public class RouteOverlay extends MapOverlay
 	{
 		if (!route.show)
 			return;
-
-		Androzic application = (Androzic) context.getApplication();
 
 		final int[] cxy = mapView.mapCenterXY;
 
@@ -244,8 +245,6 @@ public class RouteOverlay extends MapOverlay
 	{
 		if (!route.show)
 			return;
-
-		Androzic application = (Androzic) context.getApplication();
 
 		final int[] cxy = mapView.mapCenterXY;
 
@@ -302,9 +301,12 @@ public class RouteOverlay extends MapOverlay
 	@Override
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
-		routeWidth = settings.getInt(context.getString(R.string.pref_route_linewidth), context.getResources().getInteger(R.integer.def_route_linewidth));
-		pointWidth = settings.getInt(context.getString(R.string.pref_route_pointwidth), context.getResources().getInteger(R.integer.def_route_pointwidth));
-		showNames = settings.getBoolean(context.getString(R.string.pref_route_showname), true);
+		Resources resources = application.getResources();
+
+		if (!preserveWidth)
+			routeWidth = settings.getInt(application.getString(R.string.pref_route_linewidth), resources.getInteger(R.integer.def_route_linewidth));
+		pointWidth = settings.getInt(application.getString(R.string.pref_route_pointwidth), resources.getInteger(R.integer.def_route_pointwidth));
+		showNames = settings.getBoolean(application.getString(R.string.pref_route_showname), true);
 
 		if (!route.editing)
 		{

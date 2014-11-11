@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:contentDescription="@string/menu_navigate"
-        android:src="@drawable/ic_action_directions" />
+        android:src="@drawable/ic_navigation_white_24dp" />
 
     <ImageButton
         android:id="@+id/edit_button"
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:contentDescription="@string/menu_edit"
-        android:src="@drawable/ic_action_edit" />
+        android:src="@drawable/ic_edit_white_24dp" />
 
     <ImageButton
         android:id="@+id/share_button"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:contentDescription="@string/menu_share"
-        android:src="@drawable/ic_action_share" />
+        android:src="@drawable/ic_share_white_24dp" />
 
     <ImageButton
         android:id="@+id/remove_button"
@@ -35,6 +35,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:contentDescription="@string/menu_remove"
-        android:src="@drawable/ic_action_trash" />
+        android:src="@drawable/ic_delete_white_24dp" />
 
 </merge>

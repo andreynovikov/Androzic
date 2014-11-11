@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/action_follow"
+        android:icon="@drawable/ic_lock_open_white_24dp"
+        android:orderInCategory="0"
+        android:title="@string/action_follow"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_add_waypoint"
+        android:icon="@drawable/ic_pin_drop_white_24dp"
+        android:orderInCategory="0"
+        android:title="@string/action_add_waypoint"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_navigation_details"
+        android:icon="@drawable/ic_list_white_24dp"
+        android:orderInCategory="0"
+        android:title="@string/menu_details"/>
+    <item
+        android:id="@+id/action_next_nav_point"
+        android:icon="@drawable/ic_skip_next_white_24dp"
+        android:orderInCategory="0"
+        android:title="@string/menu_nextnavpoint"/>
+    <item
+        android:id="@+id/action_prev_nav_point"
+        android:icon="@drawable/ic_skip_previous_white_24dp"
+        android:orderInCategory="0"
+        android:title="@string/menu_prevnavpoint"/>
+    <item
+        android:id="@+id/action_stop_navigation"
+        android:icon="@drawable/ic_stop_white_24dp"
+        android:orderInCategory="0"
+        android:title="@string/menu_stopnavigation"/>
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:orderInCategory="1"
+        android:title="@string/menu_search"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_locate"
+        android:icon="@drawable/ic_my_location_white_24dp"
+        android:orderInCategory="1"
+        android:title="@string/menu_whereami"/>
+    
+    <group
+        android:checkableBehavior="all"
+        android:orderInCategory="1" >
+        <item
+            android:id="@+id/action_locating"
+            android:title="@string/action_locating"/>
+        <item
+            android:id="@+id/action_tracking"
+            android:title="@string/action_tracking"/>
+    </group>
+
+</menu>

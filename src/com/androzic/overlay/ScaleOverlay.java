@@ -20,15 +20,15 @@
 
 package com.androzic.overlay;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Paint.Align;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 
-import com.androzic.Androzic;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.map.Map;
@@ -40,18 +40,23 @@ public class ScaleOverlay extends MapOverlay
 
 	private Paint linePaint;
 	private Paint textPaint;
+	private Paint fillPaint;
+	private boolean drawBackground;
 	private double mpp;
 	private long lastScaleMove;
 	private int lastScalePos;
 
-	public ScaleOverlay(Activity activity)
+	public ScaleOverlay()
 	{
-		super(activity);
+		super();
+		
+		Resources resources = application.getResources();
+
 		linePaint = new Paint();
         linePaint.setAntiAlias(false);
         linePaint.setStrokeWidth(2);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setColor(context.getResources().getColor(R.color.scalebar));
+        linePaint.setColor(resources.getColor(R.color.scalebar));
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
         textPaint.setStrokeWidth(2);
@@ -59,18 +64,25 @@ public class ScaleOverlay extends MapOverlay
         textPaint.setTextAlign(Align.CENTER);
         textPaint.setTextSize(16);
         textPaint.setTypeface(Typeface.SANS_SERIF);
-        textPaint.setColor(context.getResources().getColor(R.color.scalebar));
+        textPaint.setColor(resources.getColor(R.color.scalebar));
+		fillPaint = new Paint();
+		fillPaint.setAntiAlias(false);
+		fillPaint.setStrokeWidth(1);
+		fillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+		fillPaint.setColor(resources.getColor(R.color.scalebarbg));
+
+		drawBackground = true;
+		
     	mpp = 0;
     	lastScaleMove = 0;
     	lastScalePos = 1;
-    	onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
+    	onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(application));
     	enabled = true;
 	}
 
 	@Override
 	public synchronized void onMapChanged()
 	{
-    	Androzic application = (Androzic) context.getApplication();
     	Map map = application.getCurrentMap();
     	if (map == null)
     		return;
@@ -178,7 +190,28 @@ public class ScaleOverlay extends MapOverlay
 			cx += mapView.viewArea.right - x3 - 40;
 			cy += mapView.viewArea.bottom - 30;
 		}
+
+		int t = 2000;
+		if (m <= t && m * 2 > t)
+			t = m * 3;
+		String[] d = StringFormatter.distanceC(m, t);
+		String d2 = StringFormatter.distanceH(m*2, t);
 		
+		if (drawBackground)
+		{
+			Rect rect = new Rect();
+			textPaint.getTextBounds(d[0], 0, d[0].length(), rect);
+			int htw = rect.width() / 2;
+			textPaint.getTextBounds(d2, 0, d2.length(), rect);
+			int httw = rect.width() / 2;
+			int th = rect.height();
+			int bt = cty > 0 ? cy : cy + cty - th;
+			int bb = cty > 0 ? cy + cty : cy + 10;
+			rect = new Rect(cx-htw, bt, cx+x3+httw, bb);
+			rect.inset(-2, -2);
+			c.drawRect(rect, fillPaint);
+		}
+
 		c.drawLine(cx, cy, cx+x3, cy, linePaint);
 		c.drawLine(cx, cy+10, cx+x3, cy+10, linePaint);
 		c.drawLine(cx, cy, cx, cy+10, linePaint);
@@ -193,13 +226,9 @@ public class ScaleOverlay extends MapOverlay
 		c.drawLine(cx+xd2+xd4, cy, cx+xd2+xd4, cy+10, linePaint);
 
 		c.drawText("0", cx+x, cy+cty, textPaint);
-		int t = 2000;
-		if (m <= t && m * 2 > t)
-			t = m * 3;
-		String[] d = StringFormatter.distanceC(m, t);
 		c.drawText(d[0], cx+x2, cy+cty, textPaint);
 		c.drawText(d[0], cx, cy+cty, textPaint);
-		c.drawText(StringFormatter.distanceH(m*2, t), cx+x3, cy+cty, textPaint);
+		c.drawText(d2, cx+x3, cy+cty, textPaint);
 	}
 
 	@Override
@@ -210,8 +239,11 @@ public class ScaleOverlay extends MapOverlay
 	@Override
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
-		int color = settings.getInt(context.getString(R.string.pref_scalebarcolor), context.getResources().getColor(R.color.scalebar));
+		Resources resources = application.getResources();
+		drawBackground = settings.getBoolean(application.getString(R.string.pref_scalebarbg), resources.getBoolean(R.bool.def_scalebarbg));
+		int color = settings.getInt(application.getString(R.string.pref_scalebarcolor), resources.getColor(R.color.scalebar));
 		linePaint.setColor(color);
 		textPaint.setColor(color);
+		fillPaint.setColor(settings.getInt(application.getString(R.string.pref_scalebarbgcolor), resources.getColor(R.color.scalebarbg)));
 	}
 }

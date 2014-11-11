@@ -20,16 +20,15 @@
 
 package com.androzic.overlay;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.Paint.Align;
 import android.preference.PreferenceManager;
 
-import com.androzic.Androzic;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.util.Geo;
@@ -45,20 +44,22 @@ public class DistanceOverlay extends MapOverlay
 	double[] ancor;
 	int [] ancorXY;
 
-    public DistanceOverlay(final Activity mapActivity)
+    public DistanceOverlay()
     {
-        super(mapActivity);
+        super();
+
+		Resources resources = application.getResources();
 
         linePaint = new Paint();
         linePaint.setAntiAlias(true);
         linePaint.setStrokeWidth(5);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setColor(context.getResources().getColor(R.color.distanceline));
+        linePaint.setColor(resources.getColor(R.color.distanceline));
         circlePaint = new Paint();
         circlePaint.setAntiAlias(true);
         circlePaint.setStrokeWidth(1);
         circlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        circlePaint.setColor(context.getResources().getColor(R.color.distanceline));
+        circlePaint.setColor(resources.getColor(R.color.distanceline));
         circlePaint.setAlpha(255);
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
@@ -67,14 +68,14 @@ public class DistanceOverlay extends MapOverlay
         textPaint.setTextAlign(Align.LEFT);
         textPaint.setTextSize(10);
         textPaint.setTypeface(Typeface.SANS_SERIF);
-        textPaint.setColor(context.getResources().getColor(R.color.waypointtext));
+        textPaint.setColor(resources.getColor(R.color.waypointtext));
         textFillPaint = new Paint();
         textFillPaint.setAntiAlias(false);
         textFillPaint.setStrokeWidth(1);
         textFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        textFillPaint.setColor(context.getResources().getColor(R.color.distanceline));
+        textFillPaint.setColor(resources.getColor(R.color.distanceline));
 
-        onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(context));
+        onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(application));
         
         enabled = false;
     }
@@ -82,7 +83,6 @@ public class DistanceOverlay extends MapOverlay
     public void setAncor(double[] ancor)
     {
     	this.ancor = ancor;
-    	Androzic application = (Androzic) context.getApplication();
         ancorXY = application.getXYbyLatLon(this.ancor[0], this.ancor[1]);
     }
 
@@ -97,7 +97,6 @@ public class DistanceOverlay extends MapOverlay
 		super.onMapChanged();
 		if (ancor == null)
 			return;
-    	Androzic application = (Androzic) context.getApplication();
 		ancorXY = application.getXYbyLatLon(this.ancor[0], this.ancor[1]);
 	}
 
@@ -159,8 +158,9 @@ public class DistanceOverlay extends MapOverlay
 	@Override
 	public void onPreferencesChanged(SharedPreferences settings)
 	{
-        linePaint.setStrokeWidth(settings.getInt(context.getString(R.string.pref_navigation_linewidth), context.getResources().getInteger(R.integer.def_navigation_linewidth)));
-        int textSize = settings.getInt(context.getString(R.string.pref_waypoint_width), context.getResources().getInteger(R.integer.def_waypoint_width));
+		Resources resources = application.getResources();
+        linePaint.setStrokeWidth(settings.getInt(application.getString(R.string.pref_navigation_linewidth), resources.getInteger(R.integer.def_navigation_linewidth)));
+        int textSize = settings.getInt(application.getString(R.string.pref_waypoint_width), resources.getInteger(R.integer.def_waypoint_width));
         textPaint.setTextSize(textSize * 2);
 	}
 }

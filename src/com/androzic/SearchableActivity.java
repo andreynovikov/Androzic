@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012 Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014 Andrey Novikov <http://andreynovikov.info/>
  * 
  * This file is part of Androzic application.
  * 
@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.ListActivity;
@@ -48,6 +49,9 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -103,6 +107,28 @@ public class SearchableActivity extends ListActivity
 	{
 		setIntent(intent);
 		handleIntent(intent);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.search_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.action_clear:
+				SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+				suggestions.clearHistory();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	private void handleIntent(Intent intent)
@@ -200,7 +226,8 @@ public class SearchableActivity extends ListActivity
 
 		public void run()
 		{
-			Androzic application = (Androzic) getApplication();
+			Androzic application = Androzic.getApplication();
+			Locale locale = Locale.getDefault();
 
 			// Coordinates
 			double c[] = CoordinateParser.parse(query);
@@ -214,12 +241,12 @@ public class SearchableActivity extends ListActivity
 				runOnUiThread(updateResults);
 			}
 
-			String lq = query.toLowerCase();
+			String lq = query.toLowerCase(locale);
 
 			// Waypoints
 			for (Waypoint waypoint : application.getWaypoints())
 			{
-				if (waypoint.name.toLowerCase().contains(lq) || waypoint.description.toLowerCase().contains(lq))
+				if (waypoint.name.toLowerCase(locale).contains(lq) || waypoint.description.toLowerCase(locale).contains(lq))
 				{
 					synchronized (results)
 					{
@@ -232,7 +259,7 @@ public class SearchableActivity extends ListActivity
 			// Routes
 			for (Route route : application.getRoutes())
 			{
-				if (route.name.toLowerCase().contains(lq) || route.description.toLowerCase().contains(lq))
+				if (route.name.toLowerCase(locale).contains(lq) || route.description.toLowerCase(locale).contains(lq))
 				{
 					synchronized (results)
 					{
@@ -243,7 +270,7 @@ public class SearchableActivity extends ListActivity
 				}
 				for (Waypoint waypoint : route.getWaypoints())
 				{
-					if (waypoint.name.toLowerCase().contains(lq) || waypoint.description.toLowerCase().contains(lq))
+					if (waypoint.name.toLowerCase(locale).contains(lq) || waypoint.description.toLowerCase(locale).contains(lq))
 					{
 						synchronized (results)
 						{
@@ -255,9 +282,10 @@ public class SearchableActivity extends ListActivity
 				}
 			}
 
+			// Tracks
 			for (Track track : application.getTracks())
 			{
-				if (track.name.toLowerCase().contains(lq) || track.description.toLowerCase().contains(lq))
+				if (track.name.toLowerCase(locale).contains(lq) || track.description.toLowerCase(locale).contains(lq))
 				{
 					synchronized (results)
 					{
@@ -329,6 +357,7 @@ public class SearchableActivity extends ListActivity
 		else if (item instanceof Route)
 		{
 			Route route = (Route) item;
+			route.show = true;
 			Waypoint waypoint = route.getWaypoint(0);
 			location[0] = waypoint.latitude;
 			location[1] = waypoint.longitude;

@@ -9,11 +9,11 @@
         android:summary="@string/pref_wakelock_summary"
         android:title="@string/pref_wakelock_title" />
     <com.androzic.ui.preference.HelpfulCheckBoxPreference
-        android:defaultValue="@bool/def_hideactionbar"
-        android:key="@string/pref_hideactionbar"
-        android:summary="@string/pref_hideactionbar_summary"
-        android:title="@string/pref_hideactionbar_title" />
-
+        android:defaultValue="@bool/def_hidestatusbar"
+        android:key="@string/pref_hidestatusbar"
+        android:summary="@string/pref_hidestatusbar_summary"
+        android:title="@string/pref_hidestatusbar_title" />
+    
     <ListPreference
         android:defaultValue="0"
         android:dialogTitle="@string/pref_exit_title"
