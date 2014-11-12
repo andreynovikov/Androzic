@@ -84,6 +84,9 @@ public class LocationService extends BaseLocationService implements LocationList
 	private boolean locationsEnabled = false;
 	//FIXME Use this to permanently loose location
 	private int gpsLocationTimeout = 120000;
+	// Used for test purposes
+	private static final boolean enableMockLocations = false;
+	private Handler mockCallback = new Handler();
 
 	private LocationManager locationManager = null;
 
@@ -315,6 +318,11 @@ public class LocationService extends BaseLocationService implements LocationList
 			}
 			startForeground(NOTIFICATION_ID, getNotification());
 		}
+		if (enableMockLocations)
+		{
+			updateProvider(LocationManager.GPS_PROVIDER, true);
+			mockCallback.post(sendMockLocation);
+		}
 	}
 
 	private void disconnect()
@@ -327,8 +335,14 @@ public class LocationService extends BaseLocationService implements LocationList
 			locationManager = null;
 			stopForeground(true);
 		}
+		if (enableMockLocations)
+		{
+			mockCallback.removeCallbacks(sendMockLocation);
+			updateProvider(LocationManager.GPS_PROVIDER, false);
+		}
 	}
 
+	@SuppressWarnings("unused")
 	private Notification getNotification()
 	{
 		int msgId = R.string.notif_loc_started;
@@ -369,8 +383,7 @@ public class LocationService extends BaseLocationService implements LocationList
 			builder.setContentText(getText(msgId));
 		builder.setOngoing(true);
 
-		Notification notification = builder.getNotification();
-		return notification;
+		return builder.build();
 	}
 
 	private void updateNotification()
@@ -745,6 +758,9 @@ public class LocationService extends BaseLocationService implements LocationList
 	@Override
 	public void onLocationChanged(final Location location)
 	{
+		if (enableMockLocations)
+			return;
+		
 		tics++;
 
 		boolean sendUpdate = false;
@@ -852,13 +868,6 @@ public class LocationService extends BaseLocationService implements LocationList
 		smoothSpeed = smoothspeed;
 		avgSpeed = avspeed;
 
-		/*
-		 * lastKnownLocation.setSpeed(20); lastKnownLocation.setBearing(55);
-		 * lastKnownLocation.setAltitude(169);
-		 * lastKnownLocation.setLatitude(55.852527);
-		 * lastKnownLocation.setLongitude(29.451150);
-		 */
-
 		if (sendUpdate)
 			updateLocation();
 
@@ -945,6 +954,9 @@ public class LocationService extends BaseLocationService implements LocationList
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras)
 	{
+		if (enableMockLocations)
+			return;
+
 		if (LocationManager.GPS_PROVIDER.equals(provider))
 		{
 			switch (status)
@@ -961,6 +973,9 @@ public class LocationService extends BaseLocationService implements LocationList
 	@Override
 	public void onGpsStatusChanged(int event)
 	{
+		if (enableMockLocations)
+			return;
+
 		switch (event)
 		{
 			case GpsStatus.GPS_EVENT_STARTED:
@@ -1084,4 +1099,29 @@ public class LocationService extends BaseLocationService implements LocationList
 			return LocationService.this.getTrackEndTime();
 		}
 	}
+	
+	/**
+	 * Mock location generator used for application testing. Locations are generated
+	 * by logic required for particular test.
+	 */
+	final private Runnable sendMockLocation = new Runnable() {
+		public void run()
+		{
+			mockCallback.postDelayed(this, 1000);
+
+			updateGpsStatus(GPS_OK, 5, 25);
+
+			lastKnownLocation.setProvider(LocationManager.GPS_PROVIDER);
+			lastKnownLocation.setTime(System.currentTimeMillis());
+			lastKnownLocation.setSpeed(20);
+			lastKnownLocation.setBearing((System.currentTimeMillis() / 166) % 360);
+			lastKnownLocation.setAltitude(169);
+			lastKnownLocation.setLatitude(55.852527);
+			lastKnownLocation.setLongitude(29.451150);
+			nmeaGeoidHeight = 0;
+
+			updateLocation();
+			isContinous = true;
+		}
+	};
 }
