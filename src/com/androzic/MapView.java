@@ -64,7 +64,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private static final int REFRESH_MESSAGE = 1;
 
 	private static final float MAX_ROTATION_SPEED = 20f;
-	private static final float INC_ROTATION_SPEED = 0.5f;
+	private static final float INC_ROTATION_SPEED = 2f;
 	private static final float MAX_SHIFT_SPEED = 20f;
 	private static final float INC_SHIFT_SPEED = 2f;
 
@@ -402,8 +402,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	protected void doDraw(Canvas canvas)
 	{
-		boolean scaled = scale > 1.1 || scale < 0.9;
 		Matrix matrix = new Matrix();
+		
+		boolean scaled = scale > 1.1 || scale < 0.9;
 		if (scaled)
 		{
 			float dx = currentViewport.width * (1 - scale) / 2;
@@ -416,7 +417,15 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		
 		if (bufferBitmap != null && !bufferBitmap.isRecycled())
 		{
-			matrix.postTranslate(-currentViewport.mapCenterXY[0]+renderViewport.mapCenterXY[0], -currentViewport.mapCenterXY[1]+renderViewport.mapCenterXY[1]);
+			// Difference between current and buffer map center
+			int mcXdiff = renderViewport.mapCenterXY[0] - currentViewport.mapCenterXY[0];
+			int mcYdiff = renderViewport.mapCenterXY[1] - currentViewport.mapCenterXY[1];
+			// Difference between current and buffer look ahead
+			int laXdiff = renderViewport.lookAheadXY[0] - currentViewport.lookAheadXY[0];
+			int laYdiff = renderViewport.lookAheadXY[1] - currentViewport.lookAheadXY[1];
+			// Adjust buffer bitmap position
+			matrix.postTranslate(mcXdiff - laXdiff, mcYdiff - laYdiff);
+			// Draw buffer bitmap
 			canvas.drawBitmap(bufferBitmap, matrix, null);
 		}
 
@@ -465,15 +474,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			canvas.drawLine(0, 20, 0, 120, crossPaint);
 			canvas.drawLine(0, -20, 0, -120, crossPaint);
 		}
-
-		if (isMoving && isFollowing && isFixed)
-		{
-			lookAheadC = lookAhead;
-		}
-		else
-		{
-			lookAheadC = 0;
-		}
 	}
 	
 	public void refreshMap()
@@ -483,7 +483,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	
 	private void refreshBuffer()
 	{
-		Log.e(TAG, "refreshBuffer()");
 		if (!renderHandler.hasMessages(REFRESH_MESSAGE))
 		{
 			Message msg = Message.obtain(renderHandler, new Runnable() {
@@ -501,7 +500,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private void refreshBufferInternal()
 	{
-		Log.e(TAG, "refreshBufferInternal("+currentViewport.width+","+currentViewport.height+")");
+		Log.i(TAG, "refreshBufferInternal("+currentViewport.width+","+currentViewport.height+")");
 
 		if (currentViewport.width == 0 || currentViewport.height == 0)
 			return;
@@ -653,7 +652,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				lookAheadS += lookAheadSS;
 			}
 		}
-		if (lookAheadB != smoothB)
+		if (lookAheadC > 0 && lookAheadB != smoothB)
 		{
 			recalculated = true;
 
@@ -696,6 +695,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		{
 			currentViewport.lookAheadXY[0] = (int) Math.round(Math.sin(Math.toRadians(smoothB)) * -lookAheadS);
 			currentViewport.lookAheadXY[1] = (int) Math.round(Math.cos(Math.toRadians(smoothB)) * lookAheadS);
+			refreshBuffer();
 		}
 		return recalculated;
 	}
@@ -724,6 +724,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	public void setMoving(boolean moving)
 	{
 		isMoving = moving;
+		setLookAhead();
 	}
 
 	public boolean isMoving()
@@ -741,17 +742,45 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			if (follow)
 			{
 				Toast.makeText(getContext(), R.string.following_enabled, Toast.LENGTH_SHORT).show();
+				
 				boolean newMap = application.setMapCenter(currentViewport.location[0], currentViewport.location[1], true, true, false);
 				if (newMap)
 					updateMapInfo();
-				updateMapCenter();
+				
+				int dx = currentViewport.locationXY[0] - currentViewport.mapCenterXY[0];
+				int dy = currentViewport.locationXY[1] - currentViewport.mapCenterXY[1];
+				int sx = dx + currentViewport.width / 2;
+				int sy = dy + currentViewport.height / 2;
+				
+				if (sx >= 0 && sy >= 0 && sx <= currentViewport.width && sy <= currentViewport.height)
+				{
+					// Location is inside current viewport
+					/*
+					lookAheadS = (float) Math.sqrt(dx * dx + dy * dy);
+					smoothB = (float) Math.toDegrees(Math.atan(1. * dx / dy));
+					
+					if (dx > 0)
+						smoothB = 90 + smoothB;
+					if (dx < 0)
+						smoothB = 270 + smoothB;
+					smoothB -= 90;
+					if (smoothB < 0)
+						smoothB = 360 - smoothB;
+					currentViewport.lookAheadXY[0] = dx;
+					currentViewport.lookAheadXY[1] = dy;
+					*/
+				}
 			}
 			else
 			{
 				Toast.makeText(getContext(), R.string.following_disabled, Toast.LENGTH_SHORT).show();
+				boolean mapChanged = application.scrollMap(-currentViewport.lookAheadXY[0], -currentViewport.lookAheadXY[1], true);
+				if (mapChanged)
+					updateMapInfo();
 			}
-
+			updateMapCenter();
 			isFollowing = follow;
+			setLookAhead();
 		}
 	}
 
@@ -814,6 +843,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	{
 		isFixed = fixed;
 		movingCursor.setColorFilter(isFixed ? active : null);
+		setLookAhead();
 	}
 
 	public boolean isFixed()
@@ -834,6 +864,25 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		final int h = getHeight();
 		final int half = w > h ? h / 2 : w / 2;
 		lookAhead = (int) (half * ahead * 0.01);
+	}
+
+	/**
+	 * Set current look ahead amount based on map conditions
+	 */
+	private void setLookAhead()
+	{
+		if (isMoving && isFollowing && isFixed)
+		{
+			lookAheadC = lookAhead;
+		}
+		else
+		{
+			lookAheadC = 0;
+			lookAheadS = 0;
+			lookAheadSS = 0;
+			currentViewport.lookAheadXY[0] = 0;
+			currentViewport.lookAheadXY[1] = 0;
+		}
 	}
 
 	public void setCrossColor(final int color)
