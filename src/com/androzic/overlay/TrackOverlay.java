@@ -143,14 +143,14 @@ public class TrackOverlay extends MapOverlay
 		boolean skipped = false;
 		int lastX = 0, lastY = 0;
 		List<TrackPoint> trackpoints = track.getAllPoints();
+		int[] xy = new int[2];
 		synchronized (trackpoints)
 		{
 			for (TrackPoint tp : trackpoints)
 			{
-				int[] xy = new int[2];
 				if (tp.dirty)
 				{
-					xy = application.getXYbyLatLon(tp.latitude, tp.longitude);
+					application.getXYbyLatLon(tp.latitude, tp.longitude, xy);
 					tp.x = xy[0];
 					tp.y = xy[1];
 					tp.dirty = false;
