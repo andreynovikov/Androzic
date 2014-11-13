@@ -91,6 +91,7 @@ import com.androzic.map.Map;
 import com.androzic.map.MapIndex;
 import com.androzic.map.MapPoint;
 import com.androzic.map.MockMap;
+import com.androzic.map.OzfDecoder;
 import com.androzic.map.SASMapLoader;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.TileProvider;
@@ -2327,6 +2328,15 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		super.onCreate();
 		Log.e("ANDROZIC","Application onCreate()");
 
+		try
+		{
+			OzfDecoder.useNativeCalls();
+		}
+		catch (UnsatisfiedLinkError e)
+		{
+			Toast.makeText(Androzic.this, "Failed to initialize native library: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+		
 		renderingThread = new HandlerThread("RenderingThread");
 		renderingThread.start();
 		
