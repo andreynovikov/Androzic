@@ -28,7 +28,6 @@ public class OverlayManager
 	public WaypointsOverlay waypointsOverlay;
 	public DistanceOverlay distanceOverlay;
 	public AccuracyOverlay accuracyOverlay;
-	public ScaleOverlay scaleOverlay;
 	public List<TrackOverlay> fileTrackOverlays = new ArrayList<TrackOverlay>();
 	public List<RouteOverlay> routeOverlays = new ArrayList<RouteOverlay>();
 	
@@ -53,7 +52,6 @@ public class OverlayManager
 	{
 		mapObjectsOverlay = new MapObjectsOverlay();
 		waypointsOverlay = new WaypointsOverlay();
-		scaleOverlay = new ScaleOverlay();
 	}
 
 	public void onWaypointsChanged()
@@ -138,8 +136,6 @@ public class OverlayManager
 				overlays.add(navigationOverlay);
 			if (waypointsOverlay != null)
 				overlays.add(waypointsOverlay);
-			if (scaleOverlay != null)
-				overlays.add(scaleOverlay);
 			if (mapObjectsOverlay != null)
 				overlays.add(mapObjectsOverlay);
 			if (distanceOverlay != null)
@@ -151,8 +147,6 @@ public class OverlayManager
 				overlays.add(accuracyOverlay);
 			if (distanceOverlay != null)
 				overlays.add(distanceOverlay);
-			if (scaleOverlay != null)
-				overlays.add(scaleOverlay);
 			if (navigationOverlay != null)
 				overlays.add(navigationOverlay);
 			if (currentTrackOverlay != null)
@@ -227,10 +221,6 @@ public class OverlayManager
 		{
 			accuracyOverlay.onPreferencesChanged(settings);
 		}
-		if (scaleOverlay != null)
-		{
-			scaleOverlay.onPreferencesChanged(settings);
-		}
 		if (currentTrackOverlay != null)
 		{
 			currentTrackOverlay.onPreferencesChanged(settings);
@@ -300,10 +290,8 @@ public class OverlayManager
 
 		mapObjectsOverlay.onBeforeDestroy();
 		waypointsOverlay.onBeforeDestroy();
-		scaleOverlay.onBeforeDestroy();
 		
 		mapObjectsOverlay = null;
 		waypointsOverlay = null;
-		scaleOverlay = null;
 	}
 }

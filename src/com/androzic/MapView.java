@@ -37,6 +37,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -56,6 +58,7 @@ import com.androzic.map.Map;
 import com.androzic.overlay.MapOverlay;
 import com.androzic.overlay.OverlayManager;
 import com.androzic.util.Geo;
+import com.androzic.util.StringFormatter;
 
 public class MapView extends SurfaceView implements SurfaceHolder.Callback, MultiTouchObjectCanvas<Object>
 {
@@ -72,6 +75,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private static final int GESTURE_THRESHOLD_DP = (int) (ViewConfiguration.get(Androzic.getApplication()).getScaledTouchSlop() * 3);
 	private static final int DOUBLE_TAP_TIMEOUT = ViewConfiguration.getDoubleTapTimeout();
+
+	private static final int SCALE_MOVE_DELAY = 2 * 1000000000;
 
 	private int vectorType = 1;
 	private int vectorMultiplier = 10;
@@ -116,10 +121,21 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private int vectorLength = 0;
 	private int proximity = 0;
 
+	// cursor
 	private Drawable movingCursor = null;
 	private Paint crossPaint = null;
 	private Paint pointerPaint = null;
 	private PorterDuffColorFilter active = null;
+
+	// scale bar
+	private int scaleBarMeters;
+	private int scaleBarWidth;
+	private Paint scaleLinePaint;
+	private Paint scaleTextPaint;
+	private Paint scaleFillPaint;
+	private boolean drawScaleBackground;
+	private long lastScaleMove = 0;
+	private int lastScalePos = 1;
 
 	private Androzic application;
 	private MapHolder mapHolder;
@@ -224,19 +240,43 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 		getHolder().addCallback(this);
 
+		Resources resources = getResources();
+		
+		scaleLinePaint = new Paint();
+		scaleLinePaint.setAntiAlias(false);
+		scaleLinePaint.setStrokeWidth(2);
+		scaleLinePaint.setStyle(Paint.Style.STROKE);
+		scaleLinePaint.setColor(resources.getColor(R.color.scalebar));
+        scaleTextPaint = new Paint();
+        scaleTextPaint.setAntiAlias(true);
+        scaleTextPaint.setStrokeWidth(2);
+        scaleTextPaint.setStyle(Paint.Style.FILL);
+        scaleTextPaint.setTextAlign(Align.CENTER);
+        scaleTextPaint.setTextSize(16);
+        scaleTextPaint.setTypeface(Typeface.SANS_SERIF);
+        scaleTextPaint.setColor(resources.getColor(R.color.scalebar));
+		scaleFillPaint = new Paint();
+		scaleFillPaint.setAntiAlias(false);
+		scaleFillPaint.setStrokeWidth(1);
+		scaleFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+		scaleFillPaint.setColor(resources.getColor(R.color.scalebarbg));
+
+		drawScaleBackground = true;
+		
+    	lastScaleMove = 0;
+    	lastScalePos = 1;
+
 		crossPaint = new Paint();
 		crossPaint.setAntiAlias(true);
 		crossPaint.setStrokeWidth(3);
 		crossPaint.setStyle(Paint.Style.STROKE);
-		crossPaint.setColor(getResources().getColor(R.color.mapcross));
+		crossPaint.setColor(resources.getColor(R.color.mapcross));
 
 		pointerPaint = new Paint();
 		pointerPaint.setAntiAlias(true);
 		pointerPaint.setStrokeWidth(3);
 		pointerPaint.setStyle(Paint.Style.STROKE);
-		pointerPaint.setColor(getResources().getColor(R.color.cursor));
-
-		Resources resources = getResources();
+		pointerPaint.setColor(resources.getColor(R.color.cursor));
 
 		if (application.customCursor != null)
 		{
@@ -260,6 +300,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		Log.i(TAG, "surfaceChanged(" + width + "," + height + ")");
 		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
 		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
+		calculateScaleBar();
 		recreateBuffers = true;
 		setLookAhead(lookAheadPst);
 		refreshBuffer();
@@ -271,6 +312,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		Log.i(TAG, "surfaceCreated(" + holder + ")");
 		currentViewport.width = getWidth();
 		currentViewport.height = getHeight();
+		calculateScaleBar();
 		recreateBuffers = true;
 		refreshBuffer();
 		
@@ -426,10 +468,117 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		int cx = currentViewport.width / 2;
 		int cy = currentViewport.height / 2;
 
+		if (scaled)
+			return;
+
+		// Draw scale bar
+		if (mpp > 0)
+		{
+			final int x2 = scaleBarWidth * 2;
+			final int x3 = scaleBarWidth * 3;
+			final int xd2 = scaleBarWidth / 2;
+			final int xd4 = scaleBarWidth / 4;
+			
+			int scaleX = VIEWPORT_EXCESS;
+			int scaleY = VIEWPORT_EXCESS;
+			int cty = -10;
+	
+			int pos;
+			if (currentViewport.bearing >= 0 && currentViewport.bearing < 90)
+				pos = 1;
+			else if (currentViewport.bearing >= 90 && currentViewport.bearing < 180)
+				pos = 2;
+			else if (currentViewport.bearing >= 180 && currentViewport.bearing < 270)
+				pos = 3;
+			else
+				pos = 4;
+	
+			if (pos != lastScalePos)
+			{
+				long now = System.nanoTime();
+				if (lastScaleMove == 0)
+				{
+					pos = lastScalePos;
+					lastScaleMove = now;
+				}
+				else if (now > lastScaleMove + SCALE_MOVE_DELAY)
+				{
+					lastScalePos = pos;
+					lastScaleMove = 0;
+				}
+				else
+				{
+					pos = lastScalePos;
+				}
+			}
+	
+			if (pos == 1)
+			{
+				scaleX += 30;
+				scaleY += currentViewport.viewArea.bottom - 30;
+			}
+			else if (pos == 2)
+			{
+				scaleX += 30;
+				scaleY += currentViewport.viewArea.top + 10;
+				cty = 30;
+			}
+			else if (pos == 3)
+			{
+				scaleX += currentViewport.viewArea.right - x3 - 40;
+				scaleY += currentViewport.viewArea.top + 10;
+				cty = 30;
+			}
+			else
+			{
+				scaleX += currentViewport.viewArea.right - x3 - 40;
+				scaleY += currentViewport.viewArea.bottom - 30;
+			}
+	
+			int t = 2000;
+			if (scaleBarMeters <= t && scaleBarMeters * 2 > t)
+				t = scaleBarMeters * 3;
+			String[] d = StringFormatter.distanceC(scaleBarMeters, t);
+			String d2 = StringFormatter.distanceH(scaleBarMeters*2, t);
+			
+			if (drawScaleBackground)
+			{
+				Rect rect = new Rect();
+				scaleTextPaint.getTextBounds(d[0], 0, d[0].length(), rect);
+				int htw = rect.width() / 2;
+				scaleTextPaint.getTextBounds(d2, 0, d2.length(), rect);
+				int httw = rect.width() / 2;
+				int th = rect.height();
+				int bt = cty > 0 ? scaleY : scaleY + cty - th;
+				int bb = cty > 0 ? scaleY + cty : scaleY + 10;
+				rect = new Rect(scaleX-htw, bt, scaleX+x3+httw, bb);
+				rect.inset(-2, -2);
+				canvas.drawRect(rect, scaleFillPaint);
+			}
+	
+			canvas.drawLine(scaleX, scaleY, scaleX+x3, scaleY, scaleLinePaint);
+			canvas.drawLine(scaleX, scaleY+10, scaleX+x3, scaleY+10, scaleLinePaint);
+			canvas.drawLine(scaleX, scaleY, scaleX, scaleY+10, scaleLinePaint);
+			canvas.drawLine(scaleX+x3, scaleY, scaleX+x3, scaleY+10, scaleLinePaint);
+			canvas.drawLine(scaleX+scaleBarWidth, scaleY, scaleX+scaleBarWidth, scaleY+10, scaleLinePaint);
+			canvas.drawLine(scaleX+x2, scaleY, scaleX+x2, scaleY+10, scaleLinePaint);
+			canvas.drawLine(scaleX+scaleBarWidth, scaleY+5, scaleX+x2, scaleY+5, scaleLinePaint);
+			canvas.drawLine(scaleX, scaleY+5, scaleX+xd4, scaleY+5, scaleLinePaint);
+			canvas.drawLine(scaleX+xd2, scaleY+5, scaleX+xd2+xd4, scaleY+5, scaleLinePaint);
+			canvas.drawLine(scaleX+xd4, scaleY, scaleX+xd4, scaleY+10, scaleLinePaint);
+			canvas.drawLine(scaleX+xd2, scaleY, scaleX+xd2, scaleY+10, scaleLinePaint);
+			canvas.drawLine(scaleX+xd2+xd4, scaleY, scaleX+xd2+xd4, scaleY+10, scaleLinePaint);
+	
+			canvas.drawText("0", scaleX+scaleBarWidth, scaleY+cty, scaleTextPaint);
+			canvas.drawText(d[0], scaleX+x2, scaleY+cty, scaleTextPaint);
+			canvas.drawText(d[0], scaleX, scaleY+cty, scaleTextPaint);
+			canvas.drawText(d2, scaleX+x3, scaleY+cty, scaleTextPaint);
+		}
+
 		canvas.translate(currentViewport.lookAheadXY[0] + cx, currentViewport.lookAheadXY[1] + cy);
 
 		// draw cursor (it is always topmost)
-		if (!scaled && isMoving)
+		if (isMoving)
 		{
 			int sx = currentViewport.locationXY[0] - currentViewport.mapCenterXY[0];
 			int sy = currentViewport.locationXY[1] - currentViewport.mapCenterXY[1];
@@ -446,7 +595,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			sy += cy;
 
 			// Draw overflow bearing triangle
-			if (sx < 0 || sy < 0 || sx > currentViewport.width || sy > currentViewport.height)
+			if (sx < VIEWPORT_EXCESS || sy < VIEWPORT_EXCESS || sx > currentViewport.width - VIEWPORT_EXCESS || sy > currentViewport.height - VIEWPORT_EXCESS)
 			{
 				canvas.save();
 				double bearing = Geo.bearing(currentViewport.mapCenter[0], currentViewport.mapCenter[1], currentViewport.location[0], currentViewport.location[1]);
@@ -459,7 +608,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 
 		// Draw map center cross
-		if (!scaled && !isFollowing)
+		if (!isFollowing)
 		{
 			canvas.drawCircle(0, 0, 1, crossPaint);
 			canvas.drawCircle(0, 0, 40, crossPaint);
@@ -609,6 +758,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		else
 			mpp = map.mpp / map.getZoom();
 		calculateVectorLength();
+		calculateScaleBar();
 		application.overlayManager.notifyOverlays();
 		try
 		{
@@ -724,6 +874,46 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				vectorLength = (int) (currentViewport.speed * 60 / mpp);
 		}
 		vectorLength *= vectorMultiplier;
+	}
+
+	private void calculateScaleBar()
+	{
+		if (mpp == 0)
+			return;
+
+		scaleBarMeters = (int) (mpp * (currentViewport.width - VIEWPORT_EXCESS * 2) / 6);
+		if (scaleBarMeters < 40)
+			scaleBarMeters = scaleBarMeters / 10 * 10;
+		else if (scaleBarMeters < 80)
+			scaleBarMeters = 50;
+		else if (scaleBarMeters < 130)
+			scaleBarMeters = 100;
+		else if (scaleBarMeters < 300)
+			scaleBarMeters = 200;
+		else if (scaleBarMeters < 700)
+			scaleBarMeters = 500;
+		else if (scaleBarMeters < 900)
+			scaleBarMeters = 800;
+		else if (scaleBarMeters < 1300)
+			scaleBarMeters = 1000;
+		else if (scaleBarMeters < 3000)
+			scaleBarMeters = 2000;
+		else if (scaleBarMeters < 7000)
+			scaleBarMeters = 5000;
+		else if (scaleBarMeters < 10000)
+			scaleBarMeters = 8000;
+		else if (scaleBarMeters < 80000)
+			scaleBarMeters = (int) (Math.ceil(scaleBarMeters * 1. / 10000) * 10000);
+		else
+			scaleBarMeters = (int) (Math.ceil(scaleBarMeters * 1. / 100000) * 100000);
+		
+		scaleBarWidth = (int) (scaleBarMeters / mpp);
+		
+		if (scaleBarWidth > (currentViewport.width - VIEWPORT_EXCESS * 2) / 4)
+		{
+			scaleBarWidth /= 2;
+			scaleBarMeters /= 2;
+		}
 	}
 
 	public void setMoving(boolean moving)
@@ -885,6 +1075,22 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 	}
 
+	public void setScaleBarColor(final int color)
+	{
+		scaleLinePaint.setColor(color);
+		scaleTextPaint.setColor(color);
+	}
+	
+	public void setScaleBarBackgroundColor(final int color)
+	{
+		scaleFillPaint.setColor(color);
+	}
+		
+	public void setDrawScaleBarBackground(final boolean draw)
+	{
+		drawScaleBackground = draw;
+	}
+		
 	public void setCrossColor(final int color)
 	{
 		crossPaint.setColor(color);

@@ -295,6 +295,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_lookahead));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapbest));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapbestinterval));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarbg));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarcolor));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarbgcolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcrosscolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorvector));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorcolor));
@@ -967,44 +970,56 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 		else if (getString(R.string.pref_showdistance_int).equals(key))
 		{
-			showDistance = Integer.parseInt(sharedPreferences.getString(getString(R.string.pref_showdistance_int), getString(R.string.def_showdistance)));
+			showDistance = Integer.parseInt(sharedPreferences.getString(key, getString(R.string.def_showdistance)));
 		}
 		else if (getString(R.string.pref_maprenderinterval).equals(key))
 		{
-			updatePeriod = sharedPreferences.getInt(getString(R.string.pref_maprenderinterval), resources.getInteger(R.integer.def_maprenderinterval)) * 100;
+			updatePeriod = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_maprenderinterval)) * 100;
 		}
 		else if (getString(R.string.pref_mapfollowonloc).equals(key))
 		{
-			followOnLocation = sharedPreferences.getBoolean(getString(R.string.pref_mapfollowonloc), resources.getBoolean(R.bool.def_mapfollowonloc));
+			followOnLocation = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapfollowonloc));
 		}
 		else if (getString(R.string.pref_mapdiminterval).equals(key))
 		{
-			dimInterval = sharedPreferences.getInt(getString(R.string.pref_mapdiminterval), resources.getInteger(R.integer.def_mapdiminterval)) * 1000;
+			dimInterval = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_mapdiminterval)) * 1000;
 		}
 		else if (getString(R.string.pref_mapdimvalue).equals(key))
 		{
-			dimValue = sharedPreferences.getInt(getString(R.string.pref_mapdimvalue), resources.getInteger(R.integer.def_mapdimvalue));
+			dimValue = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_mapdimvalue));
 		}		
 		else if (getString(R.string.pref_mapdim).equals(key))
 		{
-			autoDim = sharedPreferences.getBoolean(getString(R.string.pref_mapdim), resources.getBoolean(R.bool.def_mapdim));
+			autoDim = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapdim));
 			dimScreen();
 		}
 		else if (getString(R.string.pref_unfollowontap).equals(key))
 		{
-			map.setStrictUnfollow(!sharedPreferences.getBoolean(getString(R.string.pref_unfollowontap), resources.getBoolean(R.bool.def_unfollowontap)));
+			map.setStrictUnfollow(!sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_unfollowontap)));
 		}
 		else if (getString(R.string.pref_lookahead).equals(key))
 		{
-			map.setLookAhead(sharedPreferences.getInt(getString(R.string.pref_lookahead), resources.getInteger(R.integer.def_lookahead)));
+			map.setLookAhead(sharedPreferences.getInt(key, resources.getInteger(R.integer.def_lookahead)));
 		}
 		else if (getString(R.string.pref_mapbest).equals(key))
 		{
-			map.setBestMapEnabled(sharedPreferences.getBoolean(getString(R.string.pref_mapbest), resources.getBoolean(R.bool.def_mapbest)));
+			map.setBestMapEnabled(sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapbest)));
 		}
 		else if (getString(R.string.pref_mapbestinterval).equals(key))
 		{
-			map.setBestMapInterval(sharedPreferences.getInt(getString(R.string.pref_mapbestinterval), resources.getInteger(R.integer.def_mapbestinterval)) * 1000);
+			map.setBestMapInterval(sharedPreferences.getInt(key, resources.getInteger(R.integer.def_mapbestinterval)) * 1000);
+		}
+		else if (getString(R.string.pref_scalebarbg).equals(key))
+		{
+			map.setDrawScaleBarBackground(sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_scalebarbg)));
+		}
+		else if (getString(R.string.pref_scalebarcolor).equals(key))
+		{
+			map.setScaleBarColor(sharedPreferences.getInt(key, resources.getColor(R.color.scalebar)));
+		}
+		else if (getString(R.string.pref_scalebarbgcolor).equals(key))
+		{
+			map.setScaleBarBackgroundColor(sharedPreferences.getInt(key, resources.getColor(R.color.scalebarbg)));
 		}
 		else if (getString(R.string.pref_mapcrosscolor).equals(key))
 		{
@@ -1021,7 +1036,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 		else if (getString(R.string.pref_navigation_proximity).equals(key))
 		{
-			map.setProximity(Integer.parseInt(sharedPreferences.getString(getString(R.string.pref_navigation_proximity), getString(R.string.def_navigation_proximity))));
+			map.setProximity(Integer.parseInt(sharedPreferences.getString(key, getString(R.string.def_navigation_proximity))));
 		}
 		else if (getString(R.string.pref_unitprecision).equals(key))
 		{
@@ -1030,14 +1045,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 		else if (getString(R.string.pref_unitspeed).equals(key))
 		{
-			int speedIdx = Integer.parseInt(sharedPreferences.getString(getString(R.string.pref_unitspeed), "0"));
+			int speedIdx = Integer.parseInt(sharedPreferences.getString(key, "0"));
 			speedFactor = Double.parseDouble(resources.getStringArray(R.array.speed_factors)[speedIdx]);
 			speedAbbr = resources.getStringArray(R.array.speed_abbrs)[speedIdx];
 			speedUnit.setText(speedAbbr);
 		}
 		else if (getString(R.string.pref_unitelevation).equals(key))
 		{
-			int elevationIdx = Integer.parseInt(sharedPreferences.getString(getString(R.string.pref_unitelevation), "0"));
+			int elevationIdx = Integer.parseInt(sharedPreferences.getString(key, "0"));
 			elevationFactor = Double.parseDouble(resources.getStringArray(R.array.elevation_factors)[elevationIdx]);
 			elevationAbbr = resources.getStringArray(R.array.elevation_abbrs)[elevationIdx];
 			elevationUnit.setText(elevationAbbr);
