@@ -43,11 +43,6 @@
             android:key="@string/pref_mapdrawborder"
             android:summary="@string/pref_mapdrawborder_summary"
             android:title="@string/pref_mapdrawborder_title" />
-        <com.androzic.ui.preference.HelpfulCheckBoxPreference
-            android:defaultValue="@bool/def_maphideondrag"
-            android:key="@string/pref_maphideondrag"
-            android:summary="@string/pref_maphideondrag_summary"
-            android:title="@string/pref_maphideondrag_title" />
 
         <com.androzic.ui.ColorPreference
             android:defaultValue="@color/mapcross"

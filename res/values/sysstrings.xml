@@ -35,7 +35,6 @@
     <string name="pref_mapdim">mapdim</string>
     <string name="pref_mapdimvalue">mapdimvalue</string>
     <string name="pref_mapdiminterval">mapdimint</string>
-    <string name="pref_maphideondrag">maphideondrag</string>
     <string name="pref_mapcropborder">mapcropborder</string>
     <string name="pref_mapdrawborder">mapdrawborder</string>
     <string name="pref_unfollowontap">unfollowontap</string>

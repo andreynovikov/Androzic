@@ -288,7 +288,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_wakelock));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_showdistance_int));
 
-		onSharedPreferenceChanged(settings, getString(R.string.pref_maphideondrag));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdiminterval));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdimvalue));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdim));
@@ -977,10 +976,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		else if (getString(R.string.pref_mapfollowonloc).equals(key))
 		{
 			followOnLocation = sharedPreferences.getBoolean(getString(R.string.pref_mapfollowonloc), resources.getBoolean(R.bool.def_mapfollowonloc));
-		}
-		else if (getString(R.string.pref_maphideondrag).equals(key))
-		{
-			map.setHideOnDrag(sharedPreferences.getBoolean(getString(R.string.pref_maphideondrag), resources.getBoolean(R.bool.def_maphideondrag)));
 		}
 		else if (getString(R.string.pref_mapdiminterval).equals(key))
 		{

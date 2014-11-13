@@ -74,7 +74,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private int vectorType = 1;
 	private int vectorMultiplier = 10;
 	private boolean strictUnfollow = true;
-	private boolean hideOnDrag = true;
 	private boolean loadBestMap = true;
 	private int bestMapInterval = 5000; // 5 seconds
 	private long drawPeriod = 200 * 1000000; // 200 milliseconds
@@ -527,16 +526,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		canvas.translate(viewport.lookAheadXY[0] + cx, viewport.lookAheadXY[1] + cy);
 
 		// draw overlays
-		if ((penOX == 0 && penOY == 0) || !hideOnDrag)
-		{
-			// FIXME Optimize getOverlays()
-			for (MapOverlay mo : application.overlayManager.getOverlays(OverlayManager.ORDER_DRAW_PREFERENCE))
-				if (mo.isEnabled())
-					mo.onPrepareBuffer(viewport, canvas);
-			for (MapOverlay mo : application.overlayManager.getOverlays(OverlayManager.ORDER_DRAW_PREFERENCE))
-				if (mo.isEnabled())
-					mo.onPrepareBufferEx(viewport, canvas);
-		}
+		// FIXME Optimize getOverlays()
+		for (MapOverlay mo : application.overlayManager.getOverlays(OverlayManager.ORDER_DRAW_PREFERENCE))
+			if (mo.isEnabled())
+				mo.onPrepareBuffer(viewport, canvas);
+		for (MapOverlay mo : application.overlayManager.getOverlays(OverlayManager.ORDER_DRAW_PREFERENCE))
+			if (mo.isEnabled())
+				mo.onPrepareBufferEx(viewport, canvas);
 
 		Bitmap t = bufferBitmap;
 		synchronized (this)
@@ -817,11 +813,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	public boolean getStrictUnfollow()
 	{
 		return strictUnfollow;
-	}
-
-	public void setHideOnDrag(boolean hide)
-	{
-		hideOnDrag = hide;
 	}
 
 	public void setBestMapEnabled(boolean best)
@@ -1222,7 +1213,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			vectorMultiplier = bundle.getInt("vectorMultiplier");
 			isFollowing = bundle.getBoolean("autoFollow");
 			strictUnfollow = bundle.getBoolean("strictUnfollow");
-			hideOnDrag = bundle.getBoolean("hideOnDrag");
 			loadBestMap = bundle.getBoolean("loadBestMap");
 			bestMapInterval = bundle.getInt("bestMapInterval");
 
@@ -1273,7 +1263,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		bundle.putInt("vectorMultiplier", vectorMultiplier);
 		bundle.putBoolean("autoFollow", isFollowing);
 		bundle.putBoolean("strictUnfollow", strictUnfollow);
-		bundle.putBoolean("hideOnDrag", hideOnDrag);
 		bundle.putBoolean("loadBestMap", loadBestMap);
 		bundle.putInt("bestMapInterval", bestMapInterval);
 
