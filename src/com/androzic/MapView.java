@@ -67,6 +67,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private static final float INC_ROTATION_SPEED = 2f;
 	private static final float MAX_SHIFT_SPEED = 20f;
 	private static final float INC_SHIFT_SPEED = 2f;
+	
+	private static final int VIEWPORT_EXCESS = 64;
 
 	private static final int GESTURE_THRESHOLD_DP = (int) (ViewConfiguration.get(Androzic.getApplication()).getScaledTouchSlop() * 3);
 	private static final int DOUBLE_TAP_TIMEOUT = ViewConfiguration.getDoubleTapTimeout();
@@ -256,8 +258,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
 		Log.i(TAG, "surfaceChanged(" + width + "," + height + ")");
-		currentViewport.width = getWidth();
-		currentViewport.height = getHeight();
+		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
+		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
 		recreateBuffers = true;
 		setLookAhead(lookAheadPst);
 		refreshBuffer();
@@ -390,6 +392,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	protected void doDraw(Canvas canvas)
 	{
+		canvas.translate(-VIEWPORT_EXCESS, -VIEWPORT_EXCESS);
 		Matrix matrix = new Matrix();
 		
 		boolean scaled = scale > 1.1 || scale < 0.9;
@@ -501,7 +504,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			{
 				if (recreateBuffers && bufferBitmap != null)
 				{
-					Bitmap t = Bitmap.createBitmap(bufferBitmap, 0, 0, currentViewport.width, currentViewport.height);
+					Bitmap t = Bitmap.createBitmap(currentViewport.width, currentViewport.height, Bitmap.Config.RGB_565);
 					if (t != bufferBitmap)
 						bufferBitmap.recycle();
 					bufferBitmap = t;
@@ -509,6 +512,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				if (bufferBitmapTmp != null)
 					bufferBitmapTmp.recycle();
 				bufferBitmapTmp = Bitmap.createBitmap(currentViewport.width, currentViewport.height, Bitmap.Config.RGB_565);
+				recreateBuffers = false;
 			}
 		}
 		
