@@ -991,7 +991,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		
 		boolean covers = currentMap != null && currentMap.coversLatLon(mapCenter[0], mapCenter[1]);
 
-		if (reindex || findbest)
+		if (!covers || reindex || findbest)
 			suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
 
 		if (covers && !findbest)
@@ -1161,6 +1161,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				id = suitableMaps.get(pos+1).id;
 			}
+			else
+			{
+				id = suitableMaps.get(0).id;
+			}
 		}
 		else if (suitableMaps.size() > 0)
 		{
@@ -1182,6 +1186,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			if (pos > 0)
 			{
 				id = suitableMaps.get(pos-1).id;
+			}
+			else
+			{
+				id = suitableMaps.get(0).id;
 			}
 		}
 		else if (suitableMaps.size() > 0)
@@ -1247,7 +1255,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		// TODO should override equals()?
 		if (newMap != null && ! newMap.equals(currentMap))
 		{
-			Log.i(TAG, "Set map: " + newMap);
+			Log.i(TAG, "Set map: " + newMap.title);
 			if (mapHolder != null)
 			{
 				try
@@ -1305,7 +1313,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	}
 	
 	/*
-	 * ���������:
 	 * Clip map to corners
 	 * Draw corners
 	 * Show adjacent maps
@@ -1314,59 +1321,62 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	
 	private void updateCoveringMaps()
 	{
-		if (!mapsHandler.hasMessages(1))
-		{
-			Message m = Message.obtain(mapsHandler, new Runnable() {
-				@Override
-				public void run()
+		if (mapsHandler.hasMessages(1))
+			mapsHandler.removeMessages(1);
+
+		Message m = Message.obtain(mapsHandler, new Runnable() {
+			@Override
+			public void run()
+			{
+				Log.i(TAG, "updateCoveringMaps()");
+				Bounds area = new Bounds();
+				int[] xy = new int[2];
+				double[] ll = new double[2];
+				currentMap.getXYByLatLon(mapCenter[0], mapCenter[1], xy);
+				currentMap.getLatLonByXY(xy[0] + (int) coveringScreen.left, xy[1] + (int) coveringScreen.top, ll);
+				area.maxLat = ll[0];
+				area.minLon = ll[1];
+				currentMap.getLatLonByXY(xy[0] + (int) coveringScreen.right, xy[1] + (int) coveringScreen.bottom, ll);
+				area.minLat = ll[0];
+				area.maxLon = ll[1];
+				List<Map> cmr = new ArrayList<Map>();
+				if (coveringMaps != null)
+					cmr.addAll(coveringMaps);
+				List<Map> cma = maps.getCoveringMaps(currentMap, area, coveredAll, coveringBestMap);
+				Iterator<Map> icma = cma.iterator();
+				while (icma.hasNext())
 				{
-					Bounds area = new Bounds();
-					int[] xy = new int[2];
-					double[] ll = new double[2];
-					currentMap.getXYByLatLon(mapCenter[0], mapCenter[1], xy);
-					currentMap.getLatLonByXY(xy[0] + (int) coveringScreen.left, xy[1] + (int) coveringScreen.top, ll);
-					area.maxLat = ll[0];
-					area.minLon = ll[1];
-					currentMap.getLatLonByXY(xy[0] + (int) coveringScreen.right, xy[1] + (int) coveringScreen.bottom, ll);
-					area.minLat = ll[0];
-					area.maxLon = ll[1];
-					List<Map> cmr = new ArrayList<Map>();
-					if (coveringMaps != null)
-						cmr.addAll(coveringMaps);
-					List<Map> cma = maps.getCoveringMaps(currentMap, area, coveredAll, coveringBestMap);
-					Iterator<Map> icma = cma.iterator();
-					while (icma.hasNext())
+					Map map = icma.next();
+					try
 					{
-						Map map = icma.next();
-						try
-						{
-							if (! map.activated())
-								map.activate(mapHolder.getMapView(), screenSize);
-							double zoom = map.mpp / currentMap.mpp * currentMap.getZoom();
-							if (zoom != map.getZoom())
-								map.setTemporaryZoom(zoom);
-							cmr.remove(map);
-						}
-						catch (Exception e)
-						{
-							icma.remove();
-							e.printStackTrace();
-						}
+						if (!map.activated())
+							map.activate(mapHolder.getMapView(), screenSize);
+						double zoom = map.mpp / currentMap.mpp * currentMap.getZoom();
+						if (zoom != map.getZoom())
+							map.setTemporaryZoom(zoom);
+						cmr.remove(map);
 					}
-					synchronized (Androzic.this)
+					catch (Exception e)
 					{
-						for (Map map : cmr)
-						{
-							if (map != currentMap)
-								map.deactivate();
-						}
-						coveringMaps = cma;
+						icma.remove();
+						e.printStackTrace();
 					}
 				}
-			});
-			m.what = 1;
-			mapsHandler.sendMessage(m);
-		}
+				synchronized (Androzic.this)
+				{
+					for (Map map : cmr)
+					{
+						if (map != currentMap)
+							map.deactivate();
+					}
+					coveringMaps = cma;
+				}
+				if (mapHolder != null)
+					mapHolder.conditionsChanged();
+			}
+		});
+		m.what = 1;
+		mapsHandler.sendMessage(m);
 	}
 	
 	public void drawMap(MapView.Viewport viewport, boolean bestmap, Canvas c)
@@ -1381,15 +1391,16 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				int t = -(viewport.height / 2 + viewport.lookAheadXY[1]);
 				int r = l + viewport.width;
 				int b = t + viewport.height;
-				if (coveringMaps == null || viewport.location[0] != coveringLoc[0] || viewport.location[1] != coveringLoc[1] || coveringBestMap != bestmap || 
+				
+				if (coveringMaps == null || viewport.mapCenter[0] != coveringLoc[0] || viewport.mapCenter[1] != coveringLoc[1] || coveringBestMap != bestmap || 
 					l != coveringScreen.left || t != coveringScreen.top || r != coveringScreen.right || b != coveringScreen.bottom)
 				{
 					coveringScreen.left = l;
 					coveringScreen.top = t;
 					coveringScreen.right = r;
 					coveringScreen.bottom = b;
-					coveringLoc[0] = viewport.location[0];
-					coveringLoc[1] = viewport.location[1];
+					coveringLoc[0] = viewport.mapCenter[0];
+					coveringLoc[1] = viewport.mapCenter[1];
 					coveringBestMap = bestmap;
 					updateCoveringMaps();
 				}
