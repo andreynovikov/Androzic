@@ -417,22 +417,25 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent)
 		{
-			WaypointItemHolder waypointHolder;
+			WaypointItemHolder waypointHolder = null;
 			Waypoint wpt = (Waypoint) getItem(position);
+			
+			if (convertView != null)
+				waypointHolder = (WaypointItemHolder) convertView.getTag();
 			
 			if (convertView == null)
 			{
 				convertView = mInflater.inflate(mItemLayout, parent, false);
+			}
+			
+			if (waypointHolder == null)
+			{
 				waypointHolder = new WaypointItemHolder();
 				waypointHolder.icon = (ImageView) convertView.findViewById(R.id.icon);
 				waypointHolder.name = (TextView) convertView.findViewById(R.id.name);
 				waypointHolder.coordinates = (TextView) convertView.findViewById(R.id.coordinates);
 				waypointHolder.distance = (TextView) convertView.findViewById(R.id.distance);
 				convertView.setTag(waypointHolder);
-			}
-			else
-			{
-				waypointHolder = (WaypointItemHolder) convertView.getTag();
 			}
 
 			waypointHolder.name.setText(wpt.name);
