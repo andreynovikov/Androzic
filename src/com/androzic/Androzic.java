@@ -68,6 +68,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -202,24 +203,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	private Handler mapsHandler;
 	private Handler uiHandler;
 
-	public Androzic()
+	public Looper getRenderingThreadLooper()
 	{
-		super();
-		
-		uiHandler = new Handler();
-
-		renderingThread = new HandlerThread("RenderingThread");
-		renderingThread.start();
-		
-		longOperationsThread = new HandlerThread("RenderingThread");
-		longOperationsThread.start();
-		
-		mapsHandler = new Handler(longOperationsThread.getLooper());
-	}
-
-	public HandlerThread getRenderingThread()
-	{
-		return renderingThread;
+		//return Looper.getMainLooper();
+		return renderingThread.getLooper();
 	}
 
 	public MapHolder getMapHolder()
@@ -2340,6 +2327,15 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		super.onCreate();
 		Log.e("ANDROZIC","Application onCreate()");
 
+		renderingThread = new HandlerThread("RenderingThread");
+		renderingThread.start();
+		
+		longOperationsThread = new HandlerThread("LongOperationsThread");
+		longOperationsThread.start();
+		
+		uiHandler = new Handler();
+		mapsHandler = new Handler(longOperationsThread.getLooper());
+
 		setInstance(this);
 		
         String intentToCheck = "com.androzic.donate";
@@ -2367,7 +2363,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		else
 		{
-			screenSize = 320 * 480;
+			screenSize = 480 * 800;
 		}
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);

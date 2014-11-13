@@ -133,6 +133,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private Viewport currentViewport;
 	
+	private boolean recreateBuffers;
 	private Bitmap bufferBitmap;
 	private Bitmap bufferBitmapTmp;
 	private Handler renderHandler;
@@ -217,7 +218,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		this.mapHolder = holder;
 
 		currentViewport = new Viewport();
-		renderHandler = new Handler(application.getRenderingThread().getLooper());
+		renderHandler = new Handler(application.getRenderingThreadLooper());
+		recreateBuffers = false;
 
 		getHolder().addCallback(this);
 
@@ -255,16 +257,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
 		Log.i(TAG, "surfaceChanged(" + width + "," + height + ")");
-		synchronized (this)
-		{
-			currentViewport.width = getWidth();
-			currentViewport.height = getHeight();
-			if (bufferBitmap != null)
-				bufferBitmap.recycle();
-			if (bufferBitmapTmp != null)
-				bufferBitmapTmp.recycle();
-			setLookAhead(lookAheadPst);
-		}
+		currentViewport.width = getWidth();
+		currentViewport.height = getHeight();
+		recreateBuffers = true;
+		setLookAhead(lookAheadPst);
 		refreshBuffer();
 	}
 
@@ -272,16 +268,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	public void surfaceCreated(SurfaceHolder holder)
 	{
 		Log.i(TAG, "surfaceCreated(" + holder + ")");
-		
-		synchronized (this)
-		{
-			currentViewport.width = getWidth();
-			currentViewport.height = getHeight();
-			if (bufferBitmap != null)
-				bufferBitmap.recycle();
-			if (bufferBitmapTmp != null)
-				bufferBitmapTmp.recycle();
-		}
+		currentViewport.width = getWidth();
+		currentViewport.height = getHeight();
+		recreateBuffers = true;
 		refreshBuffer();
 		
 		drawingThread = new DrawingThread(holder, this);
@@ -415,18 +404,21 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		
 		canvas.drawARGB(255, 255, 255, 255);
 		
-		if (bufferBitmap != null && !bufferBitmap.isRecycled())
+		synchronized (this)
 		{
-			// Difference between current and buffer map center
-			int mcXdiff = renderViewport.mapCenterXY[0] - currentViewport.mapCenterXY[0];
-			int mcYdiff = renderViewport.mapCenterXY[1] - currentViewport.mapCenterXY[1];
-			// Difference between current and buffer look ahead
-			int laXdiff = renderViewport.lookAheadXY[0] - currentViewport.lookAheadXY[0];
-			int laYdiff = renderViewport.lookAheadXY[1] - currentViewport.lookAheadXY[1];
-			// Adjust buffer bitmap position
-			matrix.postTranslate(mcXdiff - laXdiff, mcYdiff - laYdiff);
-			// Draw buffer bitmap
-			canvas.drawBitmap(bufferBitmap, matrix, null);
+			if (bufferBitmap != null && !bufferBitmap.isRecycled())
+			{
+				// Difference between current and buffer map center
+				int mcXdiff = renderViewport.mapCenterXY[0] - currentViewport.mapCenterXY[0];
+				int mcYdiff = renderViewport.mapCenterXY[1] - currentViewport.mapCenterXY[1];
+				// Difference between current and buffer look ahead
+				int laXdiff = renderViewport.lookAheadXY[0] - currentViewport.lookAheadXY[0];
+				int laYdiff = renderViewport.lookAheadXY[1] - currentViewport.lookAheadXY[1];
+				// Adjust buffer bitmap position
+				matrix.postTranslate(mcXdiff - laXdiff, mcYdiff - laYdiff);
+				// Draw buffer bitmap
+				canvas.drawBitmap(bufferBitmap, matrix, null);
+			}
 		}
 
 		int cx = currentViewport.width / 2;
@@ -489,7 +481,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				@Override
 				public void run()
 				{
-					renderHandler.removeMessages(REFRESH_MESSAGE);
 					refreshBufferInternal();
 				}
 			});
@@ -505,8 +496,22 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		if (currentViewport.width == 0 || currentViewport.height == 0)
 			return;
 
-		if (bufferBitmapTmp == null || bufferBitmapTmp.isRecycled())
-			bufferBitmapTmp = Bitmap.createBitmap(currentViewport.width, currentViewport.height, Bitmap.Config.RGB_565);
+		if (recreateBuffers || bufferBitmapTmp == null || bufferBitmapTmp.isRecycled())
+		{
+			synchronized (this)
+			{
+				if (recreateBuffers && bufferBitmap != null)
+				{
+					Bitmap t = Bitmap.createBitmap(bufferBitmap, 0, 0, currentViewport.width, currentViewport.height);
+					if (t != bufferBitmap)
+						bufferBitmap.recycle();
+					bufferBitmap = t;
+				}
+				if (bufferBitmapTmp != null)
+					bufferBitmapTmp.recycle();
+				bufferBitmapTmp = Bitmap.createBitmap(currentViewport.width, currentViewport.height, Bitmap.Config.RGB_565);
+			}
+		}
 		
 		Canvas canvas = new Canvas(bufferBitmapTmp);
 		Viewport viewport = currentViewport.copy();
