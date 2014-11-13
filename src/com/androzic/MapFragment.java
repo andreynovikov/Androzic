@@ -1155,12 +1155,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			{
 				double[] aloc = application.getMapCenter();
 				application.routeEditingWaypoints.push(application.editingRoute.addWaypoint("RWPT" + application.editingRoute.length(), aloc[0], aloc[1]));
+				map.refreshMap();
 				break;
 			}
 			case R.id.insertpoint:
 			{
 				double[] iloc = application.getMapCenter();
 				application.routeEditingWaypoints.push(application.editingRoute.insertWaypoint("RWPT" + application.editingRoute.length(), iloc[0], iloc[1]));
+				map.refreshMap();
 				break;
 			}
 			case R.id.removepoint:
@@ -1168,6 +1170,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				if (!application.routeEditingWaypoints.empty())
 				{
 					application.editingRoute.removeWaypoint(application.routeEditingWaypoints.pop());
+					map.refreshMap();
 				}
 				break;
 			}
