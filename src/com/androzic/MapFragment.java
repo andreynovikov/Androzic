@@ -1230,7 +1230,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			case MotionEvent.ACTION_DOWN:
 				zoom100X = (int) event.getRawX();
 				zoom100Y = (int) event.getRawY();
-				Log.e(TAG, "Down: " + zoom100X + " " + zoom100Y);
 				zoomHandler.postDelayed(new Runnable() {
 					@Override
 					public void run()
@@ -1241,7 +1240,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				}, 2000);
 				break;
 			case MotionEvent.ACTION_UP:
-				Log.e(TAG, "Up: " + event.getRawX() + " " + event.getRawY());
 				int dx = Math.abs((int)event.getRawX() - zoom100X);
 				int dy = (int)event.getRawY() - zoom100Y;
 				int h = v.getHeight();
