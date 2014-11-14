@@ -24,8 +24,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.androzic"
     android:installLocation="auto"
-    android:versionCode="98"
-    android:versionName="2.0-alpha2" >
+    android:versionCode="99"
+    android:versionName="2.0-alpha3" >
 
     <supports-screens
         android:anyDensity="true"
