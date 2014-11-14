@@ -310,8 +310,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	public void surfaceCreated(SurfaceHolder holder)
 	{
 		Log.i(TAG, "surfaceCreated(" + holder + ")");
-		currentViewport.width = getWidth();
-		currentViewport.height = getHeight();
+		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
+		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
 		calculateScaleBar();
 		recreateBuffers = true;
 		refreshBuffer();
@@ -651,17 +651,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		{
 			synchronized (this)
 			{
-				if (recreateBuffers && bufferBitmap != null)
-				{
-					Bitmap t = Bitmap.createBitmap(currentViewport.width, currentViewport.height, Bitmap.Config.RGB_565);
-					if (t != bufferBitmap)
-						bufferBitmap.recycle();
-					bufferBitmap = t;
-				}
 				if (bufferBitmapTmp != null)
 					bufferBitmapTmp.recycle();
 				bufferBitmapTmp = Bitmap.createBitmap(currentViewport.width, currentViewport.height, Bitmap.Config.RGB_565);
-				recreateBuffers = false;
 			}
 		}
 		
@@ -687,12 +679,20 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			if (mo.isEnabled())
 				mo.onPrepareBufferEx(viewport, canvas);
 
-		Bitmap t = bufferBitmap;
 		synchronized (this)
 		{
+			Bitmap t = bufferBitmap;
 			renderViewport = viewport;
 			bufferBitmap = bufferBitmapTmp;
 			bufferBitmapTmp = t;
+			
+			if (recreateBuffers)
+			{
+				if (bufferBitmapTmp != null)
+					bufferBitmapTmp.recycle();
+				bufferBitmapTmp = null;
+				recreateBuffers = false;
+			}
 		}
 	}
 
@@ -751,6 +751,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	public void updateMapInfo()
 	{
+		Log.i(TAG, "updateMapInfo()");
 		scale = 1;
 		Map map = application.getCurrentMap();
 		if (map == null)
