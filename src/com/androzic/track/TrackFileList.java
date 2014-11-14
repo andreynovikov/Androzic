@@ -31,8 +31,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import android.widget.Toast;
-
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Track;
@@ -47,13 +45,6 @@ public class TrackFileList extends FileListDialog
 	public TrackFileList(OnFileListDialogListener listener)
 	{
 		super(R.string.loadtrack_name, listener);
-	}
-
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-		Toast.makeText(getActivity(), getString(R.string.msg_badtrackimplementation), Toast.LENGTH_LONG).show();
 	}
 
 	@Override

@@ -1044,6 +1044,14 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 	}
 	
+	public void getLatLonByXY(int x, int y, double[] ll)
+	{
+		if (currentMap != null)
+		{
+			currentMap.getLatLonByXY(x, y, ll);
+		}
+	}
+
 	public double getZoom()
 	{
 		if (currentMap != null)

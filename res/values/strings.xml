@@ -49,7 +49,6 @@
     
     <string name="msg_wait">Please wait&#8230;</string>
     <string name="msg_scansdcard">Scanning SD card</string>
-    <string name="msg_badtrackimplementation">Please notice that performance will degrade on long tracks, be patient.</string>
     <string name="msg_initializingmaps">Initializing maps&#8230;</string>
     <string name="msg_initializingdata">Initializing data&#8230;</string>
     <string name="msg_initializingplugins">Initializing plugins&#8230;</string>

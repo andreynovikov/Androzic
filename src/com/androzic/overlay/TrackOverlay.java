@@ -21,7 +21,6 @@
 package com.androzic.overlay;
 
 import java.util.Iterator;
-import java.util.List;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -33,7 +32,6 @@ import android.preference.PreferenceManager;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Track;
-import com.androzic.data.Track.TrackPoint;
 
 public class TrackOverlay extends MapOverlay
 {
@@ -142,12 +140,16 @@ public class TrackOverlay extends MapOverlay
 		boolean first = true;
 		boolean skipped = false;
 		int lastX = 0, lastY = 0;
-		List<TrackPoint> trackpoints = track.getAllPoints();
 		int[] xy = new int[2];
-		synchronized (trackpoints)
+		
+		for (Iterator<Track.TrackSegment> segments = track.getSegments().iterator(); segments.hasNext();)
 		{
-			for (TrackPoint tp : trackpoints)
+			Track.TrackSegment segment = segments.next();
+			if (! viewport.mapArea.intersects(segment.bounds))
+				continue;
+			for (Iterator<Track.TrackPoint> points = segment.getPoints().iterator(); points.hasNext();)
 			{
+				Track.TrackPoint tp = points.next();
 				if (tp.dirty)
 				{
 					application.getXYbyLatLon(tp.latitude, tp.longitude, xy);

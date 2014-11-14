@@ -54,6 +54,7 @@ import android.view.SurfaceView;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
 
+import com.androzic.data.Bounds;
 import com.androzic.map.Map;
 import com.androzic.overlay.MapOverlay;
 import com.androzic.overlay.OverlayManager;
@@ -165,6 +166,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		public int width;
 		public int height;
 		public Rect viewArea;
+		public Bounds mapArea;
 
 		public int[] lookAheadXY;
 
@@ -182,6 +184,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			height = 0;
 			
 			viewArea = new Rect();
+			mapArea = new Bounds();
 			
 			bearing = 0;
 			speed = 0;
@@ -203,6 +206,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			copy.width = width;
 			copy.height = height;
 			copy.viewArea = new Rect(viewArea);
+			copy.mapArea = new Bounds(mapArea);
 			copy.bearing = bearing;
 			copy.speed = speed;
 			copy.lookAheadXY[0] = lookAheadXY[0];
@@ -1123,6 +1127,21 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	{
 		currentViewport.mapCenter = application.getMapCenter();
 		application.getXYbyLatLon(currentViewport.mapCenter[0], currentViewport.mapCenter[1], currentViewport.mapCenterXY);
+
+		int cx = currentViewport.width / 2;
+		int cy = currentViewport.height / 2;
+		
+		double[] ll = new double[2];
+		Bounds area = new Bounds();
+		application.getLatLonByXY(currentViewport.mapCenterXY[0] - cx, currentViewport.mapCenterXY[1] - cy, ll);
+		area.extend(ll[0], ll[1]);
+		application.getLatLonByXY(currentViewport.mapCenterXY[0] + cx, currentViewport.mapCenterXY[1] - cy, ll);
+		area.extend(ll[0], ll[1]);
+		application.getLatLonByXY(currentViewport.mapCenterXY[0] - cx, currentViewport.mapCenterXY[1] + cy, ll);
+		area.extend(ll[0], ll[1]);
+		application.getLatLonByXY(currentViewport.mapCenterXY[0] + cx, currentViewport.mapCenterXY[1] + cy, ll);
+		area.extend(ll[0], ll[1]);
+		currentViewport.mapArea = area;
 		
 		refreshBuffer();
 		
