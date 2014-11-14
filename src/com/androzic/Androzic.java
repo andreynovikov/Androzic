@@ -1372,7 +1372,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					coveringMaps = cma;
 				}
 				if (mapHolder != null)
-					mapHolder.conditionsChanged();
+					mapHolder.refreshMap();
 			}
 		});
 		m.what = 1;
@@ -2403,7 +2403,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		
 		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
 		
-		overlayManager = new OverlayManager();
+		overlayManager = new OverlayManager(longOperationsThread.getLooper());
 		
 		//TODO Initialize all suitable settings
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitcoordinate));

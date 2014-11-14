@@ -1,11 +1,32 @@
+/*
+ * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
+ * Copyright (C) 2010-2014 Andrey Novikov <http://andreynovikov.info/>
+ * 
+ * This file is part of Androzic application.
+ * 
+ * Androzic is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Androzic is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.androzic.overlay;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 
 import com.androzic.Androzic;
@@ -17,8 +38,11 @@ public class OverlayManager
 {
 	public static final int ORDER_SHOW_PREFERENCE = 0;
 	public static final int ORDER_DRAW_PREFERENCE = 1;
-		
+
+	private static final int UPDATE_MESSAGE = 1;
+
 	private Androzic application;
+	private Handler executionHandler;
 
 	public LatLonGridOverlay llGridOverlay;
 	public OtherGridOverlay grGridOverlay;
@@ -30,14 +54,15 @@ public class OverlayManager
 	public AccuracyOverlay accuracyOverlay;
 	public List<TrackOverlay> fileTrackOverlays = new ArrayList<TrackOverlay>();
 	public List<RouteOverlay> routeOverlays = new ArrayList<RouteOverlay>();
-	
+
 	public boolean mapGrid = false;
 	public boolean userGrid = false;
 	public int gridPrefer = 0;
-	
-	public OverlayManager()
+
+	public OverlayManager(Looper looper)
 	{
 		application = Androzic.getApplication();
+		executionHandler = new Handler(looper);
 		createOverlays();
 	}
 
@@ -103,7 +128,7 @@ public class OverlayManager
 			accuracyOverlay = null;
 		}
 	}
-	
+
 	public void setDistanceOverlayEnabled(boolean enabled)
 	{
 		if (enabled && distanceOverlay == null)
@@ -164,33 +189,33 @@ public class OverlayManager
 		}
 		return overlays;
 	}
-	
-	private ExecutorService executorThread = Executors.newSingleThreadExecutor();
 
 	public void notifyOverlays()
 	{
-		final List<MapOverlay> overlays = getOverlays(ORDER_SHOW_PREFERENCE);
-		final boolean[] states = new boolean[overlays.size()];
-		int i = 0;
-    	for (MapOverlay mo : overlays)
-    	{
-   			states[i] = mo.setEnabled(false);
-   			i++;
-    	}
-		executorThread.execute(new Runnable() {
-			public void run()
-			{
-				int j = 0;
-		    	for (MapOverlay mo : overlays)
-		    	{
-		   			mo.onMapChanged();
-	   				mo.setEnabled(states[j]);
-		   			j++;
-		    	}
-			}
-		});
-	}
+		if (!executionHandler.hasMessages(UPDATE_MESSAGE))
+		{
+			Message msg = Message.obtain(executionHandler, new Runnable() {
+				@Override
+				public void run()
+				{
+					executionHandler.removeMessages(UPDATE_MESSAGE);
+					
+					List<MapOverlay> overlays = getOverlays(ORDER_SHOW_PREFERENCE);
 	
+					for (MapOverlay mo : overlays)
+					{
+						boolean enabled = mo.setEnabled(false);
+						mo.onMapChanged();
+						mo.setEnabled(enabled);
+						application.getMapHolder().refreshMap();
+					}
+				}
+			});
+			msg.what = UPDATE_MESSAGE;
+			executionHandler.sendMessage(msg);
+		}
+	}
+
 	public void onPreferencesChanged(final SharedPreferences settings)
 	{
 		for (TrackOverlay to : fileTrackOverlays)
@@ -237,7 +262,7 @@ public class OverlayManager
 			llgo.setGrid(currentMap.llGrid);
 			llGridOverlay = llgo;
 		}
-		if (mapGrid && currentMap != null && currentMap.grGrid != null && currentMap.grGrid.enabled && (! userGrid || gridPrefer == 0))
+		if (mapGrid && currentMap != null && currentMap.grGrid != null && currentMap.grGrid.enabled && (!userGrid || gridPrefer == 0))
 		{
 			OtherGridOverlay ogo = new OtherGridOverlay();
 			ogo.setGrid(currentMap.grGrid);
@@ -252,7 +277,7 @@ public class OverlayManager
 			grid.color2 = 0xFF0000FF;
 			grid.color3 = 0xFF0000FF;
 			grid.enabled = true;
-			//TODO Optimize this
+			// TODO Optimize this
 			grid.spacing = Integer.parseInt(settings.getString(application.getString(R.string.pref_grid_userscale), application.getResources().getString(R.string.def_grid_userscale)));
 			int distanceIdx = Integer.parseInt(settings.getString(application.getString(R.string.pref_grid_userunit), "0"));
 			grid.spacing *= Double.parseDouble(application.getResources().getStringArray(R.array.distance_factors_short)[distanceIdx]);
@@ -261,7 +286,7 @@ public class OverlayManager
 			grGridOverlay = ogo;
 		}
 	}
-	
+
 	public void clear()
 	{
 		setNavigationOverlayEnabled(false);
@@ -290,7 +315,7 @@ public class OverlayManager
 
 		mapObjectsOverlay.onBeforeDestroy();
 		waypointsOverlay.onBeforeDestroy();
-		
+
 		mapObjectsOverlay = null;
 		waypointsOverlay = null;
 	}

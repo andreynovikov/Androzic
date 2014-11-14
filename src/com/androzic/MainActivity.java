@@ -478,6 +478,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 				application.removeWaypoint(waypoint);
 				application.saveWaypoints(wptset);
 				sendBroadcast(new Intent(Androzic.BROADCAST_WAYPOINT_REMOVED));
+				application.getMapHolder().refreshMap();
 			}
 		}).setNegativeButton(R.string.no, null).show();
 	}

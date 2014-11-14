@@ -845,6 +845,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
+	public void refreshMap()
+	{
+		if (map == null)
+			return;
+		map.refreshMap();
+	}
+
+	@Override
 	public void conditionsChanged()
 	{
 		if (map == null)
@@ -1170,14 +1178,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			{
 				double[] aloc = application.getMapCenter();
 				application.routeEditingWaypoints.push(application.editingRoute.addWaypoint("RWPT" + application.editingRoute.length(), aloc[0], aloc[1]));
-				map.refreshMap();
+				refreshMap();
 				break;
 			}
 			case R.id.insertpoint:
 			{
 				double[] iloc = application.getMapCenter();
 				application.routeEditingWaypoints.push(application.editingRoute.insertWaypoint("RWPT" + application.editingRoute.length(), iloc[0], iloc[1]));
-				map.refreshMap();
+				refreshMap();
 				break;
 			}
 			case R.id.removepoint:
@@ -1185,7 +1193,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				if (!application.routeEditingWaypoints.empty())
 				{
 					application.editingRoute.removeWaypoint(application.routeEditingWaypoints.pop());
-					map.refreshMap();
+					refreshMap();
 				}
 				break;
 			}
@@ -1279,7 +1287,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				int wpt = application.addWaypoint(waypoint);
 				waypoint.name = "WPT" + wpt;
 				application.saveDefaultWaypoints();
-				map.refreshMap();
+				refreshMap();
 				return true;
 			case R.id.action_follow:
 				setFollowing(!following);

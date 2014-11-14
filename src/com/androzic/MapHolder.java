@@ -16,6 +16,10 @@ public interface MapHolder
 	 * Called when location, zoom or other map conditions that need redraw have changed
 	 */
 	void conditionsChanged();
+	/**
+	 * Called to force map refresh
+	 */
+	void refreshMap();
 	void updateCoordinates(double[] latlon);
 	void updateFileInfo();
 
