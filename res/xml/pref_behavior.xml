@@ -40,6 +40,11 @@
         android:key="@string/pref_mapadjacent"
         android:summary="@string/pref_mapadjacent_summary"
         android:title="@string/pref_mapadjacent_title" />
+    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+        android:defaultValue="@bool/def_maplistscale"
+        android:key="@string/pref_maplistscale"
+        android:summary="@string/pref_maplistscale_summary"
+        android:title="@string/pref_maplistscale_title" />
     <CheckBoxPreference
         android:defaultValue="@bool/def_mapfollowonloc"
         android:key="@string/pref_mapfollowonloc"

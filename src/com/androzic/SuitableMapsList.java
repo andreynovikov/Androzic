@@ -5,10 +5,13 @@ import java.util.List;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.androzic.map.Map;
+import com.androzic.map.OnMapActionListener;
 
 public class SuitableMapsList extends DialogFragment implements OnItemClickListener
 {
@@ -49,7 +53,7 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View view = inflater.inflate(R.layout.dlg_suitable_maps_list, container);
+		View view = inflater.inflate(R.layout.dlg_suitable_maps_list, container, false);
 		listView = (ListView) view.findViewById(android.R.id.list);
 		View infoButton = view.findViewById(R.id.information_button);
 		infoButton.setOnClickListener(onMapInformation);
@@ -114,12 +118,22 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 		private Context mContext;
 		private LayoutInflater mInflater;
 		private int mItemLayout;
+		private double ppcm;
 
 		public SuitableMapListAdapter(Context context)
 		{
 			mContext = context;
 			mItemLayout = R.layout.list_item_suitable_map;
 			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+			Resources resources = getResources();
+			boolean scaleInMeters = settings.getBoolean(getString(R.string.pref_maplistscale), resources.getBoolean(R.bool.def_maplistscale));
+			
+			DisplayMetrics metrics = resources.getDisplayMetrics();
+			ppcm = metrics.xdpi / 2.54;
+			if (!scaleInMeters)
+				ppcm *= 100;
 		}
 
 		@Override
@@ -156,7 +170,10 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 			TextView title = (TextView) v.findViewById(R.id.name);
 			title.setText(map.title);
 			TextView scale = (TextView) v.findViewById(R.id.scale);
-			scale.setText(String.format("%.0f%% (%.0f)", 100 * currentMap.mpp / map.mpp, map.mpp));
+			int mpcm = (int) (map.mpp * ppcm);
+			double pct = 100 * currentMap.mpp / map.mpp;
+			String fmt = pct < 0.1 ? "1:%,d (%.2f%%)" : pct < 1 ? "1:%,d (%.1f%%)" : "1:%,d (%.0f%%)";
+			scale.setText(String.format(fmt, mpcm, pct));
 			TextView path = (TextView) v.findViewById(R.id.filename);
 			if (map.mappath != null)
 			{
@@ -199,6 +216,8 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 		@Override
 		public void onClick(View v)
 		{
+			mapActionsCallback.onMapDetails(currentMap);
+			dismiss();
 		}
 	};
 
