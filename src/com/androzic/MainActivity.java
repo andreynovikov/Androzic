@@ -62,6 +62,8 @@ import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
 import com.androzic.map.Map;
+import com.androzic.map.MapInformation;
+import com.androzic.map.OnMapActionListener;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteList;
@@ -481,6 +483,14 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 				application.getMapHolder().refreshMap();
 			}
 		}).setNegativeButton(R.string.no, null).show();
+	}
+
+	@Override
+	public void onMapDetails(Map map)
+	{
+		//TODO Should show any map information, not only current
+        MapInformation mapInformation = (MapInformation) Fragment.instantiate(this, MapInformation.class.getName());
+		addFragment(mapInformation, "map_information");
 	}
 
 	@Override

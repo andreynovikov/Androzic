@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -22,24 +22,24 @@ package com.androzic.map;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.androzic.Androzic;
 import com.androzic.R;
 
-public class MapInformation extends Activity
+public class MapInformation extends Fragment
 {
-	private TextView information;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_mapinfo);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		View view = inflater.inflate(R.layout.act_mapinfo, container, false);
         
-		Androzic application = (Androzic) getApplication();
+		Androzic application = Androzic.getApplication();
 
         List<String> info = application.getCurrentMap().info();
 
@@ -50,26 +50,9 @@ public class MapInformation extends Activity
             sb.append("\n");
         }
 
-		information = (TextView) findViewById(R.id.mapinfo);
+        TextView information = (TextView) view.findViewById(R.id.mapinfo);
 		information.setText(sb);
+		
+		return view;
     }
-    
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-	}
-
-	@Override
-	protected void onPause()
-	{
-		super.onPause();
-	}
-
-	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-	}
-
 }
