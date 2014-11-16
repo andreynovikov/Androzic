@@ -78,7 +78,6 @@ import com.androzic.data.Waypoint;
 import com.androzic.location.LocationService;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
-import com.androzic.route.RouteDetails;
 import com.androzic.route.RouteEdit;
 import com.androzic.util.Astro;
 import com.androzic.util.Clipboard;
@@ -1293,7 +1292,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				setFollowing(!following);
 				return true;
 			case R.id.action_navigation_details:
-				startActivity(new Intent(getActivity(), RouteDetails.class).putExtra("index", application.getRouteIndex(application.navigationService.navRoute)).putExtra("nav", true));
+				routeActionsCallback.onRouteDetails(application.navigationService.navRoute);
 				return true;
 			case R.id.action_next_nav_point:
 				application.navigationService.nextRouteWaypoint();

@@ -31,6 +31,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.internal.view.SupportMenuInflater;
@@ -224,8 +225,10 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 			case R.id.action_view:
     			route.show = true;
 				waypointActionsCallback.onWaypointView(route.getWaypoint(selectedKey));
-				// "Close" fragment
-				getFragmentManager().popBackStack();
+				//TODO Sometimes we have to close it manually, sometimes not. Should investigate it.
+				FragmentManager fm = getFragmentManager();
+				if (fm != null)
+					fm.popBackStack();
 				return true;
 			case R.id.action_navigate:
 				if (navigation)
