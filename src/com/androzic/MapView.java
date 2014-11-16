@@ -305,8 +305,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
 		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
 		calculateScaleBar();
-		recreateBuffers = true;
 		setLookAhead(lookAheadPst);
+		recreateBuffers = true;
 		refreshBuffer();
 	}
 
@@ -317,6 +317,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
 		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
 		calculateScaleBar();
+		setLookAhead(lookAheadPst);
 		recreateBuffers = true;
 		refreshBuffer();
 		
@@ -1057,6 +1058,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		final int h = getHeight();
 		final int half = w > h ? h / 2 : w / 2;
 		lookAhead = (int) (half * ahead * 0.01);
+		setLookAhead();
 	}
 
 	/**
