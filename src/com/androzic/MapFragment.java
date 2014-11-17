@@ -517,7 +517,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				lastGeoid = application.gpsGeoid;
 			}
 
-			if (application.shouldEnableFollowing)
+			if (application.shouldEnableFollowing && map.isFixed())
 			{
 				application.shouldEnableFollowing = false;
 				if (followOnLocation)
