@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -129,7 +130,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public int sunriseType = 0;
 
 	private List<TileProvider> onlineMaps;
-	private OnlineMap onlineMap;
 	private MapIndex maps;
 	private List<Map> suitableMaps;
 	private List<Map> coveringMaps;
@@ -1289,34 +1289,33 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return false;
 	}
 	
-	public void setOnlineMap(String provider)
+	public void setOnlineMaps(String providers)
 	{
 		if (onlineMaps == null || maps == null)
 			return;
+
+		List<String> selectedProviders = Arrays.asList(providers.split("\\|"));
+		byte zoom = (byte) PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.pref_onlinemapscale), getResources().getInteger(R.integer.def_onlinemapscale));
+
 		for (TileProvider map : onlineMaps)
 		{
-			if (provider.equals(map.code))
+			boolean s = currentMap == map.instance;
+			if (map.instance != null && !selectedProviders.contains(map.code))
 			{
-				boolean s = currentMap == onlineMap;
-				if (onlineMap != null)
-					maps.removeMap(onlineMap);
-				byte zoom = (byte) PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.pref_onlinemapscale), getResources().getInteger(R.integer.def_onlinemapscale));
-				onlineMap = new OnlineMap(map, zoom);
-				maps.addMap(onlineMap);
+				maps.removeMap(map.instance);
 				if (s)
-					setMap(onlineMap);
+				{
+					updateLocationMaps(true, true);
+					map.instance.deactivate();
+				}
+				map.instance = null;
 			}
-		}
-	}
-	
-	public void removeOnlineMap()
-	{
-		maps.removeMap(onlineMap);
-		if (currentMap == onlineMap)
-		{
-			updateLocationMaps(true, true);
-			onlineMap.deactivate();
-			onlineMap = null;
+			if (selectedProviders.contains(map.code) && map.instance == null)
+			{
+				OnlineMap onlineMap = new OnlineMap(map, zoom);
+				maps.addMap(onlineMap);
+				map.instance = onlineMap;
+			}
 		}
 	}
 	
@@ -1951,20 +1950,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				
 		// Online maps
 		onlineMaps = new ArrayList<TileProvider>();
-		boolean useOnline = settings.getBoolean(getString(R.string.pref_useonlinemap), getResources().getBoolean(R.bool.def_useonlinemap));
-		String current = settings.getString(getString(R.string.pref_onlinemap), getResources().getString(R.string.def_onlinemap));
 		byte zoom = (byte) settings.getInt(getString(R.string.pref_onlinemapscale), getResources().getInteger(R.integer.def_onlinemapscale));
-		TileProvider curProvider = null;
-		String[] om = this.getResources().getStringArray(R.array.online_maps);
+		String[] om = getResources().getStringArray(R.array.online_maps);
 		for (String s : om)
 		{
 			TileProvider provider = TileProvider.fromString(s);
 			if (provider != null)
-			{
 				onlineMaps.add(provider);
-				if (current.equals(provider.code))
-					curProvider = provider;
-			}
 		}
 		File mapproviders = new File(rootPath, "providers.dat");
 		if (mapproviders.exists())
@@ -1980,11 +1972,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			    		continue;
 					TileProvider provider = TileProvider.fromString(line);
 					if (provider != null)
-					{
 						onlineMaps.add(provider);
-				        if (current.equals(provider.code))
-					        curProvider = provider;
-					}
 				}
 			    reader.close();
 			}
@@ -1993,13 +1981,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				e.printStackTrace();
 			}
 		}
-		if (useOnline && ! onlineMaps.isEmpty())
-		{
-			if (curProvider == null)
-				curProvider = onlineMaps.get(0);
-			onlineMap = new OnlineMap(curProvider, zoom);
-			maps.addMap(onlineMap);
-		}
+		setOnlineMaps(settings.getString(getString(R.string.pref_onlinemap), getResources().getString(R.string.def_onlinemap)));
 		suitableMaps = new ArrayList<Map>();
 		coveredAll = true;
 		coveringBestMap = true;
@@ -2285,17 +2267,9 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			overlayManager.initGrids(currentMap);
 		}
-		else if (getString(R.string.pref_useonlinemap).equals(key))
-		{
-			boolean online = sharedPreferences.getBoolean(key, false);
-			if (online)
-				setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
-			else
-				removeOnlineMap();
-		}
 		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
 		{
-			setOnlineMap(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
+			setOnlineMaps(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
 		}
 		else if (getString(R.string.pref_mapadjacent).equals(key))
 		{
