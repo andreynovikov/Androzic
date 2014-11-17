@@ -161,6 +161,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	{
 		public double[] mapCenter;
 		public int[] mapCenterXY;
+		/**
+		 * Current GPS location. If location is not available, coordinates are set to Double.NaN.
+		 */
 		public double[] location;
 		public int[] locationXY;
 		public int width;

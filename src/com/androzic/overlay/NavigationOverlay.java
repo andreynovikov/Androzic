@@ -78,7 +78,7 @@ public class NavigationOverlay extends MapOverlay
 
 		int[] xy = application.getXYbyLatLon(application.navigationService.navWaypoint.latitude, application.navigationService.navWaypoint.longitude);
 
-        if (viewport.location != null)
+        if (!Double.isNaN(viewport.location[0]))
         {
             final int[] lxy = viewport.locationXY;
         	c.drawLine(lxy[0] - cxy[0], lxy[1] - cxy[1], xy[0] - cxy[0], xy[1] - cxy[1], paint);

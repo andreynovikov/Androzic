@@ -72,7 +72,7 @@ public class AccuracyOverlay extends MapOverlay
 	{
 		final int[] cxy = viewport.mapCenterXY;
 
-		if (radius > 0 && viewport.location != null)
+		if (radius > 0 && !Double.isNaN(viewport.location[0]))
 		{
 			c.drawCircle(viewport.locationXY[0] - cxy[0], viewport.locationXY[1] - cxy[1], radius, paint);
 		}
