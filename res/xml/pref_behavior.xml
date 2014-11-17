@@ -55,27 +55,20 @@
         android:title="@string/pref_unfollowontap_title" />
 
     <PreferenceCategory android:title="@string/pref_onlinemaps_title" >
-        <CheckBoxPreference
-            android:defaultValue="@bool/def_useonlinemap"
-            android:key="@string/pref_useonlinemap"
-            android:title="@string/pref_useonlinemap_title" />
-
-        <ListPreference
+        <org.droidparts.widget.MultiSelectListPreference
             android:defaultValue="osm"
-            android:dependency="@string/pref_useonlinemap"
             android:dialogTitle="@string/pref_onlinemap_title"
             android:key="@string/pref_onlinemap"
             android:summary="@string/pref_onlinemap_summary"
             android:title="@string/pref_onlinemap_title" />
 
         <com.androzic.ui.preference.HelpfulSeekbarPreference
-            android:dependency="@string/pref_useonlinemap"
             android:key="@string/pref_onlinemapscale"
             android:summary="@string/pref_onlinemapscale_summary"
             android:title="@string/pref_onlinemapscale_title"
             androzic:defaultValue="@integer/def_onlinemapscale"
             androzic:format="0"
-            androzic:max="18"
+            androzic:max="19"
             androzic:min="1" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_grid_title" >

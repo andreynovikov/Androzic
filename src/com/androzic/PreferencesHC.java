@@ -23,9 +23,11 @@ package com.androzic;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.droidparts.widget.MultiSelectListPreference;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -713,30 +715,33 @@ public class PreferencesHC extends ListFragment
 				SeekbarPreference mapzoom = (SeekbarPreference) findPreference(getString(R.string.pref_onlinemapscale));
 				List<TileProvider> providers = application.getOnlineMaps();
 				String current = sharedPreferences.getString(key, getResources().getString(R.string.def_onlinemap));
-				TileProvider curProvider = null;
+				List<String> curProviders = Arrays.asList(current.split("\\|"));
+				int minZoom = 1;
+				int maxZoom = 19;
 				for (TileProvider provider : providers)
 				{
-					if (current.equals(provider.code))
-						curProvider = provider;
+					if (curProviders.contains(provider.code))
+					{
+						if (provider.minZoom > minZoom)
+							minZoom = provider.minZoom;
+						if (provider.maxZoom < maxZoom)
+							maxZoom = provider.maxZoom;
+					}
 				}
-				if (curProvider != null)
+				mapzoom.setMin(minZoom);
+				mapzoom.setMax(maxZoom);
+				int zoom = sharedPreferences.getInt(getString(R.string.pref_onlinemapscale), getResources().getInteger(R.integer.def_onlinemapscale));
+				if (zoom < minZoom)
 				{
-					mapzoom.setMin(curProvider.minZoom);
-					mapzoom.setMax(curProvider.maxZoom);
-					int zoom = sharedPreferences.getInt(getString(R.string.pref_onlinemapscale), getResources().getInteger(R.integer.def_onlinemapscale));
-					if (zoom < curProvider.minZoom)
-					{
-						SharedPreferences.Editor editor = sharedPreferences.edit();
-						editor.putInt(getString(R.string.pref_onlinemapscale), curProvider.minZoom);
-						editor.commit();
-
-					}
-					if (zoom > curProvider.maxZoom)
-					{
-						SharedPreferences.Editor editor = sharedPreferences.edit();
-						editor.putInt(getString(R.string.pref_onlinemapscale), curProvider.maxZoom);
-						editor.commit();
-					}
+					SharedPreferences.Editor editor = sharedPreferences.edit();
+					editor.putInt(getString(R.string.pref_onlinemapscale), minZoom);
+					editor.commit();
+				}
+				if (zoom > maxZoom)
+				{
+					SharedPreferences.Editor editor = sharedPreferences.edit();
+					editor.putInt(getString(R.string.pref_onlinemapscale), maxZoom);
+					editor.commit();
 				}
 			}
 			if (key.equals(getString(R.string.pref_locale)))
@@ -758,6 +763,23 @@ public class PreferencesHC extends ListFragment
 
 		private void setPrefSummary(Preference pref)
 		{
+			if (pref instanceof MultiSelectListPreference)
+			{
+				CharSequence[] summaries = ((MultiSelectListPreference) pref).getCheckedEntries();
+				if (summaries != null)
+				{
+					StringBuffer summary = new StringBuffer("");
+					for (int i = 0; i < summaries.length; i++)
+					{
+						summary.append(summaries[i]);
+						if (i < summaries.length - 1)
+						{
+							summary.append(", ");
+						}
+					}
+					pref.setSummary(summary);
+				}
+			}
 			if (pref instanceof ListPreference)
 			{
 				CharSequence summary = ((ListPreference) pref).getEntry();
@@ -830,7 +852,7 @@ public class PreferencesHC extends ListFragment
 		{
 			Androzic application = (Androzic) getActivity().getApplication();
 
-			ListPreference maps = (ListPreference) findPreference(getString(R.string.pref_onlinemap));
+			MultiSelectListPreference maps = (MultiSelectListPreference) findPreference(getString(R.string.pref_onlinemap));
 			SeekbarPreference mapzoom = (SeekbarPreference) findPreference(getString(R.string.pref_onlinemapscale));
 			// initialize map list
 			List<TileProvider> providers = application.getOnlineMaps();

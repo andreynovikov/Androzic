@@ -249,10 +249,8 @@
     <string name="pref_plugins_title">Plugins</string>
     <string name="pref_advanced_title">Advanced</string>
 	<string name="pref_usemapindex_title">Use map index</string>
-	<string name="pref_useonlinemap_title">Use online map</string>
-	<string name="pref_onlinemaps_title">Online map</string>
-	<string name="pref_onlinemap_title">Map provider</string>
-	<string name="pref_onlinemap_summary">Source of the online map</string>
+	<string name="pref_onlinemaps_title">Online maps</string>
+	<string name="pref_onlinemap_title">Map providers</string>
 	<string name="pref_onlinemapscale_title">Default zoom level</string>
 	<string name="pref_onlinemapscale_summary">Zoom level that will be interpreted as 100%</string>
     <string name="pref_loc_title">Location</string>
