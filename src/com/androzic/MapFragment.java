@@ -844,6 +844,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
+	public void onTileObtained()
+	{
+		refreshMap();
+	}
+
+	@Override
 	public void refreshMap()
 	{
 		if (map == null)

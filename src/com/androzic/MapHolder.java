@@ -2,8 +2,9 @@ package com.androzic;
 
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
+import com.androzic.map.OnMapTileStateChangeListener;
 
-public interface MapHolder
+public interface MapHolder extends OnMapTileStateChangeListener
 {
 	MapView getMapView();
 	void setFollowing(boolean follow);

@@ -230,6 +230,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				uiHandler.post(new MapActivationError(currentMap, e));
 			}
 		}
+
+		for (TileProvider map : onlineMaps)
+		{
+			if (map.instance != null)
+				map.listener = mapHolder;
+		}
+
 		overlayManager.initGrids(currentMap);
 	}
 	
@@ -1309,12 +1316,14 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					map.instance.deactivate();
 				}
 				map.instance = null;
+				map.listener = null;
 			}
 			if (selectedProviders.contains(map.code) && map.instance == null)
 			{
 				OnlineMap onlineMap = new OnlineMap(map, zoom);
 				maps.addMap(onlineMap);
 				map.instance = onlineMap;
+				map.listener = mapHolder;
 			}
 		}
 	}
@@ -1950,7 +1959,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				
 		// Online maps
 		onlineMaps = new ArrayList<TileProvider>();
-		byte zoom = (byte) settings.getInt(getString(R.string.pref_onlinemapscale), getResources().getInteger(R.integer.def_onlinemapscale));
 		String[] om = getResources().getStringArray(R.array.online_maps);
 		for (String s : om)
 		{
@@ -2461,6 +2469,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
 		editor.commit();
 		
+		setOnlineMaps("");
+		onlineMaps = null;
 		mapHolder = null;
 		currentMap = null;
 		suitableMaps = null;
