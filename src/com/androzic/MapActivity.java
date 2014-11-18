@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.londatiga.android.QuickAction3D;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,14 +39,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.androzic.data.Track;
-import com.androzic.data.Waypoint;
-import com.androzic.map.MapInformation;
 import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.StringFormatter;
@@ -80,20 +75,16 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 	protected SeekBar trackBar;
 	protected TextView waitBar;
 	protected MapView map;
-	protected QuickAction3D wptQuickAction;
 
 	protected Androzic application;
 
 	protected ExecutorService executorThread = Executors.newSingleThreadExecutor();
-
-	private int waypointSelected = -1;
 
 	public NavigationService navigationService = null;
 
 	protected long lastRenderTime = 0;
 	protected long lastMagnetic = 0;
 
-	private boolean isFullscreen;
 	LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF555555);
 
 	protected boolean ready = false;
@@ -109,7 +100,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		Log.e(TAG, "onCreate()");
 
 		ready = false;
-		isFullscreen = false;
 
 		application = (Androzic) getApplication();
 
@@ -251,23 +241,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 	}
 
-	public boolean waypointTapped(Waypoint waypoint, int x, int y)
-	{
-		try
-		{
-			if (application.editingRoute != null)
-			{
-				waypointSelected = application.getWaypointIndex(waypoint);
-				wptQuickAction.show(map, x, y);
-			}
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
-		return true;
-	}
-
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu)
 	{
@@ -284,12 +257,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 	{
 		switch (item.getItemId())
 		{
-			case R.id.menuMapInfo:
-				startActivity(new Intent(this, MapInformation.class));
-				return true;
-			case R.id.menuAllMaps:
-				startActivityForResult(new Intent(this, MapList.class), RESULT_LOAD_MAP);
-				return true;
 			case R.id.menuSetAnchor:
 				if (showDistance > 0)
 				{
@@ -359,20 +326,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 	{
 		switch (v.getId())
 		{
-			case R.id.expand:
-				ImageButton expand = (ImageButton) findViewById(R.id.expand);
-				if (isFullscreen)
-				{
-					getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-					expand.setImageDrawable(getResources().getDrawable(R.drawable.expand));
-				}
-				else
-				{
-					getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-					expand.setImageDrawable(getResources().getDrawable(R.drawable.collapse));
-				}
-				isFullscreen = !isFullscreen;
-				break;
 			case R.id.cutbefore:
 				//application.editingTrack.cutBefore(trackBar.getProgress());
 				int nb = application.editingTrack.getAllPoints().size() - 1;

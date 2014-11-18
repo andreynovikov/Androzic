@@ -69,6 +69,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	private WaypointListAdapter adapter;
 	private int selectedKey;
 	private Drawable selectedBackground;
+	private int accentColor;
     
 	private Route route;
 	private boolean navigation;
@@ -86,6 +87,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
+		accentColor = getResources().getColor(R.color.theme_accent_color);
 	}
 
 	@Override
@@ -201,12 +203,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 		v.setTag("selected");
 		selectedKey = position;
 		selectedBackground = v.getBackground();
-		int l = v.getPaddingLeft();
-		int t = v.getPaddingTop();
-		int r = v.getPaddingRight();
-		int b = v.getPaddingBottom();
-		v.setBackgroundResource(R.drawable.list_selector_background_focus);
-		v.setPadding(l, t, r, b);
+		v.setBackgroundColor(accentColor);
 		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
 		MenuBuilder menu = new MenuBuilder(getActivity());
 		menu.setCallback(this);

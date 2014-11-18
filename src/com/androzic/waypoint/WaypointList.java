@@ -81,6 +81,7 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 
 	private int selectedKey;
 	private Drawable selectedBackground;
+	private int accentColor;
 
 	private int mSortMode = -1;
 
@@ -90,6 +91,7 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
+		accentColor = getResources().getColor(R.color.theme_accent_color);
 	}
 
 	@Override
@@ -157,12 +159,7 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 		v.setTag("selected");
 		selectedKey = position;
 		selectedBackground = v.getBackground();
-		int l = v.getPaddingLeft();
-		int t = v.getPaddingTop();
-		int r = v.getPaddingRight();
-		int b = v.getPaddingBottom();
-		v.setBackgroundResource(R.drawable.list_selector_background_focus);
-		v.setPadding(l, t, r, b);
+		v.setBackgroundColor(accentColor);
 		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
 		MenuBuilder menu = new MenuBuilder(getActivity());
 		menu.setCallback(this);

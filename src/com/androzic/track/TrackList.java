@@ -73,12 +73,15 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 	private TrackListAdapter adapter;
 	private int selectedKey;
 	private Drawable selectedBackground;
+	private int accentColor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
+		setHasOptionsMenu(true);
+		accentColor = getResources().getColor(R.color.theme_accent_color);
 	}
 	
 	@Override
@@ -91,7 +94,6 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
 
 		TextView emptyView = (TextView) getListView().getEmptyView();
 		if (emptyView != null)
@@ -192,12 +194,7 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 		v.setTag("selected");
 		selectedKey = position;
 		selectedBackground = v.getBackground();
-		int l = v.getPaddingLeft();
-		int t = v.getPaddingTop();
-		int r = v.getPaddingRight();
-		int b = v.getPaddingBottom();
-		v.setBackgroundResource(R.drawable.list_selector_background_focus);
-		v.setPadding(l, t, r, b);
+		v.setBackgroundColor(accentColor);
 		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
 		MenuBuilder menu = new MenuBuilder(getActivity());
 		menu.setCallback(this);
