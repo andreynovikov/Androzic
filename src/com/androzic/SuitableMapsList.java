@@ -117,13 +117,11 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 	{
 		private Context mContext;
 		private LayoutInflater mInflater;
-		private int mItemLayout;
 		private double ppcm;
 
 		public SuitableMapListAdapter(Context context)
 		{
 			mContext = context;
-			mItemLayout = R.layout.list_item_suitable_map;
 			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
@@ -160,7 +158,7 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 			View v;
 			if (convertView == null)
 			{
-				v = mInflater.inflate(mItemLayout, parent, false);
+				v = mInflater.inflate(R.layout.list_item_suitable_map, parent, false);
 			}
 			else
 			{
@@ -234,6 +232,8 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 		@Override
 		public void onClick(View v)
 		{
+			mapActionsCallback.onOpenMap();
+			dismiss();
 		}
 	};
 }

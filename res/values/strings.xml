@@ -161,7 +161,9 @@
 	<string name="from_start">From</string>
 	<string name="start_to_end">to</string>
 	<string name="drag">drag</string>
-
+	<string name="online_maps">Online maps</string>
+	<string name="sas_maps">SAS.Planet maps</string>
+	
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>
     <string name="upto">Up to %.0f meters</string>
@@ -224,6 +226,7 @@
 	<string name="menu_about">About</string>
 	<string name="menu_maps">Maps</string>
 	<string name="menu_map">Map</string>
+	<string name="menu_folder">Folder</string>
 	<string name="menu_all">All</string>
 	<string name="menu_atcursor">At cursor</string>
 	<string name="menu_preferences">Settings</string>

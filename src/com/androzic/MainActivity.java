@@ -486,6 +486,13 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	}
 
 	@Override
+	public void onOpenMap()
+	{
+        MapList mapList = (MapList) Fragment.instantiate(this, MapList.class.getName());
+		addFragment(mapList, "map_list");
+	}
+
+	@Override
 	public void onMapDetails(Map map)
 	{
 		//TODO Should show any map information, not only current
