@@ -60,7 +60,7 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 
 	ViewGroup dialogView;
 	ListView listView;
-	ProgressBar spinner;
+	ProgressBar progressBar;
 
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
 	final Handler handler = new Handler();
@@ -90,7 +90,7 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 		builder.setView(dialogView);
 
 		listView = (ListView) dialogView.findViewById(android.R.id.list);
-		spinner = (ProgressBar) dialogView.findViewById(R.id.loading_spinner);
+		progressBar = (ProgressBar) dialogView.findViewById(R.id.loading_spinner);
 		listView.setOnItemClickListener(this);
 
 		shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -104,7 +104,7 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 		super.onResume();
 		
 		listView.setVisibility(View.GONE);
-		spinner.setVisibility(View.VISIBLE);
+		progressBar.setVisibility(View.VISIBLE);
 		
 		threadPool.execute(new Runnable() {
 			public void run()
@@ -205,8 +205,8 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 	@SuppressLint("NewApi")
 	private void crossfade(boolean direct)
 	{
-		final View from = direct ? spinner : listView;
-		final View to = direct ? listView : spinner;
+		final View from = direct ? progressBar : listView;
+		final View to = direct ? listView : progressBar;
 
 		if (!direct)
 		{

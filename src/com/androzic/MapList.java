@@ -28,15 +28,19 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -47,6 +51,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.androzic.map.Map;
@@ -57,25 +62,32 @@ import com.androzic.map.sas.SASMap;
 public class MapList extends ListFragment
 {
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
-	final Handler handler = new Handler();
+	private final Handler handler = new Handler();
 
 	private OnMapActionListener mapActionsCallback;
 	private MapListAdapter adapter;
-	TreeNode<Map> mapsTree = new TreeNode<Map>();
-	TreeNode<Map> currentTree;
+	private TreeNode<Map> mapsTree = new TreeNode<Map>();
+	private MapComparator mapComparator = new MapComparator();
+	private TreeNode<Map> currentTree;
+	private ProgressBar progressBar;
+	private int shortAnimationDuration;
+	private CharSequence oldTitle;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
+		shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 		currentTree = mapsTree;
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View view = inflater.inflate(R.layout.list_with_empty_view, container, false);
+		View view = inflater.inflate(R.layout.list_with_empty_view_and_progressbar, container, false);
+		
+		progressBar = (ProgressBar) view.findViewById(R.id.progressbar);
 
 		view.setFocusableInTouchMode(true);
 		view.requestFocus();
@@ -83,9 +95,8 @@ public class MapList extends ListFragment
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
-				if (keyCode == KeyEvent.KEYCODE_BACK)
+				if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK)
 				{
-					//TODO It goes back to top level
 					if (currentTree != mapsTree)
 					{
 						currentTree = currentTree.parent;
@@ -108,9 +119,11 @@ public class MapList extends ListFragment
 
 		TextView emptyView = (TextView) getListView().getEmptyView();
 		if (emptyView != null)
-			emptyView.setText(R.string.msg_empty_track_list);
+			emptyView.setText(R.string.msg_empty_map_list);
 
-		adapter = new MapListAdapter(getActivity());
+		Activity activity = getActivity();
+
+		adapter = new MapListAdapter(activity);
 		setListAdapter(adapter);
 	}
 	
@@ -135,8 +148,23 @@ public class MapList extends ListFragment
 	public void onResume()
 	{
 		super.onResume();
+		ActionBarActivity activity = (ActionBarActivity) getActivity();
+		if (oldTitle == null)
+			oldTitle = activity.getSupportActionBar().getTitle();
+		activity.getSupportActionBar().setTitle(R.string.maplist_name);
 		populateItems();
 		adapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		if (oldTitle != null)
+		{
+			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
+			oldTitle = null;
+		}
 	}
 
 	@Override
@@ -152,13 +180,46 @@ public class MapList extends ListFragment
 		boolean useIndex = settings.getBoolean(getString(R.string.pref_usemapindex), getResources().getBoolean(R.bool.def_usemapindex));
 		menu.findItem(R.id.action_reset_index).setEnabled(useIndex);
 	}
+	
+	@SuppressLint("NewApi")
+	private void crossfade(boolean direct)
+	{
+		View listView = adapter.getCount() > 0 ? getListView() : getListView().getEmptyView();
+		final View from = direct ? progressBar : listView;
+		final View to = direct ? listView : progressBar;
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1)
+		{
+			from.setVisibility(View.GONE);
+			to.setVisibility(View.VISIBLE);
+		}
+		else
+		{
+			// Set the content view to 0% opacity but visible, so that it is visible
+			// (but fully transparent) during the animation.
+			to.setAlpha(0f);
+			to.setVisibility(View.VISIBLE);
+	
+			// Animate the content view to 100% opacity, and clear any animation
+			// listener set on the view.
+			to.animate().alpha(1f).setDuration(shortAnimationDuration).setListener(null);
+	
+			// Animate the loading view to 0% opacity. After the animation ends,
+			// set its visibility to GONE as an optimization step (it won't
+			// participate in layout passes, etc.)
+			from.animate().alpha(0f).setDuration(shortAnimationDuration).setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation)
+				{
+					from.setVisibility(View.GONE);
+				}
+			});
+		}
+	}
 
 	private void populateItems()
 	{
-		final ProgressDialog pd = new ProgressDialog(getActivity());
-		pd.setIndeterminate(true);
-		pd.setMessage(getString(R.string.msg_wait)); 
-		pd.show();
+		crossfade(false);
 		
 		new Thread(new Runnable() 
 		{
@@ -202,11 +263,10 @@ public class MapList extends ListFragment
 						folder.addChild(components[components.length - 1], map);
 					}
 					
-					mapsTree.sort(new MapComparator());
+					mapsTree.sort(mapComparator);
 					currentTree = mapsTree;
 				}
 
-				pd.dismiss(); 
 				handler.post(updateResults);
 			} 
 		}).start(); 
@@ -225,6 +285,7 @@ public class MapList extends ListFragment
 		public void run() 
         {
 			adapter.notifyDataSetChanged();
+			crossfade(true);
         }
 	};
 
@@ -239,6 +300,7 @@ public class MapList extends ListFragment
 		}
 		else
 		{
+			item.sort(mapComparator);
 			currentTree = item;
 			adapter.notifyDataSetChanged();
 		}
@@ -250,11 +312,10 @@ public class MapList extends ListFragment
 		switch (item.getItemId())
 		{
 			case R.id.action_reset_index:
-				//TODO Show intermediate in the toolbar instead
-				final ProgressDialog pd = new ProgressDialog(getActivity());
-				pd.setIndeterminate(true);
-				pd.setMessage(getString(R.string.msg_initializingmaps));
-				pd.show();
+				crossfade(false);
+				mapsTree.clear();
+				currentTree = mapsTree;
+				adapter.notifyDataSetChanged();
 
 				new Thread(new Runnable() 
 				{ 
@@ -262,8 +323,6 @@ public class MapList extends ListFragment
 					{
 						Androzic application = Androzic.getApplication();
 						application.resetMaps();
-
-						pd.dismiss(); 
 						handler.post(updateList);
 					} 
 				}).start(); 
@@ -447,12 +506,18 @@ public class MapList extends ListFragment
 				return name.hashCode();
 		}
 
+		public void clear()
+		{
+			for (TreeNode<T> child : children)
+			{
+				child.clear();
+			}
+			children.clear();
+		}
+
 		public void sort(Comparator<TreeNode<T>> comparator)
 		{
-			//TODO Sort only current "folder"
 			Collections.sort(children, comparator);
-			for (TreeNode<T> child : children)
-				child.sort(comparator);
 		}
 	}
 
