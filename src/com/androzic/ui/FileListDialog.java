@@ -45,6 +45,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androzic.R;
@@ -86,11 +87,12 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(title);
-		dialogView = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.dlg_list, null);
+		dialogView = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.list_with_empty_view_and_progressbar, null);
 		builder.setView(dialogView);
 
 		listView = (ListView) dialogView.findViewById(android.R.id.list);
-		progressBar = (ProgressBar) dialogView.findViewById(R.id.loading_spinner);
+		progressBar = (ProgressBar) dialogView.findViewById(R.id.progressbar);
+
 		listView.setOnItemClickListener(this);
 
 		shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -148,6 +150,9 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 	final Runnable updateResults = new Runnable() {
 		public void run()
 		{
+			TextView emptyView = (TextView) dialogView.findViewById(android.R.id.empty);
+			emptyView.setText(R.string.msg_empty_map_list);
+			listView.setEmptyView(emptyView);
 			listView.setAdapter(new SimpleAdapter(getActivity(), fileData, android.R.layout.simple_list_item_2, new String[] { KEY_FILE, KEY_PATH }, new int[] { android.R.id.text1, android.R.id.text2 }));
 			crossfade(true);
 		}
