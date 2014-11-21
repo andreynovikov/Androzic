@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -112,6 +113,13 @@ public class TrackExportDialog extends DialogFragment implements TextWatcher
 		dialog.setTitle(R.string.exporttrack_name);
 		dialog.setCanceledOnTouchOutside(false);
 		return view;
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+		getDialog().getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 	}
 
 	@Override
