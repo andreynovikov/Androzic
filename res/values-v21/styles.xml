@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="SuitableMapsList">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+	</style>
+	<style name="GpsInfoDialog">
+	    <item name="android:padding">24dp</item>
+	</style>
+</resources>

@@ -38,6 +38,14 @@
             android:src="@drawable/ic_folder_open_white_24dp" />
     </LinearLayout>
 
-    <include layout="@layout/list_with_empty_view" />
+    <LinearLayout
+        style="@style/SuitableMapsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/theme_primary_darker_color"
+        android:orientation="vertical" >
+
+        <include layout="@layout/list_with_empty_view" />
+    </LinearLayout>
 
 </LinearLayout>
