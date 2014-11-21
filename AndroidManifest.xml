@@ -147,15 +147,8 @@
             android:name=".HSIActivity"
             android:label="@string/hsi_name" />
         <activity
-            android:name=".MapList"
-            android:label="@string/maplist_name"
-            android:theme="@style/Dialog" />
-        <activity
             android:name=".ErrorDialog"
             android:theme="@style/Dialog" />
-        <activity
-            android:name=".map.MapInformation"
-            android:label="@string/mapinformation_name" />
         <activity
             android:name=".ui.MarkerPickerActivity"
             android:exported="true"
