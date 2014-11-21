@@ -57,8 +57,10 @@
     <string name="msg_dedicated">Dedicated to my fair Olya</string>
     <string name="msg_nothing_found">Nothing was found. Please take into account that data is searched only if it is loaded in Androzic, named locations are searched only if Internet connection is available.</string>
     <string name="msg_empty_map_list">No maps available.</string>
-    <string name="msg_empty_route_list">No routes available. Use menu to create route or load it from file.</string>
-    <string name="msg_empty_track_list">No tracks available. Use menu to load track from file.</string>
+    <string name="msg_empty_waypoint_list">No waypoints available. You can create some or load them from file.</string>
+    <string name="msg_empty_route_list">No routes available. You can create route or load it from file.</string>
+    <string name="msg_empty_track_list">No tracks available. You can load track from file.</string>
+    <string name="msg_empty_file_list">No suitable files found in data folder.</string>
     <string name="msg_newdatafolder">On popular request Androzic now works with folders differently. You can freely select any folder for maps and data. Data folder is now unified for all data types: waypoints, tracks and routes. You have to copy your existing data files manually to the following autocreated folder: &#8216;%s&#8217;.</string>
     <string name="msg_expandcurrenttrack">If you have not cleared your current track for a long time this can significantly degrade performance. Proceed?</string>
     <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>

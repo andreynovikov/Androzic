@@ -95,10 +95,20 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 	}
 
 	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		return inflater.inflate(R.layout.list_with_empty_view, container, false);
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		
+
+		TextView emptyView = (TextView) getListView().getEmptyView();
+		if (emptyView != null)
+			emptyView.setText(R.string.msg_empty_waypoint_list);
+
 		FragmentActivity activity = getActivity();
 		
 		adapter = new WaypointListAdapter(activity);
