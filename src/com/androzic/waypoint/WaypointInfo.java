@@ -81,7 +81,8 @@ public class WaypointInfo extends DialogFragment implements OnClickListener
 	public Dialog onCreateDialog(Bundle savedInstanceState)
 	{
 		Dialog dialog = super.onCreateDialog(savedInstanceState);
-		dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+			dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
 		return dialog;
 	}
 
@@ -164,7 +165,7 @@ public class WaypointInfo extends DialogFragment implements OnClickListener
 		Dialog dialog = getDialog();
 		View view = getView();
 		
-		if (waypoint.drawImage)
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && waypoint.drawImage)
 		{
 			BitmapFactory.Options options = new BitmapFactory.Options();
             options.inScaled = false;
@@ -240,12 +241,14 @@ public class WaypointInfo extends DialogFragment implements OnClickListener
 			((TextView) view.findViewById(R.id.date)).setText(DateFormat.getDateFormat(activity).format(waypoint.date)+" "+DateFormat.getTimeFormat(activity).format(waypoint.date));
 		else
 			((TextView) view.findViewById(R.id.date)).setVisibility(View.GONE);
-		
-		if (icon != null)
-			dialog.setFeatureDrawable(Window.FEATURE_LEFT_ICON, icon);
-		else
-			dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_map);
-		
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+		{
+			if (icon != null)
+				dialog.setFeatureDrawable(Window.FEATURE_LEFT_ICON, icon);
+			else
+				dialog.setFeatureDrawableResource(Window.FEATURE_RIGHT_ICON, R.drawable.ic_place_white_24dp);
+		}
 		dialog.setTitle(waypoint.name);
 	}
 }
