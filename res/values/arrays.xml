@@ -67,6 +67,7 @@
 	<string-array name="exit_names">
 		<item>Double press Back</item>
 		<item>Confirmation dialog</item>
+		<item>Drawer menu item</item>
 		<item>Nothing</item>
     </string-array>
 	<string-array name="orientation_names">
@@ -90,9 +91,8 @@
     	<item>Color picker initial code</item>
     	<item>Seekbar preference initial code</item>
     	<item>Sunrise/sunset calculation</item>
-    	<item>Drag\'n\'drop list initial code</item>
     	<item>Multitouch controller</item>
-    	<item>Interface icons</item>
+    	<item>Drag sort list</item>
     	<item>Waypoint icons</item>
     	<item>Czech localization</item>
     	<item>French localization</item>
