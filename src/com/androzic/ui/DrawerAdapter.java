@@ -54,7 +54,7 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>
 	public boolean isEnabled(int position)
 	{
 		DrawerItem item = getItem(position);
-		return item.type == DrawerItem.ItemType.ACTION || item.type == DrawerItem.ItemType.FRAGMENT;
+		return item.type != DrawerItem.ItemType.DIVIDER;
 	}
 
 	@Override

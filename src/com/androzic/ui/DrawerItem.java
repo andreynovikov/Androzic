@@ -28,14 +28,15 @@ public class DrawerItem
 {
 	public static enum ItemType
 	{
-		DIVIDER, ACTION, FRAGMENT
+		DIVIDER, INTENT, FRAGMENT, ACTION
 	}
 	
 	public ItemType type;
 	public Drawable icon;
 	public String name;
 	public Fragment fragment;
-	public Intent action;
+	public Intent intent;
+	public Runnable action;
 	public boolean minor = false;
 	public boolean supplementary = false;
 
@@ -52,7 +53,15 @@ public class DrawerItem
 		this.fragment = fragment;
 	}
 	
-	public DrawerItem(Drawable icon, String name, Intent action)
+	public DrawerItem(Drawable icon, String name, Intent intent)
+	{
+		this.type = ItemType.INTENT;
+		this.icon = icon;
+		this.name = name;
+		this.intent = intent;
+	}
+
+	public DrawerItem(Drawable icon, String name, Runnable action)
 	{
 		this.type = ItemType.ACTION;
 		this.icon = icon;

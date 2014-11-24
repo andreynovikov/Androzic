@@ -126,58 +126,17 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		onSharedPreferenceChanged(settings, getString(R.string.pref_orientation));
 		settings.registerOnSharedPreferenceChangeListener(this);
 
-		mDrawerItems = new ArrayList<DrawerItem>();
-
-		Resources resources = getResources();
-
-		Drawable icon;
-		Intent action;
-		Fragment fragment;
-
-		// add main items to drawer list
-		icon = resources.getDrawable(R.drawable.ic_map_white_24dp);
-		fragment = Fragment.instantiate(this, MapFragment.class.getName());
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_map), fragment));
-		icon = resources.getDrawable(R.drawable.ic_place_white_24dp);
-		fragment = Fragment.instantiate(this, WaypointList.class.getName());
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_waypoints), fragment));
-		icon = resources.getDrawable(R.drawable.ic_directions_white_24dp);
-		fragment = Fragment.instantiate(this, RouteList.class.getName());
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_routes), fragment));
-		icon = resources.getDrawable(R.drawable.ic_gesture_white_24dp);
-		fragment = Fragment.instantiate(this, TrackList.class.getName());
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_tracks), fragment));
-
-		// add plugins to drawer list
-		mDrawerItems.add(new DrawerItem());
-		icon = resources.getDrawable(R.drawable.ic_my_location_white_24dp);
-		action = new Intent(this, HSIActivity.class);
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_hsi), action).makeMinor());
-		java.util.Map<String, Pair<Drawable, Intent>> plugins = application.getPluginsViews();
-		for (String plugin : plugins.keySet())
-		{
-			mDrawerItems.add(new DrawerItem(plugins.get(plugin).first, plugin, plugins.get(plugin).second).makeMinor());
-		}
-
-		// add supplementary items to drawer list
-		mDrawerItems.add(new DrawerItem());
-		icon = resources.getDrawable(R.drawable.ic_settings_white_24dp);
-		fragment = Fragment.instantiate(this, PreferencesHC.class.getName());
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), fragment).makeMinor().makeSupplementary());
-		icon = resources.getDrawable(R.drawable.ic_info_white_24dp);
-		fragment = Fragment.instantiate(this, About.class.getName());
-		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_about), fragment).makeMinor().makeSupplementary());
-
 		mTitle = mDrawerTitle = getTitle();
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
 		// set a custom shadow that overlays the main content when the drawer opens
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 		// set up the drawer's list view with items and click listener
+		mDrawerItems = new ArrayList<DrawerItem>();
+		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 		mDrawerAdapter = new DrawerAdapter(this, mDrawerItems);
 		mDrawerList.setAdapter(mDrawerAdapter);
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+		initializeDrawerItems();
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
@@ -350,13 +309,13 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		
 		DrawerItem item = mDrawerItems.get(position);
 		// Actions
-		if (item.type == DrawerItem.ItemType.ACTION)
+		if (item.type == DrawerItem.ItemType.INTENT)
 		{
 			if (position > 0)
-				startActivity(item.action);
+				startActivity(item.intent);
 		}
 		// Fragments
-		else
+		else if (item.type == DrawerItem.ItemType.FRAGMENT)
 		{
 			FragmentManager fm = getSupportFragmentManager();
 			if (fm.getBackStackEntryCount() > 0)
@@ -381,6 +340,11 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 			ft.commit();
 			// update selected item and title, then close the drawer
 			updateDrawerUI(item, position);
+		}
+		else if (item.type == DrawerItem.ItemType.ACTION)
+		{
+			Log.e(TAG, "ACTION");
+			runOnUiThread(item.action);
 		}
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
@@ -622,6 +586,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		if (getString(R.string.pref_exit).equals(key))
 		{
 			exitConfirmation = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			initializeDrawerItems();
 			secondBack = false;
 		}
 		else if (getString(R.string.pref_hidestatusbar).equals(key))
@@ -635,6 +600,88 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		{
 			setRequestedOrientation(Integer.parseInt(sharedPreferences.getString(key, "-1")));
 		}
+	}
+
+	private void initializeDrawerItems()
+	{
+		if (mDrawerItems == null)
+			return;
+
+		mDrawerItems.clear();
+
+		Resources resources = getResources();
+
+		Drawable icon;
+		Intent action;
+		Fragment fragment;
+		FragmentManager fm = getSupportFragmentManager();		
+
+		// add main items to drawer list
+		icon = resources.getDrawable(R.drawable.ic_map_white_24dp);
+		fragment = fm.findFragmentByTag(getString(R.string.menu_map));
+		if (fragment == null)
+			fragment = Fragment.instantiate(this, MapFragment.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_map), fragment));
+
+		icon = resources.getDrawable(R.drawable.ic_place_white_24dp);
+		fragment = fm.findFragmentByTag(getString(R.string.menu_waypoints));
+		if (fragment == null)
+			fragment = Fragment.instantiate(this, WaypointList.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_waypoints), fragment));
+
+		icon = resources.getDrawable(R.drawable.ic_directions_white_24dp);
+		fragment = fm.findFragmentByTag(getString(R.string.menu_routes));
+		if (fragment == null)
+			fragment = Fragment.instantiate(this, RouteList.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_routes), fragment));
+
+		icon = resources.getDrawable(R.drawable.ic_gesture_white_24dp);
+		fragment = fm.findFragmentByTag(getString(R.string.menu_tracks));
+		if (fragment == null)
+			fragment = Fragment.instantiate(this, TrackList.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_tracks), fragment));
+
+		// add plugins to drawer list
+		mDrawerItems.add(new DrawerItem());
+		icon = resources.getDrawable(R.drawable.ic_my_location_white_24dp);
+		action = new Intent(this, HSIActivity.class);
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_hsi), action).makeMinor());
+
+		java.util.Map<String, Pair<Drawable, Intent>> plugins = application.getPluginsViews();
+		for (String plugin : plugins.keySet())
+		{
+			mDrawerItems.add(new DrawerItem(plugins.get(plugin).first, plugin, plugins.get(plugin).second).makeMinor());
+		}
+
+		// add supplementary items to drawer list
+		mDrawerItems.add(new DrawerItem());
+		icon = resources.getDrawable(R.drawable.ic_settings_white_24dp);
+		fragment = fm.findFragmentByTag(getString(R.string.menu_preferences));
+		if (fragment == null)
+			fragment = Fragment.instantiate(this, PreferencesHC.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), fragment).makeMinor().makeSupplementary());
+
+		icon = resources.getDrawable(R.drawable.ic_info_white_24dp);
+		fragment = fm.findFragmentByTag(getString(R.string.menu_about));
+		if (fragment == null)
+			fragment = Fragment.instantiate(this, About.class.getName());
+		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_about), fragment).makeMinor().makeSupplementary());
+
+		if (exitConfirmation == 3)
+		{
+			icon = resources.getDrawable(R.drawable.ic_open_in_new_white_24dp);
+			Runnable exit = new Runnable() {
+				@Override
+				public void run()
+				{
+					Log.e(TAG, "Exit");
+					MainActivity.this.finish();
+				}
+			};
+			mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_exit), exit).makeMinor().makeSupplementary());
+		}
+
+		mDrawerAdapter.notifyDataSetChanged();
 	}
 
 	private void updateDrawerUI(DrawerItem item, int position)
@@ -735,6 +782,9 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 						MainActivity.this.finish();
 					}
 				}).setNegativeButton(R.string.no, null).show();
+				return;
+			case 3:
+				// Quit is performed from menu
 				return;
 			default:
 				super.onBackPressed();

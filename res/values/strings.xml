@@ -241,6 +241,7 @@
     <string name="menu_newwaypointset">New waypoint set</string>
     <string name="menu_clear_history">Clear search history</string>
     <string name="menu_whereami">Where am I?</string>
+    <string name="menu_exit">Exit</string>
 
 	<string name="action_save">Save</string>
     <string name="action_add_waypoint">Add waypoint</string>
