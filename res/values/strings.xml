@@ -11,7 +11,6 @@
     <string name="managewaypoints_name">Waypoints</string>
     <string name="waypointproperties_name">Edit waypoint</string>
     <string name="waypointproject_name">Project new waypoint</string>
-    <string name="advanced_name">Advanced properties</string>
     <string name="manageroutes_name">Routes</string>
     <string name="selectroute_name">Select route</string>
     <string name="loadroute_name">Load route from file</string>
@@ -198,10 +197,10 @@
 	<string name="menu_thisnavpoint">Navigate here</string>
 	<string name="menu_routes">Routes</string>
 	<string name="menu_newroute">New route</string>
-    <string name="menu_properties">Properties</string>
     <string name="menu_project">Project new</string>
     <string name="menu_new">New</string>
     <string name="menu_edit">Edit</string>
+    <string name="menu_edit_path">Edit path</string>
     <string name="menu_open">Open</string>
     <string name="menu_load">Load from file</string>
     <string name="menu_save">Save to file</string>
