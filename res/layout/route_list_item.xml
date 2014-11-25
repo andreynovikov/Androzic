@@ -24,13 +24,21 @@
         android:paddingRight="8dip"
         android:src="@drawable/ic_more_vert_white_24dp" />
 
+    <View
+        android:id="@+id/popup_anchor"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/actions"
+        android:background="@android:color/transparent" />
+    
     <TextView
         android:id="@+id/name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/distance"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@id/actions"
+        android:layout_toLeftOf="@id/popup_anchor"
         android:layout_toRightOf="@id/icon"
         android:ellipsize="marquee"
         android:gravity="center_vertical"
