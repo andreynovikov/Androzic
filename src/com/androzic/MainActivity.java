@@ -48,9 +48,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -79,9 +81,11 @@ import com.androzic.ui.DrawerAdapter;
 import com.androzic.ui.DrawerItem;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
+import com.androzic.waypoint.WaypointDetails;
 import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
 import com.androzic.waypoint.WaypointProperties;
+import com.shamanland.fab.FloatingActionButton;
 
 public class MainActivity extends ActionBarActivity implements FragmentHolder, OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener
 {
@@ -93,6 +97,8 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	private ActionBarDrawerToggle mDrawerToggle;
 	private Drawable mHomeDrawable;
 	private Toolbar mToolbar;
+	private int mToolbarHeight;
+	private FloatingActionButton mActionButton;
 
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
@@ -116,6 +122,8 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	    mToolbar = (Toolbar) findViewById(R.id.action_toolbar);
 	    setSupportActionBar(mToolbar);
 
+	    mActionButton = (FloatingActionButton) findViewById(R.id.toolbar_action_button);
+	    
 		backToast = Toast.makeText(this, R.string.backQuit, Toast.LENGTH_SHORT);
 
 		application = Androzic.getApplication();
@@ -401,6 +409,22 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		args.putDouble("lon", loc.getLongitude());
 		waypointInfo.setArguments(args);
 		waypointInfo.show(fm, "waypoint_info");
+	}
+
+	@Override
+	public void onWaypointDetails(Waypoint waypoint)
+	{
+		Location loc = application.getLocationAsLocation();
+        FragmentManager fm = getSupportFragmentManager();
+        WaypointDetails waypointDetails = (WaypointDetails) fm.findFragmentByTag("waypoint_details");
+        if (waypointDetails == null)
+        	waypointDetails = new WaypointDetails();
+        waypointDetails.setWaypoint(waypoint);
+		Bundle args = new Bundle();
+		args.putDouble("lat", loc.getLatitude());
+		args.putDouble("lon", loc.getLongitude());
+		waypointDetails.setArguments(args);
+		addFragment(waypointDetails, "waypoint_details");
 	}
 
 	@Override
@@ -813,6 +837,28 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		ft.add(R.id.content_frame, fragment, tag);
 		ft.addToBackStack(tag);
 		ft.commit();
+	}
+
+	@Override
+	public FloatingActionButton enableActionButton()
+	{
+		// FIXME Do not hard code dimensions
+		int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 104, getResources().getDisplayMetrics());
+		ViewGroup.LayoutParams params = mToolbar.getLayoutParams();
+		mToolbarHeight = params.height;
+		params.height = height;
+		mActionButton.setVisibility(View.VISIBLE);
+		return mActionButton;
+	}
+
+	@Override
+	public void disableActionButton()
+	{
+		// FIXME Do not hardcode dimensions
+		ViewGroup.LayoutParams params = mToolbar.getLayoutParams();
+		params.height = mToolbarHeight;
+		mActionButton.setOnClickListener(null);
+		mActionButton.setVisibility(View.GONE);
 	}
 
 }

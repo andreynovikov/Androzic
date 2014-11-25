@@ -7,4 +7,5 @@
     <issue id="MissingTranslation" severity="error" />
     <issue id="TypographyQuotes" severity="informational" />
     <issue id="UnusedIds" severity="warning" />
+    <issue id="WebViewLayout" severity="warning" />
 </lint>

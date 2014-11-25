@@ -24,10 +24,6 @@
         android:title="@string/menu_load"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_new_waypoint"
-        android:icon="@drawable/ic_place_white_24dp"
-        android:title="@string/menu_new_waypoint"/>
-    <item
         android:id="@+id/action_project_waypoint"
         android:icon="@drawable/ic_arrow_forward_white_24dp"
         android:title="@string/menu_project"/>

@@ -97,8 +97,7 @@
             android:name=".Splash"
             android:configChanges="orientation"
             android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:theme="@style/ApplicationTheme.NoActionBar">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -51,6 +51,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androzic.Androzic;
+import com.androzic.FragmentHolder;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
@@ -63,6 +64,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	private static final String TAG = "RouteDetails";
 
 	Androzic application;
+	private FragmentHolder fragmentHolderCallback;
 	private OnRouteActionListener routeActionsCallback;
 	private OnWaypointActionListener waypointActionsCallback;
 	
@@ -103,6 +105,14 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 
 		// This makes sure that the container activity has implemented
 		// the callback interface. If not, it throws an exception
+		try
+		{
+			fragmentHolderCallback = (FragmentHolder) activity;
+		}
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString() + " must implement FragmentHolder");
+		}
 		try
 		{
 			routeActionsCallback = (OnRouteActionListener) activity;
@@ -146,6 +156,16 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 			application.registerReceiver(navigationReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATUS));
 			application.registerReceiver(navigationReceiver, new IntentFilter(NavigationService.BROADCAST_NAVIGATION_STATE));
 		}
+		else
+		{
+			fragmentHolderCallback.enableActionButton().setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v)
+				{
+					routeActionsCallback.onRouteNavigate(route);
+				}
+			});
+		}
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		onSharedPreferenceChanged(settings, getString(R.string.pref_wakelock));
@@ -162,6 +182,10 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 		if (navigation)
 		{
 			application.unregisterReceiver(navigationReceiver);
+		}
+		else
+		{
+			fragmentHolderCallback.disableActionButton();
 		}
 		
 		if (oldTitle != null)
@@ -182,7 +206,6 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	@Override
 	public void onPrepareOptionsMenu(final Menu menu)
 	{
-		menu.findItem(R.id.action_navigate).setVisible(!navigation);
 	}
 
 	@Override

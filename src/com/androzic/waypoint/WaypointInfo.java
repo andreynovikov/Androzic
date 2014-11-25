@@ -159,7 +159,6 @@ public class WaypointInfo extends DialogFragment implements OnClickListener
 	@SuppressLint("NewApi")
 	private void updateWaypointInfo(double lat, double lon)
 	{
-        
 		Androzic application = Androzic.getApplication();
 		Activity activity = getActivity();
 		Dialog dialog = getDialog();

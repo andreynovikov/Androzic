@@ -57,6 +57,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -70,8 +72,10 @@ import com.androzic.data.WaypointSet;
 import com.androzic.ui.FileListDialog;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
+import com.shamanland.fab.FloatingActionButton;
+import com.shamanland.fab.ShowHideOnScroll;
 
-public class WaypointList extends ListFragment implements FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
+public class WaypointList extends ListFragment implements OnItemLongClickListener, FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
 	private static final int DIALOG_WAYPOINT_PROJECT = 1;
 	
@@ -97,7 +101,7 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		return inflater.inflate(R.layout.list_with_empty_view, container, false);
+		return inflater.inflate(R.layout.list_with_empty_view_and_fab, container, false);
 	}
 
 	@Override
@@ -108,6 +112,17 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 		TextView emptyView = (TextView) getListView().getEmptyView();
 		if (emptyView != null)
 			emptyView.setText(R.string.msg_empty_waypoint_list);
+
+		FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.actionButton);
+		getListView().setOnTouchListener(new ShowHideOnScroll(fab));
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				waypointActionsCallback.onWaypointEdit(new Waypoint());
+			}
+		});
+		getListView().setOnItemLongClickListener(this);
 
 		FragmentActivity activity = getActivity();
 		
@@ -166,6 +181,15 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 	@Override
 	public void onListItemClick(ListView lv, View v, int position, long id)
 	{
+		Androzic application = Androzic.getApplication();
+		Waypoint waypoint = application.getWaypoint(position);
+		waypointActionsCallback.onWaypointDetails(waypoint);
+	}
+	
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> lv, View v, int position, long id)
+	{
 		v.setTag("selected");
 		selectedKey = position;
 		selectedBackground = v.getBackground();
@@ -173,11 +197,12 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
 		MenuBuilder menu = new MenuBuilder(getActivity());
 		menu.setCallback(this);
-		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.name));
+		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.actions));
 		popup.setForceShowIcon(true);
 		popup.setCallback(this);
 		new SupportMenuInflater(getActivity()).inflate(R.menu.waypoint_menu, menu);
 		popup.show();
+		return true;
 	}
 
 	@Override
@@ -251,9 +276,6 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 						}
 					}
 				}).setNegativeButton(R.string.cancel, null).create().show();
-				return true;
-			case R.id.action_new_waypoint:
-				waypointActionsCallback.onWaypointEdit(new Waypoint());
 				return true;
 			case R.id.action_project_waypoint:
 				WaypointProject waypointProjectDialog = new WaypointProject();
@@ -367,7 +389,7 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 		}
 	};
 
-	public class WaypointListAdapter extends BaseAdapter
+	public class WaypointListAdapter extends BaseAdapter implements View.OnClickListener
 	{
 		private LayoutInflater mInflater;
 		private int mItemLayout;
@@ -439,12 +461,14 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 			{
 				waypointHolder = new WaypointItemHolder();
 				waypointHolder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				waypointHolder.actions = (ImageView) convertView.findViewById(R.id.actions);
 				waypointHolder.name = (TextView) convertView.findViewById(R.id.name);
 				waypointHolder.coordinates = (TextView) convertView.findViewById(R.id.coordinates);
 				waypointHolder.distance = (TextView) convertView.findViewById(R.id.distance);
 				convertView.setTag(waypointHolder);
 			}
 
+			waypointHolder.actions.setOnClickListener(this);
 			waypointHolder.name.setText(wpt.name);
 			
 			String coordinates = StringFormatter.coordinates(application.coordinateFormat, " ", wpt.latitude, wpt.longitude);
@@ -531,12 +555,23 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 			});
 			notifyDataSetChanged();
 		}
-		
+
+		@Override
+		public void onClick(View v)
+		{
+			ListView lv = getListView();
+			int position = lv.getPositionForView((View) v.getParent());
+			int child = position - lv.getFirstVisiblePosition() + lv.getHeaderViewsCount();
+			if (child < 0 || child >= lv.getChildCount())
+				return;
+			onItemLongClick(lv, lv.getChildAt(child), position, getItemId(position));
+		}
 	}
 	
 	private static class WaypointItemHolder
 	{
 		ImageView icon;
+		ImageView actions;
 		TextView name;
 		TextView coordinates;
 		TextView distance;

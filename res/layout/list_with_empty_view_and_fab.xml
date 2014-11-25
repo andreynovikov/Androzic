@@ -17,4 +17,13 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:visibility="gone" />
 
+    <com.shamanland.fab.FloatingActionButton
+        android:id="@+id/actionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_add_white_24dp" />
+
 </FrameLayout>

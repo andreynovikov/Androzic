@@ -32,6 +32,7 @@ public interface OnWaypointActionListener
 	 * Open waypoint information dialog
 	 */
 	void onWaypointShow(Waypoint waypoint);
+	void onWaypointDetails(Waypoint waypoint);
 	void onWaypointNavigate(Waypoint waypoint);
 	void onWaypointEdit(Waypoint waypoint);
 	void onWaypointShare(Waypoint waypoint);

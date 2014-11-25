@@ -2,10 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/action_details"
-        android:icon="@drawable/ic_list_white_24dp"
-        android:title="@string/menu_details"/>
-    <item
         android:id="@+id/action_navigate"
         android:icon="@drawable/ic_navigation_white_24dp"
         android:title="@string/menu_navigate"/>

@@ -10,6 +10,8 @@
         <item name="android:colorBackground">@color/theme_primary_darker_color</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="activatedBackgroundIndicator">@null</item>
+<!-- 		<item name="popupMenuStyle">@style/PopupMenu</item>  -->
+	    <item name="floatingActionButtonStyle">@style/Theme.Application.Fab</item>
         <!-- The rest of your attributes -->
         <item name="horizontalPadding">6dip</item>
     </style>
@@ -18,15 +20,19 @@
         <item name="android:background">@color/theme_primary_color</item>
     </style>
 
-    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+    <style name="PopupMenu" parent="@style/Widget.AppCompat.PopupMenu">
+		<item name="android:popupBackground">@color/theme_primary_color</item>
+    </style>
+
+	<style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
         <item name="color">@android:color/white</item>
     </style>
 
-    <style name="ApplicationTheme.NoActionBar" parent="Theme.AppCompat">
-        <item name="android:windowNoTitle">true</item>
-    </style>
-
+    <style name="Theme.Application.Fab" parent="FloatingActionButton">
+	    <item name="floatingActionButtonColor">@color/theme_accent_color</item>
+	</style>
+    
     <!-- Left to remember how to use target API check -->
     <style name="MyActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:displayOptions" tools:targetApi="11">showHome|useLogo</item>

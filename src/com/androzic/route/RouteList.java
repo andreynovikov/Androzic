@@ -47,6 +47,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -57,8 +59,10 @@ import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
+import com.shamanland.fab.FloatingActionButton;
+import com.shamanland.fab.ShowHideOnScroll;
 
-public class RouteList extends ListFragment implements FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
+public class RouteList extends ListFragment implements OnItemLongClickListener, FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
 	private OnRouteActionListener routeActionsCallback;
 
@@ -82,7 +86,7 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		return inflater.inflate(R.layout.list_with_empty_view, container, false);
+		return inflater.inflate(R.layout.list_with_empty_view_and_fab, container, false);
 	}
 
 	@Override
@@ -93,6 +97,19 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 		TextView emptyView = (TextView) getListView().getEmptyView();
 		if (emptyView != null)
 			emptyView.setText(R.string.msg_empty_route_list);
+
+		FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.actionButton);
+		getListView().setOnTouchListener(new ShowHideOnScroll(fab));
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				Androzic application = Androzic.getApplication();
+				Route route = new Route("New route", "", true);
+				application.addRoute(route);
+				routeActionsCallback.onRouteEdit(route);
+			}
+		});
 
 		Activity activity = getActivity();
 
@@ -135,13 +152,7 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 	{
 		switch (item.getItemId())
 		{
-			case R.id.menuNewRoute:
-				Androzic application = Androzic.getApplication();
-				Route route = new Route("New route", "", true);
-				application.addRoute(route);
-				routeActionsCallback.onRouteEdit(route);
-				return true;
-			case R.id.menuLoadRoute:
+			case R.id.action_load_route:
 				RouteFileList fileListDialog = new RouteFileList(this);
 				fileListDialog.show(getFragmentManager(), "dialog");
 				return true;
@@ -158,6 +169,14 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 	@Override
 	public void onListItemClick(ListView lv, View v, int position, long id)
 	{
+		final Androzic application = Androzic.getApplication();
+		final Route route = application.getRoute(position);
+		routeActionsCallback.onRouteDetails(route);
+	}
+	
+	@Override
+	public boolean onItemLongClick(AdapterView<?> lv, View v, int position, long id)
+	{
 		v.setTag("selected");
 		selectedKey = position;
 		selectedBackground = v.getBackground();
@@ -165,11 +184,12 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
 		MenuBuilder menu = new MenuBuilder(getActivity());
 		menu.setCallback(this);
-		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.name));
+		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.actions));
 		popup.setForceShowIcon(true);
 		popup.setCallback(this);
 		new SupportMenuInflater(getActivity()).inflate(R.menu.route_menu, menu);
 		popup.show();
+		return true;
 	}
 
 	@Override
@@ -180,9 +200,6 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 		
 		switch (item.getItemId())
 		{
-			case R.id.action_details:
-				routeActionsCallback.onRouteDetails(route);
-				return true;
 			case R.id.action_navigate:
 				routeActionsCallback.onRouteNavigate(route);
 				return true;
@@ -230,7 +247,7 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 		return false;
 	}
 
-	public class RouteListAdapter extends BaseAdapter
+	public class RouteListAdapter extends BaseAdapter implements View.OnClickListener
 	{
 		private LayoutInflater mInflater;
 		private int mItemLayout;
@@ -309,6 +326,10 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 				v = convertView;
 			}
 			Route route = getItem(position);
+			
+			View actions = v.findViewById(R.id.actions);
+			actions.setOnClickListener(this);
+
 			TextView text = (TextView) v.findViewById(R.id.name);
 			text.setText(route.name);
 			String distance = StringFormatter.distanceH(route.distance);
@@ -349,6 +370,17 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 		public boolean hasStableIds()
 		{
 			return true;
+		}
+
+		@Override
+		public void onClick(View v)
+		{
+			ListView lv = getListView();
+			int position = lv.getPositionForView((View) v.getParent());
+			int child = position - lv.getFirstVisiblePosition() + lv.getHeaderViewsCount();
+			if (child < 0 || child >= lv.getChildCount())
+				return;
+			onItemLongClick(lv, lv.getChildAt(child), position, getItemId(position));
 		}
 	}
 }

@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/action_load_route"
-        android:icon="@drawable/ic_folder_open_white_24dp"
-        android:title="@string/menu_load"
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_edit_white_24dp"
+        android:title="@string/menu_edit"
         app:showAsAction="always"/>
 
 </menu>
