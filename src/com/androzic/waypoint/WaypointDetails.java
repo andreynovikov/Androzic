@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.androzic.Androzic;
@@ -34,7 +33,7 @@ import com.androzic.data.Waypoint;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
-public class WaypointDetails extends Fragment implements View.OnClickListener
+public class WaypointDetails extends Fragment
 {
 	private FragmentHolder fragmentHolderCallback;
 	private OnWaypointActionListener waypointActionsCallback;
@@ -53,12 +52,7 @@ public class WaypointDetails extends Fragment implements View.OnClickListener
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View rootView = inflater.inflate(R.layout.waypoint_details, container, false);
-
-		Button shareButton = (Button) rootView.findViewById(R.id.share_button);
-		shareButton.setOnClickListener(this);
-
-		return rootView;
+		return inflater.inflate(R.layout.waypoint_details, container, false);
 	}
 
 	@Override
@@ -105,7 +99,13 @@ public class WaypointDetails extends Fragment implements View.OnClickListener
 	{
 		super.onResume();
 
-		fragmentHolderCallback.enableActionButton().setOnClickListener(this);
+		fragmentHolderCallback.enableActionButton().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				waypointActionsCallback.onWaypointNavigate(waypoint);
+			}
+		});
 	}
 
 	@Override
@@ -137,26 +137,18 @@ public class WaypointDetails extends Fragment implements View.OnClickListener
 			case R.id.action_edit:
 				waypointActionsCallback.onWaypointEdit(waypoint);
 				return true;
+			case R.id.action_view:
+				waypointActionsCallback.onWaypointView(waypoint);
+				return true;
+			case R.id.action_share:
+				waypointActionsCallback.onWaypointShare(waypoint);
+				return true;
+			case R.id.action_delete:
+				waypointActionsCallback.onWaypointRemove(waypoint);
+				return true;
 		}
 		return false;
 	}
-
-	@Override
-    public void onClick(View v)
-    {
-		switch (v.getId())
-		{
-			case R.id.toolbar_action_button:
-				waypointActionsCallback.onWaypointNavigate(waypoint);
-				break;
-			case R.id.share_button:
-				waypointActionsCallback.onWaypointShare(waypoint);
-				break;
-			case R.id.remove_button:
-				waypointActionsCallback.onWaypointRemove(waypoint);
-				break;
-		}
-    }
 
 	public void setWaypoint(Waypoint waypoint)
 	{

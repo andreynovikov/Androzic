@@ -197,7 +197,7 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
 		MenuBuilder menu = new MenuBuilder(getActivity());
 		menu.setCallback(this);
-		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.actions));
+		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.popup_anchor));
 		popup.setForceShowIcon(true);
 		popup.setCallback(this);
 		new SupportMenuInflater(getActivity()).inflate(R.menu.waypoint_menu, menu);
