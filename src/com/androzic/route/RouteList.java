@@ -110,6 +110,7 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 				routeActionsCallback.onRouteEdit(route);
 			}
 		});
+		getListView().setOnItemLongClickListener(this);
 
 		Activity activity = getActivity();
 
@@ -184,7 +185,7 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
 		MenuBuilder menu = new MenuBuilder(getActivity());
 		menu.setCallback(this);
-		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.actions));
+		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.popup_anchor));
 		popup.setForceShowIcon(true);
 		popup.setCallback(this);
 		new SupportMenuInflater(getActivity()).inflate(R.menu.route_menu, menu);
