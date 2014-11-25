@@ -48,7 +48,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Pair;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -842,11 +841,9 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	@Override
 	public FloatingActionButton enableActionButton()
 	{
-		// FIXME Do not hard code dimensions
-		int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 104, getResources().getDisplayMetrics());
 		ViewGroup.LayoutParams params = mToolbar.getLayoutParams();
 		mToolbarHeight = params.height;
-		params.height = height;
+		params.height = getResources().getDimensionPixelSize(R.dimen.floating_action_button_toolbar_height);
 		mActionButton.setVisibility(View.VISIBLE);
 		return mActionButton;
 	}
@@ -854,7 +851,6 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	@Override
 	public void disableActionButton()
 	{
-		// FIXME Do not hardcode dimensions
 		ViewGroup.LayoutParams params = mToolbar.getLayoutParams();
 		params.height = mToolbarHeight;
 		mActionButton.setOnClickListener(null);
