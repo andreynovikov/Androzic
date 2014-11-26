@@ -58,6 +58,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
@@ -72,6 +73,7 @@ import com.androzic.route.RouteProperties;
 import com.androzic.route.RouteSave;
 import com.androzic.route.RouteStart;
 import com.androzic.track.OnTrackActionListener;
+import com.androzic.track.TrackDetails;
 import com.androzic.track.TrackList;
 import com.androzic.track.TrackProperties;
 import com.androzic.track.TrackSave;
@@ -566,6 +568,29 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 			waypointProperties = (WaypointProperties) Fragment.instantiate(this, WaypointProperties.class.getName());
 		waypointProperties.setRouteWaypoint(waypoint);
 		addFragment(waypointProperties, "waypoint_properties");
+	}
+
+	@Override
+	public void onTrackView(Track track)
+	{
+		Track.TrackPoint tp = track.getPoint(0);
+		MapObject mo = new MapObject(tp.latitude, tp.longitude);
+		if (application.ensureVisible(mo))
+			application.getMapHolder().mapChanged();
+		else
+			application.getMapHolder().conditionsChanged();
+		selectItem(0);
+	}
+
+	@Override
+	public void onTrackDetails(Track track)
+	{
+        FragmentManager fm = getSupportFragmentManager();
+        TrackDetails trackDetails = (TrackDetails) fm.findFragmentByTag("track_details");
+        if (trackDetails == null)
+        	trackDetails = new TrackDetails();
+        trackDetails.setTrack(track);
+		addFragment(trackDetails, "track_details");
 	}
 
 	@Override

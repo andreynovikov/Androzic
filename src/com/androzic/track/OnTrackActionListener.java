@@ -24,6 +24,8 @@ import com.androzic.data.Track;
 
 public interface OnTrackActionListener
 {
+	void onTrackView(Track track);
+	void onTrackDetails(Track track);
 	void onTrackEdit(Track track);
 	void onTrackEditPath(Track track);
 	void onTrackToRoute(Track track);

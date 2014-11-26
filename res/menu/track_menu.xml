@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_edit_white_24dp"
-        android:title="@string/menu_edit"/>
+        android:title="@string/menu_edit"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_edith_path"
         android:icon="@drawable/ic_border_color_white_24dp"

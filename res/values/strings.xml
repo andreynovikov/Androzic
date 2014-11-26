@@ -165,7 +165,14 @@
 	<string name="drag">drag</string>
 	<string name="online_maps">Online maps</string>
 	<string name="sas_maps">SAS.Planet maps</string>
-	
+	<string name="start_point">Start point</string>
+	<string name="finish_point">Finish point</string>
+	<string name="statistics">Statistics</string>
+	<string name="points">point(s)</string>
+	<string name="segments">segment(s)</string>
+	<string name="max_speed">Maximim speed</string>
+	<string name="average_speed">Average speed</string>
+			
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>
     <string name="upto">Up to %.0f meters</string>

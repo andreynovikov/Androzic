@@ -50,6 +50,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -61,7 +63,7 @@ import com.androzic.data.Track;
 import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
 
-public class TrackList extends ListFragment implements FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
+public class TrackList extends ListFragment implements OnItemLongClickListener, FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
 	List<Track> tracks = null;
 
@@ -98,6 +100,8 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 		TextView emptyView = (TextView) getListView().getEmptyView();
 		if (emptyView != null)
 			emptyView.setText(R.string.msg_empty_track_list);
+
+		getListView().setOnItemLongClickListener(this);
 
 		Activity activity = getActivity();
 		
@@ -191,6 +195,14 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 	@Override
 	public void onListItemClick(ListView lv, View v, int position, long id)
 	{
+		final Androzic application = Androzic.getApplication();
+		final Track track = application.getTrack(position);
+		trackActionsCallback.onTrackDetails(track);
+	}
+	
+	@Override
+	public boolean onItemLongClick(AdapterView<?> lv, View v, int position, long id)
+	{	
 		v.setTag("selected");
 		selectedKey = position;
 		selectedBackground = v.getBackground();
@@ -198,11 +210,12 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
 		MenuBuilder menu = new MenuBuilder(getActivity());
 		menu.setCallback(this);
-		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.name));
+		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.popup_anchor));
 		popup.setForceShowIcon(true);
 		popup.setCallback(this);
 		new SupportMenuInflater(getActivity()).inflate(R.menu.track_menu, menu);
 		popup.show();
+		return true;
 	}
 
 
@@ -261,7 +274,7 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 		return false;
 	}
 
-	public class TrackListAdapter extends BaseAdapter
+	public class TrackListAdapter extends BaseAdapter implements View.OnClickListener
 	{
 		private LayoutInflater mInflater;
 		private int mItemLayout;
@@ -325,7 +338,12 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 			{
 				v = convertView;
 			}
+
 			Track track = getItem(position);
+			
+			View actions = v.findViewById(R.id.actions);
+			actions.setOnClickListener(this);
+
 			TextView text = (TextView) v.findViewById(R.id.name);
 			text.setText(track.name);
 			String distance = StringFormatter.distanceH(track.distance);
@@ -356,6 +374,17 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 		public boolean hasStableIds()
 		{
 			return true;
+		}
+
+		@Override
+		public void onClick(View v)
+		{
+			ListView lv = getListView();
+			int position = lv.getPositionForView((View) v.getParent());
+			int child = position - lv.getFirstVisiblePosition() + lv.getHeaderViewsCount();
+			if (child < 0 || child >= lv.getChildCount())
+				return;
+			onItemLongClick(lv, lv.getChildAt(child), position, getItemId(position));
 		}
 	}
 }
