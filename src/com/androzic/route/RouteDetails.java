@@ -200,12 +200,13 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
-		inflater.inflate(R.menu.routedetails_menu, menu);
+		inflater.inflate(R.menu.route_menu, menu);
 	}
 
 	@Override
 	public void onPrepareOptionsMenu(final Menu menu)
 	{
+		menu.findItem(R.id.action_navigate).setVisible(false);
 	}
 
 	@Override
@@ -213,8 +214,20 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	{
 		switch (item.getItemId())
 		{
-			case R.id.action_navigate:
-				routeActionsCallback.onRouteNavigate(route);
+			case R.id.action_edit:
+				routeActionsCallback.onRouteEdit(route);
+				return true;
+			case R.id.action_edith_path:
+				routeActionsCallback.onRouteEditPath(route);
+				return true;
+			case R.id.action_save:
+				routeActionsCallback.onRouteSave(route);
+				return true;
+			case R.id.action_remove:
+				Androzic application = Androzic.getApplication();
+				application.removeRoute(route);
+				// "Close" fragment
+				getFragmentManager().popBackStack();
 				return true;
 		}
 		return false;

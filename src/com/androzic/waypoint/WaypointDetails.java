@@ -145,8 +145,14 @@ public class WaypointDetails extends Fragment
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
-		inflater.inflate(R.menu.waypointdetails_menu, menu);
+		inflater.inflate(R.menu.waypoint_menu, menu);
 		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(final Menu menu)
+	{
+		menu.findItem(R.id.action_navigate).setVisible(false);
 	}
 
 	@Override

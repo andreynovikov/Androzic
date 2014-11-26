@@ -149,6 +149,12 @@ public class TrackDetails extends Fragment
 	}
 
 	@Override
+	public void onPrepareOptionsMenu(final Menu menu)
+	{
+		menu.findItem(R.id.action_view).setVisible(false);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		switch (item.getItemId())
