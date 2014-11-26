@@ -250,9 +250,10 @@ public class TrackDetails extends Fragment
 		
 		for (Iterator<Track.TrackSegment> segments = track.getSegments().iterator(); segments.hasNext();)
 		{
-			segmentCount++;
 			Track.TrackSegment segment = segments.next();
 			Track.TrackPoint ptp = null;
+			if (segment.independent)
+				segmentCount++;
 			for (Iterator<Track.TrackPoint> points = segment.getPoints().iterator(); points.hasNext();)
 			{
 				Track.TrackPoint tp = points.next();
