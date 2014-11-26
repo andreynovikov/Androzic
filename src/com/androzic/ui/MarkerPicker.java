@@ -80,7 +80,7 @@ public class MarkerPicker extends DialogFragment implements OnItemClickListener,
 	public Dialog onCreateDialog(Bundle savedInstanceState)
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle(getString(R.string.information_name));
+		builder.setTitle(getString(R.string.markericon_name));
 		View view = getActivity().getLayoutInflater().inflate(R.layout.act_markericon, null);
 		builder.setView(view);
 
