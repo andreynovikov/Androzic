@@ -208,6 +208,7 @@ public class WaypointDetails extends Fragment
 		String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.bearingH(bearing);
 		((TextView) view.findViewById(R.id.distance)).setText(distance);
 
+		((TextView) view.findViewById(R.id.waypointset)).setText(waypoint.set.name);
 
 		if (waypoint.date != null)
 		{
