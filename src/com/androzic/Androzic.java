@@ -2309,6 +2309,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			overlayManager.setDistanceOverlayEnabled(showDistance > 0);
 		}
 		overlayManager.onPreferencesChanged(sharedPreferences);
+		if (mapHolder != null)
+			mapHolder.refreshMap();
 	}	
 
 	@Override

@@ -1226,6 +1226,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					application.overlayManager.distanceOverlay.setEnabled(true);
 				}
 				updateMapViewArea();
+				refreshMap();
 				map.requestFocus();
 				break;
 			}
