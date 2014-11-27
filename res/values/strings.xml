@@ -168,8 +168,6 @@
 	<string name="start_point">Start point</string>
 	<string name="finish_point">Finish point</string>
 	<string name="statistics">Statistics</string>
-	<string name="points">point(s)</string>
-	<string name="segments">segment(s)</string>
 	<string name="max_speed">Maximim speed</string>
 	<string name="average_speed">Average speed</string>
 			

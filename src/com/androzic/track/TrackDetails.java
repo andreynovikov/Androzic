@@ -210,7 +210,8 @@ public class TrackDetails extends Fragment
 
 		View view = getView();
 
-		((TextView) view.findViewById(R.id.point_count)).setText(String.format(Locale.getDefault(), "%d %s", track.getPointCount(), resources.getString(R.string.points)));
+		int pointCount = track.getPointCount();
+		((TextView) view.findViewById(R.id.point_count)).setText(resources.getQuantityString(R.plurals.numberOfPoints, pointCount, pointCount));
 
 		String distance = StringFormatter.distanceH(track.distance);
 		((TextView) view.findViewById(R.id.distance)).setText(distance);
@@ -275,7 +276,7 @@ public class TrackDetails extends Fragment
 
 		double averageSpeed = mv.getMeanValue();
 
-		((TextView) view.findViewById(R.id.segment_count)).setText(String.format(Locale.getDefault(), "%d %s", segmentCount, resources.getString(R.string.segments)));
+		((TextView) view.findViewById(R.id.segment_count)).setText(resources.getQuantityString(R.plurals.numberOfSegments, segmentCount, segmentCount));
 
 		// FIXME Does not use altitude units
 		String maxEle = String.format(Locale.getDefault(), "%.0f %s", maxElevation, resources.getStringArray(R.array.distance_abbrs_short)[2]);
