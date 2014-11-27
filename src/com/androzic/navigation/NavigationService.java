@@ -92,7 +92,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 	public double navBearing = 0.0;
 	public long navTurn = 0;
 	public double navVMG = 0.0;
-	public int navETE = 0;
+	public int navETE = Integer.MAX_VALUE;
 	public double navCourse = 0.0;
 	public double navXTK = Double.NEGATIVE_INFINITY;
 
@@ -241,7 +241,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 		navBearing = 0.0;
 		navTurn = 0;
 		navVMG = 0.0;
-		navETE = 0;
+		navETE = Integer.MAX_VALUE;
 		navCourse = 0.0;
 		navXTK = Double.NEGATIVE_INFINITY;
 
