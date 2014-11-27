@@ -452,7 +452,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		Intent i = new Intent(android.content.Intent.ACTION_SEND);
 		i.setType("text/plain");
 		i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
-		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
+		String coords = StringFormatter.coordinates(" ", waypoint.latitude, waypoint.longitude);
 		i.putExtra(Intent.EXTRA_TEXT, waypoint.name + " @ " + coords);
 		startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
 	}

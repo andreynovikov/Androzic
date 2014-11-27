@@ -471,7 +471,7 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 			waypointHolder.actions.setOnClickListener(this);
 			waypointHolder.name.setText(wpt.name);
 			
-			String coordinates = StringFormatter.coordinates(application.coordinateFormat, " ", wpt.latitude, wpt.longitude);
+			String coordinates = StringFormatter.coordinates(" ", wpt.latitude, wpt.longitude);
 			waypointHolder.coordinates.setText(coordinates);
 			
 			double dist = Geo.distance(loc[0], loc[1], wpt.latitude, wpt.longitude);

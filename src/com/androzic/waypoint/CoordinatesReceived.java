@@ -63,7 +63,7 @@ public class CoordinatesReceived extends Activity implements OnClickListener
 
         ((TextView) findViewById(R.id.message)).setText(getString(R.string.new_coordinates, sender));
 	
-		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", lat, lon);
+		String coords = StringFormatter.coordinates(" ", lat, lon);
 		((TextView) findViewById(R.id.coordinates)).setText(coords);
 		
 		double dist = Geo.distance(ll[0], ll[1], lat, lon);

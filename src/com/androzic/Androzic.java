@@ -125,7 +125,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public static final int PATH_SAS = 0x002;
 	public static final int PATH_ICONS = 0x008;
 	
-	public int coordinateFormat = 0;
 	public int angleType = 0;
 	public int sunriseType = 0;
 
@@ -2250,11 +2249,36 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		else if (getString(R.string.pref_unitcoordinate).equals(key))
 		{
-			coordinateFormat = Integer.parseInt(sharedPreferences.getString(key, "0"));			
+			StringFormatter.coordinateFormat = Integer.parseInt(sharedPreferences.getString(key, "0"));			
+		}
+		else if (getString(R.string.pref_unitdistance).equals(key))
+		{
+			int distanceIdx = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			StringFormatter.distanceFactor = Double.parseDouble(resources.getStringArray(R.array.distance_factors)[distanceIdx]);
+			StringFormatter.distanceAbbr = resources.getStringArray(R.array.distance_abbrs)[distanceIdx];
+			StringFormatter.distanceShortFactor = Double.parseDouble(resources.getStringArray(R.array.distance_factors_short)[distanceIdx]);
+			StringFormatter.distanceShortAbbr = resources.getStringArray(R.array.distance_abbrs_short)[distanceIdx];
+		}
+		else if (getString(R.string.pref_unitspeed).equals(key))
+		{
+			int speedIdx = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			StringFormatter.speedFactor = Double.parseDouble(resources.getStringArray(R.array.speed_factors)[speedIdx]);
+			StringFormatter.speedAbbr = resources.getStringArray(R.array.speed_abbrs)[speedIdx];
+		}
+		else if (getString(R.string.pref_unitelevation).equals(key))
+		{
+			int elevationIdx = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			StringFormatter.elevationFactor = Double.parseDouble(resources.getStringArray(R.array.elevation_factors)[elevationIdx]);
+			StringFormatter.elevationAbbr = resources.getStringArray(R.array.elevation_abbrs)[elevationIdx];
 		}
 		else if (getString(R.string.pref_unitangle).equals(key))
 		{
 			angleType = Integer.parseInt(sharedPreferences.getString(key, "0"));
+		}
+		else if (getString(R.string.pref_unitprecision).equals(key))
+		{
+			boolean precision = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_unitprecision));
+			StringFormatter.precisionFormat = precision ? "%.1f" : "%.0f";
 		}
 		else if (getString(R.string.pref_grid_mapshow).equals(key))
 		{
@@ -2394,12 +2418,16 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		
 		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
-		
+
 		overlayManager = new OverlayManager(longOperationsThread.getLooper());
-		
+
 		//TODO Initialize all suitable settings
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitcoordinate));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitdistance));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitspeed));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitelevation));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitangle));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdrawborder));
@@ -2409,8 +2437,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		onSharedPreferenceChanged(settings, getString(R.string.pref_showdistance_int));
 
 		settings.registerOnSharedPreferenceChangeListener(this);
-		
-		//navEnabled = navigationService != null && navigationService.isNavigating();
 	}
 	
 	@SuppressLint("NewApi")

@@ -105,12 +105,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private int dimInterval;
 	private int dimValue;
 
-	private String precisionFormat = "%.0f";
-	private double speedFactor;
-	private String speedAbbr;
-	private double elevationFactor;
-	private String elevationAbbr;
-
 	// Views
 	private MapView map;
 
@@ -501,12 +495,10 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 			map.setLocation(application.lastKnownLocation);
 
-			double s = application.lastKnownLocation.getSpeed() * speedFactor;
-			double e = application.lastKnownLocation.getAltitude() * elevationFactor;
 			double track = application.fixDeclination(application.lastKnownLocation.getBearing());
-			speedValue.setText(String.format(precisionFormat, s));
+			speedValue.setText(StringFormatter.speedC(application.lastKnownLocation.getSpeed()));
 			trackValue.setText(String.valueOf(Math.round(track)));
-			elevationValue.setText(String.valueOf(Math.round(e)));
+			elevationValue.setText(StringFormatter.elevationC(application.lastKnownLocation.getAltitude()));
 			// TODO set separate color
 			if (application.gpsGeoid != lastGeoid)
 			{
@@ -666,14 +658,17 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		if (!application.isNavigating())
 			return;
 
+		long now = System.currentTimeMillis();
+		
 		double distance = application.navigationService.navDistance;
 		double bearing = application.navigationService.navBearing;
 		long turn = application.navigationService.navTurn;
-		double vmg = application.navigationService.navVMG * speedFactor;
+		double vmg = application.navigationService.navVMG;
 		int ete = application.navigationService.navETE;
 
-		String[] dist = StringFormatter.distanceC(distance, precisionFormat);
-		String extra = String.format(precisionFormat, vmg) + " " + speedAbbr + " | " + StringFormatter.timeH(ete);
+		String[] dist = StringFormatter.distanceC(distance, StringFormatter.precisionFormat);
+		String eteString = (ete == Integer.MAX_VALUE) ? getString(R.string.never) : (String) DateUtils.getRelativeTimeSpanString(now + (ete + 1) * 60000, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE);
+		String extra = StringFormatter.speedH(vmg) + " | " + eteString;
 
 		String trnsym = "";
 		if (turn > 0)
@@ -738,7 +733,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			int eta = application.navigationService.navRouteETE(navDistance);
 			if (eta < Integer.MAX_VALUE)
 				eta += application.navigationService.navETE;
-			extra = StringFormatter.distanceH(navDistance + distance, 1000) + " | " + StringFormatter.timeH(eta);
+			String etaString = (eta == Integer.MAX_VALUE) ? getString(R.string.never) : (String) DateUtils.getRelativeTimeSpanString(now + (eta + 1) * 60000, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE);
+			extra = StringFormatter.distanceH(navDistance + distance, 1000) + " | " + etaString;
 			routeExtra.setText(extra);
 		}
 	}
@@ -904,7 +900,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		// TODO strange situation, needs investigation
 		if (application != null)
 		{
-			final String pos = StringFormatter.coordinates(application.coordinateFormat, " ", latlon[0], latlon[1]);
+			final String pos = StringFormatter.coordinates(" ", latlon[0], latlon[1]);
 			getActivity().runOnUiThread(new Runnable() {
 
 				@Override
@@ -1051,24 +1047,13 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		{
 			map.setProximity(Integer.parseInt(sharedPreferences.getString(key, getString(R.string.def_navigation_proximity))));
 		}
-		else if (getString(R.string.pref_unitprecision).equals(key))
-		{
-			boolean precision = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_unitprecision));
-			precisionFormat = precision ? "%.1f" : "%.0f";
-		}
 		else if (getString(R.string.pref_unitspeed).equals(key))
 		{
-			int speedIdx = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			speedFactor = Double.parseDouble(resources.getStringArray(R.array.speed_factors)[speedIdx]);
-			speedAbbr = resources.getStringArray(R.array.speed_abbrs)[speedIdx];
-			speedUnit.setText(speedAbbr);
+			speedUnit.setText(StringFormatter.speedAbbr);
 		}
 		else if (getString(R.string.pref_unitelevation).equals(key))
 		{
-			int elevationIdx = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			elevationFactor = Double.parseDouble(resources.getStringArray(R.array.elevation_factors)[elevationIdx]);
-			elevationAbbr = resources.getStringArray(R.array.elevation_abbrs)[elevationIdx];
-			elevationUnit.setText(elevationAbbr);
+			elevationUnit.setText(StringFormatter.elevationAbbr);
 		}
 		else if (getString(R.string.pref_unitangle).equals(key))
 		{
@@ -1373,7 +1358,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				i.setType("text/plain");
 				i.putExtra(Intent.EXTRA_SUBJECT, R.string.currentloc);
 				double[] loc = application.getMapCenter();
-				String spos = StringFormatter.coordinates(application.coordinateFormat, " ", loc[0], loc[1]);
+				String spos = StringFormatter.coordinates(" ", loc[0], loc[1]);
 				i.putExtra(Intent.EXTRA_TEXT, spos);
 				startActivity(Intent.createChooser(i, getString(R.string.menu_share)));
 				return true;
@@ -1389,7 +1374,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			case R.id.action_copy_location:
 			{
 				double[] cloc = application.getMapCenter();
-				String cpos = StringFormatter.coordinates(application.coordinateFormat, " ", cloc[0], cloc[1]);
+				String cpos = StringFormatter.coordinates(" ", cloc[0], cloc[1]);
 				Clipboard.copy(getActivity(), cpos);
 				return true;
 			}

@@ -170,7 +170,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 		Spinner coordformat = (Spinner) rootView.findViewById(R.id.coordformat_spinner);
 		coordformat.setOnItemSelectedListener(this);
-		coordformat.setSelection(application.coordinateFormat);
+		coordformat.setSelection(StringFormatter.coordinateFormat);
 
 		return rootView;
 	}

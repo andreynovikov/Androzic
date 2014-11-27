@@ -25,11 +25,9 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateFormat;
@@ -193,17 +191,9 @@ public class TrackDetails extends Fragment
 
 	private void updateTrackDetails()
 	{
-		Androzic application = Androzic.getApplication();
 		ActionBarActivity activity = (ActionBarActivity) getActivity();
 		Resources resources = getResources();
 		
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
-		boolean precision = settings.getBoolean(getString(R.string.pref_unitprecision), resources.getBoolean(R.bool.def_unitprecision));
-		String precisionFormat = precision ? "%.1f" : "%.0f";
-		int speedIdx = Integer.parseInt(settings.getString(getString(R.string.pref_unitspeed), "0"));
-		double speedFactor = Double.parseDouble(resources.getStringArray(R.array.speed_factors)[speedIdx]);
-		String speedAbbr = resources.getStringArray(R.array.speed_abbrs)[speedIdx];
-
 		if (oldTitle == null)
 			oldTitle = activity.getSupportActionBar().getTitle();
 		activity.getSupportActionBar().setTitle(track.name);
@@ -219,9 +209,9 @@ public class TrackDetails extends Fragment
 		Track.TrackPoint ftp = track.getPoint(0);
 		Track.TrackPoint ltp = track.getLastPoint();
 
-		String start_coords = StringFormatter.coordinates(application.coordinateFormat, " ", ftp.latitude, ftp.longitude);
+		String start_coords = StringFormatter.coordinates(" ", ftp.latitude, ftp.longitude);
 		((TextView) view.findViewById(R.id.start_coordinates)).setText(start_coords);
-		String finish_coords = StringFormatter.coordinates(application.coordinateFormat, " ", ltp.latitude, ltp.longitude);
+		String finish_coords = StringFormatter.coordinates(" ", ltp.latitude, ltp.longitude);
 		((TextView) view.findViewById(R.id.finish_coordinates)).setText(finish_coords);
 
 		Date start_date = new Date(ftp.time);
@@ -278,16 +268,10 @@ public class TrackDetails extends Fragment
 
 		((TextView) view.findViewById(R.id.segment_count)).setText(resources.getQuantityString(R.plurals.numberOfSegments, segmentCount, segmentCount));
 
-		// FIXME Does not use altitude units
-		String maxEle = String.format(Locale.getDefault(), "%.0f %s", maxElevation, resources.getStringArray(R.array.distance_abbrs_short)[2]);
-		((TextView) view.findViewById(R.id.max_elevation)).setText(maxEle);
-		String minEle = String.format(Locale.getDefault(), "%.0f %s", minElevation, resources.getStringArray(R.array.distance_abbrs_short)[2]);
-		((TextView) view.findViewById(R.id.min_elevation)).setText(minEle);
+		((TextView) view.findViewById(R.id.max_elevation)).setText(StringFormatter.elevationH(maxElevation));
+		((TextView) view.findViewById(R.id.min_elevation)).setText(StringFormatter.elevationH(minElevation));
 
-		String maxSpeedValue = String.format(precisionFormat, maxSpeed * speedFactor);
-		String averageSpeedValue = String.format(precisionFormat, averageSpeed * speedFactor);
-
-		((TextView) view.findViewById(R.id.max_speed)).setText(String.format(Locale.getDefault(), "%s: %s %s", resources.getString(R.string.max_speed), maxSpeedValue, speedAbbr));
-		((TextView) view.findViewById(R.id.average_speed)).setText(String.format(Locale.getDefault(), "%s: %s %s", resources.getString(R.string.average_speed), averageSpeedValue, speedAbbr));
+		((TextView) view.findViewById(R.id.max_speed)).setText(String.format(Locale.getDefault(), "%s: %s", resources.getString(R.string.max_speed), StringFormatter.speedH(maxSpeed)));
+		((TextView) view.findViewById(R.id.average_speed)).setText(String.format(Locale.getDefault(), "%s: %s", resources.getString(R.string.average_speed), StringFormatter.speedH(averageSpeed)));
 	}
 }

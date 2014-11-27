@@ -221,13 +221,12 @@ public class WaypointInfo extends DialogFragment implements OnClickListener
 			description.loadDataWithBaseURL(baseUrl.toString() + "/", descriptionHtml, "text/html", "utf-8", null);
 		}
 
-		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
+		String coords = StringFormatter.coordinates(" ", waypoint.latitude, waypoint.longitude);
 		((TextView) view.findViewById(R.id.coordinates)).setText(coords);
 		
 		if (waypoint.altitude != Integer.MIN_VALUE)
 		{
-			String altitude = String.format(Locale.getDefault(), "%d %s", waypoint.altitude, getResources().getStringArray(R.array.distance_abbrs_short)[2]);
-			((TextView) view.findViewById(R.id.altitude)).setText(altitude);
+			((TextView) view.findViewById(R.id.altitude)).setText(StringFormatter.elevationH(waypoint.altitude));
 		}
 		
 		double dist = Geo.distance(lat, lon, waypoint.latitude, waypoint.longitude);

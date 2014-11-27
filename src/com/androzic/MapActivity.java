@@ -57,20 +57,11 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 	private static final int RESULT_EDIT_ROUTE = 0x110;
 
 	// main preferences
-	protected String precisionFormat = "%.0f";
-	protected double speedFactor;
-	protected String speedAbbr;
-	protected double elevationFactor;
-	protected String elevationAbbr;
 	protected int renderInterval;
 	protected int magInterval;
 	protected int showDistance;
 	protected boolean showAccuracy;
 	protected boolean followOnLocation;
-	protected int exitConfirmation;
-
-	private TextView speedUnit;
-	private TextView elevationUnit;
 
 	protected SeekBar trackBar;
 	protected TextView waitBar;
@@ -121,8 +112,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		}
 
 		setContentView(R.layout.act_main);
-		speedUnit = (TextView) findViewById(R.id.speedunit);
-		elevationUnit = (TextView) findViewById(R.id.elevationunit);
 		trackBar = (SeekBar) findViewById(R.id.trackbar);
 		map = (MapView) findViewById(R.id.mapview);
 
@@ -148,19 +137,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		Resources resources = getResources();
 
 		// update some preferences
-		int speedIdx = Integer.parseInt(settings.getString(getString(R.string.pref_unitspeed), "0"));
-		speedFactor = Double.parseDouble(resources.getStringArray(R.array.speed_factors)[speedIdx]);
-		speedAbbr = resources.getStringArray(R.array.speed_abbrs)[speedIdx];
-		speedUnit.setText(speedAbbr);
-		int distanceIdx = Integer.parseInt(settings.getString(getString(R.string.pref_unitdistance), "0"));
-		StringFormatter.distanceFactor = Double.parseDouble(resources.getStringArray(R.array.distance_factors)[distanceIdx]);
-		StringFormatter.distanceAbbr = resources.getStringArray(R.array.distance_abbrs)[distanceIdx];
-		StringFormatter.distanceShortFactor = Double.parseDouble(resources.getStringArray(R.array.distance_factors_short)[distanceIdx]);
-		StringFormatter.distanceShortAbbr = resources.getStringArray(R.array.distance_abbrs_short)[distanceIdx];
-		int elevationIdx = Integer.parseInt(settings.getString(getString(R.string.pref_unitelevation), "0"));
-		elevationFactor = Double.parseDouble(resources.getStringArray(R.array.elevation_factors)[elevationIdx]);
-		elevationAbbr = resources.getStringArray(R.array.elevation_abbrs)[elevationIdx];
-		elevationUnit.setText(elevationAbbr);
 		application.sunriseType = Integer.parseInt(settings.getString(getString(R.string.pref_unitsunrise), "0"));
 
 		renderInterval = settings.getInt(getString(R.string.pref_maprenderinterval), resources.getInteger(R.integer.def_maprenderinterval)) * 100;
@@ -368,12 +344,12 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 					application.editingTrack.editingPos = progress;
 				}
 				Track.TrackPoint tp = application.editingTrack.getPoint(progress);
-				double ele = tp.elevation * elevationFactor;
+				//double ele = tp.elevation * elevationFactor;
 				((TextView) findViewById(R.id.tp_number)).setText("#" + (progress + 1));
 				// FIXME Need UTM support here
-				((TextView) findViewById(R.id.tp_latitude)).setText(StringFormatter.coordinate(application.coordinateFormat, tp.latitude));
-				((TextView) findViewById(R.id.tp_longitude)).setText(StringFormatter.coordinate(application.coordinateFormat, tp.longitude));
-				((TextView) findViewById(R.id.tp_elevation)).setText(String.valueOf(Math.round(ele)) + " " + elevationAbbr);
+				((TextView) findViewById(R.id.tp_latitude)).setText(StringFormatter.coordinate(tp.latitude));
+				((TextView) findViewById(R.id.tp_longitude)).setText(StringFormatter.coordinate(tp.longitude));
+				//((TextView) findViewById(R.id.tp_elevation)).setText(String.valueOf(Math.round(ele)) + " " + elevationAbbr);
 				((TextView) findViewById(R.id.tp_time)).setText(SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT).format(new Date(tp.time)));
 				boolean mapChanged = application.setMapCenter(tp.latitude, tp.longitude, true, false, false);
 				if (mapChanged)

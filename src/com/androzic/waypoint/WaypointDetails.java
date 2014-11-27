@@ -21,7 +21,6 @@
 package com.androzic.waypoint;
 
 import java.io.File;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -201,14 +200,12 @@ public class WaypointDetails extends Fragment
 
 		View view = getView();
 		
-		String coords = StringFormatter.coordinates(application.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
+		String coords = StringFormatter.coordinates(" ", waypoint.latitude, waypoint.longitude);
 		((TextView) view.findViewById(R.id.coordinates)).setText(coords);
 
 		if (waypoint.altitude != Integer.MIN_VALUE)
 		{
-			// FIXME Does not use altitude units
-			String altitude = String.format(Locale.getDefault(), "%d %s", waypoint.altitude, getResources().getStringArray(R.array.distance_abbrs_short)[2]);
-			((TextView) view.findViewById(R.id.altitude)).setText(altitude);
+			((TextView) view.findViewById(R.id.altitude)).setText("\u2336 " + StringFormatter.elevationH(waypoint.altitude));
 			view.findViewById(R.id.altitude).setVisibility(View.VISIBLE);
 		}
 		else
@@ -218,9 +215,7 @@ public class WaypointDetails extends Fragment
 
 		if (waypoint.proximity > 0)
 		{
-			// FIXME Meters
-			String altitude = String.format(Locale.getDefault(), "~%d m", waypoint.proximity);
-			((TextView) view.findViewById(R.id.proximity)).setText(altitude);
+			((TextView) view.findViewById(R.id.proximity)).setText("~ " + StringFormatter.distanceH(waypoint.proximity));
 			view.findViewById(R.id.proximity).setVisibility(View.VISIBLE);
 		}
 		else

@@ -536,7 +536,7 @@ public class SearchableActivity extends ListActivity
 			if (isCoordinates)
 			{
 				TextView textView = (TextView) v.findViewById(R.id.name);
-				String coords = StringFormatter.coordinates(mApplication.coordinateFormat, " ", coordinates.lat, coordinates.lon);
+				String coords = StringFormatter.coordinates(" ", coordinates.lat, coordinates.lon);
 				textView.setText(coords);
 				double dist = Geo.distance(mLocation[0], mLocation[1], coordinates.lat, coordinates.lon);
 				double bearing = Geo.bearing(mLocation[0], mLocation[1], coordinates.lat, coordinates.lon);
@@ -548,7 +548,7 @@ public class SearchableActivity extends ListActivity
 			{
 				TextView textView = (TextView) v.findViewById(R.id.name);
 				textView.setText(waypoint.name);
-				String coords = StringFormatter.coordinates(mApplication.coordinateFormat, " ", waypoint.latitude, waypoint.longitude);
+				String coords = StringFormatter.coordinates(" ", waypoint.latitude, waypoint.longitude);
 				textView = (TextView) v.findViewById(R.id.coordinates);
 				textView.setText(coords);
 				double dist = Geo.distance(mLocation[0], mLocation[1], waypoint.latitude, waypoint.longitude);
@@ -674,7 +674,7 @@ public class SearchableActivity extends ListActivity
 					name = addr;
 				TextView textView = (TextView) v.findViewById(R.id.name);
 				textView.setText(name);
-				String coords = StringFormatter.coordinates(mApplication.coordinateFormat, " ", address.getLatitude(), address.getLongitude());
+				String coords = StringFormatter.coordinates(" ", address.getLatitude(), address.getLongitude());
 				textView = (TextView) v.findViewById(R.id.coordinates);
 				textView.setText(coords);
 				double dist = Geo.distance(mLocation[0], mLocation[1], address.getLatitude(), address.getLongitude());

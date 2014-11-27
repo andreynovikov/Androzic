@@ -69,10 +69,6 @@ public class HSIActivity extends Activity
 	private TextView eteValue;
 	private TextView eteUnit;
 
-	protected double speedFactor;
-	protected String speedAbbr;
-	protected double elevationFactor;
-	
 	private Androzic application;
 
     @Override
@@ -114,20 +110,9 @@ public class HSIActivity extends Activity
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		Resources resources = getResources();
 		
-		int speedIdx = Integer.parseInt(settings.getString(getString(R.string.pref_unitspeed), "0"));
-		speedFactor = Double.parseDouble(resources.getStringArray(R.array.speed_factors)[speedIdx]);
-		speedAbbr = resources.getStringArray(R.array.speed_abbrs)[speedIdx];
-		speedUnit.setText(speedAbbr);
-		vmgUnit.setText(speedAbbr);
-		int distanceIdx = Integer.parseInt(settings.getString(getString(R.string.pref_unitdistance), "0"));
-		StringFormatter.distanceFactor = Double.parseDouble(resources.getStringArray(R.array.distance_factors)[distanceIdx]);
-		StringFormatter.distanceAbbr = resources.getStringArray(R.array.distance_abbrs)[distanceIdx];
-		StringFormatter.distanceShortFactor = Double.parseDouble(resources.getStringArray(R.array.distance_factors_short)[distanceIdx]);
-		StringFormatter.distanceShortAbbr = resources.getStringArray(R.array.distance_abbrs_short)[distanceIdx];
-		int elevationIdx = Integer.parseInt(settings.getString(getString(R.string.pref_unitelevation), "0"));
-		elevationFactor = Double.parseDouble(resources.getStringArray(R.array.elevation_factors)[elevationIdx]);
-		String elevationAbbr = resources.getStringArray(R.array.elevation_abbrs)[elevationIdx];
-		elevationUnit.setText(elevationAbbr);
+		speedUnit.setText(StringFormatter.speedAbbr);
+		vmgUnit.setText(StringFormatter.speedAbbr);
+		elevationUnit.setText(StringFormatter.elevationAbbr);
 		trackUnit.setText((application.angleType == 0 ? "deg" : getString(R.string.degmag)));
 		bearingUnit.setText((application.angleType == 0 ? "deg" : getString(R.string.degmag)));
 		courseUnit.setText((application.angleType == 0 ? "deg" : getString(R.string.degmag)));
@@ -190,8 +175,7 @@ public class HSIActivity extends Activity
 				xtkValue.setText(xtks[0] + xtksym);
 				xtkUnit.setText(xtks[1]);
 			}
-			double vmg = navigationService.navVMG * speedFactor;
-			vmgValue.setText(String.valueOf(Math.round(vmg)));
+			vmgValue.setText(String.valueOf(StringFormatter.speedC(navigationService.navVMG)));
 			String[] ete = StringFormatter.timeC(navigationService.navETE);
 			eteValue.setText(ete[0]);
 			eteUnit.setText(ete[1]);
@@ -290,11 +274,9 @@ public class HSIActivity extends Activity
 				{
 					float track = (float) application.fixDeclination(loc.getBearing());
 					hsiView.setAzimuth(track);
-					double s = loc.getSpeed() * speedFactor;
-					double e = loc.getAltitude() * elevationFactor;
-					speedValue.setText(String.valueOf(Math.round(s)));
+					speedValue.setText(StringFormatter.speedC(loc.getSpeed()));
 					trackValue.setText(String.valueOf(Math.round(track)));
-					elevationValue.setText(String.valueOf(Math.round(e)));
+					elevationValue.setText(StringFormatter.elevationC(loc.getAltitude()));
 				}
 			});
 		}
