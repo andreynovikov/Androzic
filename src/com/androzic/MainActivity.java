@@ -509,7 +509,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		if (routeDetails == null)
 			routeDetails = (RouteDetails) Fragment.instantiate(this, RouteDetails.class.getName());
 		routeDetails.setRoute(route);
-		addFragment(routeDetails, "route_properties");
+		addFragment(routeDetails, "route_details");
 	}
 
 	@Override

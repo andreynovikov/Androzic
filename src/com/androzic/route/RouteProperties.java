@@ -96,7 +96,7 @@ public class RouteProperties extends Fragment
 	public void onResume()
 	{
 		super.onResume();
-		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.trackproperties_name);
+		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.routeproperties_name);
 	}
 
 	@Override
