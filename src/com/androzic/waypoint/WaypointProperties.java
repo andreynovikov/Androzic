@@ -91,8 +91,6 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 	private int defMarkerColor;
 	private int defTextColor;
-	
-	private CharSequence oldTitle;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -215,23 +213,9 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 	public void onResume()
 	{
 		super.onResume();
-		ActionBarActivity activity = (ActionBarActivity) getActivity();
-		if (oldTitle == null)
-			oldTitle = activity.getSupportActionBar().getTitle();
-		activity.getSupportActionBar().setTitle(R.string.waypointproperties_name);
+		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.waypointproperties_name);
 	}
 	
-	@Override
-	public void onPause()
-	{
-		super.onPause();
-		if (oldTitle != null)
-		{
-			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
-			oldTitle = null;
-		}
-	}
-
 	@Override
 	public void onSaveInstanceState(Bundle outState)
 	{

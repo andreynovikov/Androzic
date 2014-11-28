@@ -55,7 +55,6 @@ public class TrackDetails extends Fragment
 	private OnTrackActionListener trackActionsCallback;
 
 	private Track track;
-	private CharSequence oldTitle;
 	private Drawable fabDrawable;
 	private FloatingActionButton fab;
 
@@ -131,12 +130,6 @@ public class TrackDetails extends Fragment
 		
 		fab.setImageDrawable(fabDrawable);
 		fragmentHolderCallback.disableActionButton();
-
-		if (oldTitle != null)
-		{
-			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
-			oldTitle = null;
-		}
 	}
 
 	@Override
@@ -194,8 +187,6 @@ public class TrackDetails extends Fragment
 		ActionBarActivity activity = (ActionBarActivity) getActivity();
 		Resources resources = getResources();
 		
-		if (oldTitle == null)
-			oldTitle = activity.getSupportActionBar().getTitle();
 		activity.getSupportActionBar().setTitle(track.name);
 
 		View view = getView();

@@ -54,8 +54,6 @@ public class RouteProperties extends Fragment
 	private ColorButton color;
 	private Spinner width;
 	private ArrayAdapter<String> widthAdapter;
-	
-	private CharSequence oldTitle;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -98,21 +96,7 @@ public class RouteProperties extends Fragment
 	public void onResume()
 	{
 		super.onResume();
-		ActionBarActivity activity = (ActionBarActivity) getActivity();
-		if (oldTitle == null)
-			oldTitle = activity.getSupportActionBar().getTitle();
-		activity.getSupportActionBar().setTitle(R.string.trackproperties_name);
-	}
-
-	@Override
-	public void onPause()
-	{
-		super.onPause();
-		if (oldTitle != null)
-		{
-			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
-			oldTitle = null;
-		}
+		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.trackproperties_name);
 	}
 
 	@Override

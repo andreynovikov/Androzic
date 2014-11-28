@@ -48,7 +48,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Pair;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -250,26 +249,6 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-//		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.menu.general_menu, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	/* Called whenever we call invalidateOptionsMenu() */
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu)
-	{
-		// If the nav drawer is open, hide action items related to the content view
-		//boolean hide = mDrawerLayout.isDrawerOpen(mDrawerList) || mDrawerAdapter.getSelectedItem() != 0;
-		//menu.findItem(R.id.action_search).setVisible(!hide);
-		//menu.findItem(R.id.action_locating).setVisible(!hide);
-		//menu.findItem(R.id.action_tracking).setVisible(!hide);
-		return super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		// Handle action buttons
@@ -384,6 +363,25 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		super.onConfigurationChanged(newConfig);
 		// Pass any configuration change to the drawer toggles
 		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState)
+	{
+		savedInstanceState.putInt("drawerPosition", mDrawerAdapter.getSelectedItem());
+		savedInstanceState.putString("title", (String) getSupportActionBar().getTitle());
+		super.onSaveInstanceState(savedInstanceState);
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState)
+	{
+		super.onRestoreInstanceState(savedInstanceState);
+		int pos = savedInstanceState.getInt("drawerPosition");
+		DrawerItem item = mDrawerItems.get(pos);
+		updateDrawerUI(item, pos);
+		restoreDrawerUI();
+		getSupportActionBar().setTitle(savedInstanceState.getString("title"));
 	}
 
 	@Override
@@ -742,7 +740,6 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	private void restoreDrawerUI()
 	{
 		FragmentManager fm = getSupportFragmentManager();
-		String tag = "map";
 		if (fm.getBackStackEntryCount() > 0)
 		{
 			mDrawerToggle.setDrawerIndicatorEnabled(false);
@@ -753,24 +750,16 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		    // End of hack
 			
 			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerList);
-			FragmentManager.BackStackEntry bse = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
-			tag = bse.getName();
 		}
 		else
 		{
 			mDrawerToggle.setDrawerIndicatorEnabled(true);
 			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerList);
-		}
-		Log.e(TAG, "restoreDrawerUI: " + tag);
-		Fragment fragment = fm.findFragmentByTag(tag);
-		for (int pos = 0; pos < mDrawerItems.size(); pos++)
-		{
+
+			int pos = mDrawerAdapter.getSelectedItem();
 			DrawerItem item = mDrawerItems.get(pos);
-			if (item.type == DrawerItem.ItemType.FRAGMENT && item.fragment == fragment)
-			{
+			if (item.type == DrawerItem.ItemType.FRAGMENT)
 				updateDrawerUI(item, pos);
-				break;
-			}
 		}
 	}
 	

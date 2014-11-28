@@ -58,7 +58,6 @@ public class WaypointDetails extends Fragment
 	private OnWaypointActionListener waypointActionsCallback;
 
 	private Waypoint waypoint;
-	private CharSequence oldTitle;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -131,14 +130,8 @@ public class WaypointDetails extends Fragment
 	public void onPause()
 	{
 		super.onPause();
-		
-		fragmentHolderCallback.disableActionButton();
 
-		if (oldTitle != null)
-		{
-			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
-			oldTitle = null;
-		}
+		fragmentHolderCallback.disableActionButton();
 	}
 
 	@Override
@@ -194,8 +187,6 @@ public class WaypointDetails extends Fragment
 		Androzic application = Androzic.getApplication();
 		ActionBarActivity activity = (ActionBarActivity) getActivity();
 		
-		if (oldTitle == null)
-			oldTitle = activity.getSupportActionBar().getTitle();
 		activity.getSupportActionBar().setTitle(waypoint.name);
 
 		View view = getView();

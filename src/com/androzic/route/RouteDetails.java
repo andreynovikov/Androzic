@@ -76,8 +76,6 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	private Route route;
 	private boolean navigation;
 
-	private CharSequence oldTitle;
-
 	public RouteDetails()
 	{
 		application = Androzic.getApplication();
@@ -186,12 +184,6 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 		else
 		{
 			fragmentHolderCallback.disableActionButton();
-		}
-		
-		if (oldTitle != null)
-		{
-			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
-			oldTitle = null;
 		}
 		
 		PreferenceManager.getDefaultSharedPreferences(application).unregisterOnSharedPreferenceChangeListener(this);
@@ -326,8 +318,6 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	private void updateRouteDetails()
 	{
 		ActionBarActivity activity = (ActionBarActivity) getActivity();
-		if (oldTitle == null)
-			oldTitle = activity.getSupportActionBar().getTitle();
 		activity.getSupportActionBar().setTitle(navigation ? "\u21d2 " + route.name : route.name);
 		
 		adapter = new WaypointListAdapter(activity, route);

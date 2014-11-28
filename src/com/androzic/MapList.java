@@ -71,7 +71,6 @@ public class MapList extends ListFragment
 	private TreeNode<Map> currentTree;
 	private ProgressBar progressBar;
 	private int shortAnimationDuration;
-	private CharSequence oldTitle;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -148,23 +147,9 @@ public class MapList extends ListFragment
 	public void onResume()
 	{
 		super.onResume();
-		ActionBarActivity activity = (ActionBarActivity) getActivity();
-		if (oldTitle == null)
-			oldTitle = activity.getSupportActionBar().getTitle();
-		activity.getSupportActionBar().setTitle(R.string.maplist_name);
+		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.maplist_name);
 		populateItems();
 		adapter.notifyDataSetChanged();
-	}
-
-	@Override
-	public void onPause()
-	{
-		super.onPause();
-		if (oldTitle != null)
-		{
-			((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(oldTitle);
-			oldTitle = null;
-		}
 	}
 
 	@Override
