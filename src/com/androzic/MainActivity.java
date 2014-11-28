@@ -715,7 +715,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		icon = resources.getDrawable(R.drawable.ic_settings_white_24dp);
 		fragment = fm.findFragmentByTag(getString(R.string.menu_preferences));
 		if (fragment == null)
-			fragment = Fragment.instantiate(this, PreferencesHC.class.getName());
+			fragment = Fragment.instantiate(this, Preferences.class.getName());
 		mDrawerItems.add(new DrawerItem(icon, getString(R.string.menu_preferences), fragment).makeMinor().makeSupplementary());
 
 		icon = resources.getDrawable(R.drawable.ic_info_white_24dp);
