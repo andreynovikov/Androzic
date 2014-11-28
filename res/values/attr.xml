@@ -9,6 +9,7 @@
         <attr name="breadCrumbShortTitle" format="string" />
         <attr name="icon" />
         <attr name="fragment" format="string" />
+        <attr name="help" format="reference" />
     </declare-styleable>
     <declare-styleable name="ScrollLayout">
         <attr name="labelerClass" format="string" />

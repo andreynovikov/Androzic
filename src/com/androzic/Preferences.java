@@ -63,6 +63,9 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.util.Xml;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -156,6 +159,7 @@ public class Preferences extends ListFragment
 			args = new Bundle();
 		//TODO We should use breadcrumbs or remove them from parser
 		args.putString("title", (String) header.getTitle(getResources()));
+		args.putInt("help", header.help);
 		fragment.setArguments(args);
 		
 		fragmentHolderCallback.addFragment(fragment, header.fragment);
@@ -259,6 +263,7 @@ public class Preferences extends ListFragment
 					}
 					header.iconRes = sa.getResourceId(R.styleable.PreferenceHeader_icon, 0);
 					header.fragment = sa.getString(R.styleable.PreferenceHeader_fragment);
+					header.help = sa.getResourceId(R.styleable.PreferenceHeader_help, 0);
 					sa.recycle();
 
 					if (curBundle == null)
@@ -277,7 +282,7 @@ public class Preferences extends ListFragment
 						String innerNodeName = parser.getName();
 						if (innerNodeName.equals("extra"))
 						{
-							resources.parseBundleExtra("extra", attrs, curBundle);
+							resources.parseBundleExtra(innerNodeName, attrs, curBundle);
 							XmlUtils.skipCurrentTag(parser);
 
 						}
@@ -395,6 +400,8 @@ public class Preferences extends ListFragment
 	 */
 	public static final class Header implements Parcelable
 	{
+		public int help;
+
 		/**
 		 * Identifier for this header, to correlate with a new list when
 		 * it is updated. The default value is {@link PreferenceActivity#HEADER_ID_UNDEFINED}, meaning no id.
@@ -621,10 +628,13 @@ public class Preferences extends ListFragment
 
 	public static class PreferencesFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 	{
+		private int help;
+
 		@Override
 		public void onCreate(Bundle savedInstanceState)
 		{
 			super.onCreate(savedInstanceState);
+			setHasOptionsMenu(true);
 
 			Bundle arguments = getArguments();
 
@@ -646,6 +656,8 @@ public class Preferences extends ListFragment
 					getPreferenceScreen().getPreference(i).setEnabled(false);
 				}
 			}
+			
+			help = arguments.getInt("help", 0);
 		}
 
 		@Override
@@ -666,6 +678,33 @@ public class Preferences extends ListFragment
 
 			getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 			((ActionBarActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+		}
+
+		@Override
+		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+		{
+			inflater.inflate(R.menu.help_menu, menu);
+			super.onCreateOptionsMenu(menu, inflater);
+		}
+
+		@Override
+		public void onPrepareOptionsMenu(final Menu menu)
+		{
+			menu.findItem(R.id.action_help).setVisible(help != 0);
+		}
+
+		@Override
+		public boolean onOptionsItemSelected(MenuItem item)
+		{
+			switch (item.getItemId())
+			{
+				case R.id.action_help:
+					PreferencesHelpDialog dialog = new PreferencesHelpDialog(help);
+					dialog.show(getFragmentManager(), "dialog");
+					return true;
+				default:
+					return super.onOptionsItemSelected(item);
+			}
 		}
 
 		@SuppressLint("NewApi")

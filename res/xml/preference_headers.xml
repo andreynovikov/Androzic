@@ -4,11 +4,12 @@
 
     <header
         androzic:fragment="com.androzic.Preferences$OnlineMapPreferencesFragment"
-        androzic:title="@string/pref_map_title" >
+        androzic:title="@string/pref_map_title"
+        androzic:help="@+id/map_section" >
         <extra
             android:name="resource"
             android:value="pref_behavior" />
-    </header>
+        </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
         androzic:title="@string/pref_folder_title" >
@@ -60,7 +61,8 @@
     </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
-        androzic:title="@string/pref_navigation_title" >
+        androzic:title="@string/pref_navigation_title"
+        androzic:help="@+id/navigation_section" >
         <extra
             android:name="resource"
             android:value="pref_navigation" />
