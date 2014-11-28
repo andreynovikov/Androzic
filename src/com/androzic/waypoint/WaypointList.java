@@ -155,11 +155,12 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		Androzic application = Androzic.getApplication();
 		application.saveWaypoints();
 
+		application.registerReceiver(broadcastReceiver, new IntentFilter(Androzic.BROADCAST_WAYPOINT_ADDED));
 		application.registerReceiver(broadcastReceiver, new IntentFilter(Androzic.BROADCAST_WAYPOINT_REMOVED));
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(application);
 		mSortMode = settings.getInt(getString(R.string.wpt_sort), R.id.action_sort_size);
-		adapter.sort(1);
+		adapter.sort(mSortMode == R.id.action_sort_size ? 1 : 0);
 	}
 
 	@Override
@@ -385,6 +386,7 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
+			adapter.sort(mSortMode == R.id.action_sort_size ? 1 : 0);
 			adapter.notifyDataSetChanged();
 		}
 	};

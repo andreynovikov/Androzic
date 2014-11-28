@@ -163,6 +163,8 @@ public class WaypointDetails extends Fragment
 				return true;
 			case R.id.action_delete:
 				waypointActionsCallback.onWaypointRemove(waypoint);
+				// "Close" fragment
+				getFragmentManager().popBackStack();
 				return true;
 		}
 		return false;

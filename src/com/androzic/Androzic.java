@@ -119,6 +119,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 {
 	private static final String TAG = "Androzic";
 
+	public static final String BROADCAST_WAYPOINT_ADDED = "com.androzic.waypointAdded";
 	public static final String BROADCAST_WAYPOINT_REMOVED = "com.androzic.waypointRemoved";
 
 	public static final int PATH_DATA = 0x001;
@@ -165,6 +166,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	private List<Route> routes = new ArrayList<Route>();
 
 	// Map activity state
+	protected Waypoint undoWaypoint = null;
 	protected Route editingRoute = null;
 	protected Track editingTrack = null;
 	protected Stack<Waypoint> routeEditingWaypoints = null;
@@ -321,11 +323,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 	public int addWaypoint(final Waypoint newWaypoint)
 	{
-		newWaypoint.set = defWaypointSet;
+		if (newWaypoint.set == null)
+			newWaypoint.set = defWaypointSet;
 		synchronized (waypoints)
 		{
 			waypoints.add(newWaypoint);
 		}
+		sendBroadcast(new Intent(Androzic.BROADCAST_WAYPOINT_ADDED));
 		return waypoints.lastIndexOf(newWaypoint);
 	}
 
@@ -340,6 +344,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				waypoints.addAll(newWaypoints);
 			}
 		}
+		sendBroadcast(new Intent(Androzic.BROADCAST_WAYPOINT_ADDED));
 		return waypoints.size() - 1;
 	}
 
@@ -355,15 +360,20 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 			waypointSets.add(waypointSet);
 		}
+		sendBroadcast(new Intent(Androzic.BROADCAST_WAYPOINT_ADDED));
 		return waypoints.size() - 1;
 	}
 
 	public boolean removeWaypoint(final Waypoint delWaypoint)
 	{
+		boolean removed;
 		synchronized (waypoints)
 		{
-			return waypoints.remove(delWaypoint);
+			removed = waypoints.remove(delWaypoint);
 		}
+		if (removed)
+			sendBroadcast(new Intent(Androzic.BROADCAST_WAYPOINT_REMOVED));
+		return removed;
 	}
 	
 	public void removeWaypoint(final int delWaypoint)
@@ -372,6 +382,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			waypoints.remove(delWaypoint);
 		}
+		sendBroadcast(new Intent(Androzic.BROADCAST_WAYPOINT_REMOVED));
 	}
 
 	/**

@@ -85,6 +85,8 @@ import com.androzic.waypoint.WaypointDetails;
 import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
 import com.androzic.waypoint.WaypointProperties;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.listeners.ActionClickListener;
 import com.shamanland.fab.FloatingActionButton;
 
 public class MainActivity extends ActionBarActivity implements FragmentHolder, OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener
@@ -458,18 +460,27 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	@Override
 	public void onWaypointRemove(final Waypoint waypoint)
 	{
-		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.removeWaypointQuestion)
-		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+		application.undoWaypoint = waypoint;
+		application.removeWaypoint(waypoint);
+		application.saveWaypoints(waypoint.set);
+		application.getMapHolder().refreshMap();
+
+		Snackbar snackbar = Snackbar.with(application);
+		snackbar.text(R.string.waypoint_removed);
+		snackbar.actionLabel(R.string.undo);
+		snackbar.actionListener(new ActionClickListener() {
 			@Override
-			public void onClick(DialogInterface dialog, int which)
+			public void onActionClicked()
 			{
-				WaypointSet wptset = waypoint.set;
-				application.removeWaypoint(waypoint);
-				application.saveWaypoints(wptset);
-				sendBroadcast(new Intent(Androzic.BROADCAST_WAYPOINT_REMOVED));
+				if (application.undoWaypoint == null)
+					return;
+				application.addWaypoint(application.undoWaypoint);
+				application.saveWaypoints(waypoint.set);
 				application.getMapHolder().refreshMap();
+				application.undoWaypoint = null;
 			}
-		}).setNegativeButton(R.string.no, null).show();
+		});
+		snackbar.show(this);
 	}
 
 	@Override

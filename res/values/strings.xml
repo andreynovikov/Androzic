@@ -87,7 +87,6 @@
  
     <string name="backQuit">Press Back again to quit</string>
     <string name="quitQuestion">Do you want to quit?</string>
-    <string name="removeWaypointQuestion">Remove waypoint?</string>
 
     <string name="quit">Quit</string>
     <string name="yes">Yes</string>
@@ -96,6 +95,7 @@
     <string name="gotit">Got it</string>
     <string name="save">Save</string>
     <string name="done">Done</string>
+    <string name="undo">Undo</string>
     <string name="navigate">Navigate</string>
     <string name="generate">Generate</string>
     <string name="cancel">Cancel</string>
@@ -171,6 +171,7 @@
 	<string name="max_speed">Maximim speed</string>
 	<string name="average_speed">Average speed</string>
 			
+	<string name="waypoint_removed">Waypoint removed</string>
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>
     <string name="upto">Up to %.0f meters</string>
