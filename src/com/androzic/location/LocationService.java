@@ -374,9 +374,12 @@ public class LocationService extends BaseLocationService implements LocationList
 		intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		intent.setComponent(new ComponentName(getApplicationContext(), Splash.class));
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, intent, 0);
-		builder.setContentIntent(contentIntent);
+		builder.setContentIntent(PendingIntent.getActivity(this, NOTIFICATION_ID, intent, 0));
 		builder.setContentTitle(getText(R.string.notif_loc_short));
+		builder.setGroup("androzic");
+		builder.setCategory(NotificationCompat.CATEGORY_SERVICE);
+		builder.setPriority(NotificationCompat.PRIORITY_LOW);
+		builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 		if (errorTime > 0 && DEBUG_ERRORS)
 			builder.setContentText(errorMsg);
 		else

@@ -58,7 +58,6 @@ public class NavigationService extends BaseNavigationService implements OnShared
 	private ILocationService locationService = null;
 	protected Location lastKnownLocation;
 	
-	private Notification notification;
 	private PendingIntent contentIntent;
 	
 	private int routeProximity = 200;
@@ -108,14 +107,6 @@ public class NavigationService extends BaseNavigationService implements OnShared
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_navigation_proximity));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_navigation_traverse));
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder.setContentIntent(contentIntent);
-		builder.setSmallIcon(R.drawable.ic_stat_navigation);
-		builder.setWhen(0);
-		builder.setContentTitle(getText(R.string.notif_nav_short));
-		builder.setContentText(getText(R.string.notif_nav_started));
-		notification = builder.build();
 
 		Log.i(TAG, "Service started");
 	}
@@ -263,7 +254,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 	{
 		clearNavigation();
 		connect();
-		startForeground(NOTIFICATION_ID, notification);
+		startForeground(NOTIFICATION_ID, getNotification());
 
 		vmgav = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -278,7 +269,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 	{
 		clearNavigation();
 		connect();
-		startForeground(NOTIFICATION_ID, notification);
+		startForeground(NOTIFICATION_ID, getNotification());
 
 		vmgav = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -550,19 +541,35 @@ public class NavigationService extends BaseNavigationService implements OnShared
 		}
 	}
 	
+	private Notification getNotification()
+	{
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setContentIntent(contentIntent);
+		builder.setSmallIcon(R.drawable.ic_stat_navigation);
+		builder.setContentTitle(getText(R.string.notif_nav_short));
+		if (navWaypoint != null)
+		{
+			builder.setWhen(System.currentTimeMillis());
+			builder.setContentText(String.format((String) getText(R.string.notif_nav_to), navWaypoint.name));
+		}
+		else
+		{
+			builder.setWhen(0);
+			builder.setContentText(getText(R.string.notif_nav_started));
+		}
+		builder.setGroup("androzic");
+		builder.setCategory(NotificationCompat.CATEGORY_SERVICE);
+		builder.setPriority(NotificationCompat.PRIORITY_LOW);
+		builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+		return builder.build();
+	}
+
 	private void updateNavigationState(final int state)
 	{
 		if (state != STATE_STOPED && state != STATE_REACHED)
 		{
-			NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-			builder.setContentIntent(contentIntent);
-			builder.setSmallIcon(R.drawable.ic_stat_navigation);
-			builder.setWhen(System.currentTimeMillis());
-			builder.setContentTitle(getText(R.string.notif_nav_short));
-			builder.setContentText(String.format((String) getText(R.string.notif_nav_to), navWaypoint.name));
-			notification = builder.build();
 			NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-			nm.notify(NOTIFICATION_ID, notification);
+			nm.notify(NOTIFICATION_ID, getNotification());
 		}
 		sendBroadcast(new Intent(BROADCAST_NAVIGATION_STATE).putExtra("state", state));
 		Log.d(TAG, "State dispatched");
