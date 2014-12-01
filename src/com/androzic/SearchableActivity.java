@@ -558,11 +558,11 @@ public class SearchableActivity extends ListActivity
 				textView.setText(distance);
 				ImageView icon = (ImageView) v.findViewById(R.id.icon);
 				Bitmap b = null;
-				if (mApplication.iconsEnabled && waypoint.drawImage)
+				if (waypoint.drawImage)
 				{
 					BitmapFactory.Options options = new BitmapFactory.Options();
 					options.inScaled = false;
-					b = BitmapFactory.decodeFile(mApplication.iconPath + File.separator + waypoint.image, options);
+					b = BitmapFactory.decodeFile(mApplication.markerPath + File.separator + waypoint.marker, options);
 				}
 				int h = b != null ? b.getHeight() : 30;
 				Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity), h, Config.ARGB_8888);

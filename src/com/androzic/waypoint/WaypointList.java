@@ -482,11 +482,11 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 			waypointHolder.distance.setText(distance);
 			
 			Bitmap b = null;
-			if (application.iconsEnabled && wpt.drawImage)
+			if (wpt.drawImage)
 			{
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inScaled = false;
-				b = BitmapFactory.decodeFile(application.iconPath + File.separator + wpt.image, options);
+				b = BitmapFactory.decodeFile(application.markerPath + File.separator + wpt.marker, options);
 			}
 			int h = b != null ? b.getHeight() : 30;
 			Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity), h, Config.ARGB_8888);

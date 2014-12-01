@@ -25,7 +25,6 @@
 package com.androzic.waypoint;
 
 import java.io.File;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -168,7 +167,7 @@ public class WaypointInfo extends DialogFragment implements OnClickListener
 		{
 			BitmapFactory.Options options = new BitmapFactory.Options();
             options.inScaled = false;
-			Bitmap b = BitmapFactory.decodeFile(application.iconPath + File.separator + waypoint.image, options);
+			Bitmap b = BitmapFactory.decodeFile(application.markerPath + File.separator + waypoint.marker, options);
 			if (b != null)
 			{
 				b.setDensity(Bitmap.DENSITY_NONE);

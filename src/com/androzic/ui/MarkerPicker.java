@@ -38,7 +38,7 @@ public class MarkerPicker extends DialogFragment implements OnItemClickListener,
 
 	public interface OnMarkerPickerDialogListener
 	{
-	    public void onMarkerSelected(String icon);       
+	    public void onMarkerSelected(String icon);
 	}
 	
 	public MarkerPicker(OnMarkerPickerDialogListener listener)
@@ -55,7 +55,7 @@ public class MarkerPicker extends DialogFragment implements OnItemClickListener,
 		icons = new ArrayList<Bitmap>();
 
 		Androzic application = Androzic.getApplication();
-		File dir = new File(application.iconPath);
+		File dir = new File(application.markerPath);
 
 		List<File> result = new ArrayList<File>();
 

@@ -23,6 +23,7 @@ package com.androzic;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -45,6 +46,7 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -77,6 +79,7 @@ public class Splash extends Activity implements OnClickListener
 
 	private static final int PROGRESS_STEP = 10000;
 
+	@SuppressWarnings("unused")
 	private int result;
 	private boolean wait;
 	protected String savedMessage;
@@ -334,16 +337,24 @@ public class Splash extends Activity implements OnClickListener
 				datadir.mkdirs();
 			}
 
-			// check icons folder existence
+			// old icons are used by plugins so far
 			File iconsdir = new File(settings.getString(getString(R.string.pref_folder_icon), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_icon)));
-			if (!iconsdir.exists())
+			// check marker icons folder existence
+			File markericonsdir = new File(settings.getString(getString(R.string.pref_folder_markericon), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_markericon)));
+			if (true || !markericonsdir.exists())
 			{
 				try
 				{
-					iconsdir.mkdirs();
-					File nomedia = new File(iconsdir, ".nomedia");
+					markericonsdir.mkdirs();
+					int dpi = resources.getDisplayMetrics().densityDpi;
+					String dpiEx = "mdpi";
+					if (dpi >= DisplayMetrics.DENSITY_XHIGH)
+						dpiEx = "xhdpi";
+					if (dpi >= DisplayMetrics.DENSITY_XXHIGH)
+						dpiEx = "xxhdpi";
+					File nomedia = new File(markericonsdir, ".nomedia");
 					nomedia.createNewFile();
-					application.copyAssets("icons", iconsdir);
+					application.copyAssets("icons-" + dpiEx, markericonsdir);
 				}
 				catch (IOException e)
 				{
@@ -359,6 +370,7 @@ public class Splash extends Activity implements OnClickListener
 			application.setDataPath(Androzic.PATH_DATA, datadir.getAbsolutePath());
 			application.setDataPath(Androzic.PATH_SAS, sasdir.getAbsolutePath());
 			application.setDataPath(Androzic.PATH_ICONS, iconsdir.getAbsolutePath());
+			application.setDataPath(Androzic.PATH_MARKERICONS, markericonsdir.getAbsolutePath());
 
 			// initialize data
 			application.installData();
@@ -420,7 +432,7 @@ public class Splash extends Activity implements OnClickListener
 					List<Route> routes = null;
 					try
 					{
-						String lc = file.getName().toLowerCase();
+						String lc = file.getName().toLowerCase(Locale.getDefault());
 						if (lc.endsWith(".rt2") || lc.endsWith(".rte"))
 						{
 							routes = OziExplorerFiles.loadRoutesFromFile(file, application.charset);

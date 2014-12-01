@@ -151,7 +151,7 @@ public class OziExplorerFiles
 	
 		    		if (fields.length >= 22 && ! "".equals(fields[21]))
 		    		{
-		    			waypoint.image = fields[21];
+		    			waypoint.marker = fields[21];
 			    	}
 		    		waypoints.add(waypoint);
 		    	}
@@ -231,7 +231,7 @@ public class OziExplorerFiles
 	        	writer.write(wpt.proximity + ",");
 	        	writer.write((wpt.altitude == Integer.MIN_VALUE ? -777 : wpt.altitude) + ",");
 	        	writer.write(",,,,,,");
-	        	writer.write(wpt.image+",,");
+	        	writer.write(wpt.marker+",,");
 	        	writer.write("\n");
 	        }
         }

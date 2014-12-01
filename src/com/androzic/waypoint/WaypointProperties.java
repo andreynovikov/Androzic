@@ -125,23 +125,16 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 		iconValue = null;
 		ImageButton icon = (ImageButton) rootView.findViewById(R.id.icon_button);
 		icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_highlight_remove_white_24dp));
-		if (application.iconsEnabled)
+		if (waypoint.drawImage)
 		{
-			if (waypoint.drawImage)
+			Bitmap b = BitmapFactory.decodeFile(application.markerPath + File.separator + waypoint.marker);
+			if (b != null)
 			{
-				Bitmap b = BitmapFactory.decodeFile(application.iconPath + File.separator + waypoint.image);
-				if (b != null)
-				{
-					icon.setImageBitmap(b);
-					iconValue = waypoint.image;
-				}
+				icon.setImageBitmap(b);
+				iconValue = waypoint.marker;
 			}
-			icon.setOnClickListener(iconOnClickListener);
 		}
-		else
-		{
-			icon.setEnabled(false);
-		}
+		icon.setOnClickListener(iconOnClickListener);
 
 		ArrayList<String> items = new ArrayList<String>();
 		for (WaypointSet wptset : application.getWaypointSets())
@@ -189,7 +182,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 			if (iconValue != null)
 			{
 				Androzic application = Androzic.getApplication();
-				Bitmap b = BitmapFactory.decodeFile(application.iconPath + File.separator + iconValue);
+				Bitmap b = BitmapFactory.decodeFile(application.markerPath + File.separator + iconValue);
 				if (b != null)
 					icon.setImageBitmap(b);
 			}
@@ -287,12 +280,12 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 					if (iconValue == null)
 					{
-						waypoint.image = "";
+						waypoint.marker = "";
 						waypoint.drawImage = false;
 					}
 					else
 					{
-						waypoint.image = iconValue;
+						waypoint.marker = iconValue;
 						waypoint.drawImage = true;
 					}
 					int markerColorValue = markercolor.getColor();
@@ -395,7 +388,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 		iconValue = icon;
 		ImageButton iconButton = (ImageButton) getView().findViewById(R.id.icon_button);
 		Androzic application = Androzic.getApplication();
-		Bitmap b = BitmapFactory.decodeFile(application.iconPath + File.separator + iconValue);
+		Bitmap b = BitmapFactory.decodeFile(application.markerPath + File.separator + iconValue);
 		if (b != null)
 			iconButton.setImageBitmap(b);
 	}

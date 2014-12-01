@@ -21,6 +21,7 @@
     <string name="pref_folder_waypoint">folderwaypoint</string>
     <string name="pref_folder_data">folderdata</string>
     <string name="pref_folder_icon">foldericon</string>
+    <string name="pref_folder_markericon">foldermarkericon</string>
     <string name="pref_maprenderinterval">maprenderinterval</string>
     <string name="pref_mapbest">mapbest</string>
     <string name="pref_mapbestinterval">mapbestint</string>
@@ -100,6 +101,7 @@
 	<string name="def_folder_map">Androzic/maps</string>
 	<string name="def_folder_sas">Androzic/sas</string>
 	<string name="def_folder_icon">Androzic/icons</string>
+	<string name="def_folder_markericon">Androzic/markericons</string>
 	<string name="def_folder_data">Androzic/data</string>
 	<string name="def_folder_prefix">Androzic</string>
 	<string name="def_onlinemap">osm</string>

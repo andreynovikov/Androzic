@@ -165,9 +165,25 @@ public class MapObjectsOverlay extends MapOverlay
 			int height = pointWidth;
 
 			Bitmap icon = null;
+			// old icons
 			if (!"".equals(mo.image) && application.iconsEnabled)
 			{
 				icon = BitmapFactory.decodeFile(application.iconPath + File.separator + mo.image);
+				if (icon == null)
+				{
+					mo.drawImage = false;
+				}
+				else
+				{
+					width = icon.getWidth();
+					height = icon.getHeight();
+					mo.drawImage = true;
+				}
+			}
+			// new markers
+			if (!"".equals(mo.marker))
+			{
+				icon = BitmapFactory.decodeFile(application.markerPath + File.separator + mo.marker);
 				if (icon == null)
 				{
 					mo.drawImage = false;

@@ -125,6 +125,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public static final int PATH_DATA = 0x001;
 	public static final int PATH_SAS = 0x002;
 	public static final int PATH_ICONS = 0x008;
+	public static final int PATH_MARKERICONS = 0x010;
 	
 	public int angleType = 0;
 	public int sunriseType = 0;
@@ -185,6 +186,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	private String mapPath;
 	private String sasPath;
 	public String iconPath;
+	public String markerPath;
 	public boolean mapsInited = false;
 	private MapHolder mapHolder;
 	protected OverlayManager overlayManager;
@@ -1826,6 +1828,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			dataPath = path;
 		if ((pathtype & PATH_ICONS) > 0)
 			iconPath = path;
+		if ((pathtype & PATH_MARKERICONS) > 0)
+			markerPath = path;
 		if ((pathtype & PATH_SAS) > 0)
 			sasPath = path;
 	}
@@ -2019,6 +2023,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	 */
 	public void copyAssets(String folder, File path)
 	{
+		Log.i(TAG, "CopyAssets(" + folder + ", " + path + ")");
 		AssetManager assetManager = getAssets();
 		String[] files = null;
 		try
