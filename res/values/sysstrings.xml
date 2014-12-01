@@ -14,7 +14,6 @@
    	<string name="pref_onlinemap">onlinemap</string>
    	<string name="pref_onlinemapscale">onlinemapscale</string>
     <string name="pref_loc_gpstimeout">loc_gpstimeout</string>
-    <string name="pref_loc_store">loc_store</string>
     <string name="pref_folder_root">folderroot</string>
     <string name="pref_folder_map">foldermapnew</string>
     <string name="pref_folder_map_old">foldermap</string>
@@ -29,7 +28,6 @@
     <string name="pref_mapfollowonloc">mapfollowonloc</string>
     <string name="pref_maplistscale">maplistscale</string>
     <string name="pref_wakelock">wakelock</string>
-	<string name="pref_hideactionbar">hideactionbar</string>
 	<string name="pref_hidestatusbar">hidestatusbar</string>
 	<string name="pref_exit">exit</string>
     <string name="pref_mapdim">mapdim</string>

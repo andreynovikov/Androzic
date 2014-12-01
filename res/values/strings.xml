@@ -269,8 +269,6 @@
     <string name="pref_loc_title">Location</string>
     <string name="pref_loc_gpstimeout_title">GPS location timeout</string>
     <string name="pref_loc_gpstimeout_summary">Specifies timeout in seconds of last GPS fix after which location will be forgotten</string>
-    <string name="pref_loc_store_title">Remember last location</string>
-    <string name="pref_loc_store_summary">Starts application at the last location</string>
     <string name="pref_folder_title">Folders</string>
     <string name="pref_folder_prefix_title">Application folder</string>
     <string name="pref_folder_map_title">Maps folder</string>
@@ -292,8 +290,6 @@
     <string name="pref_maplistscale_summary">In map lists show map scale in meters per centimeter instead of conventional centimeters per centimeter.</string>
     <string name="pref_wakelock_title">Keep screen on</string>
 	<string name="pref_wakelock_summary">Keeps the device&#8217;s screen turned on and bright when map is displayed</string>
-	<string name="pref_hideactionbar_title">Hide action bar</string>
-	<string name="pref_hideactionbar_summary">Hide application action bar when map is displayed. Takes affect only after application restart.</string>
 	<string name="pref_hidestatusbar_title">Hide status bar</string>
 	<string name="pref_hidestatusbar_summary">Hide Android status bar when map is displayed.</string>
 	<string name="pref_mapdim_title">Screen auto dim</string>

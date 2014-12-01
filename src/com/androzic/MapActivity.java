@@ -38,7 +38,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -79,7 +78,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 	LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF555555);
 
 	protected boolean ready = false;
-	private boolean restarting = false;
 
 	/** Called when the activity is first created. */
 	@SuppressLint("ShowToast")
@@ -94,23 +92,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 
 		application = (Androzic) getApplication();
 
-		// check if called after crash
-		if (!application.mapsInited)
-		{
-			restarting = true;
-			startActivity(new Intent(this, Splash.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
-			finish();
-			return;
-		}
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		Resources resources = getResources();
-
-		if (settings.getBoolean(getString(R.string.pref_hideactionbar), resources.getBoolean(R.bool.def_hideactionbar)))
-		{
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-		}
-
 		setContentView(R.layout.act_main);
 		trackBar = (SeekBar) findViewById(R.id.trackbar);
 		map = (MapView) findViewById(R.id.mapview);
@@ -120,9 +101,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		findViewById(R.id.cutbefore).setOnClickListener(this);
 
 		trackBar.setOnSeekBarChangeListener(this);
-
-		if (getIntent().getExtras() != null)
-			onNewIntent(getIntent());
 
 		ready = true;
 	}
@@ -157,13 +135,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		super.onDestroy();
 		Log.e(TAG, "onDestroy()");
 		ready = false;
-
-		if (isFinishing() && !restarting)
-		{
-			application.clear();
-		}
-
-		restarting = false;
 
 		application = null;
 		map = null;
