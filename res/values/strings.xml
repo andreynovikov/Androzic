@@ -171,7 +171,7 @@
 	<string name="max_speed">Maximim speed</string>
 	<string name="average_speed">Average speed</string>
 			
-	<string name="waypoint_removed">Waypoint removed</string>
+	<string name="waypoint_deleted">Waypoint deleted</string>
     <string name="badmaps">Map index error</string>
     <string name="nomaps">No maps found</string>
     <string name="upto">Up to %.0f meters</string>

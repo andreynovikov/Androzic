@@ -465,7 +465,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		application.getMapHolder().refreshMap();
 
 		Snackbar snackbar = Snackbar.with(application);
-		snackbar.text(R.string.waypoint_removed);
+		snackbar.text(R.string.waypoint_deleted);
 		snackbar.actionLabel(R.string.undo);
 		snackbar.actionListener(new ActionClickListener() {
 			@Override
