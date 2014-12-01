@@ -4,12 +4,12 @@
 
     <header
         androzic:fragment="com.androzic.Preferences$OnlineMapPreferencesFragment"
-        androzic:title="@string/pref_map_title"
-        androzic:help="@+id/map_section" >
+        androzic:help="@+id/map_section"
+        androzic:title="@string/pref_map_title" >
         <extra
             android:name="resource"
             android:value="pref_behavior" />
-        </header>
+    </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
         androzic:title="@string/pref_folder_title" >
@@ -19,6 +19,7 @@
     </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
+        androzic:help="@+id/location_section"
         androzic:title="@string/pref_loc_title" >
         <extra
             android:name="resource"
@@ -26,6 +27,7 @@
     </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
+        androzic:help="@+id/display_section"
         androzic:title="@string/pref_show_title" >
         <extra
             android:name="resource"
@@ -40,6 +42,7 @@
     </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
+        androzic:help="@+id/track_section"
         androzic:title="@string/pref_tracking_title" >
         <extra
             android:name="resource"
@@ -47,6 +50,7 @@
     </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
+        androzic:help="@+id/waypoint_section"
         androzic:title="@string/pref_waypoint_title" >
         <extra
             android:name="resource"
@@ -54,6 +58,7 @@
     </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
+        androzic:help="@+id/route_section"
         androzic:title="@string/pref_route_title" >
         <extra
             android:name="resource"
@@ -61,8 +66,8 @@
     </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
-        androzic:title="@string/pref_navigation_title"
-        androzic:help="@+id/navigation_section" >
+        androzic:help="@+id/navigation_section"
+        androzic:title="@string/pref_navigation_title" >
         <extra
             android:name="resource"
             android:value="pref_navigation" />
@@ -74,6 +79,7 @@
     </header>
     <header
         androzic:fragment="com.androzic.Preferences$PreferencesFragment"
+        androzic:help="@+id/advanced_section"
         androzic:title="@string/pref_advanced_title" >
         <extra
             android:name="resource"

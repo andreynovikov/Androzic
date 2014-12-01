@@ -3,22 +3,18 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_show_title" >
 
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showsatinfo"
-        android:summary="@string/pref_showsatinfo_summary"
         android:title="@string/pref_showsatinfo_title" />
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showmapinfo"
-        android:summary="@string/pref_showmapinfo_summary"
         android:title="@string/pref_showmapinfo_title" />
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showcurrenttrack"
-        android:summary="@string/pref_showcurrenttrack_summary"
         android:title="@string/pref_showcurrenttrack_title" />
-
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showaccuracy"
@@ -33,15 +29,13 @@
         android:title="@string/pref_showdistance_title" />
 
     <PreferenceCategory android:title="@string/pref_map_title" >
-        <com.androzic.ui.preference.HelpfulCheckBoxPreference
+        <CheckBoxPreference
             android:defaultValue="@bool/def_mapcropborder"
             android:key="@string/pref_mapcropborder"
-            android:summary="@string/pref_mapcropborder_summary"
             android:title="@string/pref_mapcropborder_title" />
-        <com.androzic.ui.preference.HelpfulCheckBoxPreference
+        <CheckBoxPreference
             android:defaultValue="@bool/def_mapdrawborder"
             android:key="@string/pref_mapdrawborder"
-            android:summary="@string/pref_mapdrawborder_summary"
             android:title="@string/pref_mapdrawborder_title" />
 
         <com.androzic.ui.ColorPreference
@@ -73,9 +67,8 @@
             androzic:defaultColor="@color/scalebarbg" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_cursor_title" >
-        <com.androzic.ui.preference.HelpfulSeekbarPreference
+        <com.androzic.ui.SeekbarPreference
             android:key="@string/pref_lookahead"
-            android:summary="@string/pref_lookahead_summary"
             android:text=" %"
             android:title="@string/pref_lookahead_title"
             androzic:defaultValue="@integer/def_lookahead"
@@ -94,12 +87,10 @@
             android:entries="@array/cursorvector_names"
             android:entryValues="@array/cursorvector_values"
             android:key="@string/pref_cursorvector"
-            android:summary="@string/pref_cursorvector_summary"
             android:title="@string/pref_cursorvector_title" />
 
-        <com.androzic.ui.preference.HelpfulSeekbarPreference
+        <com.androzic.ui.SeekbarPreference
             android:key="@string/pref_cursorvectormlpr"
-            android:summary="@string/pref_cursorvectormlpr_summary"
             android:title="@string/pref_cursorvectormlpr_title"
             androzic:defaultValue="@integer/def_cursorvectormlpr"
             androzic:format="0"

@@ -284,7 +284,7 @@
     <string name="pref_mapbestinterval_title">Best map interval</string>
     <string name="pref_mapbestinterval_summary">Time period between best map lookups</string>
     <string name="pref_mapadjacent_title">Adjacent maps</string>
-    <string name="pref_mapadjacent_summary">Display adjacent maps outside the border of current map (EXPERIMENTAL, can significantly degrade performance!)</string>
+    <string name="pref_mapadjacent_summary">Display adjacent maps outside the border of current map (<b>experimental</b>, can significantly degrade performance!)</string>
     <string name="pref_mapfollowonloc_title">Follow on first location</string>
     <string name="pref_maplistscale_title">Map list scale in meters</string>
     <string name="pref_maplistscale_summary">In map lists show map scale in meters per centimeter instead of conventional centimeters per centimeter.</string>
@@ -302,7 +302,7 @@
     <string name="pref_unfollowontap_title">Stop following on drag</string>
     <string name="pref_exit_title">Exit confirmation</string>
     <string name="pref_charset_title">Text file encoding</string>
-    <string name="pref_charset_summary">The character set for map and data text files. Caution: you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
+    <string name="pref_charset_summary">The character set for map and data text files. <b>Caution:</b> you can not mix files in Android native (UTF-8) and national character sets, change this setting only if all your files are in national encoding, otherwise manually recode the files which are not in UTF-8 encoding. Takes affect only after application restart.</string>
     <string name="pref_orientation_title">Screen orientation</string>
     <string name="pref_locale_title">Language</string>
     <string name="pref_show_title">Display</string>

@@ -3,30 +3,26 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_navigation_title" >
 
-    <com.androzic.ui.preference.HelpfulEditTextPreference
+    <EditTextPreference
         android:defaultValue="@string/def_navigation_proximity"
         android:inputType="number"
         android:key="@string/pref_navigation_proximity"
         android:maxLength="4"
         android:numeric="integer"
         android:singleLine="true"
-        android:summary="@string/pref_navigation_proximity_summary"
         android:title="@string/pref_navigation_proximity_title" />
 
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_navigation_traverse"
         android:key="@string/pref_navigation_traverse"
-        android:summary="@string/pref_navigation_traverse_summary"
         android:title="@string/pref_navigation_traverse_title" />
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_navigation_loadlast"
         android:key="@string/pref_navigation_loadlast"
-        android:summary="@string/pref_navigation_loadlast_summary"
         android:title="@string/pref_navigation_loadlast_title" />
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_navigation_proximitycircle"
         android:key="@string/pref_navigation_proximitycircle"
-        android:summary="@string/pref_navigation_proximitycircle_summary"
         android:title="@string/pref_navigation_proximitycircle_title" />
 
     <com.androzic.ui.ColorPreference
@@ -36,9 +32,8 @@
         android:title="@string/pref_navigation_linecolor_title"
         androzic:defaultColor="@color/navigationline" />
 
-    <com.androzic.ui.preference.HelpfulSeekbarPreference
+    <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_navigation_linewidth"
-        android:summary="@string/pref_navigation_linewidth_summary"
         android:text=" pixels"
         android:title="@string/pref_navigation_linewidth_title"
         androzic:defaultValue="@integer/def_navigation_linewidth"

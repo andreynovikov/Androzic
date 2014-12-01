@@ -20,6 +20,72 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/pref_maprenderinterval_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_maprenderinterval_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_mapbest_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_mapbest_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_mapbestinterval_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_mapbestinterval_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_mapadjacent_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_mapadjacent_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_maplistscale_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_maplistscale_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
             android:text="@string/pref_onlinemapscale_title"
             android:textColor="?android:textColorPrimary" />
 
@@ -31,6 +97,27 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_grid_usermpp_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_grid_usermpp_summary" />
+
+        <TextView
+            android:id="@+id/location_section"
+            style="@style/sectionHeader"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_loc_title" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:text="@string/pref_loc_gpstimeout_title"
             android:textColor="?android:textColorPrimary" />
 
@@ -42,208 +129,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_loc_store_title"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_tracking_mintime_title"
             android:textColor="?android:textColorPrimary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_loc_store_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_maprenderinterval_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_maprenderinterval_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapbest_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapbest_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapbestinterval_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapbestinterval_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapadjacent_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapadjacent_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_maplistscale_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_maplistscale_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_wakelock_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_wakelock_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_hideactionbar_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_hideactionbar_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_hidestatusbar_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_hidestatusbar_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapdim_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapdim_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapcropborder_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapcropborder_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapdrawborder_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_mapdrawborder_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_charset_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_charset_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_cursorvector_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_cursorvector_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_cursorvectormlpr_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_cursorvectormlpr_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_showsatinfo_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_showsatinfo_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_showmapinfo_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_showmapinfo_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_showcurrenttrack_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_showcurrenttrack_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_lookahead_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_lookahead_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_grid_usermpp_title" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_grid_usermpp_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_tracking_mintime_title" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -253,7 +142,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_tracking_mindistance_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_tracking_mindistance_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -261,9 +153,128 @@
             android:text="@string/pref_tracking_mindistance_summary" />
 
         <TextView
+            android:id="@+id/display_section"
+            style="@style/sectionHeader"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_tracking_linewidth_title" />
+            android:text="@string/pref_show_title" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/pref_showsatinfo_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_showsatinfo_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_showmapinfo_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_showmapinfo_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_showcurrenttrack_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_showcurrenttrack_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_mapcropborder_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_mapcropborder_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_mapdrawborder_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_mapdrawborder_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_lookahead_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_lookahead_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_cursorvector_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_cursorvector_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_cursorvectormlpr_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_cursorvectormlpr_summary" />
+
+        <TextView
+            android:id="@+id/track_section"
+            style="@style/sectionHeader"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_tracking_title" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/pref_tracking_linewidth_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -273,7 +284,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_tracking_currentload_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_tracking_currentload_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -283,7 +297,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_tracking_currentlength_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_tracking_currentlength_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -291,9 +308,18 @@
             android:text="@string/pref_tracking_currentlength_summary" />
 
         <TextView
+            android:id="@+id/waypoint_section"
+            style="@style/sectionHeader"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_waypoint_visible_title" />
+            android:text="@string/pref_waypoint_title" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/pref_waypoint_visible_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -303,7 +329,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_waypoint_width_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_waypoint_width_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -313,7 +342,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_waypoint_showname_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_waypoint_showname_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -321,9 +353,18 @@
             android:text="@string/pref_waypoint_showname_summary" />
 
         <TextView
+            android:id="@+id/route_section"
+            style="@style/sectionHeader"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_route_preload_title" />
+            android:text="@string/pref_route_title" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/pref_route_preload_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -333,7 +374,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_route_preload_hidden_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_route_preload_hidden_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -343,7 +387,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_route_linewidth_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_route_linewidth_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -353,7 +400,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_route_pointwidth_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_route_pointwidth_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -363,7 +413,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_route_showname_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_route_showname_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -380,7 +433,9 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_navigation_proximity_title" />
+            android:layout_marginBottom="4dp"
+            android:text="@string/pref_navigation_proximity_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -390,7 +445,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_navigation_traverse_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_navigation_traverse_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -400,7 +458,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_navigation_loadlast_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_navigation_loadlast_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -410,7 +471,10 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_navigation_proximitycircle_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_navigation_proximitycircle_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -420,12 +484,73 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_navigation_linewidth_title" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_navigation_linewidth_title"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/pref_navigation_linewidth_summary" />
+
+        <TextView
+            android:id="@+id/advanced_section"
+            style="@style/sectionHeader"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_advanced_title" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/pref_wakelock_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_wakelock_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_hidestatusbar_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_hidestatusbar_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_mapdim_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_mapdim_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_charset_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_charset_summary" />
     </LinearLayout>
 
 </ScrollView>

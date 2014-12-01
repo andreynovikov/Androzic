@@ -8,9 +8,8 @@
         android:key="@string/pref_usemapindex"
         android:title="@string/pref_usemapindex_title" />
 
-    <com.androzic.ui.preference.HelpfulSeekbarPreference
+    <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_maprenderinterval"
-        android:summary="@string/pref_maprenderinterval_summary"
         android:text=" ms"
         android:title="@string/pref_maprenderinterval_title"
         androzic:defaultValue="@integer/def_maprenderinterval"
@@ -19,31 +18,27 @@
         androzic:min="2"
         androzic:multiplier="100" />
 
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_mapbest"
         android:key="@string/pref_mapbest"
-        android:summary="@string/pref_mapbest_summary"
         android:title="@string/pref_mapbest_title" />
 
-    <com.androzic.ui.preference.HelpfulSeekbarPreference
+    <com.androzic.ui.SeekbarPreference
         android:dependency="@string/pref_mapbest"
         android:key="@string/pref_mapbestinterval"
-        android:summary="@string/pref_mapbestinterval_summary"
         android:text=" seconds"
         android:title="@string/pref_mapbestinterval_title"
         androzic:defaultValue="@integer/def_mapbestinterval"
         androzic:max="30"
         androzic:min="3" />
 
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_mapadjacent"
         android:key="@string/pref_mapadjacent"
-        android:summary="@string/pref_mapadjacent_summary"
         android:title="@string/pref_mapadjacent_title" />
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_maplistscale"
         android:key="@string/pref_maplistscale"
-        android:summary="@string/pref_maplistscale_summary"
         android:title="@string/pref_maplistscale_title" />
     <CheckBoxPreference
         android:defaultValue="@bool/def_mapfollowonloc"
@@ -59,12 +54,10 @@
             android:defaultValue="osm"
             android:dialogTitle="@string/pref_onlinemap_title"
             android:key="@string/pref_onlinemap"
-            android:summary="@string/pref_onlinemap_summary"
             android:title="@string/pref_onlinemap_title" />
 
-        <com.androzic.ui.preference.HelpfulSeekbarPreference
+        <com.androzic.ui.SeekbarPreference
             android:key="@string/pref_onlinemapscale"
-            android:summary="@string/pref_onlinemapscale_summary"
             android:title="@string/pref_onlinemapscale_title"
             androzic:defaultValue="@integer/def_onlinemapscale"
             androzic:format="0"
@@ -108,7 +101,6 @@
             android:maxLength="4"
             android:numeric="integer"
             android:singleLine="true"
-            android:summary="@string/pref_grid_usermpp_summary"
             android:title="@string/pref_grid_usermpp_title" />
 
         <ListPreference

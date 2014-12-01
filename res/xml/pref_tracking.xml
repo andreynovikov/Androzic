@@ -3,29 +3,26 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_tracking_title" >
 
-    <com.androzic.ui.preference.HelpfulSeekbarPreference
+    <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_tracking_linewidth"
-        android:summary="@string/pref_tracking_linewidth_summary"
         android:text=" pixels"
         android:title="@string/pref_tracking_linewidth_title"
         androzic:defaultValue="@integer/def_track_linewidth"
         androzic:max="30"
         androzic:min="1" />
 
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_tracking_currentload"
         android:key="@string/pref_tracking_currentload"
-        android:summary="@string/pref_tracking_currentload_summary"
         android:title="@string/pref_tracking_currentload_title" />
 
-    <com.androzic.ui.preference.HelpfulEditTextPreference
+    <EditTextPreference
         android:defaultValue="@string/def_tracking_currentlength"
         android:inputType="number"
         android:key="@string/pref_tracking_currentlength"
         android:maxLength="4"
         android:numeric="integer"
         android:singleLine="true"
-        android:summary="@string/pref_tracking_currentlength_summary"
         android:title="@string/pref_tracking_currentlength_title" />
 
     <com.androzic.ui.ColorPreference

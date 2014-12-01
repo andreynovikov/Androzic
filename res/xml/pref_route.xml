@@ -3,39 +3,34 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_route_title" >
 
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_route_preload"
         android:key="@string/pref_route_preload"
-        android:summary="@string/pref_route_preload_summary"
         android:title="@string/pref_route_preload_title" />
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/def_route_preload_hidden"
         android:dependency="@string/pref_route_preload"
         android:key="@string/pref_route_preload_hidden"
-        android:summary="@string/pref_route_preload_hidden_summary"
         android:title="@string/pref_route_preload_hidden_title" />
 
-    <com.androzic.ui.preference.HelpfulSeekbarPreference
+    <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_route_linewidth"
-        android:summary="@string/pref_route_linewidth_summary"
         android:text=" pixels"
         android:title="@string/pref_route_linewidth_title"
         androzic:defaultValue="@integer/def_route_linewidth"
         androzic:max="6"
         androzic:min="1" />
-    <com.androzic.ui.preference.HelpfulSeekbarPreference
+    <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_route_pointwidth"
-        android:summary="@string/pref_route_pointwidth_summary"
         android:text=" pixels"
         android:title="@string/pref_route_pointwidth_title"
         androzic:defaultValue="@integer/def_route_pointwidth"
         androzic:max="20"
         androzic:min="5" />
 
-    <com.androzic.ui.preference.HelpfulCheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_route_showname"
-        android:summary="@string/pref_route_showname_summary"
         android:title="@string/pref_route_showname_title" />
 
 </PreferenceScreen>
