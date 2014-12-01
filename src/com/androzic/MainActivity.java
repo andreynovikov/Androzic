@@ -110,6 +110,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	private Toast backToast;
 
 	protected Androzic application;
+	private boolean restarting = false;
 
 	@SuppressLint("ShowToast")
 	@Override
@@ -117,6 +118,17 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	{
 		super.onCreate(savedInstanceState);
 		Log.e(TAG, "onCreate()");
+
+		application = Androzic.getApplication();
+
+		// check if called after crash
+		if (!application.mapsInited)
+		{
+			restarting = true;
+			startActivity(new Intent(this, Splash.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(getIntent()));
+			finish();
+			return;
+		}
 
 		setContentView(R.layout.activity_main);
 
@@ -126,8 +138,6 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	    mActionButton = (FloatingActionButton) findViewById(R.id.toolbar_action_button);
 	    
 		backToast = Toast.makeText(this, R.string.backQuit, Toast.LENGTH_SHORT);
-
-		application = Androzic.getApplication();
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		onSharedPreferenceChanged(settings, getString(R.string.pref_exit));
@@ -243,8 +253,10 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		getSupportFragmentManager().removeOnBackStackChangedListener(mBackStackChangedListener);
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 
-		if (isFinishing())
+		if (isFinishing() && !restarting)
 			application.clear();
+
+		restarting = false;
 
 		application = null;
 	}
