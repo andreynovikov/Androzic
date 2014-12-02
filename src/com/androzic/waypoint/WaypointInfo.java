@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2012  Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
  *
  * This file is part of Androzic application.
  *
@@ -31,11 +31,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,7 +42,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -62,7 +57,6 @@ import com.androzic.util.StringFormatter;
 public class WaypointInfo extends DialogFragment implements OnClickListener
 {
 	private Waypoint waypoint;
-	private Drawable icon;
 	private OnWaypointActionListener waypointActionsCallback;
 
 	public WaypointInfo()
@@ -73,16 +67,6 @@ public class WaypointInfo extends DialogFragment implements OnClickListener
 	public void setWaypoint(Waypoint waypoint)
 	{
 		this.waypoint = waypoint;
-		icon = null;
-	}
-
-	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState)
-	{
-		Dialog dialog = super.onCreateDialog(savedInstanceState);
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-			dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
-		return dialog;
 	}
 
 	@Override
@@ -163,18 +147,6 @@ public class WaypointInfo extends DialogFragment implements OnClickListener
 		Dialog dialog = getDialog();
 		View view = getView();
 		
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && waypoint.drawImage)
-		{
-			BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = false;
-			Bitmap b = BitmapFactory.decodeFile(application.markerPath + File.separator + waypoint.marker, options);
-			if (b != null)
-			{
-				b.setDensity(Bitmap.DENSITY_NONE);
-				icon = new BitmapDrawable(getResources(), b);
-			}
-		}
-
 		WebView description = (WebView) view.findViewById(R.id.description);
 		
 		if ("".equals(waypoint.description))
@@ -239,13 +211,6 @@ public class WaypointInfo extends DialogFragment implements OnClickListener
 		else
 			((TextView) view.findViewById(R.id.date)).setVisibility(View.GONE);
 
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-		{
-			if (icon != null)
-				dialog.setFeatureDrawable(Window.FEATURE_LEFT_ICON, icon);
-			else
-				dialog.setFeatureDrawableResource(Window.FEATURE_RIGHT_ICON, R.drawable.ic_place_white_24dp);
-		}
 		dialog.setTitle(waypoint.name);
 	}
 }
