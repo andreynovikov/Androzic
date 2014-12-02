@@ -341,17 +341,15 @@ public class Splash extends Activity implements OnClickListener
 			File iconsdir = new File(settings.getString(getString(R.string.pref_folder_icon), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_icon)));
 			// check marker icons folder existence
 			File markericonsdir = new File(settings.getString(getString(R.string.pref_folder_markericon), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_markericon)));
-			if (true || !markericonsdir.exists())
+			if (!markericonsdir.exists())
 			{
 				try
 				{
 					markericonsdir.mkdirs();
 					int dpi = resources.getDisplayMetrics().densityDpi;
-					String dpiEx = "mdpi";
-					if (dpi >= DisplayMetrics.DENSITY_XHIGH)
-						dpiEx = "xhdpi";
-					if (dpi >= DisplayMetrics.DENSITY_XXHIGH)
-						dpiEx = "xxhdpi";
+					String dpiEx = "xhdpi";
+					if (dpi <= DisplayMetrics.DENSITY_HIGH)
+						dpiEx = "hdpi";
 					File nomedia = new File(markericonsdir, ".nomedia");
 					nomedia.createNewFile();
 					application.copyAssets("icons-" + dpiEx, markericonsdir);

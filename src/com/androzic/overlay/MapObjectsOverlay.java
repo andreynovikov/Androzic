@@ -40,7 +40,9 @@ import com.androzic.Androzic;
 import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.MapObject;
+import com.androzic.data.Marker;
 import com.androzic.map.Map;
+import com.androzic.ui.MarkerFactory;
 
 public class MapObjectsOverlay extends MapOverlay
 {
@@ -178,26 +180,29 @@ public class MapObjectsOverlay extends MapOverlay
 					width = icon.getWidth();
 					height = icon.getHeight();
 					mo.drawImage = true;
+					mo.anchorX = application.iconX;
+					mo.anchorY = application.iconY;
 				}
 			}
 			// new markers
 			if (!"".equals(mo.marker))
 			{
-				icon = BitmapFactory.decodeFile(application.markerPath + File.separator + mo.marker);
-				if (icon == null)
+				int color = mo.backcolor != Integer.MIN_VALUE ? mo.backcolor : fillPaint.getColor();
+				Marker marker = MarkerFactory.getMarker(application, mo.marker, color);
+				if (marker == null)
 				{
 					mo.drawImage = false;
 				}
 				else
 				{
+					icon = marker.image;
 					width = icon.getWidth();
 					height = icon.getHeight();
 					mo.drawImage = true;
+					mo.anchorX = marker.anchorX;
+					mo.anchorY = marker.anchorY;
 				}
 			}
-
-			Rect rect = null;
-			rect = new Rect(0, 0, width, height);
 
 			Rect bounds = new Rect();
 
@@ -217,6 +222,7 @@ public class MapObjectsOverlay extends MapOverlay
 			if (mo.drawImage)
 			{
 				bc.drawBitmap(icon, 0, icon.getHeight() > bounds.height() ? 0 : (bounds.height() - icon.getHeight()) / 2, null);
+				icon.recycle();
 			}
 			else
 			{
@@ -233,6 +239,7 @@ public class MapObjectsOverlay extends MapOverlay
 				}
 				bc.save();
 				bc.translate(0, pointWidth > bounds.height() ? 0 : (bounds.height() - pointWidth) / 2);
+				Rect rect = new Rect(0, 0, pointWidth, pointWidth);
 				bc.drawRect(rect, borderPaint);
 				rect.inset(1, 1);
 				bc.drawRect(rect, fillPaint);
@@ -268,8 +275,8 @@ public class MapObjectsOverlay extends MapOverlay
 
 		if (mo.bitmap == null)
 		{
-			dx = mo.drawImage ? application.iconX : pointWidth / 2;
-			dy = mo.drawImage ? application.iconY : bitmap.getHeight() / 2;
+			dx = mo.drawImage ? mo.anchorX : pointWidth / 2;
+			dy = mo.drawImage ? mo.anchorY : bitmap.getHeight() / 2;
 		}
 
 		if (mo.proximity > 0 && mpp > 0)

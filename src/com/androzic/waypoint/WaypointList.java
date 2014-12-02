@@ -20,7 +20,6 @@
 
 package com.androzic.waypoint;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -37,11 +36,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -70,6 +70,7 @@ import com.androzic.R;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
 import com.androzic.ui.FileListDialog;
+import com.androzic.ui.MarkerFactory;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 import com.shamanland.fab.FloatingActionButton;
@@ -484,19 +485,34 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 			Bitmap b = null;
 			if (wpt.drawImage)
 			{
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inScaled = false;
-				b = BitmapFactory.decodeFile(application.markerPath + File.separator + wpt.marker, options);
+				b = MarkerFactory.getIcon(application, wpt.marker);
 			}
-			int h = b != null ? b.getHeight() : 30;
-			Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity), h, Config.ARGB_8888);
+			
+			int border = (int) (8 * mDensity);
+			int sizeX = (int) (24 * mDensity);
+			int sizeY = (int) (18 * mDensity);
+			Bitmap bm = Bitmap.createBitmap(sizeX + border * 2, sizeY + border * 2, Config.ARGB_8888);
 			bm.eraseColor(Color.TRANSPARENT);
 			Canvas bc = new Canvas(bm);
 			if (b != null)
 			{
-				b.setDensity(Bitmap.DENSITY_NONE);
-				int l = (int) ((38 * mDensity - b.getWidth()) / 2);
-				bc.drawBitmap(b, null, new Rect(l, 0, b.getWidth() + l, b.getHeight()), null);
+				int iconWidth = b.getWidth();
+				int iconHeight = b.getHeight();
+				
+				Matrix matrix = new Matrix();
+				if (iconWidth > sizeX || iconHeight > sizeY)
+				{
+					float scaleX = (float) (1. * sizeX / iconWidth);
+					float scaleY = (float) (1. * sizeY / iconHeight);
+					float scale = scaleX > scaleY ? scaleX : scaleY;
+					matrix.postScale(scale, scale);
+					iconWidth = (int) (iconWidth * scale);
+					iconHeight = (int) (iconHeight * scale);
+				}
+
+				matrix.postTranslate(border + (sizeX - iconWidth) / 2, border + (sizeY - iconHeight) / 2);
+				bc.drawBitmap(b, matrix, null);
+				b.recycle();
 			}
 			else
 			{
@@ -512,7 +528,7 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 					mFillPaint.setColor(wpt.backcolor);
 				}
 				Rect rect = new Rect(0, 0, mPointWidth, mPointWidth);
-				bc.translate((38 * mDensity - mPointWidth) / 2, (30 - mPointWidth) / 2);
+				bc.translate(border + (sizeX - mPointWidth) / 2, border + (sizeY - mPointWidth) / 2);
 				bc.drawRect(rect, mBorderPaint);
 				rect.inset(1, 1);
 				bc.drawRect(rect, mFillPaint);
@@ -524,6 +540,13 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 				{
 					mFillPaint.setColor(bgc);
 				}
+			}
+			BitmapDrawable drawable = (BitmapDrawable)waypointHolder.icon.getDrawable();
+			if (drawable != null)
+			{
+				b = drawable.getBitmap();
+				if (b != null)
+					b.recycle();
 			}
 			waypointHolder.icon.setImageBitmap(bm);
 
