@@ -34,6 +34,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
@@ -122,11 +123,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private int vectorLength = 0;
 	private int proximity = 0;
 
-	// cursor
+	// cursors
 	private Drawable movingCursor = null;
 	private Paint crossPaint = null;
 	private Paint pointerPaint = null;
 	private PorterDuffColorFilter active = null;
+	private Path crossPath = null;
+	private Path trianglePath = null;
 
 	// scale bar
 	private int scaleBarMeters;
@@ -284,6 +287,28 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		pointerPaint.setStrokeWidth(3);
 		pointerPaint.setStyle(Paint.Style.STROKE);
 		pointerPaint.setColor(resources.getColor(R.color.cursor));
+
+		float density = resources.getDisplayMetrics().density;
+		
+		crossPath = new Path();
+		crossPath.addCircle(0, 0, 1 * density, Path.Direction.CW);
+		crossPath.addCircle(0, 0, 40 * density, Path.Direction.CW);
+		crossPath.moveTo(20 * density, 0);
+		crossPath.lineTo(100 * density, 0);
+		crossPath.moveTo(-20 * density, 0);
+		crossPath.lineTo(-100 * density, 0);
+		crossPath.moveTo(0, 20 * density);
+		crossPath.lineTo(0, 100 * density);
+		crossPath.moveTo(0, -20 * density);
+		crossPath.lineTo(0, -100 * density);
+		
+		trianglePath = new Path();
+		trianglePath.moveTo(-5 * density, -45 * density);
+		trianglePath.lineTo(0, -55 * density);
+		trianglePath.moveTo(0, -55 * density);
+		trianglePath.lineTo(5 * density, -45 * density);
+		trianglePath.moveTo(-5 * density, -45 * density);
+		trianglePath.lineTo(5 * density, -45 * density);
 
 		if (application.customCursor != null)
 		{
@@ -608,23 +633,14 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				canvas.save();
 				double bearing = Geo.bearing(currentViewport.mapCenter[0], currentViewport.mapCenter[1], currentViewport.location[0], currentViewport.location[1]);
 				canvas.rotate((float) bearing, 0, 0);
-				canvas.drawLine(-10, -50, 0, -70, pointerPaint);
-				canvas.drawLine(0, -70, 10, -50, pointerPaint);
-				canvas.drawLine(-10, -50, 10, -50, pointerPaint);
+				canvas.drawPath(trianglePath, pointerPaint);
 				canvas.restore();
 			}
 		}
 
 		// Draw map center cross
 		if (!isFollowing)
-		{
-			canvas.drawCircle(0, 0, 1, crossPaint);
-			canvas.drawCircle(0, 0, 40, crossPaint);
-			canvas.drawLine(20, 0, 120, 0, crossPaint);
-			canvas.drawLine(-20, 0, -120, 0, crossPaint);
-			canvas.drawLine(0, 20, 0, 120, crossPaint);
-			canvas.drawLine(0, -20, 0, -120, crossPaint);
-		}
+			canvas.drawPath(crossPath, crossPaint);
 	}
 	
 	public void refreshMap()
