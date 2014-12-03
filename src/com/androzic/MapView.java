@@ -1320,6 +1320,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				else
 				{
 					firstTapTime = event.getDownTime();
+					lastDragTime = SystemClock.uptimeMillis();
 				}
 
 				penOX = penX = (int) event.getX();
