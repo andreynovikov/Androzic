@@ -3,14 +3,28 @@
     xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_show_title" >
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="@string/pref_showsatinfo"
-        android:title="@string/pref_showsatinfo_title" />
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="@string/pref_showmapinfo"
-        android:title="@string/pref_showmapinfo_title" />
+    <ListPreference
+        android:defaultValue="2147483647"
+        android:dialogTitle="@string/pref_hidesatinfo_title"
+        android:entries="@array/elementhide_names"
+        android:entryValues="@array/elementhide_values"
+        android:key="@string/pref_hidesatinfo"
+        android:title="@string/pref_hidesatinfo_title" />
+    <ListPreference
+        android:defaultValue="2147483647"
+        android:dialogTitle="@string/pref_hidemapinfo_title"
+        android:entries="@array/elementhide_names"
+        android:entryValues="@array/elementhide_values"
+        android:key="@string/pref_hidemapinfo"
+        android:title="@string/pref_hidemapinfo_title" />
+    <ListPreference
+        android:defaultValue="2147483647"
+        android:dialogTitle="@string/pref_hidenavinfo_title"
+        android:entries="@array/elementhide_names"
+        android:entryValues="@array/elementhide_values"
+        android:key="@string/pref_hidenavinfo"
+        android:title="@string/pref_hidenavinfo_title" />
+
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_showcurrenttrack"
@@ -37,6 +51,14 @@
             android:defaultValue="@bool/def_mapdrawborder"
             android:key="@string/pref_mapdrawborder"
             android:title="@string/pref_mapdrawborder_title" />
+
+        <ListPreference
+            android:defaultValue="5"
+            android:dialogTitle="@string/pref_hidemapcross_title"
+            android:entries="@array/elementhide_names"
+            android:entryValues="@array/elementhide_values"
+            android:key="@string/pref_hidemapcross"
+            android:title="@string/pref_hidemapcross_title" />
 
         <com.androzic.ui.ColorPreference
             android:defaultValue="@color/mapcross"

@@ -80,7 +80,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private static final int DOUBLE_TAP_TIMEOUT = ViewConfiguration.getDoubleTapTimeout();
 
 	private static final int SCALE_MOVE_DELAY = 2000; // 2 seconds
-	private static final int CROSS_CURSOR_HIDE_DELAY = 5000; // 5 seconds
 
 	private int vectorType = 1;
 	private int vectorMultiplier = 10;
@@ -88,6 +87,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private boolean loadBestMap = true;
 	private int bestMapInterval = 5000; // 5 seconds
 	private long drawPeriod = 200; // 200 milliseconds
+	private int crossCursorHideDelay = 5000; // 5 seconds
+
 	/**
 	 * True when there is a valid location
 	 */
@@ -108,7 +109,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private long firstTapTime = 0;
 	private boolean wasDoubleTap = false;
 	private MotionEvent upEvent = null;
-	private long lastDragTime = 0;
+	protected long lastDragTime = 0;
 	private int penX = 0;
 	private int penY = 0;
 	private int penOX = 0;
@@ -629,6 +630,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 		canvas.translate(currentViewport.lookAheadXY[0] + cx, currentViewport.lookAheadXY[1] + cy);
 
+		boolean showCross = now < lastDragTime + crossCursorHideDelay;
+		
 		// draw cursor (it is always topmost)
 		if (isMoving)
 		{
@@ -650,7 +653,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			sy += cy;
 
 			// Draw overflow bearing triangle
-			if (now < lastDragTime + CROSS_CURSOR_HIDE_DELAY && (sx < VIEWPORT_EXCESS || sy < VIEWPORT_EXCESS || sx > currentViewport.width - VIEWPORT_EXCESS || sy > currentViewport.height - VIEWPORT_EXCESS))
+			if (showCross && (sx < VIEWPORT_EXCESS || sy < VIEWPORT_EXCESS || sx > currentViewport.width - VIEWPORT_EXCESS || sy > currentViewport.height - VIEWPORT_EXCESS))
 			{
 				canvas.save();
 				double bearing = Geo.bearing(currentViewport.mapCenter[0], currentViewport.mapCenter[1], currentViewport.location[0], currentViewport.location[1]);
@@ -661,7 +664,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 
 		// Draw map center cross
-		if (!isFollowing && now < lastDragTime + CROSS_CURSOR_HIDE_DELAY)
+		if (!isFollowing && showCross)
 			canvas.drawPath(crossPath, crossPaint);
 	}
 	
@@ -928,7 +931,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		if (mpp == 0)
 			return;
 
-		scaleBarMeters = (int) (mpp * (currentViewport.width - VIEWPORT_EXCESS * 2) / 6);
+		int w = currentViewport.viewArea.right - currentViewport.viewArea.left;
+		int h = currentViewport.viewArea.bottom - currentViewport.viewArea.top;
+		int d = w > h ? 8 : 6;
+		
+		scaleBarMeters = (int) (mpp * w / d);
 		if (scaleBarMeters < 40)
 			scaleBarMeters = scaleBarMeters / 10 * 10;
 		else if (scaleBarMeters < 80)
@@ -1137,7 +1144,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	{
 		drawScaleBackground = draw;
 	}
-		
+
+	public void setCrossCursorHideDelay(final int delay)
+	{
+		crossCursorHideDelay = delay;
+	}
 	public void setCrossColor(final int color)
 	{
 		crossPaint.setColor(color);
@@ -1214,6 +1225,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		// int dX = (int) (deltaX * Math.cos(rad) + deltaY * Math.sin(rad));
 		// int dY = (int) (deltaX * Math.sin(-rad) + deltaY * Math.cos(rad));
 		lastDragTime = SystemClock.uptimeMillis();
+		mapHolder.mapTapped();
 		boolean mapChanged = application.scrollMap(-deltaX, -deltaY, true);
 		if (mapChanged)
 			updateMapInfo();
@@ -1321,6 +1333,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				{
 					firstTapTime = event.getDownTime();
 					lastDragTime = SystemClock.uptimeMillis();
+					mapHolder.mapTapped();
 				}
 
 				penOX = penX = (int) event.getX();

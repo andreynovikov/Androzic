@@ -14,16 +14,17 @@ public interface MapHolder extends OnMapTileStateChangeListener
 	 */
 	void mapChanged();
 	/**
-	 * Called when location, zoom or other map conditions that need redraw have changed
+	 * Called when location, zoom or other map conditions that need map redraw have changed
 	 */
 	void conditionsChanged();
 	/**
-	 * Called to force map refresh
+	 * Call to force map refresh
 	 */
 	void refreshMap();
 	void updateCoordinates(double[] latlon);
 	void updateFileInfo();
 
+	void mapTapped();
 	boolean waypointTapped(Waypoint waypoint, int x, int y);
 	boolean routeWaypointTapped(Route route, int index, int x, int y);
 	boolean mapObjectTapped(long id, int x, int y);

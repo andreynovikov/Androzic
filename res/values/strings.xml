@@ -306,7 +306,9 @@
     <string name="pref_orientation_title">Screen orientation</string>
     <string name="pref_locale_title">Language</string>
     <string name="pref_show_title">Display</string>
-	<string name="pref_mapcrosscolor_title">Position cross color</string>
+	<string name="pref_hidemapcross_title">Hide position cross</string>
+	<string name="pref_hidemapcross_summary">Hide position cross after selected period of inactivity</string>
+    <string name="pref_mapcrosscolor_title">Position cross color</string>
     <string name="pref_scalebar_title">Scale bar</string>
 	<string name="pref_scalebarcolor_title">Scale bar color</string>
     <string name="pref_scalebarbg_title">Draw scale bar background</string>
@@ -317,10 +319,12 @@
 	<string name="pref_cursorvector_summary">Select base for vector line length</string>
 	<string name="pref_cursorvectormlpr_title">Vector line multiplier</string>
 	<string name="pref_cursorvectormlpr_summary">Select how many vector line bases will be used to set its length</string>
-	<string name="pref_showsatinfo_title">Show satellite panel</string>	
-	<string name="pref_showsatinfo_summary">Show current coordinates and GPS status panel</string>	
-	<string name="pref_showmapinfo_title">Show map panel</string>
-	<string name="pref_showmapinfo_summary">Show current map name and zoom level</string>
+	<string name="pref_hidesatinfo_title">Hide satellite panel</string>
+	<string name="pref_hidesatinfo_summary">Hide current coordinates and GPS status panel after selected period of inactivity. It can not be less then map update interval.</string>
+	<string name="pref_hidemapinfo_title">Hide map panel</string>
+	<string name="pref_hidemapinfo_summary">Hide current map name and zoom level after selected period of inactivity. It can not be less then map update interval.</string>
+	<string name="pref_hidenavinfo_title">Hide navigation panel</string>
+	<string name="pref_hidenavinfo_summary">Hide destination name and estimated time after selected period of inactivity. It can not be less then map update interval.</string>
 	<string name="pref_showdistance_title">Show distance</string>
 	<string name="pref_showaccuracy_title">Show accuracy circle</string>
 	<string name="pref_showcurrenttrack_title">Show current track</string>

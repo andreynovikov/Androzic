@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ImageButton
+        android:id="@+id/expandcollapse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:contentDescription="@string/expand"
+        android:paddingBottom="8dip"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:paddingTop="-1dip"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/zoomin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:contentDescription="@string/zoom_in"
+        android:padding="8dip"
+        android:src="@drawable/ic_add_circle_outline_white_24dp" />
+
+    <ImageButton
+        android:id="@+id/zoomout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:contentDescription="@string/zoom_out"
+        android:padding="8dip"
+        android:src="@drawable/ic_remove_circle_outline_white_24dp" />
+
+    <ImageButton
+        android:id="@+id/nextmap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:contentDescription="@string/next_map"
+        android:padding="8dip"
+        android:src="@drawable/ic_flip_to_front_white_24dp" />
+
+    <ImageButton
+        android:id="@+id/prevmap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:contentDescription="@string/prev_map"
+        android:padding="8dip"
+        android:src="@drawable/ic_flip_to_back_white_24dp" />
+
+</merge>

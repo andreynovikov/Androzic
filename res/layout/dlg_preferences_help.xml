@@ -163,26 +163,39 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:text="@string/pref_showsatinfo_title"
+            android:text="@string/pref_hidesatinfo_title"
             android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_showsatinfo_summary" />
+            android:text="@string/pref_hidesatinfo_summary" />
 
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:layout_marginTop="8dp"
-            android:text="@string/pref_showmapinfo_title"
+            android:text="@string/pref_hidemapinfo_title"
             android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_showmapinfo_summary" />
+            android:text="@string/pref_hidemapinfo_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_hidenavinfo_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_hidenavinfo_summary" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -222,6 +235,19 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/pref_mapdrawborder_summary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_hidemapcross_title"
+            android:textColor="?android:textColorPrimary" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_hidemapcross_summary" />
 
         <TextView
             android:layout_width="fill_parent"

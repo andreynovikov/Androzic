@@ -49,6 +49,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -104,12 +105,17 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private boolean autoDim;
 	private int dimInterval;
 	private int dimValue;
+	private boolean mapButtonsVisible;
+
+	private int mapInfoHideDelay = Integer.MAX_VALUE; // never
+	private int satInfoHideDelay = Integer.MAX_VALUE; // never
+	private int navInfoHideDelay = Integer.MAX_VALUE; // never
 
 	// Views
 	private MapView map;
 
 	private TextView coordinates;
-	private TextView satInfo;
+	private TextView sattelites;
 	private TextView currentFile;
 	private TextView mapZoom;
 
@@ -135,6 +141,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 	private TextView waitBar;
 
+	private View mapInfo;
+	private View satInfo;
+	private View navInfo;
 	private View mapButtons;
 	private ViewGroup dimView;
 	private View anchor;
@@ -182,7 +191,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		View view = inflater.inflate(R.layout.fragment_map, container, false);
 
 		coordinates = (TextView) view.findViewById(R.id.coordinates);
-		satInfo = (TextView) view.findViewById(R.id.sats);
+		sattelites = (TextView) view.findViewById(R.id.sats);
 		currentFile = (TextView) view.findViewById(R.id.currentfile);
 		mapZoom = (TextView) view.findViewById(R.id.currentzoom);
 		waypointName = (TextView) view.findViewById(R.id.waypointname);
@@ -203,6 +212,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		bearingUnit = (TextView) view.findViewById(R.id.bearingunit);
 		turnValue = (TextView) view.findViewById(R.id.turn);
 		// trackBar = (SeekBar) findViewById(R.id.trackbar);
+		mapInfo = view.findViewById(R.id.mapinfo);
+		satInfo = view.findViewById(R.id.satinfo);
+		navInfo = view.findViewById(R.id.navinfo);
 		mapButtons = view.findViewById(R.id.mapbuttons);
 		waitBar = (TextView) view.findViewById(R.id.waitbar);
 		anchor = view.findViewById(R.id.anchor);
@@ -215,7 +227,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		view.findViewById(R.id.nextmap).setOnClickListener(this);
 		view.findViewById(R.id.prevmap).setOnClickListener(this);
 		coordinates.setOnClickListener(this);
-		satInfo.setOnClickListener(this);
+		sattelites.setOnClickListener(this);
 		currentFile.setOnClickListener(this);
 		mapZoom.setOnClickListener(this);
 		waypointName.setOnClickListener(this);
@@ -280,7 +292,10 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapfollowonloc));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_wakelock));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_showdistance_int));
-
+		onSharedPreferenceChanged(settings, getString(R.string.pref_hidemapinfo));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_hidesatinfo));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_hidenavinfo));
+		
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdiminterval));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdimvalue));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdim));
@@ -291,6 +306,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarbg));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarcolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarbgcolor));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_hidemapcross));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcrosscolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorvector));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_cursorcolor));
@@ -317,7 +333,10 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		map.setKeepScreenOn(keepScreenOn);
 		map.setFollowing(following);
 
-		customizeLayout(settings);
+		mapButtonsVisible = settings.getBoolean(getString(R.string.ui_mapbuttons_shown), true);
+		mapButtons.setVisibility(mapButtonsVisible ? View.VISIBLE : View.GONE);
+
+		updateMapViewArea();
 
 		// Start updating UI
 		map.resume();
@@ -358,7 +377,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 		map = null;
 		coordinates = null;
-		satInfo = null;
+		sattelites = null;
 		currentFile = null;
 		mapZoom = null;
 		waypointName = null;
@@ -445,8 +464,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			{
 				if (!map.isFixed())
 				{
-					satInfo.setText(R.string.sat_start);
-					satInfo.setTextColor(getResources().getColor(R.color.gpsenabled));
+					sattelites.setText(R.string.sat_start);
+					sattelites.setTextColor(getResources().getColor(R.color.gpsenabled));
 					// Mock provider hack
 					if (application.gpsContinous)
 					{
@@ -458,8 +477,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				switch (application.gpsStatus)
 				{
 					case LocationService.GPS_OK:
-						satInfo.setTextColor(getResources().getColor(R.color.gpsworking));
-						satInfo.setText(String.valueOf(application.gpsFSats) + "/" + String.valueOf(application.gpsTSats));
+						sattelites.setTextColor(getResources().getColor(R.color.gpsworking));
+						sattelites.setText(String.valueOf(application.gpsFSats) + "/" + String.valueOf(application.gpsTSats));
 						if (!map.isFixed())
 						{
 							map.setMoving(true);
@@ -468,8 +487,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						}
 						break;
 					case LocationService.GPS_SEARCHING:
-						satInfo.setTextColor(getResources().getColor(R.color.gpsenabled));
-						satInfo.setText(String.valueOf(application.gpsFSats) + "/" + String.valueOf(application.gpsTSats));
+						sattelites.setTextColor(getResources().getColor(R.color.gpsenabled));
+						sattelites.setText(String.valueOf(application.gpsFSats) + "/" + String.valueOf(application.gpsTSats));
 						if (map.isFixed())
 						{
 							map.setFixed(false);
@@ -480,8 +499,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 			else
 			{
-				satInfo.setText(R.string.sat_stop);
-				satInfo.setTextColor(getResources().getColor(R.color.gpsdisabled));
+				sattelites.setText(R.string.sat_stop);
+				sattelites.setTextColor(getResources().getColor(R.color.gpsdisabled));
 				if (map.isMoving())
 				{
 					map.setMoving(false);
@@ -517,6 +536,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 
 			updateGPSStatus();
+			updatePanels();
 
 			if (autoDim && dimInterval > 0 && application.lastKnownLocation.getTime() - lastDim >= dimInterval)
 			{
@@ -525,20 +545,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 		}
 	};
-
-	private final void customizeLayout(final SharedPreferences settings)
-	{
-		boolean slVisible = settings.getBoolean(getString(R.string.pref_showsatinfo), true);
-		boolean mlVisible = settings.getBoolean(getString(R.string.pref_showmapinfo), true);
-		boolean mbVisible = settings.getBoolean(getString(R.string.ui_mapbuttons_shown), true);
-
-		View root = getView();
-		root.findViewById(R.id.satinfo).setVisibility(slVisible ? View.VISIBLE : View.GONE);
-		root.findViewById(R.id.mapinfo).setVisibility(mlVisible ? View.VISIBLE : View.GONE);
-		root.findViewById(R.id.mapbuttons).setVisibility(mbVisible ? View.VISIBLE : View.GONE);
-
-		updateMapViewArea();
-	}
 
 	private void updateMapViewArea()
 	{
@@ -557,12 +563,17 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				v = root.findViewById(R.id.bottombar);
 				if (v != null)
 					area.bottom = v.getTop();
-				//TODO Test map buttons and right bar
 				v = root.findViewById(R.id.rightbar);
 				if (v != null)
 					area.right = v.getLeft();
 				if (mapButtons.isShown())
-					area.right = mapButtons.getLeft();
+				{
+					// Landscape mode
+					if (v != null)
+						area.bottom = mapButtons.getTop();
+					else
+						area.right = mapButtons.getLeft();
+				}
 				if (!area.isEmpty())
 					map.updateViewArea(area);
 				ViewTreeObserver ob;
@@ -746,6 +757,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
+	public void mapTapped()
+	{
+		updatePanels();
+	}
+
+	@Override
 	public boolean waypointTapped(Waypoint waypoint, int x, int y)
 	{
 		try
@@ -872,6 +889,67 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		map.updateMapCenter();
 	}
 
+	private void updatePanels()
+	{
+		long now = SystemClock.uptimeMillis();
+		boolean changed = false;
+
+		if ((now < map.lastDragTime + mapInfoHideDelay))
+		{
+			if (mapInfo.getVisibility() != View.VISIBLE)
+			{
+				mapInfo.setVisibility(View.VISIBLE);
+				if (mapButtonsVisible)
+					mapButtons.setVisibility(View.VISIBLE);
+				changed = true;
+			}
+		}
+		else
+		{
+			if (mapInfo.getVisibility() != View.GONE)
+			{
+				mapInfo.setVisibility(View.GONE);
+				mapButtons.setVisibility(View.GONE);
+				changed = true;
+			}
+		}
+		if ((now < map.lastDragTime + satInfoHideDelay))
+		{
+			if (satInfo.getVisibility() != View.VISIBLE)
+			{
+				satInfo.setVisibility(View.VISIBLE);
+				changed = true;
+			}
+		}
+		else
+		{
+			if (satInfo.getVisibility() != View.GONE)
+			{
+				satInfo.setVisibility(View.GONE);
+				changed = true;
+			}
+		}
+		if ((now < map.lastDragTime + navInfoHideDelay))
+		{
+			if (navInfo.getVisibility() != View.VISIBLE)
+			{
+				navInfo.setVisibility(View.VISIBLE);
+				changed = true;
+			}
+		}
+		else
+		{
+			if (navInfo.getVisibility() != View.GONE)
+			{
+				navInfo.setVisibility(View.GONE);
+				changed = true;
+			}
+		}
+
+		if (changed)
+			updateMapViewArea();
+	}
+
 	private void updateEditStatus()
 	{
 		if (application.editingRoute != null)
@@ -981,6 +1059,21 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		{
 			showDistance = Integer.parseInt(sharedPreferences.getString(key, getString(R.string.def_showdistance)));
 		}
+		else if (getString(R.string.pref_hidemapinfo).equals(key))
+		{
+			mapInfoHideDelay = Integer.parseInt(sharedPreferences.getString(key, "2147483647"));
+			Log.e(TAG, "Hide map: " + mapInfoHideDelay);
+		}
+		else if (getString(R.string.pref_hidesatinfo).equals(key))
+		{
+			satInfoHideDelay = Integer.parseInt(sharedPreferences.getString(key, "2147483647"));
+			Log.e(TAG, "Hide sat: " + mapInfoHideDelay);
+		}
+		else if (getString(R.string.pref_hidenavinfo).equals(key))
+		{
+			navInfoHideDelay = Integer.parseInt(sharedPreferences.getString(key, "2147483647"));
+			Log.e(TAG, "Hide nav: " + mapInfoHideDelay);
+		}
 		else if (getString(R.string.pref_maprenderinterval).equals(key))
 		{
 			updatePeriod = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_maprenderinterval)) * 100;
@@ -1029,6 +1122,11 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		else if (getString(R.string.pref_scalebarbgcolor).equals(key))
 		{
 			map.setScaleBarBackgroundColor(sharedPreferences.getInt(key, resources.getColor(R.color.scalebarbg)));
+		}
+		else if (getString(R.string.pref_hidemapcross).equals(key))
+		{
+			int delay = Integer.parseInt(sharedPreferences.getString(key, "5"));
+			map.setCrossCursorHideDelay(delay);
 		}
 		else if (getString(R.string.pref_mapcrosscolor).equals(key))
 		{
@@ -1147,12 +1245,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 			case R.id.currentzoom:
 			{
-				boolean visible = mapButtons.isShown();
-				mapButtons.setVisibility(visible ? View.GONE : View.VISIBLE);
+				mapButtonsVisible = ! mapButtonsVisible;
+				mapButtons.setVisibility(mapButtonsVisible ? View.VISIBLE : View.GONE);
 				updateMapViewArea();
 				// save panel state
 				Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
-				editor.putBoolean(getString(R.string.ui_mapbuttons_shown), !visible);
+				editor.putBoolean(getString(R.string.ui_mapbuttons_shown), mapButtonsVisible);
 				editor.commit();
 				break;
 			}
@@ -1492,7 +1590,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		public void onReceive(Context context, Intent intent)
 		{
 			String action = intent.getAction();
-			Log.e(TAG, "Broadcast: " + action);
+			Log.i(TAG, "Broadcast: " + action);
 			if (action.equals(NavigationService.BROADCAST_NAVIGATION_STATE))
 			{
 				onUpdateNavigationState();

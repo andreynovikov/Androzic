@@ -10,6 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/rightbar"
         android:background="#88000000"
         android:orientation="vertical" >
 
@@ -19,7 +20,7 @@
             android:id="@+id/navinfo"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="horizontal" >
 
             <include layout="@layout/inc_routeinfo" />
 
@@ -28,39 +29,77 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottombar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#88000000"
-        android:orientation="vertical" >
+        android:id="@+id/rightbar"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/editroute"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:background="#88000000"
+            android:orientation="vertical"
+            android:padding="3dip"
+            android:visibility="gone" >
+
+            <include layout="@layout/inc_routeedit" />
+        </LinearLayout>
 
         <TableLayout
             android:id="@+id/movinginfo"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:background="#88000000"
+            android:minWidth="80dip"
             android:visibility="gone" >
 
-            <TableRow>
+            <TableRow android:gravity="center_vertical" >
+
+                <include layout="@layout/inc_speed" />
+            </TableRow>
+
+            <TableRow android:gravity="center_vertical" >
+
+                <include layout="@layout/inc_track" />
+            </TableRow>
+
+            <TableRow android:gravity="center_vertical" >
+
+                <include layout="@layout/inc_elevation" />
+            </TableRow>
+
+            <TableRow android:gravity="center_vertical" >
 
                 <include layout="@layout/inc_distance" />
+            </TableRow>
+
+            <TableRow android:gravity="center_vertical" >
 
                 <include layout="@layout/inc_bearing" />
+            </TableRow>
+
+            <TableRow android:gravity="center_vertical" >
 
                 <include layout="@layout/inc_turn" />
             </TableRow>
 
-            <TableRow android:id="@+id/movingrow" >
-
-                <include layout="@layout/inc_speed" />
-
-                <include layout="@layout/inc_track" />
-
-                <include layout="@layout/inc_elevation" />
+            <TableRow android:gravity="center_vertical" >
 
                 <include layout="@layout/inc_xtk" />
             </TableRow>
         </TableLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottombar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/rightbar"
+        android:background="#88000000"
+        android:orientation="vertical" >
 
         <LinearLayout
             android:id="@+id/edittrack"
@@ -74,17 +113,6 @@
             <include layout="@layout/inc_trackedit" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/editroute"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="3dip"
-            android:visibility="gone" >
-
-            <include layout="@layout/inc_routeedit" />
-        </LinearLayout>
-
         <include layout="@layout/inc_mapinfo" />
     </LinearLayout>
 
@@ -93,11 +121,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/bottombar"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="16dip"
+        android:layout_marginBottom="8dip"
         android:layout_marginRight="5dip"
+        android:layout_toLeftOf="@id/rightbar"
         android:background="#88000000"
-        android:orientation="vertical" >
+        android:orientation="horizontal" >
 
         <include layout="@layout/inc_mapbuttons" />
     </LinearLayout>

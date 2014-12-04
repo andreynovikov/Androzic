@@ -75,6 +75,13 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="elementhide_values">
+        <item>1000</item>
+        <item>3000</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>2147483647</item>
+    </string-array>
     <string-array name="track_types">
         <item>.plt</item>
         <item>.kml</item>
