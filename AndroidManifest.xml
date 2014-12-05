@@ -24,8 +24,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.androzic"
     android:installLocation="auto"
-    android:versionCode="101"
-    android:versionName="2.0-beta" >
+    android:versionCode="102"
+    android:versionName="2.0-RC1" >
 
     <supports-screens
         android:anyDensity="true"
