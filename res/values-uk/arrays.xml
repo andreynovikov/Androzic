@@ -61,11 +61,6 @@
     <item>іст.</item>
     <item>магн.</item>
   </string-array>
-  <string-array name="interval_names">
-    <item>Ніколи</item>
-    <item>Щоденно</item>
-    <item>Щотижня</item>
-  </string-array>
   <string-array name="grid_names">
     <item>Переважно сітка мапи</item>
     <item>Переважно сітка користувача</item>
@@ -73,6 +68,7 @@
   <string-array name="exit_names">
     <item>Подвійне натискання Назад</item>
     <item>Діалог підтвердження</item>
+    <item>Пункт навігаційного меню</item>
     <item>Нічого</item>
   </string-array>
   <string-array name="orientation_names">
@@ -90,17 +86,23 @@
     <item>Вручну</item>
     <item>Завжди</item>
   </string-array>
+  <string-array name="elementhide_names">
+    <item>1 секунда</item>
+    <item>3 секунди</item>
+    <item>5 секунд</item>
+    <item>10 секунд</item>
+    <item>Ніколи</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Підтримка мап ozf2, ozfx3</item>
     <item>Значок додатку</item>
-    <item>Первісний код кольору</item>
+    <item>Вибір кольору</item>
     <item>Початковий код бігунця</item>
     <item>Обчислення часу сходу/заходу</item>
-    <item>Початковий код перетягування в списку</item>
-    <item>Контролер мультитача</item>
-    <item>Демонстраційна бібліотека</item>
-    <item>Значки інтерфейсу</item>
-    <item>Значки точок</item>
+    <item>Контролер мультитачу</item>
+    <item>Список із сортуванням</item>
+    <item>Іконки маркерів точок шляху</item>
+    <item>Булавки маркерів точок шляху</item>
     <item>Чеська локалізація</item>
     <item>Французька локалізація</item>
     <item>Фінська локалізація</item>
@@ -112,18 +114,5 @@
     <item>Шведська локалізація</item>
     <item>Українська локалізація</item>
     <item>Португальська локалізація</item>
-  </string-array>
-  <string-array name="panel_action_names">
-    <item>Збільшити</item>
-    <item>Зменшити</item>
-    <item>Мапа більшого масштабу</item>
-    <item>Мапа меншого масштабу</item>
-    <item>Мапи під курсором</item>
-    <item>Керувати точками</item>
-    <item>Показати інформацію</item>
-    <item>Слідкувати/не слідкувати</item>
-    <item>Отримати розташування</item>
-    <item>Писати трек</item>
-    <item>Показати/сховати панель стану</item>
   </string-array>
 </resources>

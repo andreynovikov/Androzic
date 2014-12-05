@@ -61,11 +61,6 @@
     <item>истина</item>
     <item>магнитен</item>
   </string-array>
-  <string-array name="interval_names">
-    <item>Никога</item>
-    <item>Ежедневно</item>
-    <item>Седмично</item>
-  </string-array>
   <string-array name="grid_names">
     <item>Предпочитана картна мрежа</item>
     <item>Предпочитана потребителска мрежа</item>
@@ -73,7 +68,8 @@
   <string-array name="exit_names">
     <item>Double press Back</item>
     <item>Confirmation dialog</item>
-    <item>Нищо</item>
+    <item>Drawer menu item</item>
+    <item>Nothing</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Устройство по подразбиране</item>
@@ -90,40 +86,33 @@
     <item>Ръчно</item>
     <item>Винаги</item>
   </string-array>
+  <string-array name="elementhide_names">
+    <item>1 second</item>
+    <item>3 seconds</item>
+    <item>5 seconds</item>
+    <item>10 seconds</item>
+    <item>Never</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Поддръжка на карти ozf2 и ozf3 формат</item>
     <item>Икона на приложението</item>
-    <item>Избор на цвят за начален код</item>
+    <item>Color picker</item>
     <item>Настройка кода на скриващия панел</item>
     <item>Изчисление на изгрев/залез</item>
-    <item>Начален код \"влачи и пусни\"</item>
-    <item>Мултитъч контролер</item>
-    <item>Showcase library</item>
-    <item>Interface icons</item>
-    <item>Waypoint icons</item>
-    <item>Чешка локализация</item>
-    <item>Френска локализация</item>
-    <item>Финландска локализация</item>
-    <item>Българска локализация</item>
-    <item>Немски локализация</item>
-    <item>Турска локализация</item>
-    <item>Италианска локализация</item>
-    <item>Испанска локализация</item>
-    <item>Шведска локализация</item>
-    <item>Украински локализация</item>
-    <item>Португалска локализация</item>
-  </string-array>
-  <string-array name="panel_action_names">
-    <item>Приближи</item>
-    <item>Отдалечи</item>
-    <item>Едромащабна карта</item>
-    <item>Дребномащабна карта</item>
-    <item>Карти на курсора</item>
-    <item>Управление на точките</item>
-    <item>Покажи информация</item>
-    <item>Следвай/Не следвай</item>
-    <item>Получаване на местоположение</item>
-    <item>Запис на маршрута</item>
-    <item>Показване/скриване лентата на състоянието</item>
+    <item>Multitouch controller</item>
+    <item>Drag sort list</item>
+    <item>Waypoint marker icons</item>
+    <item>Waypoint marker pins</item>
+    <item>Czech localization</item>
+    <item>French localization</item>
+    <item>Finnish localization</item>
+    <item>Bulgarian localization</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
+    <item>Swedish localization</item>
+    <item>Ukrainian localization</item>
+    <item>Portuguese localization</item>
   </string-array>
 </resources>
