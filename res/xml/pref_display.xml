@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
+    xmlns:app="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_show_title" >
 
     <ListPreference
@@ -53,55 +53,59 @@
             android:title="@string/pref_mapdrawborder_title" />
 
         <ListPreference
-            android:defaultValue="5"
+            android:defaultValue="5000"
             android:dialogTitle="@string/pref_hidemapcross_title"
             android:entries="@array/elementhide_names"
             android:entryValues="@array/elementhide_values"
             android:key="@string/pref_hidemapcross"
-            android:title="@string/pref_hidemapcross_title" />
-
-        <com.androzic.ui.ColorPreference
+            android:title="@string/pref_hidemapcross_title" /><afzkl.development.colorpickerview.preference.ColorPickerPreference
             android:defaultValue="@color/mapcross"
             android:dialogTitle="@string/pref_mapcrosscolor_title"
             android:key="@string/pref_mapcrosscolor"
             android:title="@string/pref_mapcrosscolor_title"
-            androzic:defaultColor="@color/mapcross" />
-    </PreferenceCategory>
+            app:alphaChannelVisible="true"
+            app:colorPickerSliderColor="@color/theme_accent_color"
+            app:showDialogTitle="true" />
+</PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_scalebar_title" >
-        <com.androzic.ui.ColorPreference
+        <afzkl.development.colorpickerview.preference.ColorPickerPreference
             android:defaultValue="@color/scalebar"
             android:dialogTitle="@string/pref_scalebarcolor_title"
             android:key="@string/pref_scalebarcolor"
             android:title="@string/pref_scalebarcolor_title"
-            androzic:defaultColor="@color/scalebar" />
+            app:colorPickerSliderColor="@color/theme_accent_color"
+            app:showDialogTitle="true" />
 
         <CheckBoxPreference
             android:defaultValue="@bool/def_scalebarbg"
             android:key="@string/pref_scalebarbg"
             android:title="@string/pref_scalebarbg_title" />
 
-        <com.androzic.ui.ColorPreference
+        <afzkl.development.colorpickerview.preference.ColorPickerPreference
             android:defaultValue="@color/scalebarbg"
             android:dependency="@string/pref_scalebarbg"
             android:dialogTitle="@string/pref_scalebarbgcolor_title"
             android:key="@string/pref_scalebarbgcolor"
             android:title="@string/pref_scalebarbgcolor_title"
-            androzic:defaultColor="@color/scalebarbg" />
+            app:alphaChannelVisible="true"
+            app:colorPickerSliderColor="@color/theme_accent_color"
+            app:showDialogTitle="true" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_cursor_title" >
         <com.androzic.ui.SeekbarPreference
             android:key="@string/pref_lookahead"
             android:text=" %"
             android:title="@string/pref_lookahead_title"
-            androzic:defaultValue="@integer/def_lookahead"
-            androzic:max="90" />
+            app:defaultValue="@integer/def_lookahead"
+            app:max="90" />
 
-        <com.androzic.ui.ColorPreference
+        <afzkl.development.colorpickerview.preference.ColorPickerPreference
             android:defaultValue="@color/cursor"
             android:dialogTitle="@string/pref_cursorcolor_title"
             android:key="@string/pref_cursorcolor"
             android:title="@string/pref_cursorcolor_title"
-            androzic:defaultColor="@color/cursor" />
+            app:colorPickerSliderColor="@color/theme_accent_color"
+            app:showDialogTitle="true" />
 
         <ListPreference
             android:defaultValue="@string/def_cursorvector"
@@ -114,10 +118,10 @@
         <com.androzic.ui.SeekbarPreference
             android:key="@string/pref_cursorvectormlpr"
             android:title="@string/pref_cursorvectormlpr_title"
-            androzic:defaultValue="@integer/def_cursorvectormlpr"
-            androzic:format="0"
-            androzic:max="20"
-            androzic:min="1" />
+            app:defaultValue="@integer/def_cursorvectormlpr"
+            app:format="0"
+            app:max="20"
+            app:min="1" />
     </PreferenceCategory>
 
 </PreferenceScreen>

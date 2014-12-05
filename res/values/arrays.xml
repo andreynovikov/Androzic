@@ -95,7 +95,7 @@
     <string-array name="credit_merits">
     	<item>Ozf2, ozfx3 maps support</item>
     	<item>Application icon</item>
-    	<item>Color picker initial code</item>
+    	<item>Color picker</item>
     	<item>Seekbar preference initial code</item>
     	<item>Sunrise/sunset calculation</item>
     	<item>Multitouch controller</item>

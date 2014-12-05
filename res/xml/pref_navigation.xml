@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
+    xmlns:app="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_navigation_title" >
 
     <EditTextPreference
@@ -25,19 +25,21 @@
         android:key="@string/pref_navigation_proximitycircle"
         android:title="@string/pref_navigation_proximitycircle_title" />
 
-    <com.androzic.ui.ColorPreference
+    <afzkl.development.colorpickerview.preference.ColorPickerPreference
         android:defaultValue="@color/navigationline"
         android:dialogTitle="@string/pref_navigation_linecolor_title"
         android:key="@string/pref_navigation_linecolor"
         android:title="@string/pref_navigation_linecolor_title"
-        androzic:defaultColor="@color/navigationline" />
+        app:alphaChannelVisible="true"
+        app:colorPickerSliderColor="@color/theme_accent_color"
+        app:showDialogTitle="true" />
 
     <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_navigation_linewidth"
         android:text=" pixels"
         android:title="@string/pref_navigation_linewidth_title"
-        androzic:defaultValue="@integer/def_navigation_linewidth"
-        androzic:max="10"
-        androzic:min="1" />
+        app:defaultValue="@integer/def_navigation_linewidth"
+        app:max="10"
+        app:min="1" />
 
 </PreferenceScreen>

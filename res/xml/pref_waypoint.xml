@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
+    xmlns:app="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_waypoint_title" >
 
     <CheckBoxPreference
@@ -12,33 +12,37 @@
         android:key="@string/pref_waypoint_width"
         android:text=" pixels"
         android:title="@string/pref_waypoint_width_title"
-        androzic:defaultValue="@integer/def_waypoint_width"
-        androzic:max="20"
-        androzic:min="5" />
+        app:defaultValue="@integer/def_waypoint_width"
+        app:max="20"
+        app:min="5" />
 
-    <com.androzic.ui.ColorPreference
+    <afzkl.development.colorpickerview.preference.ColorPickerPreference
         android:defaultValue="@color/waypoint"
         android:dialogTitle="@string/pref_waypoint_color_title"
         android:key="@string/pref_waypoint_color"
         android:title="@string/pref_waypoint_color_title"
-        androzic:defaultColor="@color/waypoint" />
+        app:colorPickerSliderColor="@color/theme_accent_color"
+        app:showDialogTitle="true" />
 
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_waypoint_showname"
         android:title="@string/pref_waypoint_showname_title" />
 
-    <com.androzic.ui.ColorPreference
+    <afzkl.development.colorpickerview.preference.ColorPickerPreference
         android:defaultValue="@color/waypointtext"
         android:dialogTitle="@string/pref_waypoint_namecolor_title"
         android:key="@string/pref_waypoint_namecolor"
         android:title="@string/pref_waypoint_namecolor_title"
-        androzic:defaultColor="@color/waypointtext" />
-    <com.androzic.ui.ColorPreference
+        app:colorPickerSliderColor="@color/theme_accent_color"
+        app:showDialogTitle="true" />
+    <afzkl.development.colorpickerview.preference.ColorPickerPreference
         android:defaultValue="@color/waypointbg"
         android:dialogTitle="@string/pref_waypoint_bgcolor_title"
         android:key="@string/pref_waypoint_bgcolor"
         android:title="@string/pref_waypoint_bgcolor_title"
-        androzic:defaultColor="@color/waypointbg" />
+        app:alphaChannelVisible="true"
+        app:colorPickerSliderColor="@color/theme_accent_color"
+        app:showDialogTitle="true" />
 
 </PreferenceScreen>
