@@ -410,8 +410,8 @@ public class SearchableActivity extends ListActivity
 			mItems = items;
 
 			mCoordinatesItemLayout = R.layout.list_item_coordinates;
-			mWaypointItemLayout = R.layout.waypoint_list_item;
-			mRouteItemLayout = R.layout.route_list_item;
+			mWaypointItemLayout = R.layout.list_item_waypoint;
+			mRouteItemLayout = R.layout.list_item_route;
 			mTrackItemLayout = R.layout.list_item_track;
 			mAddressItemLayout = R.layout.list_item_address;
 			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

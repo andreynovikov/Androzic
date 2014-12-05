@@ -1062,17 +1062,14 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		else if (getString(R.string.pref_hidemapinfo).equals(key))
 		{
 			mapInfoHideDelay = Integer.parseInt(sharedPreferences.getString(key, "2147483647"));
-			Log.e(TAG, "Hide map: " + mapInfoHideDelay);
 		}
 		else if (getString(R.string.pref_hidesatinfo).equals(key))
 		{
 			satInfoHideDelay = Integer.parseInt(sharedPreferences.getString(key, "2147483647"));
-			Log.e(TAG, "Hide sat: " + mapInfoHideDelay);
 		}
 		else if (getString(R.string.pref_hidenavinfo).equals(key))
 		{
 			navInfoHideDelay = Integer.parseInt(sharedPreferences.getString(key, "2147483647"));
-			Log.e(TAG, "Hide nav: " + mapInfoHideDelay);
 		}
 		else if (getString(R.string.pref_maprenderinterval).equals(key))
 		{

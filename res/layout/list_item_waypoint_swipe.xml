@@ -52,6 +52,6 @@
             android:src="@drawable/ic_delete_white_24dp" />
     </LinearLayout>
 
-    <include layout="@layout/waypoint_list_item" />
+    <include layout="@layout/list_item_waypoint" />
 
 </com.daimajia.swipe.SwipeLayout>

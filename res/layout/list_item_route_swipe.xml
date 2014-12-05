@@ -52,6 +52,6 @@
             android:src="@drawable/ic_highlight_remove_white_24dp" />
     </LinearLayout>
 
-    <include layout="@layout/route_list_item" />
+    <include layout="@layout/list_item_route" />
 
 </com.daimajia.swipe.SwipeLayout>

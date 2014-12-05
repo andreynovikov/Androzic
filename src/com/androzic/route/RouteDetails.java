@@ -371,7 +371,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 
 		public WaypointListAdapter(Context context, Route route)
 		{
-			mItemLayout = R.layout.route_waypoint_list_item;
+			mItemLayout = R.layout.list_item_route_waypoint;
 			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			mRoute = route;
 		}
