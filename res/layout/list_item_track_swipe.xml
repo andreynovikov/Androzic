@@ -1,0 +1,65 @@
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight" >
+
+    <LinearLayout
+        android:id="@+id/actions_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:background="@color/theme_primary_color"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/action_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_view"
+            android:padding="16dip"
+            android:src="@drawable/ic_visibility_white_24dp" />
+
+        <ImageView
+            android:id="@+id/action_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_edit"
+            android:padding="16dip"
+            android:src="@drawable/ic_edit_white_24dp" />
+
+        <ImageView
+            android:id="@+id/action_edit_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_edit_path"
+            android:padding="16dip"
+            android:src="@drawable/ic_border_color_white_24dp" />
+
+        <ImageView
+            android:id="@+id/action_track_to_route"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_track2route"
+            android:padding="16dip"
+            android:src="@drawable/ic_directions_white_24dp" />
+
+        <ImageView
+            android:id="@+id/action_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_save"
+            android:padding="16dip"
+            android:src="@drawable/ic_save_white_24dp" />
+
+        <ImageView
+            android:id="@+id/action_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_remove"
+            android:padding="16dip"
+            android:src="@drawable/ic_highlight_remove_white_24dp" />
+    </LinearLayout>
+
+    <include layout="@layout/list_item_track" />
+
+</com.daimajia.swipe.SwipeLayout>

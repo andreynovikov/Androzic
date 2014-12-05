@@ -32,24 +32,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
-import android.support.v7.internal.view.SupportMenuInflater;
-import android.support.v7.internal.view.menu.MenuBuilder;
-import android.support.v7.internal.view.menu.MenuPopupHelper;
-import android.support.v7.internal.view.menu.MenuPresenter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -59,10 +51,12 @@ import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
+import com.daimajia.swipe.adapters.BaseSwipeAdapter;
+import com.daimajia.swipe.implments.SwipeItemMangerImpl;
 import com.shamanland.fab.FloatingActionButton;
 import com.shamanland.fab.ShowHideOnScroll;
 
-public class RouteList extends ListFragment implements OnItemLongClickListener, FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
+public class RouteList extends ListFragment implements FileListDialog.OnFileListDialogListener
 {
 	private OnRouteActionListener routeActionsCallback;
 
@@ -70,9 +64,6 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 	final Handler handler = new Handler();
 
 	private RouteListAdapter adapter;
-	private int selectedKey;
-	private Drawable selectedBackground;
-	private int accentColor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -80,7 +71,6 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
-		accentColor = getResources().getColor(R.color.theme_accent_color);
 	}
 
 	@Override
@@ -110,12 +100,10 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 				routeActionsCallback.onRouteEdit(route);
 			}
 		});
-		getListView().setOnItemLongClickListener(this);
 
-		Activity activity = getActivity();
-
-		adapter = new RouteListAdapter(activity);
+		adapter = new RouteListAdapter(getActivity());
 		setListAdapter(adapter);
+		adapter.setMode(SwipeItemMangerImpl.Mode.Single);
 	}
 
 	@Override
@@ -175,80 +163,7 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 		routeActionsCallback.onRouteDetails(route);
 	}
 	
-	@Override
-	public boolean onItemLongClick(AdapterView<?> lv, View v, int position, long id)
-	{
-		v.setTag("selected");
-		selectedKey = position;
-		selectedBackground = v.getBackground();
-		v.setBackgroundColor(accentColor);
-		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
-		MenuBuilder menu = new MenuBuilder(getActivity());
-		menu.setCallback(this);
-		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.popup_anchor));
-		popup.setForceShowIcon(true);
-		popup.setCallback(this);
-		new SupportMenuInflater(getActivity()).inflate(R.menu.route_menu, menu);
-		popup.show();
-		return true;
-	}
-
-	@Override
-	public boolean onMenuItemSelected(MenuBuilder builder, MenuItem item)
-	{
-		final Androzic application = Androzic.getApplication();
-		final Route route = application.getRoute(selectedKey);
-		
-		switch (item.getItemId())
-		{
-			case R.id.action_navigate:
-				routeActionsCallback.onRouteNavigate(route);
-				return true;
-			case R.id.action_edit:
-				routeActionsCallback.onRouteEdit(route);
-				return true;
-			case R.id.action_edith_path:
-				routeActionsCallback.onRouteEditPath(route);
-				return true;
-			case R.id.action_save:
-				routeActionsCallback.onRouteSave(route);
-				return true;
-			case R.id.action_remove:
-				application.removeRoute(route);
-				adapter.notifyDataSetChanged();
-				return true;
-		}
-		return false;
-	}
-
-	@Override
-	public void onMenuModeChange(MenuBuilder builder)
-	{
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
-	{
-		ListView lv = getListView();
-		if (allMenusAreClosing && lv != null)
-		{
-			View v = lv.findViewWithTag("selected");
-			if (v != null)
-			{
-				v.setBackgroundDrawable(selectedBackground);
-				v.setTag(null);
-			}
-		}
-	}
-
-	@Override
-	public boolean onOpenSubMenu(MenuBuilder menu)
-	{
-		return false;
-	}
-
-	public class RouteListAdapter extends BaseAdapter implements View.OnClickListener
+	public class RouteListAdapter extends BaseSwipeAdapter implements View.OnClickListener
 	{
 		private LayoutInflater mInflater;
 		private int mItemLayout;
@@ -263,7 +178,7 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 
 		public RouteListAdapter(Context context)
 		{
-			mItemLayout = R.layout.route_list_item;
+			mItemLayout = R.layout.list_item_route_swipe;
 			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			mDensity = context.getResources().getDisplayMetrics().density;
 
@@ -315,28 +230,40 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent)
+		public int getSwipeLayoutResourceId(int position)
 		{
-			View v;
-			if (convertView == null)
-			{
-				v = mInflater.inflate(mItemLayout, parent, false);
-			}
-			else
-			{
-				v = convertView;
-			}
-			Route route = getItem(position);
-			
-			View actions = v.findViewById(R.id.actions);
-			actions.setOnClickListener(this);
+			return R.id.swipe;
+		}
 
-			TextView text = (TextView) v.findViewById(R.id.name);
+		@Override
+		public View generateView(int position, ViewGroup parent)
+		{
+			View convertView = mInflater.inflate(mItemLayout, parent, false);
+			return convertView;
+		}
+
+		@Override
+		public void fillValues(int position, View convertView)
+		{
+			Route route = getItem(position);
+
+			View actionNavigate = convertView.findViewById(R.id.action_navigate);
+			View actionEdit = convertView.findViewById(R.id.action_edit);
+			View actionEditPath = convertView.findViewById(R.id.action_edit_path);
+			View actionSave = convertView.findViewById(R.id.action_save);
+			View actionRemove = convertView.findViewById(R.id.action_remove);
+			actionNavigate.setOnClickListener(this);
+			actionEdit.setOnClickListener(this);
+			actionEditPath.setOnClickListener(this);
+			actionSave.setOnClickListener(this);
+			actionRemove.setOnClickListener(this);
+
+			TextView text = (TextView) convertView.findViewById(R.id.name);
 			text.setText(route.name);
 			String distance = StringFormatter.distanceH(route.distance);
-			text = (TextView) v.findViewById(R.id.distance);
+			text = (TextView) convertView.findViewById(R.id.distance);
 			text.setText(distance);
-			text = (TextView) v.findViewById(R.id.filename);
+			text = (TextView) convertView.findViewById(R.id.filename);
 			if (route.filepath != null)
 			{
 				String filepath = route.filepath.startsWith(application.dataPath) ? route.filepath.substring(application.dataPath.length() + 1, route.filepath.length()) : route.filepath;
@@ -346,7 +273,7 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 			{
 				text.setText("");
 			}
-			ImageView icon = (ImageView) v.findViewById(R.id.icon);
+			ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
 			Bitmap bm = Bitmap.createBitmap((int) (40 * mDensity), (int) (40 * mDensity), Config.ARGB_8888);
 			bm.eraseColor(Color.TRANSPARENT);
 			Canvas bc = new Canvas(bm);
@@ -363,8 +290,6 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 			bc.drawCircle(28 * mDensity, 35 * mDensity, half, mFillPaint);
 			bc.drawCircle(28 * mDensity, 35 * mDensity, half, mBorderPaint);
 			icon.setImageBitmap(bm);
-
-			return v;
 		}
 
 		@Override
@@ -378,10 +303,28 @@ public class RouteList extends ListFragment implements OnItemLongClickListener, 
 		{
 			ListView lv = getListView();
 			int position = lv.getPositionForView((View) v.getParent());
-			int child = position - lv.getFirstVisiblePosition() + lv.getHeaderViewsCount();
-			if (child < 0 || child >= lv.getChildCount())
-				return;
-			onItemLongClick(lv, lv.getChildAt(child), position, getItemId(position));
+			closeItem(position);
+			final Route route = getItem(position);
+			
+			switch (v.getId())
+			{
+				case R.id.action_navigate:
+					routeActionsCallback.onRouteNavigate(route);
+					break;
+				case R.id.action_edit:
+					routeActionsCallback.onRouteEdit(route);
+					break;
+				case R.id.action_edit_path:
+					routeActionsCallback.onRouteEditPath(route);
+					break;
+				case R.id.action_save:
+					routeActionsCallback.onRouteSave(route);
+					break;
+				case R.id.action_remove:
+					application.removeRoute(route);
+					adapter.notifyDataSetChanged();
+					break;
+			}
 		}
 	}
 }

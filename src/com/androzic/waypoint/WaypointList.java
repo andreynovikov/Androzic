@@ -47,19 +47,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
-import android.support.v7.internal.view.SupportMenuInflater;
-import android.support.v7.internal.view.menu.MenuBuilder;
-import android.support.v7.internal.view.menu.MenuPopupHelper;
-import android.support.v7.internal.view.menu.MenuPresenter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -73,20 +66,18 @@ import com.androzic.ui.FileListDialog;
 import com.androzic.ui.MarkerFactory;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
+import com.daimajia.swipe.adapters.BaseSwipeAdapter;
+import com.daimajia.swipe.implments.SwipeItemMangerImpl;
 import com.shamanland.fab.FloatingActionButton;
 import com.shamanland.fab.ShowHideOnScroll;
 
-public class WaypointList extends ListFragment implements OnItemLongClickListener, FileListDialog.OnFileListDialogListener, MenuBuilder.Callback, MenuPresenter.Callback
+public class WaypointList extends ListFragment implements FileListDialog.OnFileListDialogListener
 {
 	private static final int DIALOG_WAYPOINT_PROJECT = 1;
 	
 	private OnWaypointActionListener waypointActionsCallback;
 	
 	private WaypointListAdapter adapter;
-
-	private int selectedKey;
-	private Drawable selectedBackground;
-	private int accentColor;
 
 	private int mSortMode = -1;
 
@@ -96,7 +87,6 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
-		accentColor = getResources().getColor(R.color.theme_accent_color);
 	}
 
 	@Override
@@ -123,12 +113,10 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 				waypointActionsCallback.onWaypointEdit(new Waypoint());
 			}
 		});
-		getListView().setOnItemLongClickListener(this);
 
-		FragmentActivity activity = getActivity();
-		
-		adapter = new WaypointListAdapter(activity);
+		adapter = new WaypointListAdapter(getActivity());
 		setListAdapter(adapter);
+		adapter.setMode(SwipeItemMangerImpl.Mode.Single);
 	}
 
 	@Override
@@ -188,24 +176,6 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		waypointActionsCallback.onWaypointDetails(waypoint);
 	}
 	
-
-	@Override
-	public boolean onItemLongClick(AdapterView<?> lv, View v, int position, long id)
-	{
-		v.setTag("selected");
-		selectedKey = position;
-		selectedBackground = v.getBackground();
-		v.setBackgroundColor(accentColor);
-		// https://gist.github.com/mediavrog/9345938#file-iconizedmenu-java-L55
-		MenuBuilder menu = new MenuBuilder(getActivity());
-		menu.setCallback(this);
-		MenuPopupHelper popup = new MenuPopupHelper(getActivity(), menu, v.findViewById(R.id.popup_anchor));
-		popup.setForceShowIcon(true);
-		popup.setCallback(this);
-		new SupportMenuInflater(getActivity()).inflate(R.menu.waypoint_menu, menu);
-		popup.show();
-		return true;
-	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
@@ -318,70 +288,6 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		adapter.notifyDataSetChanged();
 	}
 
-	@Override
-	public boolean onMenuItemSelected(MenuBuilder builder, MenuItem item)
-	{
-		Androzic application = Androzic.getApplication();
-		Waypoint waypoint = application.getWaypoint(selectedKey);
-
-		switch (item.getItemId())
-		{
-			case R.id.action_view:
-				waypointActionsCallback.onWaypointView(waypoint);
-				return true;
-			case R.id.action_navigate:
-				waypointActionsCallback.onWaypointNavigate(waypoint);
-				return true;
-			case R.id.action_edit:
-				waypointActionsCallback.onWaypointEdit(waypoint);
-				return true;
-			case R.id.action_share:
-				waypointActionsCallback.onWaypointShare(waypoint);
-				return true;
-			case R.id.action_delete:
-				waypointActionsCallback.onWaypointRemove(waypoint);
-				adapter.notifyDataSetChanged();
-				return true;
-			case R.id.action_remove:
-				/*
-				if (selectedSetKey > 0)
-				{
-					application.removeWaypointSet(selectedSetKey);
-					adapter.notifyDataSetChanged();
-				}
-				*/
-				return true;
-		}
-		return false;
-	}
-
-	@Override
-	public void onMenuModeChange(MenuBuilder builder)
-	{
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing)
-	{
-		ListView lv = getListView();
-		if (allMenusAreClosing && lv != null)
-		{
-			View v = lv.findViewWithTag("selected");
-			if (v != null)
-			{
-				v.setBackgroundDrawable(selectedBackground);
-				v.setTag(null);
-			}
-		}
-	}
-
-	@Override
-	public boolean onOpenSubMenu(MenuBuilder menu)
-	{
-		return false;
-	}
-
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -392,7 +298,7 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		}
 	};
 
-	public class WaypointListAdapter extends BaseAdapter implements View.OnClickListener
+	public class WaypointListAdapter extends BaseSwipeAdapter implements View.OnClickListener
 	{
 		private LayoutInflater mInflater;
 		private int mItemLayout;
@@ -405,7 +311,7 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 
 		public WaypointListAdapter(Context context)
 		{
-			mItemLayout = R.layout.waypoint_list_item;
+			mItemLayout = R.layout.list_item_waypoint_swipe;
 			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			mDensity = context.getResources().getDisplayMetrics().density;
 
@@ -429,7 +335,7 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		}
 
 		@Override
-		public Object getItem(int position)
+		public Waypoint getItem(int position)
 		{
 			return application.getWaypoint(position);
 		}
@@ -447,31 +353,46 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent)
+		public int getSwipeLayoutResourceId(int position)
+		{
+			return R.id.swipe;
+		}
+
+		@Override
+		public View generateView(int position, ViewGroup parent)
+		{
+			View convertView = mInflater.inflate(mItemLayout, parent, false);
+			return convertView;
+		}
+
+		@Override
+		public void fillValues(int position, View convertView)
 		{
 			WaypointItemHolder waypointHolder = null;
 			Waypoint wpt = (Waypoint) getItem(position);
 			
-			if (convertView != null)
-				waypointHolder = (WaypointItemHolder) convertView.getTag();
-			
-			if (convertView == null)
-			{
-				convertView = mInflater.inflate(mItemLayout, parent, false);
-			}
+			waypointHolder = (WaypointItemHolder) convertView.getTag();
 			
 			if (waypointHolder == null)
 			{
 				waypointHolder = new WaypointItemHolder();
 				waypointHolder.icon = (ImageView) convertView.findViewById(R.id.icon);
-				waypointHolder.actions = (ImageView) convertView.findViewById(R.id.actions);
+				waypointHolder.actionView = convertView.findViewById(R.id.action_view);
+				waypointHolder.actionNavigate = convertView.findViewById(R.id.action_navigate);
+				waypointHolder.actionEdit = convertView.findViewById(R.id.action_edit);
+				waypointHolder.actionShare = convertView.findViewById(R.id.action_share);
+				waypointHolder.actionDelete = convertView.findViewById(R.id.action_delete);
 				waypointHolder.name = (TextView) convertView.findViewById(R.id.name);
 				waypointHolder.coordinates = (TextView) convertView.findViewById(R.id.coordinates);
 				waypointHolder.distance = (TextView) convertView.findViewById(R.id.distance);
 				convertView.setTag(waypointHolder);
 			}
 
-			waypointHolder.actions.setOnClickListener(this);
+			waypointHolder.actionView.setOnClickListener(this);
+			waypointHolder.actionNavigate.setOnClickListener(this);
+			waypointHolder.actionEdit.setOnClickListener(this);
+			waypointHolder.actionShare.setOnClickListener(this);
+			waypointHolder.actionDelete.setOnClickListener(this);
 			waypointHolder.name.setText(wpt.name);
 			
 			String coordinates = StringFormatter.coordinates(" ", wpt.latitude, wpt.longitude);
@@ -549,8 +470,6 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 					b.recycle();
 			}
 			waypointHolder.icon.setImageBitmap(bm);
-
-			return convertView;
 		}
 
 		@Override
@@ -586,19 +505,41 @@ public class WaypointList extends ListFragment implements OnItemLongClickListene
 		{
 			ListView lv = getListView();
 			int position = lv.getPositionForView((View) v.getParent());
-			int child = position - lv.getFirstVisiblePosition() + lv.getHeaderViewsCount();
-			if (child < 0 || child >= lv.getChildCount())
-				return;
-			onItemLongClick(lv, lv.getChildAt(child), position, getItemId(position));
+			closeItem(position);
+			Waypoint waypoint = getItem(position);
+
+			switch (v.getId())
+			{
+				case R.id.action_view:
+					waypointActionsCallback.onWaypointView(waypoint);
+					break;
+				case R.id.action_navigate:
+					waypointActionsCallback.onWaypointNavigate(waypoint);
+					break;
+				case R.id.action_edit:
+					waypointActionsCallback.onWaypointEdit(waypoint);
+					break;
+				case R.id.action_share:
+					waypointActionsCallback.onWaypointShare(waypoint);
+					break;
+				case R.id.action_delete:
+					waypointActionsCallback.onWaypointRemove(waypoint);
+					adapter.notifyDataSetChanged();
+					break;
+			}
 		}
 	}
 	
 	private static class WaypointItemHolder
 	{
 		ImageView icon;
-		ImageView actions;
 		TextView name;
 		TextView coordinates;
 		TextView distance;
+		View actionView;
+		View actionNavigate;
+		View actionEdit;
+		View actionShare;
+		View actionDelete;
 	}
 }

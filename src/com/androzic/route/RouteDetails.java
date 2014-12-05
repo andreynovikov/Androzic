@@ -209,7 +209,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 			case R.id.action_edit:
 				routeActionsCallback.onRouteEdit(route);
 				return true;
-			case R.id.action_edith_path:
+			case R.id.action_edit_path:
 				routeActionsCallback.onRouteEditPath(route);
 				return true;
 			case R.id.action_save:

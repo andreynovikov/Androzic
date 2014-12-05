@@ -1,0 +1,57 @@
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight" >
+
+    <LinearLayout
+        android:id="@+id/actions_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:background="@color/theme_primary_color"
+        android:orientation="horizontal"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/action_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_view"
+            android:padding="16dip"
+            android:src="@drawable/ic_visibility_white_24dp" />
+
+        <ImageView
+            android:id="@+id/action_navigate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_navigate"
+            android:padding="16dip"
+            android:src="@drawable/ic_navigation_white_24dp" />
+
+        <ImageView
+            android:id="@+id/action_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_edit"
+            android:padding="16dip"
+            android:src="@drawable/ic_edit_white_24dp" />
+
+        <ImageView
+            android:id="@+id/action_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_share"
+            android:padding="16dip"
+            android:src="@drawable/ic_share_white_24dp" />
+
+        <ImageView
+            android:id="@+id/action_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_delete"
+            android:padding="16dip"
+            android:src="@drawable/ic_delete_white_24dp" />
+    </LinearLayout>
+
+    <include layout="@layout/waypoint_list_item" />
+
+</com.daimajia.swipe.SwipeLayout>
