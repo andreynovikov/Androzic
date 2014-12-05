@@ -40,7 +40,7 @@ public class MarkerFactory
 		Marker marker = new Marker(name);
 
 		Resources resources = application.getResources();
-		int border = (int) (6 * resources.getDisplayMetrics().density);
+		int border = (int) (2 * resources.getDisplayMetrics().density);
 		Bitmap pin = BitmapFactory.decodeResource(resources, R.drawable.marker_pin_1);
 		marker.image = Bitmap.createBitmap(pin.getWidth(), pin.getHeight(), Bitmap.Config.ARGB_8888);
 
