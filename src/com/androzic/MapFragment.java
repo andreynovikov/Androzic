@@ -509,6 +509,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				}
 			}
 
+			updatePanels();
+
 			if (application.lastKnownLocation == null)
 				return;
 
@@ -536,7 +538,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 
 			updateGPSStatus();
-			updatePanels();
 
 			if (autoDim && dimInterval > 0 && application.lastKnownLocation.getTime() - lastDim >= dimInterval)
 			{
