@@ -15,11 +15,6 @@
         android:title="@string/action_add_waypoint"
         app:showAsAction="always"/>
     <item
-        android:id="@+id/action_navigation_details"
-        android:icon="@drawable/ic_list_white_24dp"
-        android:orderInCategory="0"
-        android:title="@string/menu_details"/>
-    <item
         android:id="@+id/action_next_nav_point"
         android:icon="@drawable/ic_skip_next_white_24dp"
         android:orderInCategory="0"

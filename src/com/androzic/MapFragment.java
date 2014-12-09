@@ -445,7 +445,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		boolean viaRoute = application.isNavigatingViaRoute();
 
 		menu.findItem(R.id.action_stop_navigation).setVisible(navigating);
-		menu.findItem(R.id.action_navigation_details).setVisible(viaRoute);
 		menu.findItem(R.id.action_next_nav_point).setVisible(viaRoute);
 		menu.findItem(R.id.action_prev_nav_point).setVisible(viaRoute);
 		if (viaRoute)
@@ -1378,9 +1377,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				return true;
 			case R.id.action_follow:
 				setFollowing(!following);
-				return true;
-			case R.id.action_navigation_details:
-				routeActionsCallback.onRouteDetails(application.navigationService.navRoute);
 				return true;
 			case R.id.action_next_nav_point:
 				application.navigationService.nextRouteWaypoint();
