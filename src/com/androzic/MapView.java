@@ -1117,13 +1117,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	 * Set the amount of screen intended for looking ahead
 	 * 
 	 * @param ahead
-	 *            % of the smaller dimension of screen
+	 *            % of the smaller dimension of available view area
 	 */
 	public void setLookAhead(final int ahead)
 	{
 		lookAheadPst = ahead;
-		final int w = getWidth();
-		final int h = getHeight();
+		final int w = currentViewport.viewArea.width();
+		final int h = currentViewport.viewArea.height();
 		final int half = w > h ? h / 2 : w / 2;
 		lookAhead = (int) (half * ahead * 0.01);
 		setLookAhead();
@@ -1198,6 +1198,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	{
 		Log.e(TAG, "updateViewArea()");
 		currentViewport.viewArea.set(area);
+		setLookAhead(lookAheadPst);
 	}
 
 	public void updateMapCenter()
