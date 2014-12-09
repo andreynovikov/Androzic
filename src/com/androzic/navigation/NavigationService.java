@@ -561,6 +561,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 		builder.setCategory(NotificationCompat.CATEGORY_SERVICE);
 		builder.setPriority(NotificationCompat.PRIORITY_LOW);
 		builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+		builder.setColor(getResources().getColor(R.color.theme_accent_color));
 		return builder.build();
 	}
 

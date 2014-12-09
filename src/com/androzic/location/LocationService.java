@@ -380,6 +380,7 @@ public class LocationService extends BaseLocationService implements LocationList
 		builder.setCategory(NotificationCompat.CATEGORY_SERVICE);
 		builder.setPriority(NotificationCompat.PRIORITY_LOW);
 		builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+		builder.setColor(getResources().getColor(R.color.theme_accent_color));
 		if (errorTime > 0 && DEBUG_ERRORS)
 			builder.setContentText(errorMsg);
 		else
