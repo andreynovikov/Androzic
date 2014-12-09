@@ -247,6 +247,8 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 		{
 			Route route = getItem(position);
 
+			boolean navigating = application.isNavigatingViaRoute() && application.navigationService.navRoute == route;
+
 			View actionNavigate = convertView.findViewById(R.id.action_navigate);
 			View actionEdit = convertView.findViewById(R.id.action_edit);
 			View actionEditPath = convertView.findViewById(R.id.action_edit_path);
@@ -258,8 +260,15 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 			actionSave.setOnClickListener(this);
 			actionRemove.setOnClickListener(this);
 
+			if (navigating)
+			{
+				actionNavigate.setVisibility(View.GONE);
+				actionEditPath.setVisibility(View.GONE);
+				actionRemove.setVisibility(View.GONE);
+			}
+
 			TextView text = (TextView) convertView.findViewById(R.id.name);
-			text.setText(route.name);
+			text.setText(navigating ? "\u21d2 " + route.name : route.name);
 			String distance = StringFormatter.distanceH(route.distance);
 			text = (TextView) convertView.findViewById(R.id.distance);
 			text.setText(distance);

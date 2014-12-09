@@ -199,6 +199,13 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 	public void onPrepareOptionsMenu(final Menu menu)
 	{
 		menu.findItem(R.id.action_navigate).setVisible(false);
+		if (navigation)
+		{
+			menu.findItem(R.id.action_edit).setVisible(false);
+			menu.findItem(R.id.action_edit_path).setVisible(false);
+			menu.findItem(R.id.action_save).setVisible(false);
+			menu.findItem(R.id.action_remove).setVisible(false);
+		}
 	}
 
 	@Override
