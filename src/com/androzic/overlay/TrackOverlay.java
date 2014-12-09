@@ -119,6 +119,7 @@ public class TrackOverlay extends MapOverlay
 				tp.dirty = true;
 			}
 		}
+		application.getMapHolder().refreshMap();
 	}
 
 	@Override
@@ -145,6 +146,8 @@ public class TrackOverlay extends MapOverlay
 		for (Iterator<Track.TrackSegment> segments = track.getSegments().iterator(); segments.hasNext();)
 		{
 			Track.TrackSegment segment = segments.next();
+			if (segment.getPoints().size() == 0)
+				continue;
 			if (! viewport.mapArea.intersects(segment.bounds))
 				continue;
 			for (Iterator<Track.TrackPoint> points = segment.getPoints().iterator(); points.hasNext();)

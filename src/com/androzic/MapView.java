@@ -343,6 +343,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		Log.i(TAG, "surfaceChanged(" + width + "," + height + ")");
 		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
 		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
+		calculateViewportBounds();
 		calculateScaleBar();
 		setLookAhead(lookAheadPst);
 		recreateBuffers = true;
@@ -355,6 +356,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		Log.i(TAG, "surfaceCreated(" + holder + ")");
 		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
 		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
+		calculateViewportBounds();
 		calculateScaleBar();
 		setLookAhead(lookAheadPst);
 		recreateBuffers = true;
@@ -819,6 +821,23 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 	}
 
+	private void calculateViewportBounds()
+	{
+		int cx = currentViewport.width / 2;
+		int cy = currentViewport.height / 2;
+		double[] ll = new double[2];
+		Bounds area = new Bounds();
+		application.getLatLonByXY(currentViewport.mapCenterXY[0] - cx, currentViewport.mapCenterXY[1] - cy, ll);
+		area.extend(ll[0], ll[1]);
+		application.getLatLonByXY(currentViewport.mapCenterXY[0] + cx, currentViewport.mapCenterXY[1] - cy, ll);
+		area.extend(ll[0], ll[1]);
+		application.getLatLonByXY(currentViewport.mapCenterXY[0] - cx, currentViewport.mapCenterXY[1] + cy, ll);
+		area.extend(ll[0], ll[1]);
+		application.getLatLonByXY(currentViewport.mapCenterXY[0] + cx, currentViewport.mapCenterXY[1] + cy, ll);
+		area.extend(ll[0], ll[1]);
+		currentViewport.mapArea = area;
+	}
+
 	/**
 	 * 
 	 * @return True if look ahead position was recalculated
@@ -1185,22 +1204,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	{
 		currentViewport.mapCenter = application.getMapCenter();
 		application.getXYbyLatLon(currentViewport.mapCenter[0], currentViewport.mapCenter[1], currentViewport.mapCenterXY);
-
-		int cx = currentViewport.width / 2;
-		int cy = currentViewport.height / 2;
-		
-		double[] ll = new double[2];
-		Bounds area = new Bounds();
-		application.getLatLonByXY(currentViewport.mapCenterXY[0] - cx, currentViewport.mapCenterXY[1] - cy, ll);
-		area.extend(ll[0], ll[1]);
-		application.getLatLonByXY(currentViewport.mapCenterXY[0] + cx, currentViewport.mapCenterXY[1] - cy, ll);
-		area.extend(ll[0], ll[1]);
-		application.getLatLonByXY(currentViewport.mapCenterXY[0] - cx, currentViewport.mapCenterXY[1] + cy, ll);
-		area.extend(ll[0], ll[1]);
-		application.getLatLonByXY(currentViewport.mapCenterXY[0] + cx, currentViewport.mapCenterXY[1] + cy, ll);
-		area.extend(ll[0], ll[1]);
-		currentViewport.mapArea = area;
-		
+		calculateViewportBounds();
 		refreshBuffer();
 		
 		try
