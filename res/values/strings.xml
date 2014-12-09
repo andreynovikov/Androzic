@@ -65,6 +65,7 @@
     <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
     <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
     <string name="msg_nolastknownlocation">Your recent location is not known</string>
+    <string name="msg_notimplemented">Sorry! Action is not implemented yet!</string>
 
     <string name="err_nosdcard">SD card unavailable</string>
     <string name="err_nofile">No such file</string>

@@ -627,6 +627,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	@Override
 	public void onTrackEditPath(Track track)
 	{
+		Toast.makeText(this, R.string.msg_notimplemented, Toast.LENGTH_LONG).show();
 //		setResult(RESULT_OK, new Intent().putExtra("index", application.getTrackIndex(track)));
 	}
 
