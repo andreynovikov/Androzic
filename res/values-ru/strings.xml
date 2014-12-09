@@ -63,6 +63,7 @@
   <string name="msg_clearcurrenttrack">Будет очищена вся история перемещений, вы уверены?</string>
   <string name="msg_emptytracksegment">Выбранный отрезок трека пустой, ничего сохранять</string>
   <string name="msg_nolastknownlocation">Ваше последнее местоположение не известно</string>
+  <string name="msg_notimplemented">Извините! Действие ещё не реализовано!</string>
   <string name="err_nosdcard">SD-карта недоступна</string>
   <string name="err_nofile">Нет такого файла</string>
   <string name="err_write">Не удается записать файл</string>
@@ -156,7 +157,7 @@
   <string name="from_start">От</string>
   <string name="start_to_end">до</string>
   <string name="drag">перетащить</string>
-  <string name="online_maps">Online maps</string>
+  <string name="online_maps">Онлайн карты</string>
   <string name="sas_maps">Карты SAS.Планета</string>
   <string name="start_point">Начальная точка</string>
   <string name="finish_point">Финишная точка</string>
@@ -204,7 +205,7 @@
   <string name="menu_save">Сохранить в файл</string>
   <string name="menu_change">Изменить</string>
   <string name="menu_delete">Удалить</string>
-  <string name="menu_remove">Удалить</string>
+  <string name="menu_remove">Убрать</string>
   <string name="menu_clear">Очистить</string>
   <string name="menu_search">Поиск</string>
   <string name="menu_dismiss">Отказаться</string>
@@ -251,7 +252,7 @@
   <string name="pref_plugins_title">Плагины</string>
   <string name="pref_advanced_title">Дополнительно</string>
   <string name="pref_usemapindex_title">Использовать индекс карт</string>
-  <string name="pref_onlinemaps_title">Online maps</string>
+  <string name="pref_onlinemaps_title">Онлайн карты</string>
   <string name="pref_onlinemap_title">Поставщики карт</string>
   <string name="pref_onlinemapscale_title">Масштаб по-умолчанию</string>
   <string name="pref_onlinemapscale_summary">Масштаб, который будет считаться 100%</string>

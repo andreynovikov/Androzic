@@ -92,17 +92,14 @@
         <item>en</item>
         <item>ru</item>
         <item>uk</item>
-        <item>cs</item>
         <item>fr</item>
         <item>fi</item>
         <item>es</item>
         <item>it</item>
-        <item>bg</item>
         <item>pl</item>
         <item>nl</item>
         <item>tr</item>
         <item>pt</item>
-        <item>sv</item>
         <item>sr</item>
         <item>zh</item>
     </string-array>
@@ -111,17 +108,14 @@
         <item>English</item>
         <item>Русский</item>
         <item>Український</item>
-        <item>Čeština</item>
         <item>Français</item>
         <item>Suomi</item>
         <item>Español</item>
         <item>Italiano</item>
-        <item>Български</item>
         <item>Polski</item>
         <item>Hollandsk</item>
         <item>Türk</item>
         <item>Português</item>
-        <item>Svenska</item>
         <item>Српски</item>
         <item>中文 (简体)</item>
     </string-array>
