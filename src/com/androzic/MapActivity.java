@@ -22,15 +22,9 @@ package com.androzic;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.LightingColorFilter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -42,53 +36,29 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.androzic.data.Track;
-import com.androzic.navigation.NavigationService;
-import com.androzic.overlay.RouteOverlay;
 import com.androzic.util.StringFormatter;
 
 public class MapActivity extends ActionBarActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener
 {
 	private static final String TAG = "MapActivity";
 
-	private static final int RESULT_SAVE_WAYPOINT = 0x400;
-	private static final int RESULT_LOAD_MAP = 0x500;
 	private static final int RESULT_MANAGE_TRACKS = 0x600;
-	private static final int RESULT_EDIT_ROUTE = 0x110;
 
 	// main preferences
-	protected int renderInterval;
-	protected int magInterval;
 	protected int showDistance;
 	protected boolean showAccuracy;
-	protected boolean followOnLocation;
 
 	protected SeekBar trackBar;
-	protected TextView waitBar;
 	protected MapView map;
 
 	protected Androzic application;
 
-	protected ExecutorService executorThread = Executors.newSingleThreadExecutor();
-
-	public NavigationService navigationService = null;
-
-	protected long lastRenderTime = 0;
-	protected long lastMagnetic = 0;
-
-	LightingColorFilter disable = new LightingColorFilter(0xFFFFFFFF, 0xFF555555);
-
-	protected boolean ready = false;
-
-	/** Called when the activity is first created. */
-	@SuppressLint("ShowToast")
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 
 		Log.e(TAG, "onCreate()");
-
-		ready = false;
 
 		application = (Androzic) getApplication();
 
@@ -101,8 +71,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		findViewById(R.id.cutbefore).setOnClickListener(this);
 
 		trackBar.setOnSeekBarChangeListener(this);
-
-		ready = true;
 	}
 
 	@Override
@@ -112,14 +80,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		Log.e(TAG, "onResume()");
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		Resources resources = getResources();
 
-		// update some preferences
-		application.sunriseType = Integer.parseInt(settings.getString(getString(R.string.pref_unitsunrise), "0"));
-
-		renderInterval = settings.getInt(getString(R.string.pref_maprenderinterval), resources.getInteger(R.integer.def_maprenderinterval)) * 100;
-		followOnLocation = settings.getBoolean(getString(R.string.pref_mapfollowonloc), resources.getBoolean(R.bool.def_mapfollowonloc));
-		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
 		showDistance = Integer.parseInt(settings.getString(getString(R.string.pref_showdistance_int), getString(R.string.def_showdistance)));
 
 		// prepare views
@@ -127,21 +88,6 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 		{
 			startEditTrack(application.editingTrack);
 		}
-	}
-
-	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		Log.e(TAG, "onDestroy()");
-		ready = false;
-
-		application = null;
-		map = null;
-	}
-
-	public void updateMap()
-	{
 	}
 
 	private void startEditTrack(Track track)
@@ -222,47 +168,12 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 
 		switch (requestCode)
 		{
-			case RESULT_SAVE_WAYPOINT:
-			{
-				if (resultCode == RESULT_OK)
-				{
-					application.overlayManager.waypointsOverlay.clearBitmapCache();
-					application.saveWaypoints();
-					if (data != null && data.hasExtra("index")
-							&& PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_waypoint_visible), getResources().getBoolean(R.bool.def_waypoint_visible)))
-						application.ensureVisible(application.getWaypoint(data.getIntExtra("index", -1)));
-				}
-				break;
-			}
 			case RESULT_MANAGE_TRACKS:
 				if (resultCode == RESULT_OK)
 				{
 					Bundle extras = data.getExtras();
 					int index = extras.getInt("index");
 					startEditTrack(application.getTrack(index));
-				}
-				break;
-			case RESULT_EDIT_ROUTE:
-				for (Iterator<RouteOverlay> iter = application.overlayManager.routeOverlays.iterator(); iter.hasNext();)
-				{
-					RouteOverlay ro = iter.next();
-					if (ro.getRoute().editing)
-						ro.onRoutePropertiesChanged();
-				}
-				break;
-			case RESULT_LOAD_MAP:
-				if (resultCode == RESULT_OK)
-				{
-					Bundle extras = data.getExtras();
-					final int id = extras.getInt("id");
-					synchronized (map)
-					{
-						application.loadMap(id);
-						map.suspendBestMap();
-						setFollowing(false);
-						map.updateMapInfo();
-						map.updateMapCenter();
-					}
 				}
 				break;
 		}

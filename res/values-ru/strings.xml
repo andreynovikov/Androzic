@@ -219,7 +219,7 @@
   <string name="menu_view_elsewhere">Посмотреть в другом приложении</string>
   <string name="menu_gps">Настройки GPS</string>
   <string name="menu_anchor">Установить якорную точку</string>
-  <string name="menu_view">Вид</string>
+  <string name="menu_view">Показать</string>
   <string name="menu_hsi">ПНП</string>
   <string name="menu_compass">Компас</string>
   <string name="menu_information">Информация</string>

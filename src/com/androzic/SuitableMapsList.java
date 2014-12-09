@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.LightingColorFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +20,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,6 +36,8 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 	private List<Map> maps;
 	private String mapsPath;
 	private Map currentMap;
+
+	private LightingColorFilter disable = new LightingColorFilter(0xFF666666, 0xFF000000);
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -57,7 +61,8 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 		listView = (ListView) view.findViewById(android.R.id.list);
 		View infoButton = view.findViewById(R.id.information_button);
 		infoButton.setOnClickListener(onMapInformation);
-		View editButton = view.findViewById(R.id.edit_button);
+		ImageButton editButton = (ImageButton) view.findViewById(R.id.edit_button);
+		editButton.setColorFilter(disable);
 		editButton.setOnClickListener(onMapEdit);
 		View openButton = view.findViewById(R.id.open_button);
 		openButton.setOnClickListener(onMapOpen);

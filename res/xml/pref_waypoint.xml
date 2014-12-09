@@ -3,11 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res/com.androzic"
     android:title="@string/pref_waypoint_title" >
 
+    <!-- 
     <CheckBoxPreference
         android:defaultValue="@bool/def_waypoint_visible"
         android:key="@string/pref_waypoint_visible"
         android:title="@string/pref_waypoint_visible_title" />
-
+ 	-->
+ 
     <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_waypoint_width"
         android:text=" pixels"

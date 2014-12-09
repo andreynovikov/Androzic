@@ -2291,6 +2291,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			angleType = Integer.parseInt(sharedPreferences.getString(key, "0"));
 		}
+		else if (getString(R.string.pref_unitsunrise).equals(key))
+		{
+			sunriseType = Integer.parseInt(sharedPreferences.getString(key, "0"));
+		}
 		else if (getString(R.string.pref_unitprecision).equals(key))
 		{
 			boolean precision = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_unitprecision));
@@ -2444,6 +2448,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitelevation));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitangle));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitsunrise));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdrawborder));
