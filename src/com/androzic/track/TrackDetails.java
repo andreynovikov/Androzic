@@ -153,7 +153,7 @@ public class TrackDetails extends Fragment
 			case R.id.action_edit:
 				trackActionsCallback.onTrackEdit(track);
 				return true;
-			case R.id.action_edith_path:
+			case R.id.action_edit_path:
 				trackActionsCallback.onTrackEditPath(track);
 				return true;
 			case R.id.action_track_to_route:

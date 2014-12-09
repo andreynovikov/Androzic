@@ -316,7 +316,7 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 				case R.id.action_edit:
 					trackActionsCallback.onTrackEdit(track);
 					break;
-				case R.id.action_edith_path:
+				case R.id.action_edit_path:
 					trackActionsCallback.onTrackEditPath(track);
 					break;
 				case R.id.action_track_to_route:
