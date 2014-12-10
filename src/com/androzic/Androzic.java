@@ -225,7 +225,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(mapHolder.getMapView(), screenSize);
+				currentMap.activate(screenSize);
 			}
 			catch (final Throwable e)
 			{
@@ -1287,7 +1287,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				try
 				{
-					newMap.activate(mapHolder.getMapView(), screenSize);
+					newMap.activate(screenSize);
 				}
 				catch (final Throwable e)
 				{
@@ -1378,7 +1378,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					try
 					{
 						if (!map.activated())
-							map.activate(mapHolder.getMapView(), screenSize);
+							map.activate(screenSize);
 						double zoom = map.mpp / currentMap.mpp * currentMap.getZoom();
 						if (zoom != map.getZoom())
 							map.setTemporaryZoom(zoom);
@@ -1460,8 +1460,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			catch (OutOfMemoryError err)
 			{
 	        	if (! memmsg && mapHolder != null)
-	        		mapHolder.getMapView().getHandler().post(new Runnable() {
-
+	        		uiHandler.post(new Runnable() {
 						@Override
 						public void run()
 						{

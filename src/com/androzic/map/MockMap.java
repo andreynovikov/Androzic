@@ -21,7 +21,6 @@
 package com.androzic.map;
 
 import android.graphics.Canvas;
-import android.view.View;
 
 public class MockMap extends Map
 {
@@ -43,7 +42,7 @@ public class MockMap extends Map
 	}
 
 	@Override
-	public void activate(View view, int pixels)
+	public void activate(int pixels)
 	{
 	}
 

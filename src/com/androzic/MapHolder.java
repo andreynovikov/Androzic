@@ -6,7 +6,6 @@ import com.androzic.map.OnMapTileStateChangeListener;
 
 public interface MapHolder extends OnMapTileStateChangeListener
 {
-	MapView getMapView();
 	void setFollowing(boolean follow);
 	void zoomMap(float factor);
 	/**

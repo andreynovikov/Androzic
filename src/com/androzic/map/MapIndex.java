@@ -30,7 +30,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 
 import android.annotation.SuppressLint;
 
@@ -156,6 +155,7 @@ public class MapIndex implements Serializable
 		int maxLat = (int) Math.ceil(area.maxLat);
 		int minLon = (int) Math.floor(area.minLon);
 		int maxLon = (int) Math.ceil(area.maxLon);
+		
 		for (int lat = minLat; lat <= maxLat; lat++)
 		{
 			for (int lon = minLon; lon <= maxLon; lon++)

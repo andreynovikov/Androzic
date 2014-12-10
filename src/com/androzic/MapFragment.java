@@ -751,12 +751,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
-	public MapView getMapView()
-	{
-		return map;
-	}
-
-	@Override
 	public void mapTapped()
 	{
 		updatePanels();
