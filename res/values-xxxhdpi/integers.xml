@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<integer name="def_onlinemapprescalefactor">3</integer>
+<integer name="def_waypoint_width">32</integer>
+<integer name="def_route_linewidth">8</integer>
+<integer name="def_route_pointwidth">24</integer>
+<integer name="def_track_linewidth">4</integer>
+<integer name="def_navigation_linewidth">20</integer>
+</resources>

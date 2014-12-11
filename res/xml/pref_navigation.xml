@@ -39,7 +39,7 @@
         android:text=" pixels"
         android:title="@string/pref_navigation_linewidth_title"
         app:defaultValue="@integer/def_navigation_linewidth"
-        app:max="10"
+        app:max="20"
         app:min="1" />
 
 </PreferenceScreen>

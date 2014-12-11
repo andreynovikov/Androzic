@@ -18,14 +18,14 @@
         android:text=" pixels"
         android:title="@string/pref_route_linewidth_title"
         androzic:defaultValue="@integer/def_route_linewidth"
-        androzic:max="6"
+        androzic:max="10"
         androzic:min="1" />
     <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_route_pointwidth"
         android:text=" pixels"
         android:title="@string/pref_route_pointwidth_title"
         androzic:defaultValue="@integer/def_route_pointwidth"
-        androzic:max="20"
+        androzic:max="30"
         androzic:min="5" />
 
     <CheckBoxPreference
