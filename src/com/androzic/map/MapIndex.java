@@ -160,20 +160,28 @@ public class MapIndex implements Serializable
 		{
 			for (int lon = minLon; lon <= maxLon; lon++)
 			{
-				HashSet<Integer> lli = maps[lat+90][lon+180];
-				if (lli != null)
+				try
 				{
-					for (Integer id : lli)
+					HashSet<Integer> lli = maps[lat+90][lon+180];
+					if (lli != null)
 					{
-						Map map = mapIndex.get(id);
-						if (map.mpp > 200 || map.equals(refMap))
-							continue;
-						double ratio = refMap.mpp / map.mpp;
-						if (((! covered && ratio > 0.2) || ratio > 1) && ((bestmap || ! covered) && ratio < 5) && map.containsArea(area))
+						for (Integer id : lli)
 						{
-							llmaps.add(map);
+							Map map = mapIndex.get(id);
+							if (map.mpp > 200 || map.equals(refMap))
+								continue;
+							double ratio = refMap.mpp / map.mpp;
+							if (((! covered && ratio > 0.2) || ratio > 1) && ((bestmap || ! covered) && ratio < 5) && map.containsArea(area))
+							{
+								llmaps.add(map);
+							}
 						}
 					}
+				}
+				catch (ArrayIndexOutOfBoundsException e)
+				{
+					// TODO Weird! Needs investigation.
+					e.printStackTrace();
 				}
 			}
 		}
