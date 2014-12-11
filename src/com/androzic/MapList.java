@@ -413,7 +413,7 @@ public class MapList extends ListFragment
 			{
 				itemHolder.name.setText(item.data.title);
 				itemHolder.filename.setText(item.name);
-				itemHolder.scale.setText(String.format("1:%,d", (int) (item.data.mpp * ppcm)));
+				itemHolder.scale.setText(String.format("1:%,d", (int) (item.data.getAbsoluteMPP() * ppcm)));
 			}
 
 			return convertView;

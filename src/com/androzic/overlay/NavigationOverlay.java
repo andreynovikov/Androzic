@@ -65,7 +65,7 @@ public class NavigationOverlay extends MapOverlay
     	if (map == null)
     		return;
     	
-    	mpp = map.mpp / map.getZoom();
+    	mpp = map.getMPP();
 	}
 	
 	@Override

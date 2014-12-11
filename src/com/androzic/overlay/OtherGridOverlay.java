@@ -70,8 +70,8 @@ public class OtherGridOverlay extends MapOverlay
     	if (map == null)
     		return;
     	
-    	Log.e("GRID", "mpp: "+maxMPP+" "+(map.mpp / map.getZoom()));
-		if (maxMPP > 0 && maxMPP < (map.mpp / map.getZoom()))
+    	Log.e("GRID", "mpp: "+maxMPP+" "+(map.getMPP()));
+		if (maxMPP > 0 && maxMPP < (map.getMPP()))
 			return;
 
     	clip = new Rect(0, 0, map.getScaledWidth(), map.getScaledHeight());

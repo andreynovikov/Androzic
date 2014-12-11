@@ -808,7 +808,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		if (map == null)
 			mpp = 0;
 		else
-			mpp = map.mpp / map.getZoom();
+			mpp = map.getMPP();
 		calculateVectorLength();
 		calculateScaleBar();
 		application.overlayManager.notifyOverlays();

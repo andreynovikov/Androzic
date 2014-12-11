@@ -121,7 +121,7 @@ public class MapObjectsOverlay extends MapOverlay
 		if (map == null)
 			return;
 
-		mpp = map.mpp / map.getZoom();
+		mpp = map.getMPP();
 	}
 	
 	@Override

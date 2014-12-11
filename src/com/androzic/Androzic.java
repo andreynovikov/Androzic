@@ -1379,7 +1379,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					{
 						if (!map.activated())
 							map.activate(screenSize);
-						double zoom = map.mpp / currentMap.mpp * currentMap.getZoom();
+						double zoom = map.getAbsoluteMPP() / currentMap.getAbsoluteMPP() * currentMap.getZoom();
 						if (zoom != map.getZoom())
 							map.setTemporaryZoom(zoom);
 						cmr.remove(map);
@@ -1440,7 +1440,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					boolean drawn = false;
 					for (Map map : coveringMaps)
 					{
-						if (! drawn && coveringBestMap && map.mpp < cm.mpp)
+						if (! drawn && coveringBestMap && map.getMPP() < cm.getMPP())
 						{
 							coveredAll = cm.drawMap(viewport.mapCenter, viewport.lookAheadXY, viewport.width, viewport.height, cropMapBorder, drawMapBorder, c);
 							drawn = true;

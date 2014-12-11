@@ -173,8 +173,8 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 			TextView title = (TextView) v.findViewById(R.id.name);
 			title.setText(map.title);
 			TextView scale = (TextView) v.findViewById(R.id.scale);
-			int mpcm = (int) (map.mpp * ppcm);
-			double pct = 100 * currentMap.mpp / map.mpp;
+			int mpcm = (int) (map.getAbsoluteMPP() * ppcm);
+			double pct = 100 * currentMap.getAbsoluteMPP() / map.getAbsoluteMPP();
 			String fmt = pct < 0.1 ? "1:%,d (%.2f%%)" : pct < 1 ? "1:%,d (%.1f%%)" : "1:%,d (%.0f%%)";
 			scale.setText(String.format(fmt, mpcm, pct));
 			TextView path = (TextView) v.findViewById(R.id.filename);
