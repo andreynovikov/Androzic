@@ -13,6 +13,7 @@
    	<string name="pref_usemapindex">usemapindex</string>
    	<string name="pref_onlinemap">onlinemap</string>
    	<string name="pref_onlinemapscale">onlinemapscale</string>
+   	<string name="pref_onlinemapprescalefactor">onlinemapprescalefactor</string>
     <string name="pref_loc_gpstimeout">loc_gpstimeout</string>
     <string name="pref_folder_root">folderroot</string>
     <string name="pref_folder_map">foldermapnew</string>

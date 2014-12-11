@@ -2326,6 +2326,17 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			adjacentMaps = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapadjacent));
 		}
+		else if (getString(R.string.pref_onlinemapprescalefactor).equals(key))
+		{
+			int factor = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_onlinemapprescalefactor));
+			OnlineMap.setPrescaleFactor(factor);
+			if (currentMap != null && currentMap instanceof OnlineMap)
+			{
+				currentMap.recalculateCache();
+				// Hack to recalculate mpp
+				currentMap.setZoom(currentMap.getZoom());
+			}
+		}
 		else if (getString(R.string.pref_mapcropborder).equals(key))
 		{
 			cropMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapcropborder));
@@ -2440,7 +2451,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 		overlayManager = new OverlayManager(longOperationsThread.getLooper());
 
-		//TODO Initialize all suitable settings
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitcoordinate));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitdistance));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitspeed));
@@ -2449,6 +2459,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitsunrise));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_onlinemapprescalefactor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdrawborder));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_showwaypoints));

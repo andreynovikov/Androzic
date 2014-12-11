@@ -5,6 +5,8 @@
 <integer name="def_mapdiminterval">300</integer>
 <integer name="def_maginterval">300</integer>
 <integer name="def_mapdimvalue">70</integer>
+<integer name="def_onlinemapscale">14</integer>
+<integer name="def_onlinemapprescalefactor">1</integer>
 <integer name="def_lookahead">60</integer>
 <integer name="def_dragahead">0</integer>
 <integer name="def_loc_gpstimeout">120</integer>
@@ -13,6 +15,5 @@
 <integer name="def_route_pointwidth">6</integer>
 <integer name="def_track_linewidth">1</integer>
 <integer name="def_navigation_linewidth">5</integer>
-<integer name="def_onlinemapscale">14</integer>
 <integer name="def_cursorvectormlpr">10</integer>
 </resources>

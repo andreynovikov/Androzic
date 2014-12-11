@@ -267,6 +267,8 @@
 	<string name="pref_onlinemap_title">Map providers</string>
 	<string name="pref_onlinemapscale_title">Default zoom level</string>
 	<string name="pref_onlinemapscale_summary">Zoom level that will be interpreted as 100%</string>
+	<string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
+	<string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>	
     <string name="pref_loc_title">Location</string>
     <string name="pref_loc_gpstimeout_title">GPS location timeout</string>
     <string name="pref_loc_gpstimeout_summary">Specifies timeout in seconds of last GPS fix after which location will be forgotten</string>

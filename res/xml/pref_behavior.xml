@@ -63,6 +63,13 @@
             androzic:format="0"
             androzic:max="19"
             androzic:min="1" />
+        <com.androzic.ui.SeekbarPreference
+            android:key="@string/pref_onlinemapprescalefactor"
+            android:title="@string/pref_onlinemapprescalefactor_title"
+            androzic:defaultValue="@integer/def_onlinemapprescalefactor"
+            androzic:format="0"
+            androzic:max="4"
+            androzic:min="1" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_grid_title" >
         <CheckBoxPreference
