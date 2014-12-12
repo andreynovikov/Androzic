@@ -68,6 +68,7 @@ public class MapList extends ListFragment
 	private MapListAdapter adapter;
 	private TreeNode<Map> mapsTree = new TreeNode<Map>();
 	private MapComparator mapComparator = new MapComparator();
+	private boolean populated;
 	private TreeNode<Map> currentTree;
 	private ProgressBar progressBar;
 	private int shortAnimationDuration;
@@ -79,6 +80,7 @@ public class MapList extends ListFragment
 		setRetainInstance(true);
 		shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 		currentTree = mapsTree;
+		populated = false;
 	}
 	
 	@Override
@@ -148,8 +150,8 @@ public class MapList extends ListFragment
 	{
 		super.onResume();
 		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.maplist_name);
-		populateItems();
-		adapter.notifyDataSetChanged();
+		if (!populated)
+			populateItems();
 	}
 
 	@Override
@@ -210,6 +212,7 @@ public class MapList extends ListFragment
 		{
 			public void run() 
 			{
+				populated = true;
 				Androzic application = Androzic.getApplication();
 				TreeNode<Map> onlinemaps = null;
 				TreeNode<Map> sasmaps = null;
