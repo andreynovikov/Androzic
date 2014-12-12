@@ -31,5 +31,5 @@ public interface OnRouteActionListener
 	void onRouteEdit(Route route);
 	void onRouteEditPath(Route route);
 	void onRouteSave(Route route);
-	void onRouteWaypointEdit(Waypoint waypoint);
+	void onRouteWaypointEdit(Route route, Waypoint waypoint);
 }

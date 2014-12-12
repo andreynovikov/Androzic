@@ -784,7 +784,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	{
 		if (route == application.editingRoute)
 		{
-			routeActionsCallback.onRouteWaypointEdit(route.getWaypoint(index));
+			routeActionsCallback.onRouteWaypointEdit(route, route.getWaypoint(index));
 		}
 		else if (application.isNavigatingViaRoute() && application.navigationService.navRoute == route)
 		{

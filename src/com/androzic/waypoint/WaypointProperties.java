@@ -53,6 +53,7 @@ import android.widget.Toast;
 
 import com.androzic.Androzic;
 import com.androzic.R;
+import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
 import com.androzic.ui.ColorButton;
@@ -65,7 +66,7 @@ import com.jhlabs.map.UTMReference;
 public class WaypointProperties extends Fragment implements AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener, MarkerPicker.OnMarkerPickerDialogListener
 {
 	private Waypoint waypoint;
-	private boolean fromRoute;
+	private Route route;
 
 	private TabHost tabHost;
 
@@ -295,9 +296,9 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 					if (textColorValue != defTextColor)
 						waypoint.textcolor = textColorValue;
 
-					if (fromRoute)
+					if (route != null)
 					{
-						//FIXME Clear route overlay cache
+						application.dispatchRoutePropertiesChanged(route);
 					}
 					else
 					{
@@ -332,15 +333,15 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 	public void setWaypoint(Waypoint waypoint)
 	{
 		this.waypoint = waypoint;
-		this.fromRoute = false;
+		this.route = null;
 		if (isVisible())
 			updateWaypointProperties();
 	}
 
-	public void setRouteWaypoint(Waypoint waypoint)
+	public void setWaypoint(Waypoint waypoint, Route route)
 	{
 		this.waypoint = waypoint;
-		this.fromRoute = true;
+		this.route = route;
 		if (isVisible())
 			updateWaypointProperties();
 	}
@@ -351,7 +352,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 		View rootView = getView();
 
-		int visible = fromRoute ? View.GONE : View.VISIBLE;
+		int visible = route != null ? View.GONE : View.VISIBLE;
 		// TODO Think about this case
 		// rootView.findViewById(R.id.advanced).setVisibility(visible);
 		rootView.findViewById(R.id.icon_container).setVisibility(visible);

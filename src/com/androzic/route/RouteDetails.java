@@ -272,7 +272,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 				}
 				return true;
 			case R.id.action_edit:
-				routeActionsCallback.onRouteWaypointEdit(route.getWaypoint(selectedKey));
+				routeActionsCallback.onRouteWaypointEdit(route, route.getWaypoint(selectedKey));
 				return true;
 		}
 		return false;

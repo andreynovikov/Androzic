@@ -580,13 +580,13 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	}
 
 	@Override
-	public void onRouteWaypointEdit(Waypoint waypoint)
+	public void onRouteWaypointEdit(Route route, Waypoint waypoint)
 	{
 		FragmentManager fm = getSupportFragmentManager();
 		WaypointProperties waypointProperties = (WaypointProperties) fm.findFragmentByTag("waypoint_properties");
 		if (waypointProperties == null)
 			waypointProperties = (WaypointProperties) Fragment.instantiate(this, WaypointProperties.class.getName());
-		waypointProperties.setRouteWaypoint(waypoint);
+		waypointProperties.setWaypoint(waypoint, route);
 		addFragment(waypointProperties, "waypoint_properties");
 	}
 
