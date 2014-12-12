@@ -1478,7 +1478,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		public void onReceive(Context context, Intent intent)
 		{
 			String action = intent.getAction();
-			Log.i(TAG, "Broadcast: " + action);
+			Log.d(TAG, "Broadcast: " + action);
 			if (action.equals(NavigationService.BROADCAST_NAVIGATION_STATE))
 			{
 				int state = intent.getExtras().getInt("state");

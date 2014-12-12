@@ -809,6 +809,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			mpp = 0;
 		else
 			mpp = map.getMPP();
+		if (!Double.isNaN(currentViewport.location[0]))
+			application.getXYbyLatLon(currentViewport.location[0], currentViewport.location[1], currentViewport.locationXY);
 		calculateVectorLength();
 		calculateScaleBar();
 		application.overlayManager.notifyOverlays();

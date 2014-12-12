@@ -1578,7 +1578,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		public void onReceive(Context context, Intent intent)
 		{
 			String action = intent.getAction();
-			Log.i(TAG, "Broadcast: " + action);
 			if (action.equals(NavigationService.BROADCAST_NAVIGATION_STATE))
 			{
 				onUpdateNavigationState();
