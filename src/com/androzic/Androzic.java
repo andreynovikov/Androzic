@@ -190,7 +190,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public boolean mapsInited = false;
 	private MapHolder mapHolder;
 	protected OverlayManager overlayManager;
-	private int screenSize;
+	private DisplayMetrics displayMetrics;
 	public Drawable customCursor = null;
 	public boolean iconsEnabled = false;
 	public int iconX = 0;
@@ -225,7 +225,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(screenSize);
+				currentMap.activate(displayMetrics);
 			}
 			catch (final Throwable e)
 			{
@@ -1287,7 +1287,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				try
 				{
-					newMap.activate(screenSize);
+					newMap.activate(displayMetrics);
 				}
 				catch (final Throwable e)
 				{
@@ -1378,7 +1378,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					try
 					{
 						if (!map.activated())
-							map.activate(screenSize);
+							map.activate(displayMetrics);
 						double zoom = map.getAbsoluteMPP() / currentMap.getAbsoluteMPP() * currentMap.getZoom();
 						if (zoom != map.getZoom())
 							map.setTemporaryZoom(zoom);
@@ -2421,20 +2421,22 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		File sdcard = Environment.getExternalStorageDirectory();
 		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this, sdcard.getAbsolutePath()));
 		
+		displayMetrics = new DisplayMetrics();
+
+		Resources resources = getBaseContext().getResources();
 		WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 		if (wm != null)
 		{
-			DisplayMetrics metrics = new DisplayMetrics();
-			wm.getDefaultDisplay().getMetrics(metrics);
-			screenSize = metrics.widthPixels * metrics.heightPixels;
+			wm.getDefaultDisplay().getMetrics(displayMetrics);
 		}
 		else
 		{
-			screenSize = 480 * 800;
+			displayMetrics.setTo(resources.getDisplayMetrics());
 		}
+		displayMetrics.widthPixels += MapView.VIEWPORT_EXCESS * 2;
+		displayMetrics.heightPixels += MapView.VIEWPORT_EXCESS * 2;
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		Resources resources = getBaseContext().getResources();
 		Configuration config = resources.getConfiguration();
 
 		charset = settings.getString(getString(R.string.pref_charset), "UTF-8");
