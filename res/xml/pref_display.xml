@@ -58,7 +58,9 @@
             android:entries="@array/elementhide_names"
             android:entryValues="@array/elementhide_values"
             android:key="@string/pref_hidemapcross"
-            android:title="@string/pref_hidemapcross_title" /><afzkl.development.colorpickerview.preference.ColorPickerPreference
+            android:title="@string/pref_hidemapcross_title" />
+
+        <afzkl.development.colorpickerview.preference.ColorPickerPreference
             android:defaultValue="@color/mapcross"
             android:dialogTitle="@string/pref_mapcrosscolor_title"
             android:key="@string/pref_mapcrosscolor"
@@ -66,7 +68,7 @@
             app:alphaChannelVisible="true"
             app:colorPickerSliderColor="@color/theme_accent_color"
             app:showDialogTitle="true" />
-</PreferenceCategory>
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_scalebar_title" >
         <afzkl.development.colorpickerview.preference.ColorPickerPreference
             android:defaultValue="@color/scalebar"
