@@ -135,7 +135,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	private List<Map> suitableMaps;
 	private List<Map> coveringMaps;
 	private Map currentMap;
+	/**
+	 * Indicates whether current map covers all screen or not
+	 */
 	private boolean coveredAll;
+	/**
+	 * Indicates whether current map should be covered by better map
+	 */
 	private boolean coveringBestMap;
 	private double[] coveringLoc = new double[] {0.0, 0.0};
 	private Rectangle coveringScreen = new Rectangle();
@@ -2004,7 +2010,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		setOnlineMaps(settings.getString(getString(R.string.pref_onlinemap), getResources().getString(R.string.def_onlinemap)));
 		suitableMaps = new ArrayList<Map>();
-		coveredAll = true;
+		coveredAll = false;
 		coveringBestMap = true;
 		mapsInited = true;
 	}
