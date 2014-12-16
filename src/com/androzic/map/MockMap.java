@@ -43,7 +43,7 @@ public class MockMap extends Map
 	}
 
 	@Override
-	public void activate(DisplayMetrics metrics)
+	public void activate(DisplayMetrics metrics, double zoom)
 	{
 	}
 

@@ -145,6 +145,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	private boolean coveringBestMap;
 	private double[] coveringLoc = new double[] {0.0, 0.0};
 	private Rectangle coveringScreen = new Rectangle();
+	private boolean invalidCoveringMaps = true;
 	private double[] mapCenter = new double[] {0.0, 0.0};
 	private double[] location = new double[] {Double.NaN, Double.NaN};
 	private double magneticDeclination = 0;
@@ -231,7 +232,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(displayMetrics);
+				currentMap.activate(displayMetrics, 1.);
 			}
 			catch (final Throwable e)
 			{
@@ -1092,7 +1093,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		if (currentMap != null)
 		{
 			currentMap.setZoom(zoom);
-			coveringMaps = null;
+			invalidCoveringMaps = true;
 			return true;
 		}
 		return false;
@@ -1106,7 +1107,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			if (zoom > 0)
 			{
 				currentMap.setZoom(zoom);
-				coveringMaps = null;
+				invalidCoveringMaps = true;
 				return true;
 			}
 		}
@@ -1121,7 +1122,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			if (zoom > 0)
 			{
 				currentMap.setZoom(zoom);
-				coveringMaps = null;
+				invalidCoveringMaps = true;
 				return true;
 			}
 		}
@@ -1149,7 +1150,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		if (currentMap != null)
 		{
 			currentMap.zoomBy(factor);
-			coveringMaps = null;
+			invalidCoveringMaps = true;
 			return true;
 		}
 		return false;
@@ -1278,7 +1279,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			currentMap.getMapCenter(mapCenter);
 			suitableMaps = maps.getMaps(mapCenter[0], mapCenter[1]);
-			coveringMaps = null;
+			invalidCoveringMaps = true;
 		}
 		return newmap;
 	}
@@ -1293,7 +1294,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				try
 				{
-					newMap.activate(displayMetrics);
+					newMap.activate(displayMetrics, 1.);
 				}
 				catch (final Throwable e)
 				{
@@ -1306,7 +1307,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				currentMap.deactivate();
 			}
-			coveringMaps = null;
+			invalidCoveringMaps = true;
 			currentMap = newMap;
 			overlayManager.initGrids(currentMap);
 			return true;
@@ -1383,10 +1384,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					Map map = icma.next();
 					try
 					{
-						if (!map.activated())
-							map.activate(displayMetrics);
 						double zoom = map.getAbsoluteMPP() / currentMap.getAbsoluteMPP() * currentMap.getZoom();
-						if (zoom != map.getZoom())
+						if (!map.activated())
+							map.activate(displayMetrics, zoom);
+						else if (zoom != map.getZoom())
 							map.setTemporaryZoom(zoom);
 						cmr.remove(map);
 					}
@@ -1404,6 +1405,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 							map.deactivate();
 					}
 					coveringMaps = cma;
+					invalidCoveringMaps = false;
 				}
 				if (mapHolder != null)
 					mapHolder.refreshMap();
@@ -1426,7 +1428,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				int r = l + viewport.width;
 				int b = t + viewport.height;
 				
-				if (coveringMaps == null || viewport.mapCenter[0] != coveringLoc[0] || viewport.mapCenter[1] != coveringLoc[1] || coveringBestMap != bestmap || 
+				if (coveringMaps == null || invalidCoveringMaps || viewport.mapCenter[0] != coveringLoc[0] || viewport.mapCenter[1] != coveringLoc[1] || coveringBestMap != bestmap || 
 					l != coveringScreen.left || t != coveringScreen.top || r != coveringScreen.right || b != coveringScreen.bottom)
 				{
 					coveringScreen.left = l;
