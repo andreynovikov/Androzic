@@ -20,7 +20,7 @@
 
 package com.androzic.overlay;
 
-import java.util.Iterator;
+import java.util.List;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -110,13 +110,18 @@ public class TrackOverlay extends MapOverlay
 	@Override
 	public void onMapChanged()
 	{
-		for (Iterator<Track.TrackSegment> segments = track.getSegments().iterator(); segments.hasNext();)
+		synchronized (track)
 		{
-			Track.TrackSegment segment = segments.next();
-			for (Iterator<Track.TrackPoint> points = segment.getPoints().iterator(); points.hasNext();)
+			for (Track.TrackSegment segment : track.getSegments())
 			{
-				Track.TrackPoint tp = points.next();
-				tp.dirty = true;
+				synchronized (segment)
+				{
+					List<Track.TrackPoint> points = segment.getPoints();
+					for (Track.TrackPoint tp : points)
+					{
+						tp.dirty = true;
+					}
+				}
 			}
 		}
 		application.getMapHolder().refreshMap();
@@ -143,59 +148,64 @@ public class TrackOverlay extends MapOverlay
 		int lastX = 0, lastY = 0;
 		int[] xy = new int[2];
 		
-		for (Iterator<Track.TrackSegment> segments = track.getSegments().iterator(); segments.hasNext();)
+		synchronized (track)
 		{
-			Track.TrackSegment segment = segments.next();
-			if (segment.getPoints().size() == 0)
-				continue;
-			if (! viewport.mapArea.intersects(segment.bounds))
-				continue;
-			for (Iterator<Track.TrackPoint> points = segment.getPoints().iterator(); points.hasNext();)
+			for (Track.TrackSegment segment : track.getSegments())
 			{
-				Track.TrackPoint tp = points.next();
-				if (tp.dirty)
-				{
-					application.getXYbyLatLon(tp.latitude, tp.longitude, xy);
-					tp.x = xy[0];
-					tp.y = xy[1];
-					tp.dirty = false;
-				}
-				else
-				{
-					xy[0] = tp.x;
-					xy[1] = tp.y;
-				}
-
-				if (first)
-				{
-					path.setLastPoint(xy[0] - cxy[0], xy[1] - cxy[1]);
-					lastX = xy[0];
-					lastY = xy[1];
-					first = false;
+				if (! viewport.mapArea.intersects(segment.bounds))
 					continue;
-				}
-				if ((lastX == xy[0] && lastY == xy[1]) ||
-					lastX < left && cxy[0] < left ||
-					lastX > right && cxy[0] > right ||
-					lastY < top && cxy[1] < top ||
-					lastY > bottom && cxy[1] > bottom)
+				synchronized (segment)
 				{
-					lastX = xy[0];
-					lastY = xy[1];
-					skipped = true;
-					continue;
+					List<Track.TrackPoint> points = segment.getPoints();
+					if (points.size() == 0)
+						continue;
+					for (Track.TrackPoint tp : points)
+					{
+						if (tp.dirty)
+						{
+							application.getXYbyLatLon(tp.latitude, tp.longitude, xy);
+							tp.x = xy[0];
+							tp.y = xy[1];
+							tp.dirty = false;
+						}
+						else
+						{
+							xy[0] = tp.x;
+							xy[1] = tp.y;
+						}
+		
+						if (first)
+						{
+							path.setLastPoint(xy[0] - cxy[0], xy[1] - cxy[1]);
+							lastX = xy[0];
+							lastY = xy[1];
+							first = false;
+							continue;
+						}
+						if ((lastX == xy[0] && lastY == xy[1]) ||
+							lastX < left && cxy[0] < left ||
+							lastX > right && cxy[0] > right ||
+							lastY < top && cxy[1] < top ||
+							lastY > bottom && cxy[1] > bottom)
+						{
+							lastX = xy[0];
+							lastY = xy[1];
+							skipped = true;
+							continue;
+						}
+						if (skipped)
+						{
+							path.moveTo(lastX - cxy[0], lastY - cxy[1]);
+							skipped = false;
+						}
+						if (tp.continous)
+							path.lineTo(xy[0] - cxy[0], xy[1] - cxy[1]);
+						else
+							path.moveTo(xy[0] - cxy[0], xy[1] - cxy[1]);
+						lastX = xy[0];
+						lastY = xy[1];
+					}
 				}
-				if (skipped)
-				{
-					path.moveTo(lastX - cxy[0], lastY - cxy[1]);
-					skipped = false;
-				}
-				if (tp.continous)
-					path.lineTo(xy[0] - cxy[0], xy[1] - cxy[1]);
-				else
-					path.moveTo(xy[0] - cxy[0], xy[1] - cxy[1]);
-				lastX = xy[0];
-				lastY = xy[1];
 			}
 		}
 		c.drawPath(path, paint);
