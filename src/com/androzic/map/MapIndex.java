@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.annotation.SuppressLint;
 
@@ -150,6 +151,7 @@ public class MapIndex implements Serializable
 	public List<Map> getCoveringMaps(Map refMap, Bounds area, boolean covered, boolean bestmap)
 	{
 		List<Map> llmaps = new ArrayList<Map>();
+		Set<Map> llmapsidx = new HashSet<Map>();
 
 		int minLat = (int) Math.floor(area.minLat);
 		int maxLat = (int) Math.ceil(area.maxLat);
@@ -168,12 +170,15 @@ public class MapIndex implements Serializable
 						for (Integer id : lli)
 						{
 							Map map = mapIndex.get(id);
+							if (llmapsidx.contains(map))
+								continue;
 							if (map.mpp > 200 || map.equals(refMap))
 								continue;
 							double ratio = refMap.mpp / map.mpp;
 							if (((! covered && ratio > 0.2) || ratio > 1) && ((bestmap || ! covered) && ratio < 5) && map.containsArea(area))
 							{
 								llmaps.add(map);
+								llmapsidx.add(map);
 							}
 						}
 					}
