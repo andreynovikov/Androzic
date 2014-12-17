@@ -114,7 +114,6 @@ public class MapIndex implements Serializable
 			{
 				for (int lon = minLon; lon <= maxLon; lon++)
 				{
-					//Log.e("MAP", lat + " " + lon + "|" + (lat+90) + " " + (lon+180));
 					HashSet<Integer> lli = maps[lat+90][lon+180];
 					if (lli == null)
 					{

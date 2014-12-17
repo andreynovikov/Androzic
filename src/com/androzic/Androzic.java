@@ -2402,6 +2402,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			Toast.makeText(Androzic.this, "Failed to initialize native library: " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 		
+		Resources resources = getResources();
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		Configuration config = resources.getConfiguration();
+		
 		renderingThread = new HandlerThread("RenderingThread");
 		renderingThread.start();
 		
@@ -2410,6 +2414,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		
 		uiHandler = new Handler();
 		mapsHandler = new Handler(longOperationsThread.getLooper());
+
+		// We silently initialize data path to let location service restart after crash
+		File datadir = new File(settings.getString(getString(R.string.pref_folder_data), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_data)));
+		setDataPath(Androzic.PATH_DATA, datadir.getAbsolutePath());
 
 		setInstance(this);
 		
@@ -2431,7 +2439,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		
 		displayMetrics = new DisplayMetrics();
 
-		Resources resources = getBaseContext().getResources();
 		WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 		if (wm != null)
 		{
@@ -2443,9 +2450,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		displayMetrics.widthPixels += MapView.VIEWPORT_EXCESS * 2;
 		displayMetrics.heightPixels += MapView.VIEWPORT_EXCESS * 2;
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		Configuration config = resources.getConfiguration();
 
 		charset = settings.getString(getString(R.string.pref_charset), "UTF-8");
 		String lang = settings.getString(getString(R.string.pref_locale), "");

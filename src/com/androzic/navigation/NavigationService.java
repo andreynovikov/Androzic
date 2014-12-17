@@ -136,6 +136,8 @@ public class NavigationService extends BaseNavigationService implements OnShared
 			{
 				long id = extras.getLong(EXTRA_ID);
 				MapObject mo = application.getMapObject(id);
+				if (mo == null)
+					return 0;
 				activity.putExtra("launch", HSIActivity.class);
 				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				navigateTo(mo);
@@ -148,7 +150,10 @@ public class NavigationService extends BaseNavigationService implements OnShared
 				activity.putExtra("show", RouteDetails.class);
 				activity.putExtra("index", index);
 				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
-				navigateTo(application.getRoute(index), dir);
+				Route route = application.getRoute(index);
+				if (route == null)
+					return 0;
+				navigateTo(route, dir);
 				if (start != -1)
 					setRouteWaypoint(start);
 			}
