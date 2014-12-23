@@ -183,35 +183,19 @@
 
     <string-array name="online_maps">
         <item><![CDATA[OpenStreetMap Mapnik,osm,0,18,,http://{$s}.tile.openstreetmap.org/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[OpenStreetMap Tiles@Home,osmth,0,17,,http://{$s}.tah.openstreetmap.org/Tiles/tile/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[OpenCycleMap,ocm,0,16,,http://{$s}.tile.opencyclemap.org/cycle/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[OpenCycleMap Transport,ocmt,0,18,,http://{$s}.tile2.opencyclemap.org/transport/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[CloudMade (Original),cmo,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/1/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[CloudMade (Fine Line),cmfl,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/2/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[CloudMade (Tourist),cmt,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/7/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[CloudMade (Midnight Commander),cmmc,0,18,,http://{$s}.tile.cloudmade.com/8ae2d834e8e944b4a77aabaef4b6b56c/999/256/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[MapQuest,mq,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/osm/{$z}/{$x}/{$y}.png,0,1,2,3]]></item>
-        <item><![CDATA[MapQuest Open Aerial,mqoa,0,11,,http://oatile{$s}.mqcdn.com/naip/{$z}/{$x}/{$y}.png]]></item>
+        <item><![CDATA[OpenCycleMap,ocm,0,18,,http://{$s}.tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[OpenCycleMap Landscape,ocml,0,18,,http://{$s}.tile.thunderforest.com/landscape/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[OpenCycleMap Transport,ocmt,0,18,,http://{$s}.tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[OpenCycleMap Outdoors,ocmo,0,18,,http://{$s}.tile.thunderforest.com/outdoors/{$z}/{$x}/{$y}.png,a,b,c]]></item>
+        <item><![CDATA[MapQuest,mq,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/map/{$z}/{$x}/{$y}.jpg,1,2,3]]></item>
+        <item><![CDATA[MapQuest Open Aerial,mqoa,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/sat/{$z}/{$x}/{$y}.jpg,1,2,3]]></item>
         <item><![CDATA[OpenSeaMap,osea,0,18,,http://tiles.openseamap.org/seamark/{$z}/{$x}/{$y}.png]]></item>
-        <item><![CDATA[Hike Bike Map,hnb,1,17,,http://toolserver.org/tiles/hikebike/{$z}/{$x}/{$y}.png]]></item>
-        <!-- <item><![CDATA[Hike Bike Map (Hills Underlay),hnbhu,1,17,,http://toolserver.org/~cmarqu/hill/{$z}/{$x}/{$y}.png]]></item> -->
-        <item><![CDATA[MTB Map (CZ),mtbcz,7,16,,http://tchor.fi.muni.cz:8080/mtbmap_tiles/{$z}/{$x}/{$y}.png]]></item>
-        <item><![CDATA[Migurski\'s Terrain (US),migter,4,18,,http://tile.stamen.com/terrain-background/{$z}/{$x}/{$y}.jpg]]></item>
         <item><![CDATA[Chartbundle US Sectional Charts,cbsec,4,13,,http://wms.chartbundle.com/tms/1.0.0/sec/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
         <item><![CDATA[Chartbundle US Terminal Area Charts,cbtac,4,14,,http://wms.chartbundle.com/tms/1.0.0/tac/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
         <item><![CDATA[Chartbundle US World Aeronautical Charts,cbwac,4,12,,http://wms.chartbundle.com/tms/1.0.0/wac/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
         <item><![CDATA[Chartbundle US Enroute Low Charts,cbenrl,4,13,,http://wms.chartbundle.com/tms/1.0.0/enrl/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
         <item><![CDATA[Chartbundle US Enroute High Charts,cbenrh,4,12,,http://wms.chartbundle.com/tms/1.0.0/enrh/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
         <item><![CDATA[Chartbundle US Area Charts,cbenra,4,13,,http://wms.chartbundle.com/tms/1.0.0/enra/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-        <item><![CDATA[Charts VFR (US),aeromaps,5,12,,http://www.aeromaps.us/Z{$z}/{$y}/{$x}.png]]></item>
-        <item><![CDATA[Statkart Topographic (NO),notopo,5,17,,http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={$z}&x={$x}&y={$y}]]></item>
-        <item><![CDATA[Statkart Marine (NO),nomar,3,14,,http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=sjo_hovedkart2&zoom={$z}&x={$x}&y={$y}]]></item>
-        <item><![CDATA[Eniro Map (NO SE FI DK PL),eni,2,20,,http://map.eniro.com/geowebcache/service/tms1.0.0/map/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-        <item><![CDATA[Eniro Aeral (NO SE DK),enia,2,19,,http://map.eniro.com/geowebcache/service/tms1.0.0/aerial/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-        <item><![CDATA[Eniro Marine (NO SE),enim,5,16,,http://map.eniro.com/geowebcache/service/tms1.0.0/nautical/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-        <item><![CDATA[NLS Topo Map (FI),nlst,4,19,,http://tiles.kartat.kapsi.fi/peruskartta/{$z}/{$x}/{$y}.png]]></item>
-        <item><![CDATA[NLS Background,nlsb,4,19,,http://tiles.kartat.kapsi.fi/taustakartta/{$z}/{$x}/{$y}.png]]></item>
-        <item><![CDATA[NLS Aerial (FI),nlsa,13,19,,http://tiles.kartat.kapsi.fi/ortokuva/{$z}/{$x}/{$y}.png]]></item>
-    </string-array>
+	</string-array>
 
 </resources>
