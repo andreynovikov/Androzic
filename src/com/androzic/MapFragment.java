@@ -1489,7 +1489,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			{
 				Waypoint wpt = application.getWaypoint(waypointSelected);
 				application.routeEditingWaypoints.push(application.editingRoute.addWaypoint(wpt.name, wpt.latitude, wpt.longitude));
-				map.invalidate();
+				refreshMap();
 				return true;
 			}
 			case R.id.action_navigate:
