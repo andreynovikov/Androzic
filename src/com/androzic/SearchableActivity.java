@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
-import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +47,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,9 +56,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,10 +73,14 @@ import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 import com.jhlabs.map.GeodeticPosition;
 
-public class SearchableActivity extends ListActivity
+public class SearchableActivity extends ActionBarActivity implements AdapterView.OnItemClickListener
 {
 	private static final int MSG_FINISH = 1;
 
+	private Toolbar toolbar;
+	private ListView listView;
+	private ProgressBar progressBar;
+	
 	private static List<Object> results = new ArrayList<Object>();
 	private static SearchThread thread;
 	private FinishHandler finishHandler;
@@ -84,9 +91,16 @@ public class SearchableActivity extends ListActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.list_with_empty_view);
+		setContentView(R.layout.activity_search);
+
+	    toolbar = (Toolbar) findViewById(R.id.action_toolbar);
+	    setSupportActionBar(toolbar);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
 		
+	    listView = (ListView) findViewById(android.R.id.list);
+
 		finishHandler = new FinishHandler(this);
 
 		if (Intent.ACTION_SEARCH.equals(getIntent().getAction()))
@@ -97,8 +111,11 @@ public class SearchableActivity extends ListActivity
 		}
 
 		adapter = new SearchResultsListAdapter(this, results);
-		setListAdapter(adapter);
-
+		listView.setAdapter(adapter);
+		listView.setOnItemClickListener(this);
+		
+		progressBar = (ProgressBar) findViewById(R.id.progressbar);
+		
 		handleIntent(getIntent());
 	}
 
@@ -122,6 +139,10 @@ public class SearchableActivity extends ListActivity
 	{
 		switch (item.getItemId())
 		{
+			case android.R.id.home:
+				thread = null;
+				finish();
+				return true;
 			case R.id.action_clear:
 				SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
 				suggestions.clearHistory();
@@ -148,8 +169,8 @@ public class SearchableActivity extends ListActivity
 			return;
 		}
 
-		setProgressBarIndeterminateVisibility(true);
-		
+		progressBar.setVisibility(View.VISIBLE);
+
 		if (thread == null)
 		{
 			synchronized (results)
@@ -179,10 +200,13 @@ public class SearchableActivity extends ListActivity
 	
 	private void onSearchFinished()
 	{
-		TextView emptyView = (TextView) getListView().getEmptyView();
+		TextView emptyView = (TextView) findViewById(android.R.id.empty);
 		if (emptyView != null)
+		{
 			emptyView.setText(R.string.msg_nothing_found);
-		setProgressBarIndeterminateVisibility(false);
+			listView.setEmptyView(emptyView);
+		}
+		progressBar.setVisibility(View.GONE);
 		adapter.notifyDataSetChanged();
 	}
 
@@ -336,7 +360,7 @@ public class SearchableActivity extends ListActivity
 	};
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id)
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
 		Object item = adapter.getItem(position);
 		Androzic application = (Androzic) getApplication();
