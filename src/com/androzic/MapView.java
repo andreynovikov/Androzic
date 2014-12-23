@@ -1107,6 +1107,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		isFixed = fixed;
 		if (movingCursor != null)
 			movingCursor.setColorFilter(isFixed ? active : null);
+		lastDragTime = SystemClock.uptimeMillis();
 		setLookAhead();
 	}
 
