@@ -2,20 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menuMaps"
-        android:orderInCategory="0"
-        app:showAsAction="ifRoom"
-        android:title="@string/menu_maps">
-        <menu>
-            <item
-                android:id="@+id/menuMapInfo"
-                android:title="@string/menu_information"/>
-            <item
-                android:id="@+id/menuAllMaps"
-                android:title="@string/menu_all"/>
-        </menu>
-    </item>
-    <item
         android:id="@+id/menuSetAnchor"
         android:orderInCategory="1"
         android:title="@string/menu_anchor"/>

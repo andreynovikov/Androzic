@@ -42,7 +42,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -148,8 +147,8 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 		application.registerReceiver(broadcastReceiver, new IntentFilter(Androzic.BROADCAST_WAYPOINT_REMOVED));
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(application);
-		mSortMode = settings.getInt(getString(R.string.wpt_sort), R.id.action_sort_size);
-		adapter.sort(mSortMode == R.id.action_sort_size ? 1 : 0);
+		mSortMode = settings.getInt(getString(R.string.wpt_sort), 0);
+		adapter.sort(mSortMode);
 	}
 
 	@Override
@@ -189,15 +188,11 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 	{
 		Androzic application = Androzic.getApplication();
 		
-		MenuItem sortItem = menu.findItem(mSortMode);
-		if (sortItem != null)
-		{
-			Drawable icon = sortItem.getIcon();
-			menu.findItem(R.id.action_sort).setIcon(icon);
-			Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
-			editor.putInt(getString(R.string.wpt_sort), mSortMode);
-			editor.commit();
-		}
+		MenuItem sortItem = menu.findItem(mSortMode == 0 ? R.id.action_sort_alpha : R.id.action_sort_size);
+		sortItem.setChecked(true);
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
+		editor.putInt(getString(R.string.wpt_sort), mSortMode);
+		editor.commit();
 		
 		List<WaypointSet> sets = application.getWaypointSets();
 		if (sets.size() > 1)
@@ -219,12 +214,12 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 		{
 			case R.id.action_sort_alpha:
 				adapter.sort(0);
-				mSortMode = R.id.action_sort_alpha;
+				mSortMode = 0;
 				activity.supportInvalidateOptionsMenu();
 				return true;
 			case R.id.action_sort_size:
 				adapter.sort(1);
-				mSortMode = R.id.action_sort_size;
+				mSortMode = 1;
 				activity.supportInvalidateOptionsMenu();
 				return true;
 			case R.id.action_load_waypoints:
@@ -293,7 +288,7 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			adapter.sort(mSortMode == R.id.action_sort_size ? 1 : 0);
+			adapter.sort(mSortMode);
 			adapter.notifyDataSetChanged();
 		}
 	};

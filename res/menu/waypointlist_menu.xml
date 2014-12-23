@@ -8,14 +8,14 @@
         android:title="@string/menu_sort"
         app:showAsAction="always">
         <menu>
-            <item
-                android:id="@+id/action_sort_alpha"
-                android:icon="@drawable/ic_action_sort_alpha"
-                android:title="@string/action_bar_sort_alpha"/>
-            <item
-                android:id="@+id/action_sort_size"
-                android:icon="@drawable/ic_sort_white_24dp"
-                android:title="@string/action_bar_sort_distance"/>
+            <group android:checkableBehavior="single" >
+                <item
+                    android:id="@+id/action_sort_alpha"
+                    android:title="@string/action_bar_sort_alpha"/>
+                <item
+                    android:id="@+id/action_sort_size"
+                    android:title="@string/action_bar_sort_distance"/>
+            </group>
         </menu>
     </item>
     <item
