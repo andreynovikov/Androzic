@@ -21,7 +21,6 @@
 package com.androzic.track;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -214,35 +213,36 @@ public class TrackDetails extends Fragment
 		String timeSpan;
 		if (elapsed < 24 * 60 * 60 * 3)
 		{
-			timeSpan = (String) DateUtils.formatElapsedTime(elapsed);
+			timeSpan = DateUtils.formatElapsedTime(elapsed);
 		}
 		else
 		{
-			timeSpan = (String) DateUtils.formatDateRange(activity, ftp.time, ltp.time, DateUtils.FORMAT_ABBREV_MONTH);
+			timeSpan = DateUtils.formatDateRange(activity, ftp.time, ltp.time, DateUtils.FORMAT_ABBREV_MONTH);
 		}
 		((TextView) view.findViewById(R.id.time_span)).setText(timeSpan);
 
 		// Gather statistics
 		int segmentCount = 0;
 		double minElevation = Double.MAX_VALUE;
-		double maxElevation = Double.MIN_NORMAL;
+		double maxElevation = Double.MIN_VALUE;
 		double maxSpeed = 0;
 				
 		MeanValue mv = new MeanValue();
-		
-		for (Iterator<Track.TrackSegment> segments = track.getSegments().iterator(); segments.hasNext();)
+
+		for (Track.TrackSegment segment : track.getSegments())
 		{
-			Track.TrackSegment segment = segments.next();
 			Track.TrackPoint ptp = null;
 			if (segment.independent)
 				segmentCount++;
-			for (Iterator<Track.TrackPoint> points = segment.getPoints().iterator(); points.hasNext();)
+
+			for (Track.TrackPoint tp : segment.getPoints())
 			{
-				Track.TrackPoint tp = points.next();
 				if (ptp != null)
 				{
 					double d = Geo.distance(tp.latitude, tp.longitude, ptp.latitude, ptp.longitude);
 					double speed = d / ((tp.time - ptp.time) / 1000);
+					if (speed == Double.POSITIVE_INFINITY)
+						continue;
 					mv.addValue(speed);
 					if (speed > maxSpeed)
 						maxSpeed = speed;
