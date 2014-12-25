@@ -65,6 +65,7 @@
   <string name="msg_clearcurrenttrack">Буде очищена вся історія ваших переміщень, ви впевнені?</string>
   <string name="msg_emptytracksegment">Вибраний відрізок треку порожній, нічого зберігати</string>
   <string name="msg_nolastknownlocation">Ваше останнє розташування невідоме</string>
+  <string name="msg_notimplemented">Sorry! Action is not implemented yet!</string>
   <string name="err_nosdcard">SD-картка недоступна</string>
   <string name="err_nofile">Файл не знайдено</string>
   <string name="err_write">Неможливо записати файл</string>
@@ -252,6 +253,8 @@
   <string name="pref_onlinemap_title">Постачальники карт</string>
   <string name="pref_onlinemapscale_title">Стандартний рівень наближення</string>
   <string name="pref_onlinemapscale_summary">Рівень наближення, встановлений за 100%</string>
+  <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
+  <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
   <string name="pref_loc_title">Розташування</string>
   <string name="pref_loc_gpstimeout_title">Таймаут розташування GPS</string>
   <string name="pref_loc_gpstimeout_summary">Вказує час очікування в секундах останнього розташування GPS, після чого воно буде забуте</string>

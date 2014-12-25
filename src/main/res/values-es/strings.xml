@@ -63,6 +63,7 @@
   <string name="msg_clearcurrenttrack">Esto borrará todo su historial de movimiento, ¿está seguro?</string>
   <string name="msg_emptytracksegment">El segmento del track seleccionado está vacío, nada que guardar</string>
   <string name="msg_nolastknownlocation">Your recent location is not known</string>
+  <string name="msg_notimplemented">Sorry! Action is not implemented yet!</string>
   <string name="err_nosdcard">Tarjeta SD no disponible</string>
   <string name="err_nofile">Archivo no valido</string>
   <string name="err_write">No se ha podido escribir el archivo</string>
@@ -254,6 +255,8 @@
   <string name="pref_onlinemap_title">Map providers</string>
   <string name="pref_onlinemapscale_title">Nivel de zoom predeterminado</string>
   <string name="pref_onlinemapscale_summary">Nivel que será interpretado como 100% de zoom</string>
+  <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
+  <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
   <string name="pref_loc_title">Posicion</string>
   <string name="pref_loc_gpstimeout_title">Tiempo agotado de localizacion GPS</string>
   <string name="pref_loc_gpstimeout_summary">Specifies timeout in seconds of last GPS fix after which location will be forgotten</string>

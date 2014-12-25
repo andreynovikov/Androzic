@@ -51,7 +51,7 @@
   <string name="msg_initializingplugins">Initialiseren plugins&#8230;</string>
   <string name="msg_initializingview">Activeren beeld</string>
   <string name="msg_paid">Donatie versie</string>
-  <string name="msg_dedicated">Dedicated to my fair Olya</string>
+  <string name="msg_dedicated">Gewijd aan mijn eerlijke Olya</string>
   <string name="msg_nothing_found">Niets werd gevonden. Neem in aanmerking dat gegevens alleen als het wordt geladen in Androzic, benoemde locaties worden doorzocht als Internet-verbinding beschikbaar is.</string>
   <string name="msg_empty_map_list">No maps available.</string>
   <string name="msg_empty_waypoint_list">No waypoints available. You can create some or load them from file.</string>
@@ -63,6 +63,7 @@
   <string name="msg_clearcurrenttrack">Dit wist bewegende geschiedenis, weet u dat zeker?</string>
   <string name="msg_emptytracksegment">Geselecteerde track segment is leeg, niets om op te slaan</string>
   <string name="msg_nolastknownlocation">Your recent location is not known</string>
+  <string name="msg_notimplemented">Sorry! Action is not implemented yet!</string>
   <string name="err_nosdcard">SD-kaart niet beschikbaar</string>
   <string name="err_nofile">Onbekend bestand</string>
   <string name="err_write">Kan bestand niet schrijven</string>
@@ -211,7 +212,7 @@
   <string name="menu_share">Delen</string>
   <string name="menu_copy">Naar klembord kopiëren</string>
   <string name="menu_paste">Plakken vanaf klembord</string>
-  <string name="menu_view_elsewhere">View elsewhere</string>
+  <string name="menu_view_elsewhere">Kijk elders</string>
   <string name="menu_gps">GPS-instellingen</string>
   <string name="menu_anchor">Set anker</string>
   <string name="menu_view">Weergave</string>
@@ -250,13 +251,15 @@
   <string name="pref_onlinemap_title">Map providers</string>
   <string name="pref_onlinemapscale_title">Standaard zoomniveau</string>
   <string name="pref_onlinemapscale_summary">Zoom niveau die zal worden geïnterpreteerd als 100 %</string>
+  <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
+  <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
   <string name="pref_loc_title">Locatie</string>
   <string name="pref_loc_gpstimeout_title">GPS locatie timeout</string>
   <string name="pref_loc_gpstimeout_summary">Specifies timeout in seconds of last GPS fix after which location will be forgotten</string>
   <string name="pref_folder_title">Mappen</string>
   <string name="pref_folder_prefix_title">Programma map</string>
   <string name="pref_folder_map_title">Mappen map</string>
-  <string name="pref_folder_sas_title">SAS.Planet cache folder</string>
+  <string name="pref_folder_sas_title">SAS.Planeet cachemap</string>
   <string name="pref_folder_data_title">Datamap</string>
   <string name="pref_folder_icon_title">Pictogram folder</string>
   <string name="pref_folder_prefix_caution">Deze optie is alleen voor gevorderde gebruikers. Gebruik het met voorzichtigheid: Als verkeerd is ingesteld kan het programma niet starten.</string>
@@ -323,7 +326,7 @@
   <string name="pref_unitcoordinate_title">Coördinaten</string>
   <string name="pref_unitangle_title">Afwijking</string>
   <string name="pref_unitsunrise_title">Zonsopgang/zonsondergang</string>
-  <string name="pref_unitprecision_title">Extra precision</string>
+  <string name="pref_unitprecision_title">Extra precisie</string>
   <string name="pref_grid_title">Rasters</string>
   <string name="pref_grid_mapshow_title">Toon kaart raster</string>
   <string name="pref_grid_usershow_title">Aangepaste raster tonen</string>

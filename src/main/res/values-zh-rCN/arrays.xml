@@ -68,8 +68,8 @@
   <string-array name="exit_names">
     <item>双击返回</item>
     <item>确认对话框</item>
-    <item>Drawer menu item</item>
-    <item>Nothing</item>
+    <item>抽屉式菜单项</item>
+    <item>无</item>
   </string-array>
   <string-array name="orientation_names">
     <item>设备默认</item>
@@ -87,32 +87,32 @@
     <item>总是</item>
   </string-array>
   <string-array name="elementhide_names">
-    <item>1 second</item>
-    <item>3 seconds</item>
-    <item>5 seconds</item>
-    <item>10 seconds</item>
-    <item>Never</item>
+    <item>1 秒</item>
+    <item>3 秒</item>
+    <item>5 秒</item>
+    <item>10 秒</item>
+    <item>从不</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Ozf2,ozfx3地图支持</item>
     <item>应用程序图标</item>
-    <item>Color picker</item>
+    <item>颜色选取器</item>
     <item>Seekbak偏好初始码</item>
     <item>日出/日落计算</item>
-    <item>Multitouch controller</item>
-    <item>Drag sort list</item>
-    <item>Waypoint marker icons</item>
-    <item>Waypoint marker pins</item>
-    <item>Czech localization</item>
-    <item>French localization</item>
-    <item>Finnish localization</item>
-    <item>Bulgarian localization</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
-    <item>Italian localization</item>
-    <item>Spanish localization</item>
-    <item>Swedish localization</item>
-    <item>Ukrainian localization</item>
-    <item>Portuguese localization</item>
+    <item>多点触摸控制器</item>
+    <item>拖动排序列表</item>
+    <item>航点标记图标</item>
+    <item>航点标记针</item>
+    <item>捷克语翻译</item>
+    <item>法语翻译</item>
+    <item>芬兰语翻译</item>
+    <item>保加利亚语翻译</item>
+    <item>德语翻译</item>
+    <item>土耳其语翻译</item>
+    <item>意大利语翻译</item>
+    <item>西班牙语翻译</item>
+    <item>瑞典语翻译</item>
+    <item>乌克兰语翻译</item>
+    <item>葡萄牙语翻译</item>
   </string-array>
 </resources>

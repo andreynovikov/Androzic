@@ -63,6 +63,7 @@
   <string name="msg_clearcurrenttrack">Tämä tyhjentää kaikki liiketietosi. Oletko varma, että haluat jatkaa poistoa?</string>
   <string name="msg_emptytracksegment">Valittu jälkitiedosto on tyhjä. Ei tallennettavaa</string>
   <string name="msg_nolastknownlocation">Your recent location is not known</string>
+  <string name="msg_notimplemented">Sorry! Action is not implemented yet!</string>
   <string name="err_nosdcard">SD korttia ei ole</string>
   <string name="err_nofile">Ei tiedostoa</string>
   <string name="err_write">Ei voi kirjoittaa tiedostoon</string>
@@ -252,6 +253,8 @@
   <string name="pref_onlinemap_title">Map providers</string>
   <string name="pref_onlinemapscale_title">Oletus zoomaustaso</string>
   <string name="pref_onlinemapscale_summary">100% vastaava zoomi</string>
+  <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
+  <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
   <string name="pref_loc_title">Sijainti</string>
   <string name="pref_loc_gpstimeout_title">GPS sijainnin aikaviive</string>
   <string name="pref_loc_gpstimeout_summary">Specifies timeout in seconds of last GPS fix after which location will be forgotten</string>

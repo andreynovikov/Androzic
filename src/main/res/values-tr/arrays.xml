@@ -68,8 +68,8 @@
   <string-array name="exit_names">
     <item>Geri düğmesine çift basma</item>
     <item>Onay iletişim kutusu</item>
-    <item>Drawer menu item</item>
-    <item>Nothing</item>
+    <item>Çekmece menü öğesi</item>
+    <item>Hiçbiri</item>
   </string-array>
   <string-array name="orientation_names">
     <item>Aygıt varsayılanı</item>
@@ -87,32 +87,32 @@
     <item>Her zaman</item>
   </string-array>
   <string-array name="elementhide_names">
-    <item>1 second</item>
-    <item>3 seconds</item>
-    <item>5 seconds</item>
-    <item>10 seconds</item>
-    <item>Never</item>
+    <item>1 saniye</item>
+    <item>3 saniye</item>
+    <item>5 saniye</item>
+    <item>10 saniye</item>
+    <item>Asla</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 harita desteği</item>
     <item>Uygulama simgesi</item>
-    <item>Color picker</item>
+    <item>Renk Seçici</item>
     <item>Arama kutusu ilk tercihi</item>
     <item>Gündoğumu/Günbatımı hesaplama</item>
-    <item>Multitouch controller</item>
-    <item>Drag sort list</item>
-    <item>Waypoint marker icons</item>
-    <item>Waypoint marker pins</item>
-    <item>Czech localization</item>
-    <item>French localization</item>
-    <item>Finnish localization</item>
-    <item>Bulgarian localization</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
-    <item>Italian localization</item>
-    <item>Spanish localization</item>
-    <item>Swedish localization</item>
-    <item>Ukrainian localization</item>
-    <item>Portuguese localization</item>
+    <item>Dokunmatik ekran denetleyicisi</item>
+    <item>Sıralama listesini sürükle</item>
+    <item>Yer imi simgesi</item>
+    <item>Yer imi işaretçisi</item>
+    <item>Çekçe yerelleştirme</item>
+    <item>Fransızca yerelleştirme</item>
+    <item>Fince yerelleştirme</item>
+    <item>Bulgarca yerelleştirme</item>
+    <item>Almanca yerelleştirme</item>
+    <item>Türkçe yerelleştirme</item>
+    <item>İtalyanca yerelleştirme</item>
+    <item>İspanyolca Yerelleştirme</item>
+    <item>İsveççe yerelleştirme</item>
+    <item>Ukraynaca yerelleştirme</item>
+    <item>Portekizce yerelleştirme</item>
   </string-array>
 </resources>

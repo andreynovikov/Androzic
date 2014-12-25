@@ -63,6 +63,7 @@
   <string name="msg_clearcurrenttrack">This will clear all your moving history, are you sure?</string>
   <string name="msg_emptytracksegment">Selected track segment is empty, nothing to save</string>
   <string name="msg_nolastknownlocation">Your recent location is not known</string>
+  <string name="msg_notimplemented">Sorry! Action is not implemented yet!</string>
   <string name="err_nosdcard">Scheda SD non disponibile</string>
   <string name="err_nofile">Nessun file</string>
   <string name="err_write">Impossibile scrivere il file</string>
@@ -250,6 +251,8 @@
   <string name="pref_onlinemap_title">Map providers</string>
   <string name="pref_onlinemapscale_title">Livello di zoom predefinito</string>
   <string name="pref_onlinemapscale_summary">Livello di zoom che sarà interpretato come 100%</string>
+  <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
+  <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
   <string name="pref_loc_title">Posizione</string>
   <string name="pref_loc_gpstimeout_title">Timeout di posizione GPS</string>
   <string name="pref_loc_gpstimeout_summary">Specifies timeout in seconds of last GPS fix after which location will be forgotten</string>

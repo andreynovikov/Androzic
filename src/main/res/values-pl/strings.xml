@@ -63,6 +63,7 @@
   <string name="msg_clearcurrenttrack">Usuniesz całą historię przemieszczania, czy jesteś pewny?</string>
   <string name="msg_emptytracksegment">Wybrany fragment trasy jest pusty, nie ma nic do zapisania</string>
   <string name="msg_nolastknownlocation">Twoja ostatnia lokalizacja nie jest znana</string>
+  <string name="msg_notimplemented">Przepraszamy! Funkcja nie jest jeszcze zaimplementowana!</string>
   <string name="err_nosdcard">Karta SD niedostępna</string>
   <string name="err_nofile">Nie ma takiego pliku</string>
   <string name="err_write">Nie można zapisać pliku</string>
@@ -250,6 +251,8 @@
   <string name="pref_onlinemap_title">Dostawcy map</string>
   <string name="pref_onlinemapscale_title">Domyślny poziom powiększenia</string>
   <string name="pref_onlinemapscale_summary">Poziom powiększenia, który będzie interpretowany jako 100%</string>
+  <string name="pref_onlinemapprescalefactor_title">Współczynnik skali mapy bitowej</string>
+  <string name="pref_onlinemapprescalefactor_summary">Pobrane fragmenty map bitowych mogą być wstępnie skalowane z określonym współczynnikiem skali aby zawarty w nich tekst był czytelny na ekranach o wysokiej gęstości</string>
   <string name="pref_loc_title">Lokalizacja</string>
   <string name="pref_loc_gpstimeout_title">Limit czasu lokalizacji GPS</string>
   <string name="pref_loc_gpstimeout_summary">Określa limit czasu w sekundach od ostatniej pozycji GPS, po którym lokalizacja będzie zapomniana</string>

@@ -52,8 +52,7 @@
   <string name="msg_initializingview">Görünüm başlatılıyor&#8230;</string>
   <string name="msg_paid">Bağış yapılmış sürüm</string>
   <string name="msg_dedicated">Dedicated to my fair Olya</string>
-  <string name="msg_nothing_found">Hiçbir şey bulunamadı. Androzic\'in yer imleri verisi içerisinde arama yapması için yüklenmiş veri olması gerektiğini, google yer adlarını aramak için ise internet bağlantısı gerektiğini lütfen göz önünde bulundurunuz.
-</string>
+  <string name="msg_nothing_found">Hiçbir şey bulunamadı. Androzic\'in yer imleri verisi içerisinde arama yapması için yüklenmiş veri olması gerektiğini, google yer adlarını aramak için ise internet bağlantısı gerektiğini lütfen göz önünde bulundurunuz.</string>
   <string name="msg_empty_map_list">Hiçbir harita mevcut değil.</string>
   <string name="msg_empty_waypoint_list">Hiçbir yer imi mevcut değil. Yer imi oluşturabilir veya dosyadan yükleyebilirsiniz.</string>
   <string name="msg_empty_route_list">Mevcut rota bulunmuyor. Rota oluşturabilir veya dosyadan yükleyebilirsiniz.</string>
@@ -64,6 +63,7 @@
   <string name="msg_clearcurrenttrack">Bu işlem tüm hareket geçmişinizi temizleyecektir, emin misiniz?</string>
   <string name="msg_emptytracksegment">Seçili yol izi parçası boş, kaydedilecek bir şey yok.</string>
   <string name="msg_nolastknownlocation">Mevcut konumunuz bulunamadı</string>
+  <string name="msg_notimplemented">Sorry! Action is not implemented yet!</string>
   <string name="err_nosdcard">SD kart kullanılamaz</string>
   <string name="err_nofile">Böyle bir dosya yok</string>
   <string name="err_write">Dosya yazılamıyor</string>
@@ -89,7 +89,7 @@
   <string name="gotit">Anladım</string>
   <string name="save">Kaydet</string>
   <string name="done">Bitti</string>
-  <string name="undo">Undo</string>
+  <string name="undo">Geri Al</string>
   <string name="navigate">Seyrüsefer</string>
   <string name="generate">Oluştur</string>
   <string name="cancel">İptal</string>
@@ -157,13 +157,13 @@
   <string name="from_start">Nereden</string>
   <string name="start_to_end">Hedef</string>
   <string name="drag">sürükleyin</string>
-  <string name="online_maps">Online maps</string>
+  <string name="online_maps">Çevirimiçi haritalar</string>
   <string name="sas_maps">SAS.Planet haritaları</string>
-  <string name="start_point">Start point</string>
-  <string name="finish_point">Finish point</string>
-  <string name="statistics">Statistics</string>
-  <string name="max_speed">Maximim speed</string>
-  <string name="average_speed">Average speed</string>
+  <string name="start_point">Başlangıç noktası</string>
+  <string name="finish_point">Bitiş noktası</string>
+  <string name="statistics">İstatistikler</string>
+  <string name="max_speed">Maksimum hız</string>
+  <string name="average_speed">Ortalama hız</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Harita dizin-indeks hatası</string>
   <string name="nomaps">Hiç harita bulunamadı</string>
@@ -234,7 +234,7 @@
   <string name="menu_newwaypointset">Yeni yer imi listesi</string>
   <string name="menu_clear_history">Arama geçmişini temizle</string>
   <string name="menu_whereami">Neredeyim?</string>
-  <string name="menu_help">Help</string>
+  <string name="menu_help">Yardım</string>
   <string name="menu_exit">Çıkış</string>
   <string name="action_save">Kaydet</string>
   <string name="action_add_waypoint">Yer imi ekle</string>
@@ -247,10 +247,12 @@
   <string name="pref_plugins_title">Eklentiler</string>
   <string name="pref_advanced_title">Gelişmiş</string>
   <string name="pref_usemapindex_title">Harita indeksleme kullan</string>
-  <string name="pref_onlinemaps_title">Online maps</string>
+  <string name="pref_onlinemaps_title">Çevirimiçi haritalar</string>
   <string name="pref_onlinemap_title">Harita sağlayıcıları</string>
   <string name="pref_onlinemapscale_title">Varsayılan yakınlaştırma düzeyi</string>
   <string name="pref_onlinemapscale_summary">Yakınlaştırma düzeyi % 100 olarak yorumlanır</string>
+  <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
+  <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
   <string name="pref_loc_title">Konum</string>
   <string name="pref_loc_gpstimeout_title">GPS konumu zaman aşımı</string>
   <string name="pref_loc_gpstimeout_summary">Saniye cinsinden son bulunulan konumun unutulacağı GPS zaman aşımını belirtir</string>
@@ -304,11 +306,11 @@
   <string name="pref_cursorvector_summary">Vektör çizgi uzunluğu türünü seçin</string>
   <string name="pref_cursorvectormlpr_title">Vektör çizgi uzunluğu</string>
   <string name="pref_cursorvectormlpr_summary">Vektör çizgi uzunluğunu belirleyin</string>
-  <string name="pref_hidesatinfo_title">Hide satellite panel</string>
+  <string name="pref_hidesatinfo_title">Uydu panelini gizle</string>
   <string name="pref_hidesatinfo_summary">Hide current coordinates and GPS status panel after selected period of inactivity. It can not be less then map update interval.</string>
-  <string name="pref_hidemapinfo_title">Hide map panel</string>
+  <string name="pref_hidemapinfo_title">Harita panelini gizle</string>
   <string name="pref_hidemapinfo_summary">Hide current map name and zoom level after selected period of inactivity. It can not be less then map update interval.</string>
-  <string name="pref_hidenavinfo_title">Hide navigation panel</string>
+  <string name="pref_hidenavinfo_title">Gezinme panelini gizle</string>
   <string name="pref_hidenavinfo_summary">Hide destination name and estimated time after selected period of inactivity. It can not be less then map update interval.</string>
   <string name="pref_showdistance_title">Mesafeyi göster</string>
   <string name="pref_showaccuracy_title">Hassasiyet çemberini göster</string>
@@ -382,8 +384,7 @@
   <string name="notif_loc_waiting">Androzic konum bilgisini bekliyor</string>
   <string name="notif_loc_started">Androzic konumunuzu belirliyor</string>
   <string name="notif_trk_started">Androzic hareketinizi takip etmeye başladı</string>
-  <string name="notif_trk_failure">Androzic konumunuzu izlemede sorun yaşıyor
-</string>
+  <string name="notif_trk_failure">Androzic konumunuzu izlemede sorun yaşıyor</string>
   <string name="notif_nav_short">Seyrüsefer başladı</string>
   <string name="notif_nav_started">Androzic seyrüsefere başladı</string>
   <string name="notif_nav_to">Androzic şu konuma gidiyor: %s</string>
@@ -409,23 +410,11 @@
   <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
   <string name="showcase_waypointset_actions_title">Yer imi grup ayarları</string>
   <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
-  <string name="app_eula">This program is distributed under the terms of
-	the GNU General Public License as published by the Free Software Foundation,
-	either version 3 of the License./n/n
-    This application is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details./n/n
-    All rights granted under this License are granted for the term of copyright
-    on the Program, and are irrevocable provided the stated conditions are met.
-    This License explicitly affirms your unlimited permission to run the unmodified
-    Program./n/n
-    You are not required to accept this License in order to receive or run a copy of
-    the Program. Ancillary propagation of a covered work occurring solely as
-    a consequence of using peer-to-peer transmission to receive a copy likewise does
-    not require acceptance. However, nothing other than this License grants you
-    permission to propagate or modify any covered work. These actions infringe
-    copyright if you do not accept this License. Therefore, by modifying or propagating
-    a covered work, you indicate your acceptance of this License to do so./n/n
-    For full copy of the GNU General Public License see http://www.gnu.org/licenses/gpl.html</string>
+  <string name="app_eula" formatted="false">Bu program Özgür Yazılım Kuruluşu tarafından yayınlanan GNU v3 (Genel Kamu Lisansı sürüm 3) kuralları altında dağıtılmaktadır./n/n
+
+Bu programın dağıtımında faydalı olması umulmaktadır fakat HERHANGİ BİR GARANTİ VERİLMEMEKTEDİR. Ayrıntılı bilgi almak için Genel Kamu Lisansını inceleyiniz./n/n
+
+http://wiki.ubuntu-tr.net/index.php/GNU_GPL_%28Genel_Kamu_Lisans%C4%B1%29_S%C3%BCr%C3%BCm_3_Gayr%C4%B1resm%C3%AE_%C3%87evirisi/n/n
+
+http://tr.pardus-wiki.org/GNU_Genel_Kamu_Lisans%C4%B1</string>
 </resources>
