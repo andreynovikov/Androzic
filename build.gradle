@@ -43,4 +43,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.daimajia.swipelayout:library:1.1.7'
     compile 'com.nispok:snackbar:2.7.1'
+    compile 'com.shamanland:fab:0.0.6'
 }
