@@ -166,12 +166,12 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public boolean shouldEnableFollowing;
 	
 	@SuppressLint("UseSparseArrays")
-	private AbstractMap<Long, MapObject> mapObjects = new HashMap<Long, MapObject>();
-	private List<Waypoint> waypoints = new ArrayList<Waypoint>();
-	private List<WaypointSet> waypointSets = new ArrayList<WaypointSet>();
+	private final AbstractMap<Long, MapObject> mapObjects = new HashMap<>();
+	private final List<Waypoint> waypoints = new ArrayList<>();
+	private final List<WaypointSet> waypointSets = new ArrayList<>();
 	private WaypointSet defWaypointSet;
-	private List<Track> tracks = new ArrayList<Track>();
-	private List<Route> routes = new ArrayList<Route>();
+	private final List<Track> tracks = new ArrayList<>();
+	private final List<Route> routes = new ArrayList<>();
 
 	// Map activity state
 	protected Waypoint undoWaypoint = null;
@@ -180,7 +180,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	protected Stack<Waypoint> routeEditingWaypoints = null;
 	
 	// Plugins
-	private AbstractMap<String, Intent> pluginPreferences = new HashMap<String, Intent>();
+	private AbstractMap<String, Intent> pluginPreferences = new HashMap<>();
 	private AbstractMap<String, Pair<Drawable, Intent>> pluginViews = new HashMap<String, Pair<Drawable, Intent>>();
 	
 	private boolean memmsg = false;
@@ -998,7 +998,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	{
 		mapCenter[0] = lat;
 		mapCenter[1] = lon;
-		return checkcoverage ? updateLocationMaps(reindex, findbest) : false;
+		return checkcoverage && updateLocationMaps(reindex, findbest);
 	}
 
 	/**
@@ -1374,7 +1374,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				currentMap.getLatLonByXY(xy[0] + (int) coveringScreen.right, xy[1] + (int) coveringScreen.bottom, ll);
 				area.minLat = ll[0];
 				area.maxLon = ll[1];
-				List<Map> cmr = new ArrayList<Map>();
+				List<Map> cmr = new ArrayList<>();
 				if (coveringMaps != null)
 					cmr.addAll(coveringMaps);
 				List<Map> cma = maps.getCoveringMaps(currentMap, area, coveredAll, coveringBestMap);
@@ -1843,10 +1843,9 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 	public boolean setMapPath(String path)
 	{
-		String newPath = path;
-		if (mapPath == null || ! mapPath.equals(newPath))
+		if (mapPath == null || ! mapPath.equals(path))
 		{
-			mapPath = newPath;
+			mapPath = path;
 			if (mapsInited)
 			{
 				resetMaps();
@@ -2021,6 +2020,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	{
 		File index = new File(rootPath, "maps.idx");
 		if (index.exists())
+			//noinspection ResultOfMethodCallIgnored
 			index.delete();
 		initializeMaps();
 	}
@@ -2042,12 +2042,12 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			Log.e("Androzic", "Failed to get assets list", e);
 			return;
 		}
-		for (int i = 0; i < files.length; i++)
+		for (String file : files)
 		{
 			try
 			{
-				InputStream in = assetManager.open(folder + "/" + files[i]);
-				OutputStream out = new FileOutputStream(new File(path, files[i]));
+				InputStream in = assetManager.open(folder + "/" + file);
+				OutputStream out = new FileOutputStream(new File(path, file));
 				byte[] buffer = new byte[1024];
 				int read;
 				while ((read = in.read(buffer)) != -1)
@@ -2057,8 +2057,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				in.close();
 				out.flush();
 				out.close();
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				Log.e("Androzic", "Asset copy error", e);
 			}
@@ -2128,7 +2127,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		catch (Exception e)
 		{
-
+			e.printStackTrace();
 		}
 		finally
 		{
@@ -2151,6 +2150,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 			catch (Exception ex)
 			{
+				ex.printStackTrace();
 			}
 		}
 	}
@@ -2251,7 +2251,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 			Intent intent = new Intent();
             intent.setClassName(plugin.activityInfo.packageName, plugin.activityInfo.name);
-            Pair<Drawable, Intent> pair = new Pair<Drawable, Intent>(icon, intent);
+            Pair<Drawable, Intent> pair = new Pair<>(icon, intent);
 			pluginViews.put(plugin.activityInfo.loadLabel(packageManager).toString(), pair);
 		}
 	}
@@ -2432,6 +2432,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		catch (NameNotFoundException e)
 		{
+			e.printStackTrace();
 		}
 
 		File sdcard = Environment.getExternalStorageDirectory();
@@ -2521,7 +2522,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 		{
 			// save opened waypoint sets
-			HashSet<String> sets = new HashSet<String>();
+			HashSet<String> sets = new HashSet<>();
 			for (int i = 1; i < waypointSets.size(); i++)
 			{
 				WaypointSet set = waypointSets.get(i);
