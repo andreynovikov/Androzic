@@ -15,7 +15,6 @@ android {
             moduleName "ozfdecoder"
             ldLibs "z", "log"
         }
-
     }
 
     signingConfigs {
