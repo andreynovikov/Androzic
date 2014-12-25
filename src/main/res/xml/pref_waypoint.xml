@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/pref_waypoint_title" >
+
+    <!-- 
+    <CheckBoxPreference
+        android:defaultValue="@bool/def_waypoint_visible"
+        android:key="@string/pref_waypoint_visible"
+        android:title="@string/pref_waypoint_visible_title" />
+ 	-->
+ 
+    <com.androzic.ui.SeekbarPreference
+        android:key="@string/pref_waypoint_width"
+        android:text=" pixels"
+        android:title="@string/pref_waypoint_width_title"
+        app:defaultValue="@integer/def_waypoint_width"
+        app:max="30"
+        app:min="5" />
+
+    <afzkl.development.colorpickerview.preference.ColorPickerPreference
+        android:defaultValue="@color/waypoint"
+        android:dialogTitle="@string/pref_waypoint_color_title"
+        android:key="@string/pref_waypoint_color"
+        android:title="@string/pref_waypoint_color_title"
+        app:colorPickerSliderColor="@color/theme_accent_color"
+        app:showDialogTitle="true" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_waypoint_showname"
+        android:title="@string/pref_waypoint_showname_title" />
+
+    <afzkl.development.colorpickerview.preference.ColorPickerPreference
+        android:defaultValue="@color/waypointtext"
+        android:dialogTitle="@string/pref_waypoint_namecolor_title"
+        android:key="@string/pref_waypoint_namecolor"
+        android:title="@string/pref_waypoint_namecolor_title"
+        app:colorPickerSliderColor="@color/theme_accent_color"
+        app:showDialogTitle="true" />
+    <afzkl.development.colorpickerview.preference.ColorPickerPreference
+        android:defaultValue="@color/waypointbg"
+        android:dialogTitle="@string/pref_waypoint_bgcolor_title"
+        android:key="@string/pref_waypoint_bgcolor"
+        android:title="@string/pref_waypoint_bgcolor_title"
+        app:alphaChannelVisible="true"
+        app:colorPickerSliderColor="@color/theme_accent_color"
+        app:showDialogTitle="true" />
+
+</PreferenceScreen>

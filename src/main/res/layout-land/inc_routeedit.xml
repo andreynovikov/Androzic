@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:src="@drawable/ic_done_white_24dp"
+			android:id="@+id/finishrouteedit" />
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:src="@drawable/ic_action_list_add"
+			android:id="@+id/addpoint" />
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:src="@drawable/ic_action_list_insert"
+			android:id="@+id/insertpoint" />
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:src="@drawable/ic_action_list_remove"
+			android:id="@+id/removepoint" />
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:src="@drawable/ic_list_white_24dp"
+			android:id="@+id/orderpoints" />
+
+</merge>

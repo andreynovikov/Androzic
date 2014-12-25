@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<LinearLayout android:id="@+id/topbar"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true">
+
+    	<TableLayout android:id="@+id/navinfo"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+			
+			<TableRow>
+				<include layout="@layout/inc_distance" />
+				<include layout="@layout/inc_bearing" />
+				<include layout="@layout/inc_course" />
+			</TableRow>
+			<TableRow>
+				<include layout="@layout/inc_vmg" />
+				<include layout="@layout/inc_ete" />
+				<include layout="@layout/inc_xtk" />
+			</TableRow>
+	    
+		</TableLayout>
+
+	</LinearLayout>
+
+	<LinearLayout android:id="@+id/bottombar"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true">
+
+    	<TableLayout android:id="@+id/movinginfo"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+
+			<TableRow>
+				<include layout="@layout/inc_speed" />
+				<include layout="@layout/inc_track" />
+				<include layout="@layout/inc_elevation" />
+			</TableRow>
+	    
+		</TableLayout>
+
+	</LinearLayout>
+	
+	<com.androzic.ui.view.HSIView android:id="@+id/hsiview"
+		android:focusable="true"
+		android:focusableInTouchMode="true"
+		android:layout_width="fill_parent"
+		android:layout_height="0dip"
+        android:layout_above="@id/bottombar"
+        android:layout_below="@id/topbar" />
+
+</RelativeLayout>	

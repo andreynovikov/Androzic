@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/mapinfo"
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content">
+
+	<TextView android:id="@+id/currentfile"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:lines="1"
+		android:scrollHorizontally="true"
+		android:fadingEdge="horizontal"
+		android:layout_weight="1"
+		android:padding="3dip"
+		android:textColor="#ffffffff"
+		android:text="-no map-" />
+
+	<TextView android:id="@+id/currentzoom"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_weight="0"
+		android:gravity="right"
+		android:paddingRight="3dip"
+		android:paddingTop="3dip"
+		android:paddingBottom="3dip"
+		android:paddingLeft="16dip"
+		android:textColor="#ffffffff"
+		android:text="---%" />
+	  
+</LinearLayout>

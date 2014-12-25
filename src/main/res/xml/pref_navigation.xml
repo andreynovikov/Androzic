@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/pref_navigation_title" >
+
+    <EditTextPreference
+        android:defaultValue="@string/def_navigation_proximity"
+        android:inputType="number"
+        android:key="@string/pref_navigation_proximity"
+        android:maxLength="4"
+        android:numeric="integer"
+        android:singleLine="true"
+        android:title="@string/pref_navigation_proximity_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/def_navigation_traverse"
+        android:key="@string/pref_navigation_traverse"
+        android:title="@string/pref_navigation_traverse_title" />
+    <CheckBoxPreference
+        android:defaultValue="@bool/def_navigation_loadlast"
+        android:key="@string/pref_navigation_loadlast"
+        android:title="@string/pref_navigation_loadlast_title" />
+    <CheckBoxPreference
+        android:defaultValue="@bool/def_navigation_proximitycircle"
+        android:key="@string/pref_navigation_proximitycircle"
+        android:title="@string/pref_navigation_proximitycircle_title" />
+
+    <afzkl.development.colorpickerview.preference.ColorPickerPreference
+        android:defaultValue="@color/navigationline"
+        android:dialogTitle="@string/pref_navigation_linecolor_title"
+        android:key="@string/pref_navigation_linecolor"
+        android:title="@string/pref_navigation_linecolor_title"
+        app:alphaChannelVisible="true"
+        app:colorPickerSliderColor="@color/theme_accent_color"
+        app:showDialogTitle="true" />
+
+    <com.androzic.ui.SeekbarPreference
+        android:key="@string/pref_navigation_linewidth"
+        android:text=" pixels"
+        android:title="@string/pref_navigation_linewidth_title"
+        app:defaultValue="@integer/def_navigation_linewidth"
+        app:max="20"
+        app:min="1" />
+
+</PreferenceScreen>

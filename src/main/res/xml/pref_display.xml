@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/pref_show_title" >
+
+    <ListPreference
+        android:defaultValue="2147483647"
+        android:dialogTitle="@string/pref_hidesatinfo_title"
+        android:entries="@array/elementhide_names"
+        android:entryValues="@array/elementhide_values"
+        android:key="@string/pref_hidesatinfo"
+        android:title="@string/pref_hidesatinfo_title" />
+    <ListPreference
+        android:defaultValue="2147483647"
+        android:dialogTitle="@string/pref_hidemapinfo_title"
+        android:entries="@array/elementhide_names"
+        android:entryValues="@array/elementhide_values"
+        android:key="@string/pref_hidemapinfo"
+        android:title="@string/pref_hidemapinfo_title" />
+    <ListPreference
+        android:defaultValue="2147483647"
+        android:dialogTitle="@string/pref_hidenavinfo_title"
+        android:entries="@array/elementhide_names"
+        android:entryValues="@array/elementhide_values"
+        android:key="@string/pref_hidenavinfo"
+        android:title="@string/pref_hidenavinfo_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_showcurrenttrack"
+        android:title="@string/pref_showcurrenttrack_title" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_showaccuracy"
+        android:title="@string/pref_showaccuracy_title" />
+
+    <ListPreference
+        android:defaultValue="@string/def_showdistance"
+        android:dialogTitle="@string/pref_showdistance_title"
+        android:entries="@array/showdistance_names"
+        android:entryValues="@array/showdistance_values"
+        android:key="@string/pref_showdistance_int"
+        android:title="@string/pref_showdistance_title" />
+
+    <PreferenceCategory android:title="@string/pref_map_title" >
+        <CheckBoxPreference
+            android:defaultValue="@bool/def_mapcropborder"
+            android:key="@string/pref_mapcropborder"
+            android:title="@string/pref_mapcropborder_title" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/def_mapdrawborder"
+            android:key="@string/pref_mapdrawborder"
+            android:title="@string/pref_mapdrawborder_title" />
+
+        <ListPreference
+            android:defaultValue="5000"
+            android:dialogTitle="@string/pref_hidemapcross_title"
+            android:entries="@array/elementhide_names"
+            android:entryValues="@array/elementhide_values"
+            android:key="@string/pref_hidemapcross"
+            android:title="@string/pref_hidemapcross_title" />
+
+        <afzkl.development.colorpickerview.preference.ColorPickerPreference
+            android:defaultValue="@color/mapcross"
+            android:dialogTitle="@string/pref_mapcrosscolor_title"
+            android:key="@string/pref_mapcrosscolor"
+            android:title="@string/pref_mapcrosscolor_title"
+            app:alphaChannelVisible="true"
+            app:colorPickerSliderColor="@color/theme_accent_color"
+            app:showDialogTitle="true" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_scalebar_title" >
+        <afzkl.development.colorpickerview.preference.ColorPickerPreference
+            android:defaultValue="@color/scalebar"
+            android:dialogTitle="@string/pref_scalebarcolor_title"
+            android:key="@string/pref_scalebarcolor"
+            android:title="@string/pref_scalebarcolor_title"
+            app:colorPickerSliderColor="@color/theme_accent_color"
+            app:showDialogTitle="true" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/def_scalebarbg"
+            android:key="@string/pref_scalebarbg"
+            android:title="@string/pref_scalebarbg_title" />
+
+        <afzkl.development.colorpickerview.preference.ColorPickerPreference
+            android:defaultValue="@color/scalebarbg"
+            android:dependency="@string/pref_scalebarbg"
+            android:dialogTitle="@string/pref_scalebarbgcolor_title"
+            android:key="@string/pref_scalebarbgcolor"
+            android:title="@string/pref_scalebarbgcolor_title"
+            app:alphaChannelVisible="true"
+            app:colorPickerSliderColor="@color/theme_accent_color"
+            app:showDialogTitle="true" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_cursor_title" >
+        <com.androzic.ui.SeekbarPreference
+            android:key="@string/pref_lookahead"
+            android:text=" %"
+            android:title="@string/pref_lookahead_title"
+            app:defaultValue="@integer/def_lookahead"
+            app:max="90" />
+
+        <afzkl.development.colorpickerview.preference.ColorPickerPreference
+            android:defaultValue="@color/cursor"
+            android:dialogTitle="@string/pref_cursorcolor_title"
+            android:key="@string/pref_cursorcolor"
+            android:title="@string/pref_cursorcolor_title"
+            app:colorPickerSliderColor="@color/theme_accent_color"
+            app:showDialogTitle="true" />
+
+        <ListPreference
+            android:defaultValue="@string/def_cursorvector"
+            android:dialogTitle="@string/pref_cursorvector_title"
+            android:entries="@array/cursorvector_names"
+            android:entryValues="@array/cursorvector_values"
+            android:key="@string/pref_cursorvector"
+            android:title="@string/pref_cursorvector_title" />
+
+        <com.androzic.ui.SeekbarPreference
+            android:key="@string/pref_cursorvectormlpr"
+            android:title="@string/pref_cursorvectormlpr_title"
+            app:defaultValue="@integer/def_cursorvectormlpr"
+            app:format="0"
+            app:max="20"
+            app:min="1" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

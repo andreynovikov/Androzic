@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="top"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dip" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/description"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/description_text"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="top"
+                android:inputType="text|textMultiLine"
+                android:minLines="3" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="6dip"
+                android:text="@string/waypointset"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/set_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:prompt="@string/waypointset" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+					android:layout_weight="1"
+                    android:paddingTop="6dip"
+                    android:text="@string/markercolor"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+					android:layout_weight="1"
+                    android:paddingTop="6dip"
+                    android:text="@string/textcolor"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+					android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingTop="6dip" >
+
+                    <TextView
+                        android:id="@+id/markercolor_text"
+                        android:layout_width="40dip"
+                        android:layout_height="fill_parent"
+                        android:drawableBottom="@drawable/line"
+                        android:drawableTop="@drawable/line" />
+
+                    <Button
+                        android:id="@+id/markercolor_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/change" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+					android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingTop="6dip" >
+
+                    <TextView
+                        android:id="@+id/textcolor_text"
+                        android:layout_width="40dip"
+                        android:layout_height="fill_parent"
+                        android:drawableBottom="@drawable/line"
+                        android:drawableTop="@drawable/line" />
+
+                    <Button
+                        android:id="@+id/textcolor_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/change" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <include layout="@layout/inc_buttonbar" />
+
+</LinearLayout>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	
+	<ScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_gravity="top"
+		android:layout_weight="1">
+    
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:padding="5dip">
+			
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content">
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:textStyle="bold"
+					android:text="@string/name" />
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:textStyle="bold"
+					android:text="@string/from" />
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content">
+					
+				<EditText android:id="@+id/name_text"
+					android:inputType="text"
+					android:layout_weight="1"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" />
+				<Spinner android:id="@+id/source_spinner"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:prompt="@string/from"
+					android:drawSelectorOnTop="true" />
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:paddingTop="6dip">
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:textStyle="bold"
+					android:text="@string/distance" />
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:textStyle="bold"
+					android:text="@string/bearing" />
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content">
+				<LinearLayout
+					android:orientation="horizontal"
+					android:layout_weight="1"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
+					<EditText android:id="@+id/distance_text"
+						android:inputType="number"
+						android:layout_weight="1"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content" />
+					<Spinner android:id="@+id/distance_spinner"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="0"
+						android:drawSelectorOnTop="true" />
+				</LinearLayout>
+				<LinearLayout
+					android:orientation="horizontal"
+					android:layout_weight="1"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
+					<EditText android:id="@+id/bearing_text"
+						android:inputType="number"
+						android:layout_weight="1"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content" />
+					<Spinner android:id="@+id/bearing_spinner"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="0"
+						android:drawSelectorOnTop="true" />
+				</LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+
+	<include layout="@layout/inc_buttonbar" />
+	
+</LinearLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<integer name="def_waypoint_width">6</integer>
+<integer name="def_route_pointwidth">6</integer>
+<integer name="def_navigation_linewidth">5</integer>
+<integer name="def_sharing_tagwidth">6</integer>
+</resources>

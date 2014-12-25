@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.androzic.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/mapview"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:layout_alignParentTop="true"
+	android:layout_alignParentLeft="true" />

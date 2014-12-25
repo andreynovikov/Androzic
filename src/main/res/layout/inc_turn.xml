@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<TextView android:id="@+id/turn"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:lines="1"
+		android:gravity="right"
+		android:layout_weight="1"
+		android:padding="3dip"
+		android:textSize="25sp"
+		android:textColor="#ffffffff"
+		android:text="--" />
+
+	<LinearLayout android:id="@+id/turnlt"
+		android:orientation="vertical"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="3dip">
+			
+		<TextView android:id="@+id/turnname"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="9sp"
+			android:textColor="#ffffffff"
+			android:text="turn" />
+			
+		<TextView android:id="@+id/turnunit"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="12sp"
+			android:textColor="#ffffffff"
+			android:text="deg" />
+			
+	</LinearLayout>
+	
+</merge>
