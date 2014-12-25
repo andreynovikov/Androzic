@@ -22,6 +22,7 @@ package com.androzic.route;
 
 import java.io.File;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -50,6 +51,8 @@ public class RouteSave extends DialogFragment
 		throw new RuntimeException("Unimplemented initialization context");
 	}
 
+    //FIXME Fix lint error
+    @SuppressLint("ValidFragment")
 	public RouteSave(Route route)
 	{
 		this.route = route;

@@ -49,6 +49,8 @@ public class RouteStart extends DialogFragment
 		throw new RuntimeException("Unimplemented initialization context");
 	}
 
+    //FIXME Fix lint error
+    @SuppressLint("ValidFragment")
 	public RouteStart(Route route)
 	{
 		this.route = route;

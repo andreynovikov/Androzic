@@ -38,7 +38,14 @@ public class PreferencesHelpDialog extends DialogFragment
 {
 	private ScrollView rootView;
 	private int sectionId;
-	
+
+    public PreferencesHelpDialog()
+    {
+        throw new RuntimeException("Unimplemented initialization context");
+    }
+
+    //FIXME Fix lint error
+    @SuppressLint("ValidFragment")
 	public PreferencesHelpDialog(int sectionId)
 	{
 		this.sectionId = sectionId;

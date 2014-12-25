@@ -23,6 +23,7 @@ package com.androzic.track;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -57,6 +58,8 @@ public class TrackToRoute extends DialogFragment
 		throw new RuntimeException("Unimplemented initialization context");
 	}
 
+	//FIXME Fix lint error
+	@SuppressLint("ValidFragment")
 	public TrackToRoute(Track track)
 	{
 		this.track = track;

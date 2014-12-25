@@ -40,7 +40,14 @@ public class MarkerPicker extends DialogFragment implements OnItemClickListener,
 	{
 	    public void onMarkerSelected(String icon);
 	}
-	
+
+    public MarkerPicker()
+    {
+        throw new RuntimeException("Unimplemented initialization context");
+    }
+
+    //FIXME Fix lint error
+    @SuppressLint("ValidFragment")
 	public MarkerPicker(OnMarkerPickerDialogListener listener)
 	{
 		this.listener = listener;

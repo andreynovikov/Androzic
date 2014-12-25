@@ -481,7 +481,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		snackbar.actionLabel(R.string.undo);
 		snackbar.actionListener(new ActionClickListener() {
 			@Override
-			public void onActionClicked()
+			public void onActionClicked(Snackbar snackbar)
 			{
 				if (application.undoWaypoint == null)
 					return;
@@ -667,7 +667,8 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		}
 		else if (getString(R.string.pref_orientation).equals(key))
 		{
-			setRequestedOrientation(Integer.parseInt(sharedPreferences.getString(key, "-1")));
+            //noinspection ResourceType
+            setRequestedOrientation(Integer.parseInt(sharedPreferences.getString(key, "-1")));
 		}
 	}
 

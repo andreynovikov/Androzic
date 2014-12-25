@@ -75,6 +75,11 @@ public abstract class FileListDialog extends DialogFragment implements OnItemCli
 	    public void onFileLoaded(int count);
 	}
 
+    public FileListDialog()
+    {
+        throw new RuntimeException("Unimplemented initialization context");
+    }
+
 	public FileListDialog(int title, OnFileListDialogListener listener)
 	{
 		this.title = title;

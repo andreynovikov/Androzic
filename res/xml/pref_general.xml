@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:androzic="http://schemas.android.com/apk/res/com.androzic"
+    xmlns:androzic="http://schemas.android.com/apk/res-auto"
     android:title="@string/pref_advanced_title" >
 
     <CheckBoxPreference

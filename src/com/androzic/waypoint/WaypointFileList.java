@@ -20,6 +20,8 @@
 
 package com.androzic.waypoint;
 
+import android.annotation.SuppressLint;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -36,6 +38,14 @@ import com.androzic.util.WaypointFilenameFilter;
 
 public class WaypointFileList extends FileListDialog
 {
+	public WaypointFileList()
+	{
+		throw new RuntimeException("Unimplemented initialization context");
+	}
+
+	//FIXME Fix lint error
+	@SuppressLint("ValidFragment")
+
 	public WaypointFileList(OnFileListDialogListener listener)
 	{
 		super(R.string.loadwaypoints_name, listener);

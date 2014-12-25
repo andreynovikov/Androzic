@@ -45,7 +45,9 @@ public class LocationInfo extends DialogFragment
 		throw new RuntimeException("Unimplemented initialization context");
 	}
 
-	public LocationInfo(double[] location)
+    //FIXME Fix lint error
+	@SuppressLint("ValidFragment")
+    public LocationInfo(double[] location)
 	{
 		this.location = location;
 	}
@@ -113,6 +115,6 @@ public class LocationInfo extends DialogFragment
 			((TextView) view.findViewById(R.id.sunset)).setText(Astro.getLocalTimeAsString(sunset));
 		}
 		double declination = application.getDeclination(location[0], location[1]);
-		((TextView) view.findViewById(R.id.declination)).setText(String.format("%+.1f°", declination));
+		((TextView) view.findViewById(R.id.declination)).setText(String.format("%+.1f\u00B0", declination));
 	}
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
    Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
-   Copyright (C) 2010-2013  Andrey Novikov <http://andreynovikov.info/>
+   Copyright (C) 2010-2014  Andrey Novikov <http://andreynovikov.info/>
   
    This file is part of Androzic application.
   
@@ -23,9 +23,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.androzic"
-    android:installLocation="auto"
-    android:versionCode="102"
-    android:versionName="2.0-RC1" >
+    android:installLocation="auto" >
 
     <supports-screens
         android:anyDensity="true"
@@ -33,10 +31,6 @@
         android:normalScreens="true"
         android:smallScreens="true"
         android:xlargeScreens="true" />
-
-    <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="21" />
 
     <uses-feature
         android:name="android.hardware.location"
@@ -234,16 +228,6 @@
             android:authorities="com.androzic.SuggestionProvider"
             android:exported="false" />
 
-        <service
-            android:name=".track.TrackingService"
-            android:exported="true"
-            android:icon="@drawable/icon"
-            android:permission="com.androzic.permission.RECEIVE_TRACK" >
-            <intent-filter>
-                <action android:name="com.androzic.tracking" />
-                <action android:name="com.androzic.track.ITrackingRemoteService" />
-            </intent-filter>
-        </service>
         <service
             android:name=".location.LocationService"
             android:exported="true"

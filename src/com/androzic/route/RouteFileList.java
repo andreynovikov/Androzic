@@ -20,6 +20,8 @@
 
 package com.androzic.route;
 
+import android.annotation.SuppressLint;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -41,7 +43,14 @@ import com.androzic.util.RouteFilenameFilter;
 
 public class RouteFileList extends FileListDialog
 {
-	public RouteFileList(OnFileListDialogListener listener)
+    public RouteFileList()
+    {
+        throw new RuntimeException("Unimplemented initialization context");
+    }
+
+    //FIXME Fix lint error
+    @SuppressLint("ValidFragment")
+    public RouteFileList(OnFileListDialogListener listener)
 	{
 		super(R.string.loadroute_name, listener);
 	}

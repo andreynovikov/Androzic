@@ -20,6 +20,8 @@
 
 package com.androzic.track;
 
+import android.annotation.SuppressLint;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -42,6 +44,13 @@ import com.androzic.util.TrackFilenameFilter;
 
 public class TrackFileList extends FileListDialog
 {
+	public TrackFileList()
+	{
+		throw new RuntimeException("Unimplemented initialization context");
+	}
+
+	//FIXME Fix lint error
+	@SuppressLint("ValidFragment")
 	public TrackFileList(OnFileListDialogListener listener)
 	{
 		super(R.string.loadtrack_name, listener);
