@@ -1,27 +1,28 @@
 <b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required).
 
 <b>Application features:</b>
-• support for ozf2 maps (ozfx3 maps can be opened but not guaranteed)
-• support for online maps
-• support for SAS.Planet maps cache
-• works without maps as a simple navigator
-• track recording in background (power-safe)
-• navigation to waypoint and via route
-• track to route conversion
-• route creation and manipulation
-• works with waypoints, tracks and routes in Ozi format
-• reads waypoints, tracks and routes in KML and GPX format
-• HSI and compass
-• configurable units
-• UTM coordinates
-• search for locations via Google geocoder
-• location and waypoint sharing
-• portrait and landscape modes
-• tablet support
+â€¢ support for ozf2 maps (ozfx3 maps can be opened but not guaranteed)
+â€¢ support for online maps
+â€¢ support for SAS.Planet maps cache
+â€¢ works without maps as a simple navigator
+â€¢ track recording in background (power-safe)
+â€¢ navigation to waypoint and via route
+â€¢ track to route conversion
+â€¢ route creation and manipulation
+â€¢ works with waypoints, tracks and routes in Ozi format
+â€¢ reads waypoints, tracks and routes in KML and GPX format
+â€¢ HSI and compass
+â€¢ configurable units
+â€¢ UTM coordinates
+â€¢ search for locations via Google geocoder
+â€¢ location and waypoint sharing
+â€¢ portrait and landscape modes
+â€¢ tablet support
 
 <b>Functionality can be extended by plugins:</b>
-• receive coordinates via text messages (sms)
-• share location in real time
+â€¢ receive coordinates via text messages (sms)
+â€¢ receive coordinates from tracker devices
+â€¢ share location in real time
 
 <b>Androzic is free and open-source.</b> It is distributed under GNU GPL v3 license. More information can be found on http://androzic.com/
 
