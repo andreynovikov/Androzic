@@ -889,7 +889,16 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	
 	public Route getRoute(final int index)
 	{
-		return routes.get(index);
+		try
+		{
+			return routes.get(index);
+		}
+		catch (IndexOutOfBoundsException e)
+		{
+			// This can be caused when resuming unfinished route
+			Log.w(TAG, "Bad route index: " + index);
+			return null;
+		}
 	}
 	
 	public Route getRouteByFile(String filepath)
@@ -1893,7 +1902,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					maps = null;
 				}
 			}
-			catch (Exception e)
+			catch (Throwable e)
 			{
 				e.printStackTrace();
 			}
@@ -1948,7 +1957,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			    	kryo.writeObject(output, maps);
 			    	output.close();
 			    }
-			    catch (IOException e)
+			    //FIXME We should fall back to old index then...
+			    catch (Throwable e)
 			    {
 			    	e.printStackTrace();
 			    }
