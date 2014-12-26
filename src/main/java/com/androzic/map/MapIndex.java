@@ -40,15 +40,15 @@ import com.androzic.util.MapFilenameFilter;
 
 public class MapIndex implements Serializable
 {
-	private static final long serialVersionUID = 6L;
+	private static final long serialVersionUID = 7L;
 	
 	private HashSet<Integer>[][] maps;
 	private HashMap<Integer,Map> mapIndex;
-	private String mapsRoot;
 	private int hashCode;
 	private transient Comparator<Map> comparator = new MapComparator();
-	
-	public MapIndex()
+
+	@SuppressWarnings("unused")
+	MapIndex()
 	{
 	}
 
@@ -57,9 +57,8 @@ public class MapIndex implements Serializable
 	public MapIndex(String path, String charset)
 	{
 		maps = new HashSet[181][361];
-		mapIndex = new HashMap<Integer,Map>();
-		mapsRoot = path;
-		File root = new File(mapsRoot);
+		mapIndex = new HashMap<>();
+		File root = new File(path);
 		List<File> files = FileList.getFileListing(root, new MapFilenameFilter());
 		for (File file: files)
 		{
@@ -102,28 +101,31 @@ public class MapIndex implements Serializable
 
 	public void addMap(Map map)
 	{
-		if (! mapIndex.containsKey(map.id))
+		if (mapIndex.containsKey(map.id))
+			return;
+
+		mapIndex.put(map.id, map);
+		if (map.loadError != null)
+			return;
+
+		// TODO Use corner markers instead
+		Bounds bounds = map.getBounds();
+		int minLat = (int) Math.floor(bounds.minLat);
+		int maxLat = (int) Math.ceil(bounds.maxLat);
+		int minLon = (int) Math.floor(bounds.minLon);
+		int maxLon = (int) Math.ceil(bounds.maxLon);
+		for (int lat = minLat; lat <= maxLat; lat++)
 		{
-			// TODO Use corner markers instead
-			Bounds bounds = map.getBounds();
-			int minLat = (int) Math.floor(bounds.minLat);
-			int maxLat = (int) Math.ceil(bounds.maxLat);
-			int minLon = (int) Math.floor(bounds.minLon);
-			int maxLon = (int) Math.ceil(bounds.maxLon);
-			for (int lat = minLat; lat <= maxLat; lat++)
+			for (int lon = minLon; lon <= maxLon; lon++)
 			{
-				for (int lon = minLon; lon <= maxLon; lon++)
+				HashSet<Integer> lli = maps[lat + 90][lon + 180];
+				if (lli == null)
 				{
-					HashSet<Integer> lli = maps[lat+90][lon+180];
-					if (lli == null)
-					{
-						lli = new HashSet<Integer>();
-						maps[lat+90][lon+180] = lli;
-					}
-					lli.add(map.id);
+					lli = new HashSet<>();
+					maps[lat + 90][lon + 180] = lli;
 				}
+				lli.add(map.id);
 			}
-			mapIndex.put(map.id, map);
 		}
 	}
 
@@ -149,8 +151,8 @@ public class MapIndex implements Serializable
 
 	public List<Map> getCoveringMaps(Map refMap, Bounds area, boolean covered, boolean bestmap)
 	{
-		List<Map> llmaps = new ArrayList<Map>();
-		Set<Map> llmapsidx = new HashSet<Map>();
+		List<Map> llmaps = new ArrayList<>();
+		Set<Map> llmapsidx = new HashSet<>();
 
 		int minLat = (int) Math.floor(area.minLat);
 		int maxLat = (int) Math.ceil(area.maxLat);
@@ -198,7 +200,7 @@ public class MapIndex implements Serializable
 
 	public List<Map> getMaps(double latitude, double longitude)
 	{
-		List<Map> llmaps = new ArrayList<Map>();
+		List<Map> llmaps = new ArrayList<>();
 		
 		int minLat = (int) Math.floor(latitude);
 		int maxLat = (int) Math.ceil(latitude);
@@ -236,7 +238,7 @@ public class MapIndex implements Serializable
 
 	public void cleanBadMaps()
 	{
-		HashSet<Map> badMaps = new HashSet<Map>();
+		HashSet<Map> badMaps = new HashSet<>();
 		
 		for (Integer id : mapIndex.keySet())
 		{
