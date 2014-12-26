@@ -340,6 +340,18 @@ public class MapLoader
 	
 	private static void fixCornerMarkers(Map map)
 	{
+		if (map.cornerMarkers != null)
+		{
+			// If any of the corner markers is not valid do not use them all
+			boolean haveBadCorner = false;
+			for (MapPoint mp : map.cornerMarkers)
+			{
+				if (mp.lat < -90 || mp.lat > 90 || mp.lon < -180 || mp.lon > 180)
+					haveBadCorner = true;
+			}
+			if (haveBadCorner)
+				map.cornerMarkers = null;
+		}
 		if (map.cornerMarkers == null)
 		{
 			map.setCornersAmount(4);
