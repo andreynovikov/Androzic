@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -131,6 +132,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private Drawable movingCursor = null;
 	private Paint crossPaint = null;
 	private Paint pointerPaint = null;
+	private int activeColor = Color.RED;
 	private PorterDuffColorFilter active = null;
 	private Path movingPath = null;
 	private Path crossPath = null;
@@ -1107,6 +1109,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		isFixed = fixed;
 		if (movingCursor != null)
 			movingCursor.setColorFilter(isFixed ? active : null);
+		else
+			pointerPaint.setColor(isFixed ? activeColor : Color.GRAY);
 		lastDragTime = SystemClock.uptimeMillis();
 		setLookAhead();
 	}
@@ -1178,12 +1182,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	public void setCursorColor(final int color)
 	{
+		activeColor = color;
 		if (movingCursor != null)
 		{
 			active = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
 			movingCursor.setColorFilter(isFixed ? active : null);
 		}
-		pointerPaint.setColor(color);
+		pointerPaint.setColor(isFixed ? activeColor : Color.GRAY);
 	}
 
 	public void setCursorVector(final int type, final int multiplier)
