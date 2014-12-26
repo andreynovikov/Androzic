@@ -108,6 +108,7 @@ public class MapLoader
 		    fields = CSV.parseLine(line);
 		    if (fields[0].equals("MSF"))
 		    	map.scaleFactor = 1 / Double.parseDouble(fields[1]);
+		    //noinspection UnusedAssignment
 		    line = reader.readLine(); // Reserved
 		    while ((line = reader.readLine()) != null)
 			{

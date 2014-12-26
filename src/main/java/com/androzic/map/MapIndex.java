@@ -131,8 +131,11 @@ public class MapIndex implements Serializable
 
 	public void removeMap(Map map)
 	{
+		mapIndex.remove(map.id);
 		// TODO Use corner markers instead
 		Bounds bounds = map.getBounds();
+		if (bounds == null)
+			return;
 		int minLat = (int) Math.floor(bounds.minLat);
 		int maxLat = (int) Math.ceil(bounds.maxLat);
 		int minLon = (int) Math.floor(bounds.minLon);
@@ -146,7 +149,6 @@ public class MapIndex implements Serializable
 					lli.remove(map.id);
 			}
 		}
-		mapIndex.remove(map.id);
 	}
 
 	public List<Map> getCoveringMaps(Map refMap, Bounds area, boolean covered, boolean bestmap)
