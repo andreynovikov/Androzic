@@ -132,10 +132,10 @@ public class MapIndex implements Serializable
 	public void removeMap(Map map)
 	{
 		mapIndex.remove(map.id);
+		if (map.loadError != null)
+			return;
 		// TODO Use corner markers instead
 		Bounds bounds = map.getBounds();
-		if (bounds == null)
-			return;
 		int minLat = (int) Math.floor(bounds.minLat);
 		int maxLat = (int) Math.ceil(bounds.maxLat);
 		int minLon = (int) Math.floor(bounds.minLon);
