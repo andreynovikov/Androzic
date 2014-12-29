@@ -33,6 +33,8 @@ public class SASMapLoader
 		String ext = null;
 		boolean ellipsoid = false;
 		String[] zooms = file.list();
+		if (zooms == null)
+			throw new IOException("Invalid SAS cache dir: " + name);
 		int minZoom = Integer.MAX_VALUE;
 		int maxZoom = Integer.MIN_VALUE;
 		for (String zoom: zooms)
