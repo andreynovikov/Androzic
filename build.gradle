@@ -8,8 +8,8 @@ android {
         applicationId "com.androzic.v2"
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 105
-        versionName "2.0.3"
+        versionCode 106
+        versionName "2.0.4"
 
         ndk {
             moduleName "ozfdecoder"
