@@ -124,7 +124,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SearchableActivity"
+            android:name=".v2.SearchableActivity"
             android:exported="true"
             android:label="@string/search_name"
             android:launchMode="singleTop" >

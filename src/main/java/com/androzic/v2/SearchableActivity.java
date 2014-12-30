@@ -18,7 +18,7 @@
  * along with Androzic. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.androzic;
+package com.androzic.v2;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +55,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -64,6 +63,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androzic.Androzic;
+import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
@@ -77,11 +78,10 @@ public class SearchableActivity extends ActionBarActivity implements AdapterView
 {
 	private static final int MSG_FINISH = 1;
 
-	private Toolbar toolbar;
 	private ListView listView;
 	private ProgressBar progressBar;
 	
-	private static List<Object> results = new ArrayList<Object>();
+	private static final List<Object> results = new ArrayList<>();
 	private static SearchThread thread;
 	private FinishHandler finishHandler;
 
@@ -93,7 +93,7 @@ public class SearchableActivity extends ActionBarActivity implements AdapterView
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search);
 
-	    toolbar = (Toolbar) findViewById(R.id.action_toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.action_toolbar);
 	    setSupportActionBar(toolbar);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -217,7 +217,7 @@ public class SearchableActivity extends ActionBarActivity implements AdapterView
 
 		FinishHandler(SearchableActivity activity)
 		{
-			this.target = new WeakReference<SearchableActivity>(activity);
+			this.target = new WeakReference<>(activity);
 		}
 
 		public void handleMessage(Message msg)
@@ -230,7 +230,7 @@ public class SearchableActivity extends ActionBarActivity implements AdapterView
 					break;
 			}
 		}
-	};
+	}
 
 	private class SearchThread extends Thread
 	{
@@ -485,10 +485,7 @@ public class SearchableActivity extends ActionBarActivity implements AdapterView
 		@Override
 		public Object getItem(int position)
 		{
-			synchronized (mItems)
-			{
-				return mItems.get(position);
-			}
+			return mItems.get(position);
 		}
 
 		@Override
@@ -500,10 +497,7 @@ public class SearchableActivity extends ActionBarActivity implements AdapterView
 		@Override
 		public int getCount()
 		{
-			synchronized (mItems)
-			{
-				return mItems.size();
-			}
+			return mItems.size();
 		}
 
 		@Override
@@ -523,7 +517,7 @@ public class SearchableActivity extends ActionBarActivity implements AdapterView
 			Track track = null;
 			Address address = null;
 
-			int layout = 0;
+			int layout;
 			if (isCoordinates)
 			{
 				layout = mCoordinatesItemLayout;
@@ -611,6 +605,7 @@ public class SearchableActivity extends ActionBarActivity implements AdapterView
 						bgc = mWaypointFillPaint.getColor();
 						mWaypointFillPaint.setColor(waypoint.backcolor);
 					}
+					@SuppressWarnings("SuspiciousNameCombination")
 					Rect rect = new Rect(0, 0, mPointWidth, mPointWidth);
 					bc.translate((38 * mDensity - mPointWidth) / 2, (30 - mPointWidth) / 2);
 					bc.drawRect(rect, mWaypointBorderPaint);
