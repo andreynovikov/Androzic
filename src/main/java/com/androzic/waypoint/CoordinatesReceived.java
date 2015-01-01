@@ -46,7 +46,7 @@ public class CoordinatesReceived extends DialogFragment
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(getString(R.string.information_name));
-		View view = getActivity().getLayoutInflater().inflate(R.layout.act_coordinates_received, null);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.dlg_coordinates_received, null);
 		builder.setView(view);
 		builder.setPositiveButton(R.string.menu_visible, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton)
