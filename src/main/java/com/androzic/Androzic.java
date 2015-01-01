@@ -295,6 +295,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			mapObjects.put(mapObject._id, mapObject);
 		}
+		if (mapHolder != null)
+			mapHolder.refreshMap();
 		return mapObject._id;
 	}
 	
@@ -305,8 +307,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			MapObject mo = mapObjects.remove(id);
 			if (mo != null && mo.bitmap != null)
 				mo.bitmap.recycle();
+			if (mapHolder != null)
+				mapHolder.refreshMap();
 			return mo != null;
 		}
+
 	}
 	
 	/**
@@ -318,6 +323,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			mapObjects.clear();
 		}
+		if (mapHolder != null)
+			mapHolder.refreshMap();
 	}
 	
 	public MapObject getMapObject(long id)
