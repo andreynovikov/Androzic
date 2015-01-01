@@ -38,6 +38,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -195,6 +196,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	@Override
 	protected void onNewIntent(Intent intent)
 	{
+		super.onNewIntent(intent);
 		Log.e(TAG, "onNewIntent()");
 		if (intent.hasExtra("launch"))
 		{
@@ -217,7 +219,10 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 				Fragment f = Fragment.instantiate(this, name);
 				intent.removeExtra("show");
 				f.setArguments(intent.getExtras());
-				addFragment(f, name);
+				if (DialogFragment.class.isInstance(f))
+					((DialogFragment)f).show(getSupportFragmentManager(), "show");
+				else
+					addFragment(f, name);
 			}
 		}
 		else if (intent.hasExtra("lat") && intent.hasExtra("lon"))

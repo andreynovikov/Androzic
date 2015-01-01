@@ -51,7 +51,7 @@
         <item name="android:paddingRight">0dp</item>
 	</style>
 	
-	<style name="GpsInfoDialog">
+	<style name="GeneralDialog">
 	    <item name="android:padding">16dp</item>
 	</style>
 	

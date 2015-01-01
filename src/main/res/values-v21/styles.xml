@@ -6,7 +6,7 @@
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
 	</style>
-	<style name="GpsInfoDialog">
+	<style name="GeneralDialog">
 	    <item name="android:padding">24dp</item>
 	</style>
 	<style name="WaypointInfoDialog">

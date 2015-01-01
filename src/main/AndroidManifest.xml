@@ -184,10 +184,6 @@
                 <data android:pathPattern=".*\\.gpx" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".waypoint.CoordinatesReceived"
-            android:label="@string/coordinates_name"
-            android:theme="@style/Dialog" />
 
         <receiver
             android:name="ActionsReceiver"
