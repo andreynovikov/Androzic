@@ -128,7 +128,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 				mo.latitude = extras.getDouble(EXTRA_LATITUDE);
 				mo.longitude = extras.getDouble(EXTRA_LONGITUDE);
 				mo.proximity = extras.getInt(EXTRA_PROXIMITY);
-				activity.putExtra("launch", HSIActivity.class);
+				activity.putExtra(MainActivity.LAUNCH_ACTIVITY, HSIActivity.class);
 				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				navigateTo(mo);
 			}
@@ -138,7 +138,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 				MapObject mo = application.getMapObject(id);
 				if (mo == null)
 					return 0;
-				activity.putExtra("launch", HSIActivity.class);
+				activity.putExtra(MainActivity.LAUNCH_ACTIVITY, HSIActivity.class);
 				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				navigateTo(mo);
 			}
@@ -147,7 +147,7 @@ public class NavigationService extends BaseNavigationService implements OnShared
 				int index = extras.getInt(EXTRA_ROUTE_INDEX);
 				int dir = extras.getInt(EXTRA_ROUTE_DIRECTION, DIRECTION_FORWARD);
 				int start = extras.getInt(EXTRA_ROUTE_START, -1);
-				activity.putExtra("show", RouteDetails.class);
+				activity.putExtra(MainActivity.SHOW_FRAGMENT, RouteDetails.class);
 				activity.putExtra("index", index);
 				contentIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, activity, PendingIntent.FLAG_CANCEL_CURRENT);
 				Route route = application.getRoute(index);

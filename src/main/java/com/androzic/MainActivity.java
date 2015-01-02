@@ -93,6 +93,9 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 {
 	private static final String TAG = "MainActivity";
 
+	public static final String SHOW_FRAGMENT = "show";
+	public static final String LAUNCH_ACTIVITY = "launch";
+
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private DrawerAdapter mDrawerAdapter;
@@ -198,26 +201,26 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	{
 		super.onNewIntent(intent);
 		Log.e(TAG, "onNewIntent()");
-		if (intent.hasExtra("launch"))
+		if (intent.hasExtra(LAUNCH_ACTIVITY))
 		{
-			Serializable object = intent.getExtras().getSerializable("launch");
+			Serializable object = intent.getExtras().getSerializable(LAUNCH_ACTIVITY);
 			if (Class.class.isInstance(object))
 			{
 				Intent launch = new Intent(this, (Class<?>) object);
 				launch.putExtras(intent);
-				launch.removeExtra("launch");
+				launch.removeExtra(LAUNCH_ACTIVITY);
 				startActivity(launch);
 			}
 		}
-		else if (intent.hasExtra("show"))
+		else if (intent.hasExtra(SHOW_FRAGMENT))
 		{
-			Serializable object = intent.getExtras().getSerializable("show");
+			Serializable object = intent.getExtras().getSerializable(SHOW_FRAGMENT);
 			if (Class.class.isInstance(object))
 			{
 				@SuppressWarnings("rawtypes")
 				String name = ((Class) object).getName();
 				Fragment f = Fragment.instantiate(this, name);
-				intent.removeExtra("show");
+				intent.removeExtra(SHOW_FRAGMENT);
 				f.setArguments(intent.getExtras());
 				if (DialogFragment.class.isInstance(f))
 					((DialogFragment)f).show(getSupportFragmentManager(), "show");

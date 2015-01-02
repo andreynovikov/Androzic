@@ -41,7 +41,7 @@ public class ActionsReceiver extends BroadcastReceiver
 		if (action.equals("com.androzic.COORDINATES_RECEIVED"))
 		{
 			activity.putExtras(intent);
-			activity.putExtra("show", CoordinatesReceived.class);
+			activity.putExtra(MainActivity.SHOW_FRAGMENT, CoordinatesReceived.class);
 		}
 		if (action.equals("com.androzic.CENTER_ON_COORDINATES"))
 		{
