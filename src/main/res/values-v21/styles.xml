@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Dialog" parent="@android:style/Theme.Material.Dialog">
-        <item name="horizontalPadding">6dip</item>
-    </style>
+    <style name="Dialog" parent="@android:style/Theme.Material.Dialog" />
 
     <style name="SuitableMapsList">
         <item name="android:paddingTop">8dp</item>

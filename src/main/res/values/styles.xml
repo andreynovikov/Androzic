@@ -40,9 +40,7 @@
         <item name="displayOptions">showHome|useLogo</item>
     </style>
 
-    <style name="Dialog" parent="@android:style/Theme.Dialog">
-        <item name="horizontalPadding">6dip</item>
-    </style>
+    <style name="Dialog" parent="@android:style/Theme.Dialog" />
 
     <style name="SuitableMapsList">
         <item name="android:paddingTop">0dp</item>
