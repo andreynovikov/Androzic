@@ -79,6 +79,11 @@ public class OverlayManager
 		waypointsOverlay = new WaypointsOverlay();
 	}
 
+	public void onMapObjectsChanged()
+	{
+		mapObjectsOverlay.clearBitmapCache();
+	}
+
 	public void onWaypointsChanged()
 	{
 		waypointsOverlay.clearBitmapCache();

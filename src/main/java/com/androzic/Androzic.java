@@ -299,7 +299,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			mapHolder.refreshMap();
 		return mapObject._id;
 	}
-	
+
 	public boolean removeMapObject(long id)
 	{
 		synchronized (mapObjects)
@@ -311,9 +311,16 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				mapHolder.refreshMap();
 			return mo != null;
 		}
-
 	}
-	
+
+	public void onUpdateMapObject(MapObject mapObject)
+	{
+		mapObject.drawImage = false;
+		overlayManager.onMapObjectsChanged();
+		if (mapHolder != null)
+			mapHolder.refreshMap();
+	}
+
 	/**
 	 * Clear all map objects.
 	 */

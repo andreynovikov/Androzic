@@ -4,11 +4,14 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center"
-    android:columnWidth="40dp"
+    android:columnWidth="24dp"
     android:numColumns="auto_fit"
-    android:padding="5dp"
-    android:stretchMode="spacingWidthUniform"
-    android:horizontalSpacing="5dp"
-    android:verticalSpacing="5dp" >
+    android:paddingTop="16dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="16dp"
+    android:stretchMode="spacingWidth"
+    android:horizontalSpacing="8dp"
+    android:verticalSpacing="16dp" >
 
 </GridView>

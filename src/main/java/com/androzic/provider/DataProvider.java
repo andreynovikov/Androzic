@@ -1,6 +1,6 @@
 /*
  * Androzic - android navigation client that uses OziExplorer maps (ozf2, ozfx3).
- * Copyright (C) 2010-2013 Andrey Novikov <http://andreynovikov.info/>
+ * Copyright (C) 2010-2015 Andrey Novikov <http://andreynovikov.info/>
  * 
  * This file is part of Androzic application.
  * 
@@ -44,6 +44,7 @@ public class DataProvider extends ContentProvider
 	private static final int MAPOBJECTS = 1;
 	private static final int MAPOBJECTS_ID = 2;
 	private static final int ICONS_ID = 3;
+	private static final int MARKERS_ID = 4;
 
 	private static final UriMatcher uriMatcher;
 
@@ -53,6 +54,7 @@ public class DataProvider extends ContentProvider
 		uriMatcher.addURI(DataContract.AUTHORITY, DataContract.MAPOBJECTS_PATH, MAPOBJECTS);
 		uriMatcher.addURI(DataContract.AUTHORITY, DataContract.MAPOBJECTS_PATH + "/#", MAPOBJECTS_ID);
 		uriMatcher.addURI(DataContract.AUTHORITY, DataContract.ICONS_PATH + "/*", ICONS_ID);
+		uriMatcher.addURI(DataContract.AUTHORITY, DataContract.MARKERS_PATH + "/*", MARKERS_ID);
 	}
 
 	@Override
@@ -72,6 +74,8 @@ public class DataProvider extends ContentProvider
 				return "vnd.android.cursor.item/vnd.com.androzic.provider.mapobject";
 			case ICONS_ID:
 				return "vnd.android.cursor.item/vnd.com.androzic.provider.icon";
+			case MARKERS_ID:
+				return "vnd.android.cursor.item/vnd.com.androzic.provider.marker";
 			default:
 				throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -81,7 +85,7 @@ public class DataProvider extends ContentProvider
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 	{
 		Log.e(TAG, uri.toString());
-		if (uriMatcher.match(uri) != ICONS_ID)
+		if (uriMatcher.match(uri) != ICONS_ID && uriMatcher.match(uri) != MARKERS_ID)
 		{
 			throw new UnsupportedOperationException("Quering objects is not supported");
 		}
@@ -90,7 +94,8 @@ public class DataProvider extends ContentProvider
 		MatrixCursor cursor = new MatrixCursor(projection);
 		
 		Androzic application = Androzic.getApplication();
-		Bitmap bitmap = BitmapFactory.decodeFile(application.iconPath + File.separator + id);
+		String path = uriMatcher.match(uri) == MARKERS_ID ? application.markerPath : application.iconPath;
+		Bitmap bitmap = BitmapFactory.decodeFile(path + File.separator + id);
 		if (bitmap != null)
 		{
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -106,6 +111,7 @@ public class DataProvider extends ContentProvider
 	@Override
 	public Uri insert(Uri uri, ContentValues values)
 	{
+		Log.w(TAG, "insert("+uri+")");
 		if (uriMatcher.match(uri) != MAPOBJECTS)
 		{
 			throw new IllegalArgumentException("Unknown URI " + uri);
@@ -132,6 +138,7 @@ public class DataProvider extends ContentProvider
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
 	{
+		Log.w(TAG, "update("+uri+")");
 		if (uriMatcher.match(uri) != MAPOBJECTS_ID)
 		{
 			if (uriMatcher.match(uri) == MAPOBJECTS)
@@ -158,6 +165,8 @@ public class DataProvider extends ContentProvider
 			populateFields(mo, values);
 		}
 
+		application.onUpdateMapObject(mo);
+
 		getContext().getContentResolver().notifyChange(uri, null);
 		return 1;
 	}
@@ -165,6 +174,7 @@ public class DataProvider extends ContentProvider
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs)
 	{
+		Log.w(TAG, "delete("+uri+")");
 		long[] ids = null;
 		if (uriMatcher.match(uri) == MAPOBJECTS)
 		{
@@ -215,6 +225,10 @@ public class DataProvider extends ContentProvider
 		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_IMAGE_COLUMN];
 		if (values.containsKey(key))
 			mo.image = values.getAsString(key);
+
+		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_MARKER_COLUMN];
+		if (values.containsKey(key))
+			mo.marker = values.getAsString(key);
 
 		key = DataContract.MAPOBJECT_COLUMNS[DataContract.MAPOBJECT_TEXTCOLOR_COLUMN];
 		if (values.containsKey(key))

@@ -15,6 +15,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,6 @@ import com.androzic.R;
 
 public class MarkerPicker extends DialogFragment implements OnItemClickListener, OnItemLongClickListener
 {
-	private GridView grid;
 	private List<String> names;
 	private List<Bitmap> icons;
 	private OnMarkerPickerDialogListener listener;
@@ -58,13 +58,13 @@ public class MarkerPicker extends DialogFragment implements OnItemClickListener,
 	{
 		super.onCreate(savedInstanceState);
 
-		names = new ArrayList<String>();
-		icons = new ArrayList<Bitmap>();
+		names = new ArrayList<>();
+		icons = new ArrayList<>();
 
 		Androzic application = Androzic.getApplication();
 		File dir = new File(application.markerPath);
 
-		List<File> result = new ArrayList<File>();
+		List<File> result = new ArrayList<>();
 
 		File[] files = dir.listFiles(iconFilter);
 		if (files != null)
@@ -82,6 +82,7 @@ public class MarkerPicker extends DialogFragment implements OnItemClickListener,
 		}
 	}
 
+	@NonNull
 	@SuppressLint("InflateParams")
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState)
@@ -91,7 +92,7 @@ public class MarkerPicker extends DialogFragment implements OnItemClickListener,
 		View view = getActivity().getLayoutInflater().inflate(R.layout.act_markericon, null);
 		builder.setView(view);
 
-		grid = (GridView) view.findViewById(R.id.marker_grid);
+		GridView grid = (GridView) view.findViewById(R.id.marker_grid);
 		grid.setAdapter(new ImageAdapter(getActivity(), icons));
 		grid.setOnItemClickListener(this);
 		grid.setOnItemLongClickListener(this);

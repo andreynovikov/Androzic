@@ -48,7 +48,6 @@ import com.androzic.R;
 
 public class MarkerPickerActivity extends Activity implements OnItemClickListener, OnItemLongClickListener
 {
-	private GridView grid;
 	private List<String> names;
 	private List<Bitmap> icons;
 
@@ -58,13 +57,13 @@ public class MarkerPickerActivity extends Activity implements OnItemClickListene
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.act_markericon);
 
-		names = new ArrayList<String>();
-		icons = new ArrayList<Bitmap>();
+		names = new ArrayList<>();
+		icons = new ArrayList<>();
 		
 		Androzic application = Androzic.getApplication();
-		File dir = new File(application.iconPath);
+		File dir = new File(application.markerPath);
 		
-		List<File> result = new ArrayList<File>();
+		List<File> result = new ArrayList<>();
 		
 		File[] files = dir.listFiles(iconFilter);
 		if (files != null)
@@ -81,7 +80,7 @@ public class MarkerPickerActivity extends Activity implements OnItemClickListene
 			}
 		}
 
-		grid = (GridView) findViewById(R.id.marker_grid);
+		GridView grid = (GridView) findViewById(R.id.marker_grid);
 		grid.setAdapter(new ImageAdapter(this, icons));
 		grid.setOnItemClickListener(this);
 		grid.setOnItemLongClickListener(this);
@@ -102,7 +101,7 @@ public class MarkerPickerActivity extends Activity implements OnItemClickListene
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		setResult(RESULT_OK, new Intent().putExtra("icon", names.get(position)));
+		setResult(RESULT_OK, new Intent().putExtra("marker", names.get(position)));
 		finish();
 	}
 
