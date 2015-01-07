@@ -142,6 +142,7 @@
 	<string name="hemisphere">Hemisphere</string>
 	<string name="s">S</string>
 	<string name="n">N</string>
+    <string name="mgrs_string">MGRS string</string>
 	<string name="waypointset">Set</string>
 	<string name="markercolor">Marker color</string>
 	<string name="textcolor">Name color</string>

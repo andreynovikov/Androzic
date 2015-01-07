@@ -128,4 +128,13 @@
         <include layout="@layout/inc_coordutm" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/coord_mgrs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <include layout="@layout/inc_coordmgrs" />
+    </LinearLayout>
+
 </merge>

@@ -51,6 +51,12 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.coords.MGRSCoord;
+import gov.nasa.worldwind.geom.coords.UPSCoord;
+import gov.nasa.worldwind.geom.coords.UTMCoord;
+
 import com.androzic.Androzic;
 import com.androzic.R;
 import com.androzic.data.Route;
@@ -59,9 +65,6 @@ import com.androzic.data.WaypointSet;
 import com.androzic.ui.ColorButton;
 import com.androzic.ui.MarkerPicker;
 import com.androzic.util.StringFormatter;
-import com.jhlabs.map.GeodeticPosition;
-import com.jhlabs.map.ReferenceException;
-import com.jhlabs.map.UTMReference;
 
 public class WaypointProperties extends Fragment implements AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener, MarkerPicker.OnMarkerPickerDialogListener
 {
@@ -80,6 +83,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 	private ViewGroup coordDeg;
 	private ViewGroup coordUtm;
+	private ViewGroup coordMgrs;
 	private ViewGroup coordLatDeg;
 	private ViewGroup coordLatMin;
 	private ViewGroup coordLatSec;
@@ -153,6 +157,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 		coordDeg = (ViewGroup) rootView.findViewById(R.id.coord_deg);
 		coordUtm = (ViewGroup) rootView.findViewById(R.id.coord_utm);
+		coordMgrs = (ViewGroup) rootView.findViewById(R.id.coord_mgrs);
 		coordLatDeg = (ViewGroup) rootView.findViewById(R.id.coord_lat_deg);
 		coordLatMin = (ViewGroup) rootView.findViewById(R.id.coord_lat_min);
 		coordLatSec = (ViewGroup) rootView.findViewById(R.id.coord_lat_sec);
@@ -249,9 +254,9 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 					waypoint.name = name.getText().toString();
 
 					waypoint.description = description.getText().toString();
-					GeodeticPosition coords = getLatLon();
-					waypoint.latitude = coords.lat;
-					waypoint.longitude = coords.lon;
+					Angle[] coords = getLatLon();
+					waypoint.latitude = coords[0].degrees;
+					waypoint.longitude = coords[1].degrees;
 
 					try
 					{
@@ -422,65 +427,80 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 		}
 	};
 
-	private GeodeticPosition getLatLon()
+	private Angle[] getLatLon()
 	{
-		double degrees, minutes, seconds;
+		int degrees, minutes;
+		double mins, seconds;
 
 		View rootView = getView();
-		GeodeticPosition coords = new GeodeticPosition();
+		Angle[] coords = new Angle[2];
 		switch (curFormat)
 		{
 			case -1:
-				coords.lat = waypoint.latitude;
-				coords.lon = waypoint.longitude;
+				coords[0] = Angle.fromDegreesLatitude(waypoint.latitude);
+				coords[1] = Angle.fromDegreesLongitude(waypoint.longitude);
 				break;
 			case 0:
-				coords.lat = Double.valueOf(((TextView) rootView.findViewById(R.id.lat_dd_text)).getText().toString());
-				coords.lon = Double.valueOf(((TextView) rootView.findViewById(R.id.lon_dd_text)).getText().toString());
+				coords[0] = Angle.fromDegreesLatitude(Double.valueOf(((TextView) rootView.findViewById(R.id.lat_dd_text)).getText().toString()));
+				coords[1] = Angle.fromDegreesLongitude(Double.valueOf(((TextView) rootView.findViewById(R.id.lon_dd_text)).getText().toString()));
 				break;
 			case 1:
 				degrees = Integer.valueOf(((TextView) rootView.findViewById(R.id.lat_md_text)).getText().toString());
-				minutes = Double.valueOf(((TextView) rootView.findViewById(R.id.lat_mm_text)).getText().toString()) / 60;
-				if (degrees != 0)
-					minutes *= Math.signum(degrees);
-				coords.lat = degrees + minutes;
+				mins = Double.valueOf(((TextView) rootView.findViewById(R.id.lat_mm_text)).getText().toString());
+				coords[0] = Angle.fromDM(degrees, mins);
 				degrees = Integer.valueOf(((TextView) rootView.findViewById(R.id.lon_md_text)).getText().toString());
-				minutes = Double.valueOf(((TextView) rootView.findViewById(R.id.lon_mm_text)).getText().toString()) / 60;
-				if (degrees != 0)
-					minutes *= Math.signum(degrees);
-				coords.lon = degrees + minutes;
+				mins = Double.valueOf(((TextView) rootView.findViewById(R.id.lon_mm_text)).getText().toString());
+				coords[1] = Angle.fromDM(degrees, mins);
 				break;
 			case 2:
 				degrees = Integer.valueOf(((TextView) rootView.findViewById(R.id.lat_sd_text)).getText().toString());
 				minutes = Integer.valueOf(((TextView) rootView.findViewById(R.id.lat_sm_text)).getText().toString());
-				seconds = Double.valueOf(((TextView) rootView.findViewById(R.id.lat_ss_text)).getText().toString()) / 60;
-				minutes = (minutes + seconds) / 60;
-				if (degrees != 0)
-					minutes *= Math.signum(degrees);
-				coords.lat = degrees + minutes;
+				seconds = Double.valueOf(((TextView) rootView.findViewById(R.id.lat_ss_text)).getText().toString());
+				coords[0] = Angle.fromDMS(degrees, minutes, seconds);
 				degrees = Integer.valueOf(((TextView) rootView.findViewById(R.id.lon_sd_text)).getText().toString());
 				minutes = Integer.valueOf(((TextView) rootView.findViewById(R.id.lon_sm_text)).getText().toString());
-				seconds = Double.valueOf(((TextView) rootView.findViewById(R.id.lon_ss_text)).getText().toString()) / 60;
-				minutes = (minutes + seconds) / 60;
-				if (degrees != 0)
-					minutes *= Math.signum(degrees);
-				coords.lon = degrees + minutes;
+				seconds = Double.valueOf(((TextView) rootView.findViewById(R.id.lon_ss_text)).getText().toString());
+				coords[1] = Angle.fromDMS(degrees, minutes, seconds);
 				break;
 			case 3:
 				int easting = Integer.valueOf(((TextView) rootView.findViewById(R.id.utm_easting_text)).getText().toString());
 				int northing = Integer.valueOf(((TextView) rootView.findViewById(R.id.utm_northing_text)).getText().toString());
-				int zone = Integer.valueOf(((TextView) rootView.findViewById(R.id.utm_zone_text)).getText().toString());
+				String zone = ((TextView) rootView.findViewById(R.id.utm_zone_text)).getText().toString();
 				boolean hemi = ((RadioButton) rootView.findViewById(R.id.utm_hemi_s)).isChecked();
-				char band = UTMReference.getUTMNorthingZoneLetter(hemi, northing);
 				try
 				{
-					UTMReference utm = new UTMReference(zone, band, easting, northing);
-					coords = utm.toLatLng();
+					if (!"".equals(zone))
+					{
+						int z = Integer.valueOf(zone);
+						UTMCoord utm = UTMCoord.fromUTM(z, hemi ? AVKey.SOUTH : AVKey.NORTH, easting, northing);
+						coords[0] = utm.getLatitude();
+						coords[1] = utm.getLongitude();
+					}
+					else
+					{
+						UPSCoord ups = UPSCoord.fromUPS(hemi ? AVKey.SOUTH : AVKey.NORTH, easting, northing);
+						coords[0] = ups.getLatitude();
+						coords[1] = ups.getLongitude();
+					}
 				}
-				catch (ReferenceException e)
+				catch (IllegalArgumentException e)
 				{
 					Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
 				}
+				break;
+			case 4:
+				String mgrsstring = ((TextView) rootView.findViewById(R.id.mgrs_text)).getText().toString();
+				try
+				{
+					MGRSCoord mgrs = MGRSCoord.fromString(mgrsstring);
+					coords[0] = mgrs.getLatitude();
+					coords[1] = mgrs.getLongitude();
+				}
+				catch (IllegalArgumentException e)
+				{
+					Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+				}
+				break;
 		}
 		return coords;
 	}
@@ -489,64 +509,67 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
 	{
 		int degrees, minutes;
-		double min, seconds;
+		double mins, seconds;
 
 		View rootView = getView();
-		GeodeticPosition coords = getLatLon();
+		Angle[] coords = getLatLon();
 
 		switch (position)
 		{
 			case 0:
 				coordUtm.setVisibility(View.GONE);
+				coordMgrs.setVisibility(View.GONE);
 				coordDeg.setVisibility(View.VISIBLE);
-				((TextView) rootView.findViewById(R.id.lat_dd_text)).setText(StringFormatter.coordinate(0, coords.lat));
+				((TextView) rootView.findViewById(R.id.lat_dd_text)).setText(StringFormatter.coordinate(0, coords[0].degrees));
 				coordLatMin.setVisibility(View.GONE);
 				coordLatSec.setVisibility(View.GONE);
 				coordLatDeg.setVisibility(View.VISIBLE);
-				((TextView) rootView.findViewById(R.id.lon_dd_text)).setText(StringFormatter.coordinate(0, coords.lon));
+				((TextView) rootView.findViewById(R.id.lon_dd_text)).setText(StringFormatter.coordinate(0, coords[1].degrees));
 				coordLonMin.setVisibility(View.GONE);
 				coordLonSec.setVisibility(View.GONE);
 				coordLonDeg.setVisibility(View.VISIBLE);
 				break;
 			case 1:
 				coordUtm.setVisibility(View.GONE);
+				coordMgrs.setVisibility(View.GONE);
 				coordDeg.setVisibility(View.VISIBLE);
-				degrees = (int) Math.floor(Math.abs(coords.lat));
-				min = (Math.abs(coords.lat) - degrees) * 60;
-				degrees *= Math.signum(coords.lat);
+				degrees = (int) Math.floor(Math.abs(coords[0].degrees));
+				mins = (Math.abs(coords[0].degrees) - degrees) * 60;
+				degrees *= Math.signum(coords[0].degrees);
 				((TextView) rootView.findViewById(R.id.lat_md_text)).setText(String.valueOf(degrees));
-				((TextView) rootView.findViewById(R.id.lat_mm_text)).setText(String.valueOf(min));
+				((TextView) rootView.findViewById(R.id.lat_mm_text)).setText(String.valueOf(mins));
 				coordLatDeg.setVisibility(View.GONE);
 				coordLatSec.setVisibility(View.GONE);
 				coordLatMin.setVisibility(View.VISIBLE);
-				degrees = (int) Math.floor(Math.abs(coords.lon));
-				min = (Math.abs(coords.lon) - degrees) * 60;
-				degrees *= Math.signum(coords.lon);
+				degrees = (int) Math.floor(Math.abs(coords[1].degrees));
+				mins = (Math.abs(coords[1].degrees) - degrees) * 60;
+				degrees *= Math.signum(coords[1].degrees);
 				((TextView) rootView.findViewById(R.id.lon_md_text)).setText(String.valueOf(degrees));
-				((TextView) rootView.findViewById(R.id.lon_mm_text)).setText(String.valueOf(min));
+				((TextView) rootView.findViewById(R.id.lon_mm_text)).setText(String.valueOf(mins));
 				coordLonDeg.setVisibility(View.GONE);
 				coordLonSec.setVisibility(View.GONE);
 				coordLonMin.setVisibility(View.VISIBLE);
 				break;
 			case 2:
 				coordUtm.setVisibility(View.GONE);
+				coordMgrs.setVisibility(View.GONE);
 				coordDeg.setVisibility(View.VISIBLE);
-				degrees = (int) Math.floor(Math.abs(coords.lat));
-				min = (Math.abs(coords.lat) - degrees) * 60;
-				degrees *= Math.signum(coords.lat);
-				minutes = (int) Math.floor(min);
-				seconds = (min - minutes) * 60;
+				degrees = (int) Math.floor(Math.abs(coords[0].degrees));
+				mins = (Math.abs(coords[0].degrees) - degrees) * 60;
+				degrees *= Math.signum(coords[0].degrees);
+				minutes = (int) Math.floor(mins);
+				seconds = (mins - minutes) * 60;
 				((TextView) rootView.findViewById(R.id.lat_sd_text)).setText(String.valueOf(degrees));
 				((TextView) rootView.findViewById(R.id.lat_sm_text)).setText(String.valueOf(minutes));
 				((TextView) rootView.findViewById(R.id.lat_ss_text)).setText(String.valueOf(seconds));
 				coordLatDeg.setVisibility(View.GONE);
 				coordLatMin.setVisibility(View.GONE);
 				coordLatSec.setVisibility(View.VISIBLE);
-				degrees = (int) Math.floor(Math.abs(coords.lon));
-				min = (Math.abs(coords.lon) - degrees) * 60;
-				degrees *= Math.signum(coords.lon);
-				minutes = (int) Math.floor(min);
-				seconds = (min - minutes) * 60;
+				degrees = (int) Math.floor(Math.abs(coords[1].degrees));
+				mins = (Math.abs(coords[1].degrees) - degrees) * 60;
+				degrees *= Math.signum(coords[1].degrees);
+				minutes = (int) Math.floor(mins);
+				seconds = (mins - minutes) * 60;
 				((TextView) rootView.findViewById(R.id.lon_sd_text)).setText(String.valueOf(degrees));
 				((TextView) rootView.findViewById(R.id.lon_sm_text)).setText(String.valueOf(minutes));
 				((TextView) rootView.findViewById(R.id.lon_ss_text)).setText(String.valueOf(seconds));
@@ -557,25 +580,50 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 			case 3:
 				try
 				{
-					UTMReference utm = UTMReference.toUTMRef(new GeodeticPosition(coords.lat, coords.lon));
 					coordDeg.setVisibility(View.GONE);
+					coordMgrs.setVisibility(View.GONE);
 					coordUtm.setVisibility(View.VISIBLE);
-					((TextView) rootView.findViewById(R.id.utm_easting_text)).setText(String.valueOf(Math.round(utm.getEasting())));
-					((TextView) rootView.findViewById(R.id.utm_northing_text)).setText(String.valueOf(Math.round(utm.getNorthing())));
-					((TextView) rootView.findViewById(R.id.utm_zone_text)).setText(String.valueOf(utm.getLngZone()));
-					if (utm.isSouthernHemisphere())
+					if (coords[0].degrees < 84 && coords[0].degrees > -80)
 					{
-						((RadioButton) rootView.findViewById(R.id.utm_hemi_s)).setChecked(true);
+						UTMCoord utm = UTMCoord.fromLatLon(coords[0], coords[1]);
+						((TextView) rootView.findViewById(R.id.utm_easting_text)).setText(String.valueOf(Math.round(utm.getEasting())));
+						((TextView) rootView.findViewById(R.id.utm_northing_text)).setText(String.valueOf(Math.round(utm.getNorthing())));
+						((TextView) rootView.findViewById(R.id.utm_zone_text)).setText(String.valueOf(utm.getZone()));
+						if (AVKey.SOUTH.equals(utm.getHemisphere()))
+							((RadioButton) rootView.findViewById(R.id.utm_hemi_s)).setChecked(true);
+						else
+							((RadioButton) rootView.findViewById(R.id.utm_hemi_n)).setChecked(true);
 					}
 					else
 					{
-						((RadioButton) rootView.findViewById(R.id.utm_hemi_n)).setChecked(true);
+						UPSCoord ups = UPSCoord.fromLatLon(coords[0], coords[1]);
+						((TextView) rootView.findViewById(R.id.utm_easting_text)).setText(String.valueOf(Math.round(ups.getEasting())));
+						((TextView) rootView.findViewById(R.id.utm_northing_text)).setText(String.valueOf(Math.round(ups.getNorthing())));
+						if (AVKey.SOUTH.equals(ups.getHemisphere()))
+							((RadioButton) rootView.findViewById(R.id.utm_hemi_s)).setChecked(true);
+						else
+							((RadioButton) rootView.findViewById(R.id.utm_hemi_n)).setChecked(true);
 					}
 				}
-				catch (ReferenceException e)
+				catch (IllegalArgumentException e)
 				{
 					Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
 				}
+				break;
+			case 4:
+				try
+				{
+					MGRSCoord mgrs = MGRSCoord.fromLatLon(coords[0], coords[1]);
+					coordDeg.setVisibility(View.GONE);
+					coordUtm.setVisibility(View.GONE);
+					coordMgrs.setVisibility(View.VISIBLE);
+					((TextView) rootView.findViewById(R.id.mgrs_text)).setText(mgrs.toString());
+				}
+				catch (IllegalArgumentException e)
+				{
+					Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+				}
+				break;
 		}
 		curFormat = position;
 	}
