@@ -1,19 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/GeneralDialog"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dip"
     android:stretchColumns="0,1" >
 
     <TableRow>
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/degrees" />
+
+        <TextView
+            android:id="@+id/coordinate_degree"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+
+        <TextView
+            android:id="@+id/coordinate_degmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+
+        <TextView
+            android:id="@+id/coordinate_degminsec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coordinate_utmups" />
+
+        <TextView
+            android:id="@+id/coordinate_utmups"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coordinate_mgrs" />
+
+        <TextView
+            android:id="@+id/coordinate_mgrs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow android:paddingTop="8dip">
+
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/sunrise" />
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/sunset" />
     </TableRow>
@@ -22,7 +90,7 @@
 
         <TextView
             android:id="@+id/sunrise"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="--"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -30,22 +98,22 @@
 
         <TextView
             android:id="@+id/sunset"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="--"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
     </TableRow>
 
-    <TableRow android:paddingTop="5dip" >
+    <TableRow android:paddingTop="8dip" >
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/declination" />
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </TableRow>
 
@@ -53,7 +121,7 @@
 
         <TextView
             android:id="@+id/declination"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="--"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -61,7 +129,7 @@
 
         <TextView
             android:id="@+id/nothing"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />

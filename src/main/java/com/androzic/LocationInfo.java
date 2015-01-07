@@ -35,6 +35,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.androzic.util.Astro;
+import com.androzic.util.StringFormatter;
 
 public class LocationInfo extends DialogFragment
 {
@@ -93,6 +94,12 @@ public class LocationInfo extends DialogFragment
 		Location loc = new Location("fake");
 		loc.setLatitude(location[0]);
 		loc.setLongitude(location[1]);
+
+		((TextView) view.findViewById(R.id.coordinate_degree)).setText(StringFormatter.coordinates(0, " ", location[0], location[1]));
+		((TextView) view.findViewById(R.id.coordinate_degmin)).setText(StringFormatter.coordinates(1, " ", location[0], location[1]));
+		((TextView) view.findViewById(R.id.coordinate_degminsec)).setText(StringFormatter.coordinates(2, " ", location[0], location[1]));
+		((TextView) view.findViewById(R.id.coordinate_utmups)).setText(StringFormatter.coordinates(3, " ", location[0], location[1]));
+		((TextView) view.findViewById(R.id.coordinate_mgrs)).setText(StringFormatter.coordinates(4, " ", location[0], location[1]));
 
 		Calendar now = GregorianCalendar.getInstance(TimeZone.getDefault());
 		double sunrise = Astro.computeSunriseTime(application.getZenith(), loc, now);

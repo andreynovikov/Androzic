@@ -45,11 +45,11 @@
 	    <item>ft</item>
     </string-array>
     <string-array name="coordinate_units">
-        <item>DD.DDDDDD</item>
-        <item>DD° MM.MMMM\'</item>
-        <item>DD° MM\' SS.SSS\"</item>
-        <item>UTM/UPS</item>
-        <item>MGRS</item>
+        <item>@string/coordinate_degree</item>
+        <item>@string/coordinate_degmin</item>
+        <item>@string/coordinate_degminsec</item>
+        <item>@string/coordinate_utmups</item>
+        <item>@string/coordinate_mgrs</item>
     </string-array>
     <string-array name="sunrise_units">
         <item>Official</item>
