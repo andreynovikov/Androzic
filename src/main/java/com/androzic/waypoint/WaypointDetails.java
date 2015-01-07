@@ -193,8 +193,21 @@ public class WaypointDetails extends Fragment
 
 		View view = getView();
 		
-		String coords = StringFormatter.coordinates(" ", waypoint.latitude, waypoint.longitude);
-		((TextView) view.findViewById(R.id.coordinates)).setText(coords);
+		final TextView coordsView = (TextView) view.findViewById(R.id.coordinates);
+		coordsView.requestFocus();
+		coordsView.setTag(Integer.valueOf(StringFormatter.coordinateFormat));
+		coordsView.setText(StringFormatter.coordinates(" ", waypoint.latitude, waypoint.longitude));
+		coordsView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				int format = ((Integer)coordsView.getTag()).intValue() + 1;
+				if (format == 5)
+					format = 0;
+				coordsView.setText(StringFormatter.coordinates(format, " ", waypoint.latitude, waypoint.longitude));
+				coordsView.setTag(Integer.valueOf(format));
+			}
+		});
 
 		if (waypoint.altitude != Integer.MIN_VALUE)
 		{
