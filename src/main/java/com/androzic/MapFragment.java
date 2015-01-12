@@ -129,6 +129,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private TextView bearingValue;
 	private TextView bearingUnit;
 	private TextView turnValue;
+	private TextView turnUnit;
 
 	private TextView speedValue;
 	private TextView speedUnit;
@@ -157,9 +158,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private int waypointSelected = -1;
 	private long mapObjectSelected = -1;
 
-	protected long lastRenderTime = 0;
 	protected long lastDim = 0;
-	protected long lastMagnetic = 0;
 	private boolean lastGeoid = true;
 	private int zoom100X = 0;
 	private int zoom100Y = 0;
@@ -211,6 +210,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		bearingValue = (TextView) view.findViewById(R.id.bearing);
 		bearingUnit = (TextView) view.findViewById(R.id.bearingunit);
 		turnValue = (TextView) view.findViewById(R.id.turn);
+		turnUnit = (TextView) view.findViewById(R.id.turnunit);
 		// trackBar = (SeekBar) findViewById(R.id.trackbar);
 		mapInfo = view.findViewById(R.id.mapinfo);
 		satInfo = view.findViewById(R.id.satinfo);
@@ -517,7 +517,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 			double track = application.fixDeclination(application.lastKnownLocation.getBearing());
 			speedValue.setText(StringFormatter.speedC(application.lastKnownLocation.getSpeed()));
-			trackValue.setText(String.valueOf(Math.round(track)));
+			trackValue.setText(StringFormatter.angleC(track));
 			elevationValue.setText(StringFormatter.elevationC(application.lastKnownLocation.getAltitude()));
 			// TODO set separate color
 			if (application.gpsGeoid != lastGeoid)
@@ -695,8 +695,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		bearing = application.fixDeclination(bearing);
 		distanceValue.setText(dist[0]);
 		distanceUnit.setText(dist[1]);
-		bearingValue.setText(String.valueOf(Math.round(bearing)));
-		turnValue.setText(String.valueOf(Math.round(turn)) + trnsym);
+		bearingValue.setText(StringFormatter.angleC(bearing));
+		turnValue.setText(StringFormatter.angleC(turn) + trnsym);
 		waypointExtra.setText(extra);
 
 		if (application.navigationService.isNavigatingViaRoute())
@@ -1146,9 +1146,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 		else if (getString(R.string.pref_unitangle).equals(key))
 		{
-			int angleType = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			trackUnit.setText((angleType == 0 ? "deg" : getString(R.string.degmag)));
-			bearingUnit.setText((angleType == 0 ? "deg" : getString(R.string.degmag)));
+			trackUnit.setText(StringFormatter.angleAbbr);
+			bearingUnit.setText(StringFormatter.angleAbbr);
+			turnUnit.setText(StringFormatter.angleAbbr);
 		}
 	}
 

@@ -127,7 +127,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public static final int PATH_ICONS = 0x008;
 	public static final int PATH_MARKERICONS = 0x010;
 	
-	public int angleType = 0;
+	public boolean angleMagnetic = false;
 	public int sunriseType = 0;
 
 	private List<TileProvider> onlineMaps;
@@ -942,12 +942,12 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 	public double getDeclination()
 	{
-		if (angleType == 0)
+		if (!angleMagnetic)
 		{
 			double lat = Double.isNaN(location[0]) ? mapCenter[0] : location[0];
 			double lon = Double.isNaN(location[1]) ? mapCenter[1] : location[1];
 			magneticDeclination = getDeclination(lat, lon);
-		}		
+		}
 		return magneticDeclination;
 	}
 
@@ -960,7 +960,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 	public double fixDeclination(double declination)
 	{
-		if (angleType == 1)
+		if (angleMagnetic)
 		{
 			declination -= magneticDeclination;
 			declination = (declination + 360.0) % 360.0;
@@ -1608,7 +1608,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 			final long lastLocationMillis = location.getTime();
 
-			if (angleType == 1 && lastLocationMillis - lastMagnetic >= magInterval)
+			if (angleMagnetic && lastLocationMillis - lastMagnetic >= magInterval)
 			{
 				GeomagneticField mag = new GeomagneticField((float) location.getLatitude(), (float) location.getLongitude(), (float) location.getAltitude(), System.currentTimeMillis());
 				magneticDeclination = mag.getDeclination();
@@ -2156,7 +2156,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		finally
 		{
 			InputStream in = getResources().openRawResource(id);
-			FileOutputStream out = null;
+			FileOutputStream out;
 
 			try
 			{
@@ -2320,7 +2320,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		else if (getString(R.string.pref_unitangle).equals(key))
 		{
-			angleType = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			int angleIdx = Integer.parseInt(sharedPreferences.getString(key, "0"));
+			StringFormatter.angleFactor = Double.parseDouble(resources.getStringArray(R.array.angle_factors)[angleIdx]);
+			StringFormatter.angleAbbr = resources.getStringArray(R.array.angle_abbrs)[angleIdx];
+		}
+		else if (getString(R.string.pref_unitanglemagnetic).equals(key))
+		{
+			angleMagnetic = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_unitanglemagnetic));
 		}
 		else if (getString(R.string.pref_unitsunrise).equals(key))
 		{
@@ -2495,6 +2501,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitspeed));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitelevation));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitangle));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_unitanglemagnetic));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitsunrise));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));

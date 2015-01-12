@@ -232,7 +232,7 @@ public class WaypointDetails extends Fragment
 		double dist = Geo.distance(lat, lon, waypoint.latitude, waypoint.longitude);
 		double bearing = Geo.bearing(lat, lon, waypoint.latitude, waypoint.longitude);
 		bearing = application.fixDeclination(bearing);
-		String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.bearingH(bearing);
+		String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.angleH(bearing);
 		((TextView) view.findViewById(R.id.distance)).setText(distance);
 
 		((TextView) view.findViewById(R.id.waypointset)).setText(waypoint.set.name);

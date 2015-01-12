@@ -83,7 +83,7 @@ public class CoordinatesReceived extends DialogFragment
 		double dist = Geo.distance(ll[0], ll[1], lat, lon);
 		double bearing = Geo.bearing(ll[0], ll[1], lat, lon);
 		bearing = application.fixDeclination(bearing);
-		String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.bearingH(bearing);
+		String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.angleH(bearing);
 		((TextView) view.findViewById(R.id.distance)).setText(distance);
 
 		return builder.create();

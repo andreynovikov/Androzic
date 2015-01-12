@@ -120,8 +120,6 @@
 	<string name="never">never</string>
 	<string name="distance">Distance</string>
 	<string name="bearing">Bearing</string>
-	<string name="degtrue">true</string>
-	<string name="degmag">mag.</string>
 	<string name="currentloc">Current location</string>
 	<string name="satellites">Satellites</string>
 	<string name="lastfix">Last fix</string>
@@ -347,8 +345,9 @@
 	<string name="pref_unitelevation_title">Elevation</string>
 	<string name="pref_unitdistance_title">Distance</string>
 	<string name="pref_unitcoordinate_title">Coordinates</string>
-	<string name="pref_unitangle_title">Declination</string>
+	<string name="pref_unitangle_title">Angle</string>
 	<string name="pref_unitsunrise_title">Sunrise/Sunset</string>
+    <string name="pref_unitanglemagnetic_title">Use magnetic declination</string>
 	<string name="pref_unitprecision_title">Extra precision</string>
 	<string name="pref_grid_title">Grids</string>
 	<string name="pref_grid_mapshow_title">Show map grids</string>

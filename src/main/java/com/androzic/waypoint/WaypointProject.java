@@ -102,11 +102,12 @@ public class WaypointProject extends DialogFragment
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		((Spinner) view.findViewById(R.id.distance_spinner)).setAdapter(adapter);
 
-		items = getResources().getStringArray(R.array.angle_units);
+		items = getResources().getStringArray(R.array.angle_types);
 		adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, items);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		((TextView) view.findViewById(R.id.bearing_abbr)).setText(StringFormatter.angleAbbr);
 		((Spinner) view.findViewById(R.id.bearing_spinner)).setAdapter(adapter);
-		((Spinner) view.findViewById(R.id.bearing_spinner)).setSelection(application.angleType);
+		((Spinner) view.findViewById(R.id.bearing_spinner)).setSelection(application.angleMagnetic ? 1 : 0);
 
 	    ((Button) view.findViewById(R.id.done_button)).setOnClickListener(doneOnClickListener);
 	    ((Button) view.findViewById(R.id.cancel_button)).setOnClickListener(new OnClickListener() { public void onClick(View v) { dismiss(); } });
@@ -160,10 +161,13 @@ public class WaypointProject extends DialogFragment
         		{
         			distance = distance / StringFormatter.distanceShortFactor;
         		}
+		        bearing = bearing * StringFormatter.angleFactor;
         		if (bf == 1)
         		{
         			GeomagneticField mag = new GeomagneticField((float) loc[0], (float) loc[1], 0.0f, System.currentTimeMillis());
         			bearing -= mag.getDeclination();
+			        if (bearing < 0)
+				        bearing += 360d;
         		}
         		double[] prj = Geo.projection(loc[0], loc[1], distance, bearing);
         		waypoint.latitude = prj[0];

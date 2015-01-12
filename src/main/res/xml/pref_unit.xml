@@ -47,6 +47,10 @@
         android:title="@string/pref_unitsunrise_title" />
 
     <CheckBoxPreference
+        android:defaultValue="@bool/def_unitanglemagnetic"
+        android:key="@string/pref_unitanglemagnetic"
+        android:title="@string/pref_unitanglemagnetic_title" />
+    <CheckBoxPreference
         android:defaultValue="@bool/def_unitprecision"
         android:key="@string/pref_unitprecision"
         android:title="@string/pref_unitprecision_title" />

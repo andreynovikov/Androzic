@@ -113,9 +113,9 @@ public class HSIActivity extends Activity
 		speedUnit.setText(StringFormatter.speedAbbr);
 		vmgUnit.setText(StringFormatter.speedAbbr);
 		elevationUnit.setText(StringFormatter.elevationAbbr);
-		trackUnit.setText((application.angleType == 0 ? "deg" : getString(R.string.degmag)));
-		bearingUnit.setText((application.angleType == 0 ? "deg" : getString(R.string.degmag)));
-		courseUnit.setText((application.angleType == 0 ? "deg" : getString(R.string.degmag)));
+		trackUnit.setText(StringFormatter.angleAbbr);
+		bearingUnit.setText(StringFormatter.angleAbbr);
+		courseUnit.setText(StringFormatter.angleAbbr);
 		int proximity = Integer.parseInt(settings.getString(getString(R.string.pref_navigation_proximity), getString(R.string.def_navigation_proximity)));
 
 		hsiView.setProximity(proximity);
@@ -150,7 +150,7 @@ public class HSIActivity extends Activity
 			hsiView.setNavigating(navigationService.isNavigatingViaRoute() ? 2 : navigationService.isNavigating() ? 1 : 0);
 			hsiView.setCourse(course);
 			if (navigationService.isNavigatingViaRoute())
-				courseValue.setText(String.valueOf(Math.round(course)));
+				courseValue.setText(StringFormatter.angleC(course));
 			else
 				courseValue.setText("--");
 		}
@@ -159,7 +159,7 @@ public class HSIActivity extends Activity
 			float bearing = (float) application.fixDeclination(navigationService.navBearing);
 			hsiView.setBearing(bearing);
 			hsiView.setXtk(navigationService.navXTK == Double.NEGATIVE_INFINITY ? 0 : (float) navigationService.navXTK);
-			bearingValue.setText(String.valueOf(Math.round(bearing)));
+			bearingValue.setText(StringFormatter.angleC(bearing));
 			String[] dist = StringFormatter.distanceC(navigationService.navDistance);
 			distanceValue.setText(dist[0]);
 			distanceUnit.setText(dist[1]);
@@ -275,7 +275,7 @@ public class HSIActivity extends Activity
 					float track = (float) application.fixDeclination(loc.getBearing());
 					hsiView.setAzimuth(track);
 					speedValue.setText(StringFormatter.speedC(loc.getSpeed()));
-					trackValue.setText(String.valueOf(Math.round(track)));
+					trackValue.setText(StringFormatter.angleC(track));
 					elevationValue.setText(StringFormatter.elevationC(loc.getAltitude()));
 				}
 			});

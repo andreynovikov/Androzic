@@ -142,7 +142,7 @@ public class DistanceOverlay extends MapOverlay
 		double bearing = Geo.bearing(loc[0], loc[1], ancor[0], ancor[1]);
 		if (dist > 0)
 		{
-			String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.bearingH(bearing);
+			String distance = StringFormatter.distanceH(dist)+" "+StringFormatter.angleH(bearing);
 	
 			Rect rect = new Rect();
 	    	textPaint.getTextBounds(distance, 0, distance.length(), rect);

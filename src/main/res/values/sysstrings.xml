@@ -64,6 +64,7 @@
 	<string name="pref_unitcoordinate">unitcoordinate</string>
 	<string name="pref_unitangle">unitangle</string>
 	<string name="pref_unitsunrise">unitsunrise</string>
+    <string name="pref_unitanglemagnetic">unitanglemagnetic</string>
 	<string name="pref_unitprecision">unitprecision</string>
 	<string name="pref_grid_mapshow">grid_mapshow</string>
 	<string name="pref_grid_usershow">grid_usershow</string>

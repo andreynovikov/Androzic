@@ -417,7 +417,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 				v = convertView;
 				v = mInflater.inflate(mItemLayout, parent, false);
 			}
-			Waypoint wpt = (Waypoint) getItem(position);
+			Waypoint wpt = getItem(position);
 			TextView text = (TextView) v.findViewById(R.id.name);
 			if (text != null)
 			{
@@ -444,7 +444,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 						crs = mRoute.course(position - 1, position);
 					else
 						crs = mRoute.course(position, position - 1);
-					String course = StringFormatter.bearingH(crs);
+					String course = StringFormatter.angleH(crs);
 					text = (TextView) v.findViewById(R.id.course);
 					if (text != null)
 					{
@@ -511,7 +511,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 						text.setText(distance);
 					}
 					double crs = mRoute.course(position - 1, position);
-					String course = StringFormatter.bearingH(crs);
+					String course = StringFormatter.angleH(crs);
 					text = (TextView) v.findViewById(R.id.course);
 					if (text != null)
 					{

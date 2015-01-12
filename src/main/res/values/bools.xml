@@ -19,6 +19,7 @@
 <bool name="def_maplistscale">false</bool>
 <bool name="def_loc_usenetwork">true</bool>
 <bool name="def_loc_store">true</bool>
+<bool name="def_unitanglemagnetic">false</bool>
 <bool name="def_unitprecision">false</bool>
 <bool name="def_waypoint_visible">true</bool>
 <bool name="def_route_preload">true</bool>

@@ -54,7 +54,16 @@
     </string-array>
     <string-array name="angle_values">
         <item>0</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="angle_factors">
         <item>1</item>
+        <item>1</item>
+        <item>0.05625</item>
+        <item>0.06</item>
+        <item>0.9</item>
     </string-array>
     <string-array name="grid_values">
         <item>0</item>
