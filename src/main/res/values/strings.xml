@@ -347,7 +347,7 @@
 	<string name="pref_unitcoordinate_title">Coordinates</string>
 	<string name="pref_unitangle_title">Angle</string>
 	<string name="pref_unitsunrise_title">Sunrise/Sunset</string>
-    <string name="pref_unitanglemagnetic_title">Use magnetic declination</string>
+    <string name="pref_unitanglemagnetic_title">Consider magnetic declination</string>
 	<string name="pref_unitprecision_title">Extra precision</string>
 	<string name="pref_grid_title">Grids</string>
 	<string name="pref_grid_mapshow_title">Show map grids</string>

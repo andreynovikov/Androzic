@@ -98,6 +98,7 @@
     <orderEntry type="module" module-name="android-support-v4-preferencefragment" exported="" />
     <orderEntry type="module" module-name="library" exported="" />
     <orderEntry type="module" module-name="color-picker-view-library" exported="" />
+    <orderEntry type="module" module-name="geo-coordinate-conversion" exported="" />
     <orderEntry type="module" module-name="drag-sort-listview-library" exported="" />
   </component>
 </module>
