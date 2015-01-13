@@ -72,6 +72,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -194,6 +195,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	private String sasPath;
 	public String iconPath;
 	public String markerPath;
+	private File cacheDir;
 	public boolean mapsInited = false;
 	private MapHolder mapHolder;
 	protected OverlayManager overlayManager;
@@ -1851,9 +1853,23 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		rootPath = path;
 	}
 
-	public String getRootPath()
+	public File getCacheDir()
 	{
-		return rootPath;
+		if (cacheDir != null)
+			return cacheDir;
+
+		File[] caches = ContextCompat.getExternalCacheDirs(this);
+		File cacheDir = caches[0];
+		// Select the first really external (removable) storage if present
+		for (int i = 1; i < caches.length; i++)
+		{
+			if (caches[i] != null)
+			{
+				cacheDir = caches[i];
+				break;
+			}
+		}
+		return cacheDir;
 	}
 
 	public void setDataPath(int pathtype, String path)
@@ -2586,6 +2602,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		maps = null;
 		mapsInited = false;
 		memmsg = false;
+		cacheDir = null;
 	}
 
 	private class MapActivationError implements Runnable
