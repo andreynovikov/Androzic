@@ -241,13 +241,17 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 		}
 
-		for (TileProvider map : onlineMaps)
+		if (onlineMaps != null)
 		{
-			if (map.instance != null)
-				map.listener = mapHolder;
+			for (TileProvider map : onlineMaps)
+			{
+				if (map.instance != null)
+					map.listener = mapHolder;
+			}
 		}
 
-		overlayManager.initGrids(currentMap);
+		if (currentMap != null)
+			overlayManager.initGrids(currentMap);
 	}
 	
 	public java.util.Map<String, Intent> getPluginsPreferences()
