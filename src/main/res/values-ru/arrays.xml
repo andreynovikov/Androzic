@@ -46,10 +46,11 @@
     <item>фут</item>
   </string-array>
   <string-array name="coordinate_units">
-    <item>ГГ.ГГГГГГ</item>
-    <item>ГГ° ММ.ММММ\'</item>
-    <item>ГГ° ММ\' СС.ССС\"</item>
-    <item>UTM</item>
+    <item>@string/coordinate_degree</item>
+    <item>@string/coordinate_degmin</item>
+    <item>@string/coordinate_degminsec</item>
+    <item>@string/coordinate_utmups</item>
+    <item>@string/coordinate_mgrs</item>
   </string-array>
   <string-array name="sunrise_units">
     <item>Официальный</item>
@@ -57,9 +58,22 @@
     <item>Морской</item>
     <item>Астрономический</item>
   </string-array>
+  <string-array name="angle_types">
+    <item>истиный</item>
+    <item>магнитный</item>
+  </string-array>
   <string-array name="angle_units">
-    <item>ист.</item>
-    <item>маг.</item>
+    <item>градусы</item>
+    <item>тысячные НАТО</item>
+    <item>тысячные СССР</item>
+    <item>грады</item>
+  </string-array>
+  <string-array name="angle_abbrs">
+    <item>гр</item>
+    <item>гр</item>
+    <item>тыс</item>
+    <item>с.тыс</item>
+    <item>гон</item>
   </string-array>
   <string-array name="grid_names">
     <item>Предпочитать сетку карты</item>

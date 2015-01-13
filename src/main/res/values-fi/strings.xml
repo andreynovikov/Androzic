@@ -113,8 +113,6 @@
   <string name="never">ei koskaan</string>
   <string name="distance">Etäisyys</string>
   <string name="bearing">Suunta</string>
-  <string name="degtrue">tosi</string>
-  <string name="degmag">Mag.</string>
   <string name="currentloc">Nykyinen paikka</string>
   <string name="satellites">Satelliitteja</string>
   <string name="lastfix">Viime fix</string>
@@ -129,12 +127,14 @@
   <string name="alg_a">Risteile</string>
   <string name="alg_b">Säie</string>
   <string name="update_almanac">Kalenterin päivityspyyntö</string>
+  <string name="degrees">Degrees</string>
   <string name="easting">Easting</string>
   <string name="northing">Northing</string>
   <string name="zone">Vyöhyke</string>
   <string name="hemisphere">Pallonpuolisko</string>
   <string name="s">E</string>
   <string name="n">P</string>
+  <string name="mgrs_string">MGRS string</string>
   <string name="waypointset">Aseta</string>
   <string name="markercolor">Merkin väri</string>
   <string name="textcolor">Nimen väri</string>
@@ -164,6 +164,11 @@
   <string name="statistics">Statistics</string>
   <string name="max_speed">Maximim speed</string>
   <string name="average_speed">Average speed</string>
+  <string name="coordinate_degree">DD.DDDDDD</string>
+  <string name="coordinate_degmin">DD° MM.MMMM\'</string>
+  <string name="coordinate_degminsec">DD° MM\' SS.SSS\"</string>
+  <string name="coordinate_utmups">UTM/UPS</string>
+  <string name="coordinate_mgrs">MGRS</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Kartan indeksointivirhe</string>
   <string name="nomaps">Karttoja ei löydy</string>
@@ -326,8 +331,9 @@
   <string name="pref_unitelevation_title">Korkeus</string>
   <string name="pref_unitdistance_title">Etäisyys</string>
   <string name="pref_unitcoordinate_title">Koordinaatit</string>
-  <string name="pref_unitangle_title">Poikkeama</string>
+  <string name="pref_unitangle_title">Angle</string>
   <string name="pref_unitsunrise_title">Auringon nousu/lasku</string>
+  <string name="pref_unitanglemagnetic_title">Consider magnetic declination</string>
   <string name="pref_unitprecision_title">Desimaalin tarkkuudella</string>
   <string name="pref_grid_title">Ruudustot, Grids</string>
   <string name="pref_grid_mapshow_title">Näytä karttaruudusto</string>

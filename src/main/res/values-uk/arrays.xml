@@ -46,10 +46,11 @@
     <item>фут</item>
   </string-array>
   <string-array name="coordinate_units">
-    <item>ГГ.ГГГГГГ</item>
-    <item>ГГ° ММ.ММММ\'</item>
-    <item>ГГ° ММ\' СС.ССС\"</item>
-    <item>UTM</item>
+    <item>@string/coordinate_degree</item>
+    <item>@string/coordinate_degmin</item>
+    <item>@string/coordinate_degminsec</item>
+    <item>@string/coordinate_utmups</item>
+    <item>@string/coordinate_mgrs</item>
   </string-array>
   <string-array name="sunrise_units">
     <item>Офіційний</item>
@@ -57,9 +58,22 @@
     <item>Морський</item>
     <item>Астрономічний</item>
   </string-array>
+  <string-array name="angle_types">
+    <item>істинний</item>
+    <item>магнітний</item>
+  </string-array>
   <string-array name="angle_units">
-    <item>іст.</item>
-    <item>магн.</item>
+    <item>градуси</item>
+    <item>тисячні НАТО</item>
+    <item>тисячні СРСР</item>
+    <item>гради</item>
+  </string-array>
+  <string-array name="angle_abbrs">
+    <item>гр</item>
+    <item>гр</item>
+    <item>тис</item>
+    <item>с.тис</item>
+    <item>гон</item>
   </string-array>
   <string-array name="grid_names">
     <item>Переважно сітка мапи</item>

@@ -113,8 +113,6 @@
   <string name="never">никогда</string>
   <string name="distance">Расстояние</string>
   <string name="bearing">Курс</string>
-  <string name="degtrue">ист.</string>
-  <string name="degmag">маг.</string>
   <string name="currentloc">Текущее положение</string>
   <string name="satellites">Спутники</string>
   <string name="lastfix">Последнее положение</string>
@@ -129,12 +127,14 @@
   <string name="alg_a">Круиз</string>
   <string name="alg_b">Метание</string>
   <string name="update_almanac">Запросить обновление альманаха</string>
+  <string name="degrees">Градусы</string>
   <string name="easting">Вост.ук.</string>
   <string name="northing">Сев.ук.</string>
   <string name="zone">Зона</string>
   <string name="hemisphere">Полушарие</string>
   <string name="s">Ю</string>
   <string name="n">С</string>
+  <string name="mgrs_string">Строка MGRS</string>
   <string name="waypointset">Набор</string>
   <string name="markercolor">Цвет метки</string>
   <string name="textcolor">Цвет названия</string>
@@ -164,6 +164,11 @@
   <string name="statistics">Статистика</string>
   <string name="max_speed">Максимальная скорость</string>
   <string name="average_speed">Средняя скорость</string>
+  <string name="coordinate_degree">ГГ.ГГГГГГ</string>
+  <string name="coordinate_degmin">ГГ° ММ.ММММ\'</string>
+  <string name="coordinate_degminsec">ГГ° ММ\' СС.ССС\"</string>
+  <string name="coordinate_utmups">UTM/UPS</string>
+  <string name="coordinate_mgrs">MGRS</string>
   <string name="waypoint_deleted">Точка удалена</string>
   <string name="badmaps">Ошибка индексирования карт</string>
   <string name="nomaps">Карт не найдено</string>
@@ -329,8 +334,9 @@
   <string name="pref_unitelevation_title">Высота</string>
   <string name="pref_unitdistance_title">Расстояние</string>
   <string name="pref_unitcoordinate_title">Координаты</string>
-  <string name="pref_unitangle_title">Склонение</string>
+  <string name="pref_unitangle_title">Угол</string>
   <string name="pref_unitsunrise_title">Восход/закат</string>
+  <string name="pref_unitanglemagnetic_title">Учитывать магнитное склонение</string>
   <string name="pref_unitprecision_title">Повышенная точность</string>
   <string name="pref_grid_title">Сетки</string>
   <string name="pref_grid_mapshow_title">Показывать сетки карты</string>

@@ -52,7 +52,8 @@
   <string name="msg_initializingview">Görünüm başlatılıyor&#8230;</string>
   <string name="msg_paid">Bağış yapılmış sürüm</string>
   <string name="msg_dedicated">Dedicated to my fair Olya</string>
-  <string name="msg_nothing_found">Hiçbir şey bulunamadı. Androzic\'in yer imleri verisi içerisinde arama yapması için yüklenmiş veri olması gerektiğini, google yer adlarını aramak için ise internet bağlantısı gerektiğini lütfen göz önünde bulundurunuz.</string>
+  <string name="msg_nothing_found">Hiçbir şey bulunamadı. Androzic\'in yer imleri verisi içerisinde arama yapması için yüklenmiş veri olması gerektiğini, google yer adlarını aramak için ise internet bağlantısı gerektiğini lütfen göz önünde bulundurunuz.
+</string>
   <string name="msg_empty_map_list">Hiçbir harita mevcut değil.</string>
   <string name="msg_empty_waypoint_list">Hiçbir yer imi mevcut değil. Yer imi oluşturabilir veya dosyadan yükleyebilirsiniz.</string>
   <string name="msg_empty_route_list">Mevcut rota bulunmuyor. Rota oluşturabilir veya dosyadan yükleyebilirsiniz.</string>
@@ -113,8 +114,6 @@
   <string name="never">asla</string>
   <string name="distance">Mesafe</string>
   <string name="bearing">İstikamet Açısı</string>
-  <string name="degtrue">gerçek</string>
-  <string name="degmag">manyetik</string>
   <string name="currentloc">Geçerli konum</string>
   <string name="satellites">Uydular</string>
   <string name="lastfix">Son konum</string>
@@ -129,12 +128,14 @@
   <string name="alg_a">Seyir</string>
   <string name="alg_b">Fırfır</string>
   <string name="update_almanac">Almanak güncelleştirmesi yap</string>
+  <string name="degrees">Degrees</string>
   <string name="easting">Doğu</string>
   <string name="northing">Kuzey</string>
   <string name="zone">Bölge</string>
   <string name="hemisphere">Yarımküre</string>
   <string name="s">G</string>
   <string name="n">K</string>
+  <string name="mgrs_string">MGRS string</string>
   <string name="waypointset">Yer imi Grubu</string>
   <string name="markercolor">İşaretçi rengi</string>
   <string name="textcolor">Yer imi rengi</string>
@@ -164,6 +165,11 @@
   <string name="statistics">İstatistikler</string>
   <string name="max_speed">Maksimum hız</string>
   <string name="average_speed">Ortalama hız</string>
+  <string name="coordinate_degree">DD.DDDDDD</string>
+  <string name="coordinate_degmin">DD°MM.MMMM\'</string>
+  <string name="coordinate_degminsec">DD°MM\'SS.SSS\"</string>
+  <string name="coordinate_utmups">UTM/UPS</string>
+  <string name="coordinate_mgrs">MGRS</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Harita dizin-indeks hatası</string>
   <string name="nomaps">Hiç harita bulunamadı</string>
@@ -324,8 +330,9 @@
   <string name="pref_unitelevation_title">İrtifa</string>
   <string name="pref_unitdistance_title">Mesafe</string>
   <string name="pref_unitcoordinate_title">Koordinat Biçimi</string>
-  <string name="pref_unitangle_title">İstikamet açısı</string>
+  <string name="pref_unitangle_title">Angle</string>
   <string name="pref_unitsunrise_title">Gündoğumu ve günbatımı</string>
+  <string name="pref_unitanglemagnetic_title">Consider magnetic declination</string>
   <string name="pref_unitprecision_title">Ekstra hassasiyet</string>
   <string name="pref_grid_title">Grid çizgileri</string>
   <string name="pref_grid_mapshow_title">Gridleri haritada göster</string>
@@ -384,7 +391,8 @@
   <string name="notif_loc_waiting">Androzic konum bilgisini bekliyor</string>
   <string name="notif_loc_started">Androzic konumunuzu belirliyor</string>
   <string name="notif_trk_started">Androzic hareketinizi takip etmeye başladı</string>
-  <string name="notif_trk_failure">Androzic konumunuzu izlemede sorun yaşıyor</string>
+  <string name="notif_trk_failure">Androzic konumunuzu izlemede sorun yaşıyor
+</string>
   <string name="notif_nav_short">Seyrüsefer başladı</string>
   <string name="notif_nav_started">Androzic seyrüsefere başladı</string>
   <string name="notif_nav_to">Androzic şu konuma gidiyor: %s</string>
@@ -410,7 +418,7 @@
   <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
   <string name="showcase_waypointset_actions_title">Yer imi grup ayarları</string>
   <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
-  <string name="app_eula" formatted="false">Bu program Özgür Yazılım Kuruluşu tarafından yayınlanan GNU v3 (Genel Kamu Lisansı sürüm 3) kuralları altında dağıtılmaktadır./n/n
+  <string name="app_eula">Bu program Özgür Yazılım Kuruluşu tarafından yayınlanan GNU v3 (Genel Kamu Lisansı sürüm 3) kuralları altında dağıtılmaktadır./n/n
 
 Bu programın dağıtımında faydalı olması umulmaktadır fakat HERHANGİ BİR GARANTİ VERİLMEMEKTEDİR. Ayrıntılı bilgi almak için Genel Kamu Lisansını inceleyiniz./n/n
 

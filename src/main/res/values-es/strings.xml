@@ -113,8 +113,6 @@
   <string name="never">nunca</string>
   <string name="distance">Distancia</string>
   <string name="bearing">Rumbo</string>
-  <string name="degtrue">verdad</string>
-  <string name="degmag">mag.</string>
   <string name="currentloc">Situación actual</string>
   <string name="satellites">Satelites</string>
   <string name="lastfix">Ultima posición</string>
@@ -129,12 +127,14 @@
   <string name="alg_a">Crucero</string>
   <string name="alg_b">Volante</string>
   <string name="update_almanac">Solicite actualizar almanaque</string>
+  <string name="degrees">Degrees</string>
   <string name="easting">Hacia el Este</string>
   <string name="northing">Hacia el Norte</string>
   <string name="zone">Zona</string>
   <string name="hemisphere">Hemisferio</string>
   <string name="s">S</string>
   <string name="n">N</string>
+  <string name="mgrs_string">MGRS string</string>
   <string name="waypointset">Definir</string>
   <string name="markercolor">Color del marcador</string>
   <string name="textcolor">Nombre del color</string>
@@ -164,6 +164,11 @@
   <string name="statistics">Statistics</string>
   <string name="max_speed">Maximim speed</string>
   <string name="average_speed">Average speed</string>
+  <string name="coordinate_degree">DD.DDDDDD</string>
+  <string name="coordinate_degmin">DD° MM.MMMM\'</string>
+  <string name="coordinate_degminsec">DD° MM\' SS.SSS\"</string>
+  <string name="coordinate_utmups">UTM/UPS</string>
+  <string name="coordinate_mgrs">MGRS</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Indice de error de mapas</string>
   <string name="nomaps">No se encontraron mapas</string>
@@ -328,8 +333,9 @@
   <string name="pref_unitelevation_title">Elevacion</string>
   <string name="pref_unitdistance_title">Distancia</string>
   <string name="pref_unitcoordinate_title">Coordenadas</string>
-  <string name="pref_unitangle_title">Declinacion</string>
+  <string name="pref_unitangle_title">Angle</string>
   <string name="pref_unitsunrise_title">Aurora/Puesta</string>
+  <string name="pref_unitanglemagnetic_title">Consider magnetic declination</string>
   <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Cuadricula</string>
   <string name="pref_grid_mapshow_title">Ver la cuadricula en el mapa</string>

@@ -113,8 +113,6 @@
   <string name="never">nigdy</string>
   <string name="distance">Odległość</string>
   <string name="bearing">Kierunek</string>
-  <string name="degtrue">prawda</string>
-  <string name="degmag">wielkość</string>
   <string name="currentloc">Aktualna lokalizacja</string>
   <string name="satellites">Satelity</string>
   <string name="lastfix">Ostatni fix</string>
@@ -129,12 +127,14 @@
   <string name="alg_a">Algorytm \"Cruise\"</string>
   <string name="alg_b">Algorytm \"Flounce\"</string>
   <string name="update_almanac">Aktualizuj almanach</string>
+  <string name="degrees">Stopnie</string>
   <string name="easting">Kurs na wschód</string>
   <string name="northing">Kurs na północ</string>
   <string name="zone">Obszar</string>
   <string name="hemisphere">Półkula</string>
   <string name="s">S</string>
   <string name="n">N</string>
+  <string name="mgrs_string">Ciąg MGRS</string>
   <string name="waypointset">Ustawiono</string>
   <string name="markercolor">Kolor znacznika</string>
   <string name="textcolor">Kolor nazwy</string>
@@ -164,6 +164,11 @@
   <string name="statistics">Statystyki</string>
   <string name="max_speed">Prędkość maksymalna</string>
   <string name="average_speed">Średnia prędkość</string>
+  <string name="coordinate_degree">DD.DDDDDD</string>
+  <string name="coordinate_degmin">DD° MM.MMMM\'</string>
+  <string name="coordinate_degminsec">DD° MM\'SS.SSS\"</string>
+  <string name="coordinate_utmups">UTM/UPS</string>
+  <string name="coordinate_mgrs">MGRS</string>
   <string name="waypoint_deleted">Punkt nawigacyjny usunięty</string>
   <string name="badmaps">Błąd indeksu mapy</string>
   <string name="nomaps">Nie znaleziono map</string>
@@ -324,8 +329,9 @@
   <string name="pref_unitelevation_title">Wysokość n.p.m.</string>
   <string name="pref_unitdistance_title">Odległość</string>
   <string name="pref_unitcoordinate_title">Współrzędne</string>
-  <string name="pref_unitangle_title">Deklinacja</string>
+  <string name="pref_unitangle_title">Kąt</string>
   <string name="pref_unitsunrise_title">Wschód/Zachód Słońca</string>
+  <string name="pref_unitanglemagnetic_title">Należy wziąć pod uwagę deklinację magnetyczną</string>
   <string name="pref_unitprecision_title">Ekstra dokładność</string>
   <string name="pref_grid_title">Siatki</string>
   <string name="pref_grid_mapshow_title">Pokaż siatkę mapy</string>

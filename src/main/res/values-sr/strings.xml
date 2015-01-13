@@ -113,8 +113,6 @@
   <string name="never">nikad</string>
   <string name="distance">Razdaljina</string>
   <string name="bearing">Azimut</string>
-  <string name="degtrue">tačan</string>
-  <string name="degmag">mag.</string>
   <string name="currentloc">Trenutna lokacija</string>
   <string name="satellites">Sateliti</string>
   <string name="lastfix">Zadnja ispravka</string>
@@ -129,12 +127,14 @@
   <string name="alg_a">Krstarenje</string>
   <string name="alg_b">Nagla skretanja</string>
   <string name="update_almanac">Zahtjevaj godišnje ažuriranje</string>
+  <string name="degrees">Degrees</string>
   <string name="easting">Istočno</string>
   <string name="northing">Sjeverno</string>
   <string name="zone">Zona</string>
   <string name="hemisphere">Hemisfera</string>
   <string name="s">J</string>
   <string name="n">S</string>
+  <string name="mgrs_string">MGRS string</string>
   <string name="waypointset">Skup</string>
   <string name="markercolor">Boja markera</string>
   <string name="textcolor">Boja imena</string>
@@ -164,6 +164,11 @@
   <string name="statistics">Statistics</string>
   <string name="max_speed">Maximim speed</string>
   <string name="average_speed">Average speed</string>
+  <string name="coordinate_degree">SS.SSSSSS</string>
+  <string name="coordinate_degmin">SSºMM.MMMM\'</string>
+  <string name="coordinate_degminsec">SSºMM\'SS.SSS\"</string>
+  <string name="coordinate_utmups">UTM/UPS</string>
+  <string name="coordinate_mgrs">MGRS</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Greška u indeksu mape</string>
   <string name="nomaps">Mape nijesu nađene</string>
@@ -325,8 +330,9 @@
   <string name="pref_unitelevation_title">Nadmorska visina</string>
   <string name="pref_unitdistance_title">Razdaljina</string>
   <string name="pref_unitcoordinate_title">Koordinate</string>
-  <string name="pref_unitangle_title">Odstupanje</string>
+  <string name="pref_unitangle_title">Angle</string>
   <string name="pref_unitsunrise_title">Izlazak/Zalazak Sunca</string>
+  <string name="pref_unitanglemagnetic_title">Consider magnetic declination</string>
   <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Mreže</string>
   <string name="pref_grid_mapshow_title">Prikaži mreže na mapi</string>

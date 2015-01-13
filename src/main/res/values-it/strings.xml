@@ -113,8 +113,6 @@
   <string name="never">mai</string>
   <string name="distance">Distanza</string>
   <string name="bearing">Posizione</string>
-  <string name="degtrue">vero</string>
-  <string name="degmag">mag.</string>
   <string name="currentloc">Posizione corrente</string>
   <string name="satellites">Satelliti</string>
   <string name="lastfix">Ultima correzione</string>
@@ -129,12 +127,14 @@
   <string name="alg_a">Crociera</string>
   <string name="alg_b">Balza</string>
   <string name="update_almanac">Richiesta di aggiornamento Almanacco</string>
+  <string name="degrees">Degrees</string>
   <string name="easting">Est</string>
   <string name="northing">Nord</string>
   <string name="zone">Zona</string>
   <string name="hemisphere">Emisfero</string>
   <string name="s">S</string>
   <string name="n">N</string>
+  <string name="mgrs_string">MGRS string</string>
   <string name="waypointset">Impostare</string>
   <string name="markercolor">Colore dell\'indicatore</string>
   <string name="textcolor">Nome del colore</string>
@@ -164,6 +164,11 @@
   <string name="statistics">Statistics</string>
   <string name="max_speed">Maximim speed</string>
   <string name="average_speed">Average speed</string>
+  <string name="coordinate_degree">GG.GGGGGG</string>
+  <string name="coordinate_degmin">GG° MM.MMMM\'</string>
+  <string name="coordinate_degminsec">GG° MM\' SS.SSS\"</string>
+  <string name="coordinate_utmups">UTM/UPS</string>
+  <string name="coordinate_mgrs">MGRS</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Mappa indice errore</string>
   <string name="nomaps">No mappe trovati</string>
@@ -324,8 +329,9 @@
   <string name="pref_unitelevation_title">Elevazione</string>
   <string name="pref_unitdistance_title">Distanza</string>
   <string name="pref_unitcoordinate_title">Coordinate</string>
-  <string name="pref_unitangle_title">Declinazione</string>
+  <string name="pref_unitangle_title">Angle</string>
   <string name="pref_unitsunrise_title">Albe e tramonti</string>
+  <string name="pref_unitanglemagnetic_title">Consider magnetic declination</string>
   <string name="pref_unitprecision_title">Extra precision</string>
   <string name="pref_grid_title">Griglie</string>
   <string name="pref_grid_mapshow_title">Visualizza mappa griglie</string>

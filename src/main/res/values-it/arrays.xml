@@ -46,10 +46,11 @@
     <item>piedi</item>
   </string-array>
   <string-array name="coordinate_units">
-    <item>GG.GGGGGG</item>
-    <item>GG° MM.MMMM\'</item>
-    <item>GG° MM\' SS.SSS\"</item>
-    <item>UTM</item>
+    <item>@string/coordinate_degree</item>
+    <item>@string/coordinate_degmin</item>
+    <item>@string/coordinate_degminsec</item>
+    <item>@string/coordinate_utmups</item>
+    <item>@string/coordinate_mgrs</item>
   </string-array>
   <string-array name="sunrise_units">
     <item>Ufficiale</item>
@@ -57,9 +58,22 @@
     <item>Nautico</item>
     <item>Astronomico</item>
   </string-array>
+  <string-array name="angle_types">
+    <item>true</item>
+    <item>magnetic</item>
+  </string-array>
   <string-array name="angle_units">
-    <item>vero</item>
-    <item>magnetico</item>
+    <item>degrees</item>
+    <item>NATO mils</item>
+    <item>Soviet mils</item>
+    <item>grads</item>
+  </string-array>
+  <string-array name="angle_abbrs">
+    <item>deg</item>
+    <item>deg</item>
+    <item>mil</item>
+    <item>s.mil</item>
+    <item>gon</item>
   </string-array>
   <string-array name="grid_names">
     <item>Griglia mappa preferita</item>
