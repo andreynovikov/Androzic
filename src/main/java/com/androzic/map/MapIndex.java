@@ -118,7 +118,17 @@ public class MapIndex implements Serializable
 		{
 			for (int lon = minLon; lon <= maxLon; lon++)
 			{
-				HashSet<Integer> lli = maps[lat + 90][lon + 180];
+				HashSet<Integer> lli;
+				try
+				{
+					lli = maps[lat + 90][lon + 180];
+				}
+				catch (IndexOutOfBoundsException e)
+				{
+					e.printStackTrace();
+					map.loadError = e;
+					return;
+				}
 				if (lli == null)
 				{
 					lli = new HashSet<>();
