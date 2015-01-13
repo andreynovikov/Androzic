@@ -418,7 +418,7 @@
   <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
   <string name="showcase_waypointset_actions_title">Yer imi grup ayarları</string>
   <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
-  <string name="app_eula">Bu program Özgür Yazılım Kuruluşu tarafından yayınlanan GNU v3 (Genel Kamu Lisansı sürüm 3) kuralları altında dağıtılmaktadır./n/n
+  <string name="app_eula" formatted="false">Bu program Özgür Yazılım Kuruluşu tarafından yayınlanan GNU v3 (Genel Kamu Lisansı sürüm 3) kuralları altında dağıtılmaktadır./n/n
 
 Bu programın dağıtımında faydalı olması umulmaktadır fakat HERHANGİ BİR GARANTİ VERİLMEMEKTEDİR. Ayrıntılı bilgi almak için Genel Kamu Lisansını inceleyiniz./n/n
 
