@@ -1866,7 +1866,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			if (caches[i] != null)
 			{
 				cacheDir = caches[i];
-				Log.e(TAG, "Cache: " + cacheDir.getAbsolutePath());
 				break;
 			}
 		}
