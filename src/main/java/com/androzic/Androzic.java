@@ -72,6 +72,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -906,7 +907,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 		}			
 	}
-	
+
+	@Nullable
 	public Route getRoute(final int index)
 	{
 		try
@@ -920,7 +922,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			return null;
 		}
 	}
-	
+
+	@Nullable
 	public Route getRouteByFile(String filepath)
 	{
 		for (Route route : routes)
@@ -1190,6 +1193,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return onlineMaps;
 	}
 
+	@Nullable
 	public String getMapTitle()
 	{
 		if (currentMap != null)
@@ -1853,6 +1857,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		rootPath = path;
 	}
 
+	@Override
 	public File getCacheDir()
 	{
 		if (cacheDir != null)
