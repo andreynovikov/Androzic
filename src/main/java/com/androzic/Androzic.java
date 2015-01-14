@@ -1859,16 +1859,19 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			return cacheDir;
 
 		File[] caches = ContextCompat.getExternalCacheDirs(this);
-		File cacheDir = caches[0];
+		cacheDir = caches[0];
 		// Select the first really external (removable) storage if present
 		for (int i = 1; i < caches.length; i++)
 		{
 			if (caches[i] != null)
 			{
 				cacheDir = caches[i];
+				Log.e(TAG, "Cache: " + cacheDir.getAbsolutePath());
 				break;
 			}
 		}
+		if (cacheDir != null)
+			Log.i(TAG, "External cache: " + cacheDir.getAbsolutePath());
 		return cacheDir;
 	}
 
