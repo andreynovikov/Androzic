@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:androzic="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/pref_loc_title" >
 
     <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_loc_gpstimeout"
-        android:text=" seconds"
         android:title="@string/pref_loc_gpstimeout_title"
-        androzic:defaultValue="@integer/def_loc_gpstimeout"
-        androzic:max="300"
-        androzic:min="30" />
+        android:defaultValue="@integer/def_loc_gpstimeout"
+        app:text="@plurals/secondsValue"
+        app:max="300"
+        app:min="30" />
 
     <EditTextPreference
         android:defaultValue="2000"

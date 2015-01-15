@@ -7,6 +7,7 @@
 <integer name="def_mapdimvalue">70</integer>
 <integer name="def_onlinemapscale">14</integer>
 <integer name="def_onlinemapprescalefactor">1</integer>
+<integer name="def_onlinemapexpiration">2</integer>
 <integer name="def_lookahead">60</integer>
 <integer name="def_dragahead">0</integer>
 <integer name="def_loc_gpstimeout">120</integer>

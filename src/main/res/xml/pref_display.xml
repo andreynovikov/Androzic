@@ -96,10 +96,11 @@
     <PreferenceCategory android:title="@string/pref_cursor_title" >
         <com.androzic.ui.SeekbarPreference
             android:key="@string/pref_lookahead"
-            android:text=" %"
             android:title="@string/pref_lookahead_title"
-            app:defaultValue="@integer/def_lookahead"
-            app:max="90" />
+            android:defaultValue="@integer/def_lookahead"
+            app:format="0%"
+            app:max="90"
+            app:multiplier="0.01"/>
 
         <afzkl.development.colorpickerview.preference.ColorPickerPreference
             android:defaultValue="@color/cursor"
@@ -120,8 +121,7 @@
         <com.androzic.ui.SeekbarPreference
             android:key="@string/pref_cursorvectormlpr"
             android:title="@string/pref_cursorvectormlpr_title"
-            app:defaultValue="@integer/def_cursorvectormlpr"
-            app:format="0"
+            android:defaultValue="@integer/def_cursorvectormlpr"
             app:max="20"
             app:min="1" />
     </PreferenceCategory>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:androzic="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/pref_map_title" >
 
     <CheckBoxPreference
@@ -10,13 +10,12 @@
 
     <com.androzic.ui.SeekbarPreference
         android:key="@string/pref_maprenderinterval"
-        android:text=" ms"
+        android:text="@string/abbr_milliseconds"
         android:title="@string/pref_maprenderinterval_title"
-        androzic:defaultValue="@integer/def_maprenderinterval"
-        androzic:format="0"
-        androzic:max="50"
-        androzic:min="2"
-        androzic:multiplier="100" />
+        android:defaultValue="@integer/def_maprenderinterval"
+        app:max="50"
+        app:min="2"
+        app:multiplier="100" />
 
     <CheckBoxPreference
         android:defaultValue="@bool/def_mapbest"
@@ -26,11 +25,11 @@
     <com.androzic.ui.SeekbarPreference
         android:dependency="@string/pref_mapbest"
         android:key="@string/pref_mapbestinterval"
-        android:text=" seconds"
         android:title="@string/pref_mapbestinterval_title"
-        androzic:defaultValue="@integer/def_mapbestinterval"
-        androzic:max="30"
-        androzic:min="3" />
+        android:defaultValue="@integer/def_mapbestinterval"
+        app:text="@plurals/secondsValue"
+        app:max="30"
+        app:min="3" />
 
     <CheckBoxPreference
         android:defaultValue="@bool/def_mapadjacent"
@@ -59,17 +58,23 @@
         <com.androzic.ui.SeekbarPreference
             android:key="@string/pref_onlinemapscale"
             android:title="@string/pref_onlinemapscale_title"
-            androzic:defaultValue="@integer/def_onlinemapscale"
-            androzic:format="0"
-            androzic:max="19"
-            androzic:min="1" />
+            android:defaultValue="@integer/def_onlinemapscale"
+            app:max="19"
+            app:min="1" />
         <com.androzic.ui.SeekbarPreference
             android:key="@string/pref_onlinemapprescalefactor"
             android:title="@string/pref_onlinemapprescalefactor_title"
-            androzic:defaultValue="@integer/def_onlinemapprescalefactor"
-            androzic:format="0"
-            androzic:max="4"
-            androzic:min="1" />
+            android:defaultValue="@integer/def_onlinemapprescalefactor"
+            app:max="4"
+            app:min="1" />
+        <com.androzic.ui.SeekbarPreference
+            android:key="@string/pref_onlinemapexpiration"
+            android:title="@string/pref_onlinemapexpiration_title"
+            android:defaultValue="@integer/def_onlinemapexpiration"
+            app:text="@plurals/weeksValue"
+            app:zeroText="@string/never"
+            app:max="52"
+            app:min="0" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_grid_title" >
         <CheckBoxPreference

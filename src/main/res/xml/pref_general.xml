@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:androzic="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/pref_advanced_title" >
 
     <CheckBoxPreference
@@ -28,11 +28,12 @@
     <com.androzic.ui.SeekbarPreference
         android:dependency="@string/pref_mapdim"
         android:key="@string/pref_mapdimvalue"
-        android:text=" %"
         android:title="@string/pref_mapdimvalue_title"
-        androzic:defaultValue="@integer/def_mapdimvalue"
-        androzic:max="100"
-        androzic:min="10" />
+        android:defaultValue="@integer/def_mapdimvalue"
+        app:format="0%"
+        app:max="100"
+        app:min="10"
+        app:multiplier="0.01"/>
 
     <ListPreference
         android:defaultValue="UTF-8"
