@@ -2402,6 +2402,18 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				currentMap.setZoom(currentMap.getZoom());
 			}
 		}
+		else if (getString(R.string.pref_onlinemapexpiration).equals(key))
+		{
+			// in weeks
+			int expiration = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_onlinemapexpiration));
+			// in milliseconds
+			expiration *= 1000 * 3600 * 24 * 7;
+			if (onlineMaps != null)
+			{
+				for (TileProvider provider : onlineMaps)
+					provider.tileExpiration = expiration;
+			}
+		}
 		else if (getString(R.string.pref_mapcropborder).equals(key))
 		{
 			cropMapBorder = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapcropborder));
@@ -2533,6 +2545,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitsunrise));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_onlinemapprescalefactor));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_onlinemapexpiration));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapdrawborder));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_showwaypoints));
