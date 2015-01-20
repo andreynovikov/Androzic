@@ -98,6 +98,7 @@ import com.androzic.map.OzfDecoder;
 import com.androzic.map.SASMapLoader;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.TileProvider;
+import com.androzic.map.online.TileProviderFactory;
 import com.androzic.navigation.NavigationService;
 import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.OverlayManager;
@@ -2029,14 +2030,15 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 				
 		// Online maps
-		onlineMaps = new ArrayList<TileProvider>();
+		onlineMaps = new ArrayList<>();
 		String[] om = getResources().getStringArray(R.array.online_maps);
 		for (String s : om)
 		{
-			TileProvider provider = TileProvider.fromString(s);
+			TileProvider provider = TileProviderFactory.fromString(s);
 			if (provider != null)
 				onlineMaps.add(provider);
 		}
+		initializeOnlineMapProviders();
 		File mapproviders = new File(rootPath, "providers.dat");
 		if (mapproviders.exists())
 		{
@@ -2049,7 +2051,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			    	line = line.trim();
 			    	if (line.startsWith("#") || "".equals(line))
 			    		continue;
-					TileProvider provider = TileProvider.fromString(line);
+					TileProvider provider = TileProviderFactory.fromString(line);
 					if (provider != null)
 						onlineMaps.add(provider);
 				}
@@ -2265,7 +2267,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			// http://developer.android.com/about/versions/android-3.1.html#launchcontrols
 			Intent intent = new Intent();
 			intent.setClassName(plugin.activityInfo.packageName, plugin.activityInfo.name);
-			intent.setAction("com.androzic.plugins.action.INITIALIZE");
+			intent.setAction(initializationIntent.getAction());
 			sendBroadcast(intent);
 		}
 		
@@ -2307,6 +2309,27 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 	}
 
+	public void initializeOnlineMapProviders()
+	{
+		PackageManager packageManager = getPackageManager();
+
+		Intent initializationIntent = new Intent("com.androzic.map.online.provider.action.INITIALIZE");
+		// enumerate online map providers
+		List<ResolveInfo> providers = packageManager.queryBroadcastReceivers(initializationIntent, 0);
+		for (ResolveInfo provider : providers)
+		{
+			// send initialization broadcast, we send it directly instead of sending
+			// one broadcast for all plugins to wake up stopped plugins:
+			// http://developer.android.com/about/versions/android-3.1.html#launchcontrols
+			Intent intent = new Intent();
+			intent.setClassName(provider.activityInfo.packageName, provider.activityInfo.name);
+			intent.setAction(initializationIntent.getAction());
+			sendBroadcast(intent);
+
+			List<TileProvider> tileProviders = TileProviderFactory.fromPlugin(packageManager, provider);
+			onlineMaps.addAll(tileProviders);
+		}
+	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
@@ -2484,7 +2507,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		uiHandler = new Handler();
 		mapsHandler = new Handler(longOperationsThread.getLooper());
 
-		// We silently initialize data path to let location service restart after crash
+		// We silently initialize data uri to let location service restart after crash
 		File datadir = new File(settings.getString(getString(R.string.pref_folder_data), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_data)));
 		setDataPath(Androzic.PATH_DATA, datadir.getAbsolutePath());
 
