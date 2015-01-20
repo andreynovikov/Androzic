@@ -194,13 +194,6 @@
     </string-array>
 
     <string-array name="online_maps">
-        <item><![CDATA[OpenStreetMap Mapnik,osm,0,18,,http://{$s}.tile.openstreetmap.org/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[OpenCycleMap,ocm,0,18,,http://{$s}.tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[OpenCycleMap Landscape,ocml,0,18,,http://{$s}.tile.thunderforest.com/landscape/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[OpenCycleMap Transport,ocmt,0,18,,http://{$s}.tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[OpenCycleMap Outdoors,ocmo,0,18,,http://{$s}.tile.thunderforest.com/outdoors/{$z}/{$x}/{$y}.png,a,b,c]]></item>
-        <item><![CDATA[MapQuest,mq,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/map/{$z}/{$x}/{$y}.jpg,1,2,3]]></item>
-        <item><![CDATA[MapQuest Open Aerial,mqoa,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/sat/{$z}/{$x}/{$y}.jpg,1,2,3]]></item>
         <item><![CDATA[OpenSeaMap,osea,0,18,,http://tiles.openseamap.org/seamark/{$z}/{$x}/{$y}.png]]></item>
 	</string-array>
 

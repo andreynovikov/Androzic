@@ -97,6 +97,7 @@ import com.androzic.map.MockMap;
 import com.androzic.map.OzfDecoder;
 import com.androzic.map.SASMapLoader;
 import com.androzic.map.online.OnlineMap;
+import com.androzic.map.online.OpenStreetMapTileProvider;
 import com.androzic.map.online.TileProvider;
 import com.androzic.map.online.TileProviderFactory;
 import com.androzic.navigation.NavigationService;
@@ -2031,6 +2032,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				
 		// Online maps
 		onlineMaps = new ArrayList<>();
+		onlineMaps.add(new OpenStreetMapTileProvider());
 		String[] om = getResources().getStringArray(R.array.online_maps);
 		for (String s : om)
 		{
@@ -2483,7 +2485,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public void onCreate()
 	{
 		super.onCreate();
-		Log.e("ANDROZIC","Application onCreate()");
+		Log.e(TAG, "Application onCreate()");
 
 		try
 		{
