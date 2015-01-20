@@ -202,12 +202,6 @@
         <item><![CDATA[MapQuest,mq,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/map/{$z}/{$x}/{$y}.jpg,1,2,3]]></item>
         <item><![CDATA[MapQuest Open Aerial,mqoa,0,18,,http://otile{$s}.mqcdn.com/tiles/1.0.0/sat/{$z}/{$x}/{$y}.jpg,1,2,3]]></item>
         <item><![CDATA[OpenSeaMap,osea,0,18,,http://tiles.openseamap.org/seamark/{$z}/{$x}/{$y}.png]]></item>
-        <item><![CDATA[Chartbundle US Sectional Charts,cbsec,4,13,,http://wms.chartbundle.com/tms/1.0.0/sec/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-        <item><![CDATA[Chartbundle US Terminal Area Charts,cbtac,4,14,,http://wms.chartbundle.com/tms/1.0.0/tac/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-        <item><![CDATA[Chartbundle US World Aeronautical Charts,cbwac,4,12,,http://wms.chartbundle.com/tms/1.0.0/wac/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-        <item><![CDATA[Chartbundle US Enroute Low Charts,cbenrl,4,13,,http://wms.chartbundle.com/tms/1.0.0/enrl/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-        <item><![CDATA[Chartbundle US Enroute High Charts,cbenrh,4,12,,http://wms.chartbundle.com/tms/1.0.0/enrh/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
-        <item><![CDATA[Chartbundle US Area Charts,cbenra,4,13,,http://wms.chartbundle.com/tms/1.0.0/enra/{$z}/{$x}/{$y}.png,,,,,yinverse]]></item>
 	</string-array>
 
 </resources>
