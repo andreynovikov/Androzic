@@ -1203,7 +1203,18 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		else
 			return null;		
 	}
-	
+
+	@Nullable
+	public String getMapLicense()
+	{
+		if (currentMap != null && currentMap instanceof OnlineMap)
+		{
+			TileProvider provider = ((OnlineMap)currentMap).tileProvider;
+			return provider.license;
+		}
+		return null;
+	}
+
 	public Map getCurrentMap()
 	{
 		return currentMap;

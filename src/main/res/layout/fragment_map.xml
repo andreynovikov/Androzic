@@ -104,6 +104,8 @@
 
     <include layout="@layout/inc_trackdetails" />
 
+    <include layout="@layout/inc_maplicense" />
+
     <include layout="@layout/inc_wait" />
 
     <View

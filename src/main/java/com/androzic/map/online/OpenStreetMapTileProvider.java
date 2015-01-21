@@ -31,10 +31,7 @@ public class OpenStreetMapTileProvider extends TileProvider
 	{
 		name = "OpenStreetMap";
 		code = "osm";
-		minZoom = 0;
-		maxZoom = 18;
-		license = "\u00a9 OpenStreetMap contributors";
-		link = "http://www.openstreetmap.org/copyright";
+		license = "\u00a9 <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors";
 	}
 
 	@Override

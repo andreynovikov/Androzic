@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/maplicense"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_above="@id/bottombar"
+    android:padding="2dp"
+    android:textSize="8sp"
+    android:textColor="@android:color/primary_text_light"
+    android:textColorLink="@android:color/primary_text_light"
+    android:visibility="gone" />

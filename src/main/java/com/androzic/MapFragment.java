@@ -57,7 +57,9 @@ import android.support.v7.internal.view.SupportMenuInflater;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.internal.view.menu.MenuPopupHelper;
 import android.support.v7.internal.view.menu.MenuPresenter;
+import android.text.Html;
 import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -117,6 +119,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private TextView coordinates;
 	private TextView sattelites;
 	private TextView currentFile;
+	private TextView mapLicense;
 	private TextView mapZoom;
 
 	private TextView waypointName;
@@ -192,6 +195,15 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		coordinates = (TextView) view.findViewById(R.id.coordinates);
 		sattelites = (TextView) view.findViewById(R.id.sats);
 		currentFile = (TextView) view.findViewById(R.id.currentfile);
+		mapLicense = (TextView) view.findViewById(R.id.maplicense);
+		mapLicense.setClickable(true);
+		mapLicense.setMovementMethod(LinkMovementMethod.getInstance());
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		{
+			mapLicense.setRotation(-90);
+			mapLicense.setPivotX(0);
+			mapLicense.setPivotY(0);
+		}
 		mapZoom = (TextView) view.findViewById(R.id.currentzoom);
 		waypointName = (TextView) view.findViewById(R.id.waypointname);
 		waypointExtra = (TextView) view.findViewById(R.id.waypointextra);
@@ -379,6 +391,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		coordinates = null;
 		sattelites = null;
 		currentFile = null;
+		mapLicense = null;
 		mapZoom = null;
 		waypointName = null;
 		waypointExtra = null;
@@ -563,6 +576,13 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				v = root.findViewById(R.id.bottombar);
 				if (v != null)
 					area.bottom = v.getTop();
+				if (mapLicense.isShown())
+				{
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && mapLicense.getRotation() != 0f)
+						area.left = mapLicense.getHeight(); // rotated view does not correctly report it's position
+					else
+						area.bottom = mapLicense.getTop();
+				}
 				v = root.findViewById(R.id.rightbar);
 				if (v != null)
 					area.right = v.getLeft();
@@ -988,6 +1008,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	public void updateFileInfo()
 	{
 		final String title = application.getMapTitle();
+		final String license = application.getMapLicense();
 		getActivity().runOnUiThread(new Runnable() {
 
 			@Override
@@ -1001,6 +1022,17 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				{
 					currentFile.setText("-no map-");
 				}
+				if (license != null)
+				{
+					mapLicense.setText(Html.fromHtml(license));
+					mapLicense.setVisibility(View.VISIBLE);
+				}
+				else
+				{
+					mapLicense.setText(null);
+					mapLicense.setVisibility(View.GONE);
+				}
+				updateMapViewArea();
 
 				double zoom = application.getZoom() * 100;
 
