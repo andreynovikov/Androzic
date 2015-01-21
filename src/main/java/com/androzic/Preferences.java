@@ -23,7 +23,6 @@ package com.androzic;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +80,7 @@ public class Preferences extends ListFragment
 {
 	private FragmentHolder fragmentHolderCallback;
 
-	private final ArrayList<Header> headers = new ArrayList<Header>();
+	private final ArrayList<Header> headers = new ArrayList<>();
 	private HeaderAdapter adapter;
 
 	@Override
@@ -185,6 +184,7 @@ public class Preferences extends ListFragment
 			AttributeSet attrs = Xml.asAttributeSet(parser);
 
 			int type;
+			//noinspection StatementWithEmptyBody
 			while ((type = parser.next()) != XmlPullParser.END_DOCUMENT && type != XmlPullParser.START_TAG)
 			{
 				// Parse next until start tag is found
@@ -315,15 +315,10 @@ public class Preferences extends ListFragment
 			}
 
 		}
-		catch (XmlPullParserException e)
+		catch (XmlPullParserException | IOException e)
 		{
 			throw new RuntimeException("Error parsing headers", e);
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException("Error parsing headers", e);
-		}
-		finally
+		} finally
 		{
 			if (parser != null)
 				parser.close();
@@ -753,41 +748,6 @@ public class Preferences extends ListFragment
 			Preference pref = findPreference(key);
 			setPrefSummary(pref);
 
-			if (key.equals(getString(R.string.pref_onlinemap)))
-			{
-				Androzic application = Androzic.getApplication();
-				SeekbarPreference mapzoom = (SeekbarPreference) findPreference(getString(R.string.pref_onlinemapscale));
-				List<TileProvider> providers = application.getOnlineMaps();
-				String current = sharedPreferences.getString(key, getResources().getString(R.string.def_onlinemap));
-				List<String> curProviders = Arrays.asList(current.split("\\|"));
-				int minZoom = 1;
-				int maxZoom = 19;
-				for (TileProvider provider : providers)
-				{
-					if (curProviders.contains(provider.code))
-					{
-						if (provider.minZoom > minZoom)
-							minZoom = provider.minZoom;
-						if (provider.maxZoom < maxZoom)
-							maxZoom = provider.maxZoom;
-					}
-				}
-				mapzoom.setMin(minZoom);
-				mapzoom.setMax(maxZoom);
-				int zoom = sharedPreferences.getInt(getString(R.string.pref_onlinemapscale), getResources().getInteger(R.integer.def_onlinemapscale));
-				if (zoom < minZoom)
-				{
-					SharedPreferences.Editor editor = sharedPreferences.edit();
-					editor.putInt(getString(R.string.pref_onlinemapscale), minZoom);
-					editor.commit();
-				}
-				if (zoom > maxZoom)
-				{
-					SharedPreferences.Editor editor = sharedPreferences.edit();
-					editor.putInt(getString(R.string.pref_onlinemapscale), maxZoom);
-					editor.commit();
-				}
-			}
 			if (key.equals(getString(R.string.pref_locale)))
 			{
 				new AlertDialog.Builder(getActivity()).setTitle(R.string.restart_needed).setIcon(android.R.drawable.ic_dialog_alert).setMessage(getString(R.string.restart_needed_explained))
@@ -865,6 +825,7 @@ public class Preferences extends ListFragment
 		}
 	}
 
+	@SuppressWarnings("UnusedDeclaration")
 	public static class PluginsPreferencesFragment extends Preferences.PreferencesFragment
 	{
 		@Override
@@ -889,6 +850,7 @@ public class Preferences extends ListFragment
 		}
 	}
 
+	@SuppressWarnings("UnusedDeclaration")
 	public static class OnlineMapPreferencesFragment extends Preferences.PreferencesFragment
 	{
 		@Override
