@@ -581,13 +581,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	
 			if (pos == 1)
 			{
-				scaleX += htw + dp6;
+				scaleX += currentViewport.viewArea.left + htw + dp6;
 				scaleY += currentViewport.viewArea.bottom - dp6 * 2;
 				cty = -dp6;
 			}
 			else if (pos == 2)
 			{
-				scaleX += htw + dp6;
+				scaleX += currentViewport.viewArea.left + htw + dp6;
 				scaleY += currentViewport.viewArea.top + dp6;
 				cty = th + dp6 + dp3;
 			}
