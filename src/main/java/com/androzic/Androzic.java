@@ -105,6 +105,7 @@ import com.androzic.overlay.NavigationOverlay;
 import com.androzic.overlay.OverlayManager;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.overlay.TrackOverlay;
+import com.androzic.ui.TooltipManager;
 import com.androzic.util.Astro.Zenith;
 import com.androzic.util.CSV;
 import com.androzic.util.CoordinateParser;
@@ -2570,6 +2571,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		magInterval = resources.getInteger(R.integer.def_maginterval) * 1000;
 
 		overlayManager = new OverlayManager(longOperationsThread.getLooper());
+		TooltipManager.initialize(this);
 
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitcoordinate));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitdistance));

@@ -427,19 +427,19 @@
 
 	<string name="faquri">http://androzic.com/wiki/en/FAQ</string>
 
-	<string name="showcase_panel_title">Quick actions</string>
-	<string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
-	<string name="showcase_follow_title">Location following</string>
 	<string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
-	<string name="showcase_add_waypoint_title">Add waypoint</string>
 	<string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
-	<string name="showcase_search_title">Search</string>
 	<string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
-	<string name="showcase_load_waypoints_title">Load waypoints</string>
 	<string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
-	<string name="showcase_waypointset_actions_title">Waypoint set actions</string>
-	<string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
-				
+    <string name="showcase_map_buttons">Tap current map zoom to show and hide map buttons.</string>
+    <string name="showcase_quick_zoom">Slide from plus to minus icon to quickly return to 100% zoom.</string>
+    <string name="showcase_switch_map">Tap current map title to select another map for current location.</string>
+    <string name="showcase_load_map">Tap icon to open list of all available maps.</string>
+    <string name="showcase_current_location">Tap current coordinates to access location actions.</string>
+    <string name="showcase_utm_zone">If zone is left blank coordinates are saved in UPS format.</string>
+    <string name="showcase_data_list">Slide item left to access quick actions.</string>
+    <string name="showcase_waypoint_coordinates">Tap coordinates to cycle through all supported formats.</string>
+
 	<string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

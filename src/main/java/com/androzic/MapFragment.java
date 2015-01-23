@@ -82,6 +82,7 @@ import com.androzic.location.LocationService;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteEdit;
+import com.androzic.ui.TooltipManager;
 import com.androzic.util.Astro;
 import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
@@ -90,7 +91,7 @@ import com.androzic.waypoint.OnWaypointActionListener;
 
 public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, View.OnClickListener, View.OnTouchListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
-	private static final String TAG = "MapFragment";
+	public static final String TAG = "MapFragment";
 	
 	private OnWaypointActionListener waypointActionsCallback;
 	private OnRouteActionListener routeActionsCallback;
@@ -117,7 +118,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private MapView map;
 
 	private TextView coordinates;
-	private TextView sattelites;
+	private TextView satellites;
 	private TextView currentFile;
 	private TextView mapLicense;
 	private TextView mapZoom;
@@ -157,6 +158,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private ExecutorService executorThread = Executors.newSingleThreadExecutor();
 	private FinishHandler finishHandler;
 	private Handler updateCallback = new Handler();
+	private Handler tooltipCallback = new Handler();
 
 	private int waypointSelected = -1;
 	private long mapObjectSelected = -1;
@@ -193,7 +195,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		View view = inflater.inflate(R.layout.fragment_map, container, false);
 
 		coordinates = (TextView) view.findViewById(R.id.coordinates);
-		sattelites = (TextView) view.findViewById(R.id.sats);
+		satellites = (TextView) view.findViewById(R.id.sats);
 		currentFile = (TextView) view.findViewById(R.id.currentfile);
 		mapLicense = (TextView) view.findViewById(R.id.maplicense);
 		mapLicense.setClickable(true);
@@ -239,7 +241,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		view.findViewById(R.id.nextmap).setOnClickListener(this);
 		view.findViewById(R.id.prevmap).setOnClickListener(this);
 		coordinates.setOnClickListener(this);
-		sattelites.setOnClickListener(this);
+		satellites.setOnClickListener(this);
 		currentFile.setOnClickListener(this);
 		mapZoom.setOnClickListener(this);
 		waypointName.setOnClickListener(this);
@@ -356,6 +358,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		map.updateMapCenter();
 		map.requestFocus();
 		updateCallback.post(updateUI);
+		tooltipCallback.postDelayed(showTooltip, TooltipManager.TOOLTIP_DELAY);
 	}
 
 	@Override
@@ -369,6 +372,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		// Stop updating UI
 		map.pause();
 		updateCallback.removeCallbacks(updateUI);
+		tooltipCallback.removeCallbacks(showTooltip);
 
 		PreferenceManager.getDefaultSharedPreferences(application).unregisterOnSharedPreferenceChangeListener(this);
 	}
@@ -389,7 +393,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 
 		map = null;
 		coordinates = null;
-		sattelites = null;
+		satellites = null;
 		currentFile = null;
 		mapLicense = null;
 		mapZoom = null;
@@ -467,6 +471,25 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 	}
 
+	final private Runnable showTooltip = new Runnable() {
+		@Override
+		public void run()
+		{
+			long tooltip = TooltipManager.getTooltip(TAG);
+			if (tooltip == 0L)
+				return;
+			if (tooltip == TooltipManager.TOOLTIP_MAP_BUTTONS)
+				TooltipManager.showTooltip(tooltip, mapZoom);
+			else if (tooltip == TooltipManager.TOOLTIP_SWITCH_MAP)
+				TooltipManager.showTooltip(tooltip, currentFile);
+			else if (tooltip == TooltipManager.TOOLTIP_QUICK_ZOOM && application.getZoom() != 1. && mapButtonsVisible)
+				TooltipManager.showTooltip(tooltip, mapButtons.findViewById(R.id.zoomin));
+			else if (tooltip == TooltipManager.TOOLTIP_CURRENT_LOCATION)
+				TooltipManager.showTooltip(tooltip, coordinates);
+			tooltipCallback.postDelayed(this, TooltipManager.TOOLTIP_PERIOD);
+		}
+	};
+
 	final private Runnable updateUI = new Runnable() {
 		public void run()
 		{
@@ -476,8 +499,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			{
 				if (!map.isFixed())
 				{
-					sattelites.setText(R.string.sat_start);
-					sattelites.setTextColor(getResources().getColor(R.color.gpsenabled));
+					satellites.setText(R.string.sat_start);
+					satellites.setTextColor(getResources().getColor(R.color.gpsenabled));
 					// Mock provider hack
 					if (application.gpsContinous)
 					{
@@ -489,8 +512,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				switch (application.gpsStatus)
 				{
 					case LocationService.GPS_OK:
-						sattelites.setTextColor(getResources().getColor(R.color.gpsworking));
-						sattelites.setText(String.valueOf(application.gpsFSats) + "/" + String.valueOf(application.gpsTSats));
+						satellites.setTextColor(getResources().getColor(R.color.gpsworking));
+						satellites.setText(String.valueOf(application.gpsFSats) + "/" + String.valueOf(application.gpsTSats));
 						if (!map.isFixed())
 						{
 							map.setMoving(true);
@@ -499,8 +522,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						}
 						break;
 					case LocationService.GPS_SEARCHING:
-						sattelites.setTextColor(getResources().getColor(R.color.gpsenabled));
-						sattelites.setText(String.valueOf(application.gpsFSats) + "/" + String.valueOf(application.gpsTSats));
+						satellites.setTextColor(getResources().getColor(R.color.gpsenabled));
+						satellites.setText(String.valueOf(application.gpsFSats) + "/" + String.valueOf(application.gpsTSats));
 						if (map.isFixed())
 						{
 							map.setFixed(false);
@@ -511,8 +534,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			}
 			else
 			{
-				sattelites.setText(R.string.sat_stop);
-				sattelites.setTextColor(getResources().getColor(R.color.gpsdisabled));
+				satellites.setText(R.string.sat_stop);
+				satellites.setTextColor(getResources().getColor(R.color.gpsdisabled));
 				if (map.isMoving())
 				{
 					map.setMoving(false);
