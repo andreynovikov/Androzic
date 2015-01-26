@@ -30,6 +30,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateFormat;
@@ -49,15 +50,20 @@ import com.androzic.Androzic;
 import com.androzic.FragmentHolder;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
+import com.androzic.ui.TooltipManager;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
 public class WaypointDetails extends Fragment
 {
+	public static final String TAG = "WaypointDetails";
+
 	private FragmentHolder fragmentHolderCallback;
 	private OnWaypointActionListener waypointActionsCallback;
 
 	private Waypoint waypoint;
+
+	private Handler tooltipCallback = new Handler();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -124,6 +130,8 @@ public class WaypointDetails extends Fragment
 				waypointActionsCallback.onWaypointNavigate(waypoint);
 			}
 		});
+
+		tooltipCallback.postDelayed(showTooltip, TooltipManager.TOOLTIP_DELAY);
 	}
 
 	@Override
@@ -132,6 +140,10 @@ public class WaypointDetails extends Fragment
 		super.onPause();
 
 		fragmentHolderCallback.disableActionButton();
+
+		// Stop showing tooltips
+		tooltipCallback.removeCallbacks(showTooltip);
+		TooltipManager.dismiss();
 	}
 
 	@Override
@@ -169,6 +181,19 @@ public class WaypointDetails extends Fragment
 		}
 		return false;
 	}
+
+	final private Runnable showTooltip = new Runnable() {
+		@Override
+		public void run()
+		{
+			long tooltip = TooltipManager.getTooltip(TAG);
+			if (tooltip == 0L)
+				return;
+			if (tooltip == TooltipManager.TOOLTIP_WAYPOINT_COORDINATES)
+				TooltipManager.showTooltip(tooltip, getView().findViewById(R.id.coordinates));
+			tooltipCallback.postDelayed(this, TooltipManager.TOOLTIP_PERIOD);
+		}
+	};
 
 	public void setWaypoint(Waypoint waypoint)
 	{

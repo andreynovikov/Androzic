@@ -43,6 +43,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
@@ -63,6 +64,7 @@ import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
 import com.androzic.ui.FileListDialog;
 import com.androzic.ui.MarkerFactory;
+import com.androzic.ui.TooltipManager;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
@@ -72,6 +74,8 @@ import com.shamanland.fab.ShowHideOnScroll;
 
 public class WaypointList extends ListFragment implements FileListDialog.OnFileListDialogListener
 {
+	public static final String TAG = "WaypointList";
+
 	private static final int DIALOG_WAYPOINT_PROJECT = 1;
 	
 	private OnWaypointActionListener waypointActionsCallback;
@@ -79,6 +83,8 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 	private WaypointListAdapter adapter;
 
 	private int mSortMode = -1;
+
+	private Handler tooltipCallback = new Handler();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -156,6 +162,16 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 	{
 		super.onResume();
 		adapter.notifyDataSetChanged();
+		tooltipCallback.postDelayed(showTooltip, TooltipManager.TOOLTIP_DELAY);
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		// Stop showing tooltips
+		tooltipCallback.removeCallbacks(showTooltip);
+		TooltipManager.dismiss();
 	}
 
 	@Override
@@ -276,6 +292,19 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 				break;
 		}
 	}
+
+	final private Runnable showTooltip = new Runnable() {
+		@Override
+		public void run()
+		{
+			long tooltip = TooltipManager.getTooltip(TAG);
+			if (tooltip == 0L)
+				return;
+			if (tooltip == TooltipManager.TOOLTIP_DATA_LIST && !adapter.isEmpty())
+				TooltipManager.showTooltip(tooltip, getListView().getChildAt(0));
+			tooltipCallback.postDelayed(this, TooltipManager.TOOLTIP_PERIOD);
+		}
+	};
 
 	@Override
 	public void onFileLoaded(int count)

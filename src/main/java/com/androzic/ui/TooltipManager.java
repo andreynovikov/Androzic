@@ -10,6 +10,10 @@ import android.widget.PopupWindow;
 
 import com.androzic.MapFragment;
 import com.androzic.R;
+import com.androzic.SuitableMapsList;
+import com.androzic.waypoint.WaypointDetails;
+import com.androzic.waypoint.WaypointList;
+import com.androzic.waypoint.WaypointProperties;
 
 public class TooltipManager
 {
@@ -21,6 +25,11 @@ public class TooltipManager
 	 * Delay before first tooltip should be displayed after user opens the screen
 	 */
 	public static final long TOOLTIP_DELAY = 10000; // 10 seconds
+	/**
+	 * Delay before first tooltip should be displayed after user opens the screen
+	 * on which she does not stay for long time
+	 */
+	public static final long TOOLTIP_DELAY_SHORT = 1000; // 1 second
 	/**
 	 * Pause between first and subsequent tooltips for the same screen
 	 */
@@ -89,6 +98,26 @@ public class TooltipManager
 			if ((currentState & TOOLTIP_QUICK_ZOOM) == 0L)
 				return TOOLTIP_QUICK_ZOOM;
 		}
+		else if (SuitableMapsList.TAG.equals(screen))
+		{
+			if ((currentState & TOOLTIP_LOAD_MAP) == 0L)
+				return TOOLTIP_LOAD_MAP;
+		}
+		else if (WaypointDetails.TAG.equals(screen))
+		{
+			if ((currentState & TOOLTIP_WAYPOINT_COORDINATES) == 0L)
+				return TOOLTIP_WAYPOINT_COORDINATES;
+		}
+		else if (WaypointProperties.TAG.equals(screen))
+		{
+			if ((currentState & TOOLTIP_UTM_ZONE) == 0L)
+				return TOOLTIP_UTM_ZONE;
+		}
+		else if (WaypointList.TAG.equals(screen))
+		{
+			if ((currentState & TOOLTIP_DATA_LIST) == 0L)
+				return TOOLTIP_DATA_LIST;
+		}
 		return 0L;
 	}
 
@@ -108,11 +137,21 @@ public class TooltipManager
 			{
 				currentState |= tooltip;
 				SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-				//editor.putLong(context.getResources().getString(R.string.ui_tooltips_state), currentState);
-				//editor.commit();
+				editor.putLong(context.getResources().getString(R.string.ui_tooltips_state), currentState);
+				editor.commit();
 				popup = null;
 			}
 		});
 		popup.show(anchor);
+	}
+
+	public static void dismiss()
+	{
+		if (popup != null)
+		{
+			popup.setOnDismissListener(null);
+			popup.dismiss();
+			popup = null;
+		}
 	}
 }

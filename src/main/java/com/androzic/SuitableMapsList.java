@@ -10,7 +10,9 @@ import android.content.res.Resources;
 import android.graphics.LightingColorFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -26,16 +28,22 @@ import android.widget.TextView;
 
 import com.androzic.map.Map;
 import com.androzic.map.OnMapActionListener;
+import com.androzic.ui.TooltipManager;
 
 public class SuitableMapsList extends DialogFragment implements OnItemClickListener
 {
+	public static final String TAG = "SuitableMapsList";
+
 	private ListView listView;
-	private OnMapActionListener mapActionsCallback;	
-	private SuitableMapListAdapter adapter;
+	private OnMapActionListener mapActionsCallback;
+
+	private View openButton;
 
 	private List<Map> maps;
 	private String mapsPath;
 	private Map currentMap;
+
+	private Handler tooltipCallback = new Handler();
 
 	private LightingColorFilter disable = new LightingColorFilter(0xFF666666, 0xFF000000);
 
@@ -46,6 +54,7 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 		setRetainInstance(true);
 	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState)
 	{
@@ -64,7 +73,7 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 		ImageButton editButton = (ImageButton) view.findViewById(R.id.edit_button);
 		editButton.setColorFilter(disable);
 		editButton.setOnClickListener(onMapEdit);
-		View openButton = view.findViewById(R.id.open_button);
+		openButton = view.findViewById(R.id.open_button);
 		openButton.setOnClickListener(onMapOpen);
 		return view;
 	}
@@ -98,9 +107,25 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 		currentMap = application.getCurrentMap();
 		mapsPath = application.getMapPath();
 
-		adapter = new SuitableMapListAdapter(getActivity());
+		SuitableMapListAdapter adapter = new SuitableMapListAdapter(getActivity());
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(this);
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		tooltipCallback.postDelayed(showTooltip, TooltipManager.TOOLTIP_DELAY_SHORT);
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		// Stop showing tooltips
+		tooltipCallback.removeCallbacks(showTooltip);
+		TooltipManager.dismiss();
 	}
 
 	@Override
@@ -117,6 +142,19 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 		mapActionsCallback.onMapSelectedAtPosition(maps.get(position));
 		dismiss();
 	}
+
+	final private Runnable showTooltip = new Runnable() {
+		@Override
+		public void run()
+		{
+			long tooltip = TooltipManager.getTooltip(TAG);
+			if (tooltip == 0L)
+				return;
+			if (tooltip == TooltipManager.TOOLTIP_LOAD_MAP)
+				TooltipManager.showTooltip(tooltip, openButton);
+			tooltipCallback.postDelayed(this, TooltipManager.TOOLTIP_PERIOD);
+		}
+	};
 
 	public class SuitableMapListAdapter extends BaseAdapter
 	{

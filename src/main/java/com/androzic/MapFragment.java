@@ -372,7 +372,10 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		// Stop updating UI
 		map.pause();
 		updateCallback.removeCallbacks(updateUI);
+
+		// Stop showing tooltips
 		tooltipCallback.removeCallbacks(showTooltip);
+		TooltipManager.dismiss();
 
 		PreferenceManager.getDefaultSharedPreferences(application).unregisterOnSharedPreferenceChangeListener(this);
 	}

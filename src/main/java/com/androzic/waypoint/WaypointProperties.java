@@ -30,6 +30,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -64,10 +65,13 @@ import com.androzic.data.Waypoint;
 import com.androzic.data.WaypointSet;
 import com.androzic.ui.ColorButton;
 import com.androzic.ui.MarkerPicker;
+import com.androzic.ui.TooltipManager;
 import com.androzic.util.StringFormatter;
 
 public class WaypointProperties extends Fragment implements AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener, MarkerPicker.OnMarkerPickerDialogListener
 {
+	public static final String TAG = "WaypointProperties";
+
 	private Waypoint waypoint;
 	private Route route;
 
@@ -96,6 +100,8 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 
 	private int defMarkerColor;
 	private int defTextColor;
+
+	private Handler tooltipCallback = new Handler();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -213,8 +219,18 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 	{
 		super.onResume();
 		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.waypointproperties_name);
+		//tooltipCallback.postDelayed(showTooltip, TooltipManager.TOOLTIP_DELAY_SHORT);
 	}
-	
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		// Stop showing tooltips
+		tooltipCallback.removeCallbacks(showTooltip);
+		TooltipManager.dismiss();
+	}
+
 	@Override
 	public void onSaveInstanceState(Bundle outState)
 	{
@@ -334,6 +350,20 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 				return super.onOptionsItemSelected(item);
 		}
 	}
+
+	final private Runnable showTooltip = new Runnable() {
+		@Override
+		public void run()
+		{
+			long tooltip = TooltipManager.getTooltip(TAG);
+			if (tooltip == 0L)
+				return;
+			View utmZone = getView().findViewById(R.id.utm_zone_text);
+			if (tooltip == TooltipManager.TOOLTIP_UTM_ZONE && utmZone != null && utmZone.isShown())
+				TooltipManager.showTooltip(tooltip, utmZone);
+			tooltipCallback.postDelayed(this, TooltipManager.TOOLTIP_PERIOD);
+		}
+	};
 
 	public void setWaypoint(Waypoint waypoint)
 	{
@@ -604,6 +634,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 						else
 							((RadioButton) rootView.findViewById(R.id.utm_hemi_n)).setChecked(true);
 					}
+					tooltipCallback.postDelayed(showTooltip, TooltipManager.TOOLTIP_DELAY_SHORT);
 				}
 				catch (IllegalArgumentException e)
 				{
