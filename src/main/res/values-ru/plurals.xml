@@ -11,4 +11,19 @@
     <item quantity="few">%d сегмента</item>
     <item quantity="other">%d сегментов</item>
   </plurals>
+  <plurals name="weeksValue">
+    <item quantity="one">%s неделя</item>
+    <item quantity="few">%s недели</item>
+    <item quantity="other">%s недель</item>
+  </plurals>
+  <plurals name="secondsValue">
+    <item quantity="one">%s секунда</item>
+    <item quantity="few">%s секунды</item>
+    <item quantity="other">%s секунд</item>
+  </plurals>
+  <plurals name="pixelsValue">
+    <item quantity="one">%s пиксель</item>
+    <item quantity="few">%s пикселя</item>
+    <item quantity="other">%s пикселей</item>
+  </plurals>
 </resources>

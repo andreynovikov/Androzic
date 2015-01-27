@@ -9,4 +9,16 @@
     <item quantity="one">%d segment</item>
     <item quantity="other">%d segments</item>
   </plurals>
+  <plurals name="weeksValue">
+    <item quantity="one">%s week</item>
+    <item quantity="other">%s weeks</item>
+  </plurals>
+  <plurals name="secondsValue">
+    <item quantity="one">%s seconde</item>
+    <item quantity="other">%s seconds</item>
+  </plurals>
+  <plurals name="pixelsValue">
+    <item quantity="one">%s pixel</item>
+    <item quantity="other">%s pixels</item>
+  </plurals>
 </resources>

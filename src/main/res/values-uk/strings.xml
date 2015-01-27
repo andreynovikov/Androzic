@@ -171,6 +171,7 @@
   <string name="coordinate_degminsec">ГГ° ММ\' СС.ССС\"</string>
   <string name="coordinate_utmups">UTM/UPS</string>
   <string name="coordinate_mgrs">MGRS</string>
+  <string name="abbr_milliseconds">мс</string>
   <string name="waypoint_deleted">Точку видалено</string>
   <string name="badmaps">Помилка індексування мапи</string>
   <string name="nomaps">Не знайдено жодної мапи</string>
@@ -260,6 +261,7 @@
   <string name="pref_onlinemapscale_summary">Рівень наближення, встановлений за 100%</string>
   <string name="pref_onlinemapprescalefactor_title">Масштаб растру</string>
   <string name="pref_onlinemapprescalefactor_summary">Завантажені тайли растру можуть бути попередньо масштабовані з вказаним коефіцієнтом, щоб зробити текст розбірливим на екранах високої щільності</string>
+  <string name="pref_onlinemapexpiration_title">Застарівання тайлу</string>
   <string name="pref_loc_title">Розташування</string>
   <string name="pref_loc_gpstimeout_title">Таймаут розташування GPS</string>
   <string name="pref_loc_gpstimeout_summary">Вказує час очікування в секундах останнього розташування GPS, після чого воно буде забуте</string>
@@ -406,18 +408,18 @@
   <string name="perm_read_map_data_title">Отримувати дані мапи Androzic</string>
   <string name="perm_write_map_data_title">Додавати дані до мапи Androzic</string>
   <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
-  <string name="showcase_panel_title">Швидкі дії</string>
-  <string name="showcase_panel_description">Посуньте або натисніть ярлик висувної панелі для доступу до швидких дій. Швидкі дії можуть бути змінені в Налаштуваннях.</string>
-  <string name="showcase_follow_title">Слідкувати за розташуванням</string>
   <string name="showcase_follow_description">Натисніть іконку стеження, щоб включити режим стеження. У цьому режимі мапа фіксується на вашій поточної позиції. Ви так само можете двічі натиснути на мапу для включення і виключення режиму стеження.</string>
-  <string name="showcase_add_waypoint_title">Додати точку</string>
   <string name="showcase_add_waypoint_description">Натисніть значок дії, щоб швидко додати нову точку в поточному розташуванні курсора.</string>
-  <string name="showcase_search_title">Пошук</string>
   <string name="showcase_search_description">Ви можете ввести координати в різних форматах, щоб знайти їх на мапі, шукати в іменах і описах завантажених шляхових точок або маршрутів, шукати місця і адреси за допомогою служби геокодування Google (у цьому випадку необхідне підключення до інтернету).</string>
-  <string name="showcase_load_waypoints_title">Завантаження точок</string>
   <string name="showcase_load_waypoints_description">Натисніть іконку для завантаження файлу точок. Завантажені шляхові точки групуються в набори. Кожен раз, коли ви змінюєте набір, відповідний файл оновлюється автоматично.</string>
-  <string name="showcase_waypointset_actions_title">Дії з наборами точок</string>
-  <string name="showcase_waypointset_actions_description">Натисніть і потримайте на назві набору точок для доступу до додаткових дій.</string>
+  <string name="showcase_map_buttons">Торкніться шкали масштабу мапи, щоб показати чи приховати кнопки мапи.</string>
+  <string name="showcase_quick_zoom">Проведіть зі значка \"+\" до значка \"-\" для швидкого повернення до 100% масштабу.</string>
+  <string name="showcase_switch_map">Торкніться заголовку поточної мапи, щоб вибрати іншу мапу для поточного розташування.</string>
+  <string name="showcase_load_map">Торкніться значка, щоб відкрити список всіх доступних мап.</string>
+  <string name="showcase_current_location">Торкніться поточних координат, щоб перейти до дій з розташуванням.</string>
+  <string name="showcase_utm_zone">Якщо зона залишена порожньою, координати будуть збережені у форматі UPS.</string>
+  <string name="showcase_data_list">Посуньте елемент ліворуч, щоб отримати доступ до швидких дій.</string>
+  <string name="showcase_waypoint_coordinates">Торкайтесь координат для перемикання між усіма підтримуваними форматами.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

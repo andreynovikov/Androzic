@@ -169,6 +169,7 @@
   <string name="coordinate_degminsec">DD° MM\' SS.SSS\"</string>
   <string name="coordinate_utmups">UTM/UPS</string>
   <string name="coordinate_mgrs">MGRS</string>
+  <string name="abbr_milliseconds">ms</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Kartan indeksointivirhe</string>
   <string name="nomaps">Karttoja ei löydy</string>
@@ -260,6 +261,7 @@
   <string name="pref_onlinemapscale_summary">100% vastaava zoomi</string>
   <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
   <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
+  <string name="pref_onlinemapexpiration_title">Tile expiration</string>
   <string name="pref_loc_title">Sijainti</string>
   <string name="pref_loc_gpstimeout_title">GPS sijainnin aikaviive</string>
   <string name="pref_loc_gpstimeout_summary">Specifies timeout in seconds of last GPS fix after which location will be forgotten</string>
@@ -406,18 +408,18 @@
   <string name="perm_read_map_data_title">Nouda tieto Androzic kartasta</string>
   <string name="perm_write_map_data_title">Lisää tietoja Androzic karttaan</string>
   <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
-  <string name="showcase_panel_title">Pika toiminnot</string>
-  <string name="showcase_panel_description">Työnnä tai vedä liukuvaa paneelia päästäksesi pika toimintoihin. Pika toimintoja voidaan määrittää asetuksista.</string>
-  <string name="showcase_follow_title">Sijainnin seuranta</string>
   <string name="showcase_follow_description">Paina seuraa ikonia salliaksesi seuranta tilan. Tässä tilassa kartta on keskitetty nykyiseen sijaintiisi. Vaihtoehtoisesti voit kaksois napauttaa näyttöä saurannan päälle ja pois kytkemiseksi.</string>
-  <string name="showcase_add_waypoint_title">Lisää reittipiste</string>
   <string name="showcase_add_waypoint_description">Napauta toiminta-ikonia nopeasti lisätäksesi uuden reittipisteen nykyiseen sijaintiisi.</string>
-  <string name="showcase_search_title">Haku</string>
   <string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
-  <string name="showcase_load_waypoints_title">Lataa reittipisteet</string>
   <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
-  <string name="showcase_waypointset_actions_title">Reittipisteen asetus toiminta</string>
-  <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
+  <string name="showcase_map_buttons">Tap current map zoom to show and hide map buttons.</string>
+  <string name="showcase_quick_zoom">Slide from plus to minus icon to quickly return to 100% zoom.</string>
+  <string name="showcase_switch_map">Tap current map title to select another map for current location.</string>
+  <string name="showcase_load_map">Tap icon to open list of all available maps.</string>
+  <string name="showcase_current_location">Tap current coordinates to access location actions.</string>
+  <string name="showcase_utm_zone">If zone is left blank coordinates are saved in UPS format.</string>
+  <string name="showcase_data_list">Slide item left to access quick actions.</string>
+  <string name="showcase_waypoint_coordinates">Tap coordinates to cycle through all supported formats.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

@@ -170,6 +170,7 @@
   <string name="coordinate_degminsec">DD°MM\'SS.SSS\"</string>
   <string name="coordinate_utmups">UTM/UPS</string>
   <string name="coordinate_mgrs">MGRS</string>
+  <string name="abbr_milliseconds">ms</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Harita dizin-indeks hatası</string>
   <string name="nomaps">Hiç harita bulunamadı</string>
@@ -259,6 +260,7 @@
   <string name="pref_onlinemapscale_summary">Yakınlaştırma düzeyi % 100 olarak yorumlanır</string>
   <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
   <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
+  <string name="pref_onlinemapexpiration_title">Tile expiration</string>
   <string name="pref_loc_title">Konum</string>
   <string name="pref_loc_gpstimeout_title">GPS konumu zaman aşımı</string>
   <string name="pref_loc_gpstimeout_summary">Saniye cinsinden son bulunulan konumun unutulacağı GPS zaman aşımını belirtir</string>
@@ -406,18 +408,18 @@
   <string name="perm_read_map_data_title">Androzic harita verilerini al</string>
   <string name="perm_write_map_data_title">Androzic haritaya veri ekle</string>
   <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
-  <string name="showcase_panel_title">Hızlı işlemler</string>
-  <string name="showcase_panel_description">Slide or drag sliding panel handler to access quick actions. Quick actions can be configured in Settings.</string>
-  <string name="showcase_follow_title">Konum takip ediliyor</string>
   <string name="showcase_follow_description">Press follow icon to enable following mode. In this mode map will be fixed to your current position. Alternatively you can double tap on map to switch following mode on and off.</string>
-  <string name="showcase_add_waypoint_title">Yer imi ekle</string>
   <string name="showcase_add_waypoint_description">Tap action icon to quickly add new waypoint in current cursor position.</string>
-  <string name="showcase_search_title">Ara</string>
   <string name="showcase_search_description">You can type specific coordinates in various formats to find them on map, search through loaded waypoint or route names and descriptions, search for places and addresses through Google geocoding service (Internet connection is required for this to work).</string>
-  <string name="showcase_load_waypoints_title">Yer imlerini yükle</string>
   <string name="showcase_load_waypoints_description">Tap action icon to load waypoint file. Loaded waypoints are grouped in a set. Each time you modify a set, corresponding file is automatically updated.</string>
-  <string name="showcase_waypointset_actions_title">Yer imi grup ayarları</string>
-  <string name="showcase_waypointset_actions_description">Long tap on a waypoint set title to access additional actions.</string>
+  <string name="showcase_map_buttons">Tap current map zoom to show and hide map buttons.</string>
+  <string name="showcase_quick_zoom">Slide from plus to minus icon to quickly return to 100% zoom.</string>
+  <string name="showcase_switch_map">Tap current map title to select another map for current location.</string>
+  <string name="showcase_load_map">Tap icon to open list of all available maps.</string>
+  <string name="showcase_current_location">Tap current coordinates to access location actions.</string>
+  <string name="showcase_utm_zone">If zone is left blank coordinates are saved in UPS format.</string>
+  <string name="showcase_data_list">Slide item left to access quick actions.</string>
+  <string name="showcase_waypoint_coordinates">Tap coordinates to cycle through all supported formats.</string>
   <string name="app_eula" formatted="false">Bu program Özgür Yazılım Kuruluşu tarafından yayınlanan GNU v3 (Genel Kamu Lisansı sürüm 3) kuralları altında dağıtılmaktadır./n/n
 
 Bu programın dağıtımında faydalı olması umulmaktadır fakat HERHANGİ BİR GARANTİ VERİLMEMEKTEDİR. Ayrıntılı bilgi almak için Genel Kamu Lisansını inceleyiniz./n/n

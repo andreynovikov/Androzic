@@ -169,6 +169,7 @@
   <string name="coordinate_degminsec">DD° MM\' SS.SSS\"</string>
   <string name="coordinate_utmups">UTM/UPS</string>
   <string name="coordinate_mgrs">MGRS</string>
+  <string name="abbr_milliseconds">ms</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Erro de índice de mapa</string>
   <string name="nomaps">Não foram encontrados mapas</string>
@@ -258,6 +259,7 @@
   <string name="pref_onlinemapscale_summary">Nível do zoom será interpretado como 100%</string>
   <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
   <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
+  <string name="pref_onlinemapexpiration_title">Tile expiration</string>
   <string name="pref_loc_title">Localização</string>
   <string name="pref_loc_gpstimeout_title">Tempo limite de localização GPS</string>
   <string name="pref_loc_gpstimeout_summary">Specifies timeout in seconds of last GPS fix after which location will be forgotten</string>
@@ -404,17 +406,17 @@
   <string name="perm_read_map_data_title">Obter dados do mapa do Androzic</string>
   <string name="perm_write_map_data_title">Acrescentar dados no mapa Androzic</string>
   <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
-  <string name="showcase_panel_title">Ações rápidas</string>
-  <string name="showcase_panel_description">Deslizar ou arrastar manipulador de painel deslizante para aceder às ações rápidas. Ações rápidas podem ser configuradas nas configurações.</string>
-  <string name="showcase_follow_title">Seguir localização</string>
   <string name="showcase_follow_description">Toque no ícone seguir para ativar modo na sequência. Neste modo mapa será corrigido para sua posição atual. Alternativamente pode fazer um toque duplo no mapa para ligar e desligar o modo na sequência.</string>
-  <string name="showcase_add_waypoint_title">Adicionar ponto de percurso</string>
   <string name="showcase_add_waypoint_description">Toque no ícone de ação para adicionar rapidamente o novo Ponto de Percurso na posição atual do cursor.</string>
-  <string name="showcase_search_title">Pesquisar</string>
   <string name="showcase_search_description">Pode digitar as coordenadas específicas em vários formatos para encontrá-los no mapa, pesquisar através de um Ponto de Percurso carregado ou nomes e descrições de rota, busca de lugares e endereços através do serviço de geocodificação Google (Ligação à Internet é necessária para funcionar).</string>
-  <string name="showcase_load_waypoints_title">Carregar Pontos de Percurso</string>
   <string name="showcase_load_waypoints_description">Toque no ícone de ação para carregar o ficheiro de Ponto de Percuso. Os Pontos de Percurso carregados são agrupados num conjunto. De cada vez que modificar um conjunto de ficheiros correspondente é automaticamente atualizado.</string>
-  <string name="showcase_waypointset_actions_title">Conjunto de ações para Pontos de Percurso</string>
-  <string name="showcase_waypointset_actions_description">Toque longo sobre o titulo de um Ponto de Percurso para aceder a ações adicionais.</string>
+  <string name="showcase_map_buttons">Tap current map zoom to show and hide map buttons.</string>
+  <string name="showcase_quick_zoom">Slide from plus to minus icon to quickly return to 100% zoom.</string>
+  <string name="showcase_switch_map">Tap current map title to select another map for current location.</string>
+  <string name="showcase_load_map">Tap icon to open list of all available maps.</string>
+  <string name="showcase_current_location">Tap current coordinates to access location actions.</string>
+  <string name="showcase_utm_zone">If zone is left blank coordinates are saved in UPS format.</string>
+  <string name="showcase_data_list">Slide item left to access quick actions.</string>
+  <string name="showcase_waypoint_coordinates">Tap coordinates to cycle through all supported formats.</string>
   <string name="app_eula">Este programa é distribuído sob os termos da GNU General Public License conforme publicada pela Free Software Foundation, tanto a versão 3 do License./n/n esta aplicação é distribuído na esperança que será útil, mas sem qualquer garantia; sem mesmo a garantia implícita de comerciabilidade ou adequação para uma finalidade específica. Veja a GNU General Public License para mais details./n/n todos os direitos concedidos sob esta licença são concedidos para o termo de direitos autorais sobre o programa e são irrevogáveis desde que as condições declarado.     Esta licença afirma explicitamente sua permissão ilimitada para executar o Program./n/n sem modificações você não é obrigado a aceitar esta licença para receber ou executar uma cópia do programa. Propagação de auxiliar de uma obra coberta que ocorre exclusivamente em consequência usando transmissão peer-to-peer para receber uma cópia da mesma forma não requer aceitação. No entanto, nada que não seja esta licença concede-lhe permissão para propagar ou modificar qualquer objecto de trabalho. Essas ações infringem o copyright se você não aceitar esta licença. Portanto, ao modificar ou propagar uma obra coberta, você indica sua aceitação desta licença para fazer assim. / n/n para a cópia completa do http://www.gnu.org/licenses/gpl.html de Veja a GNU General Public License</string>
 </resources>

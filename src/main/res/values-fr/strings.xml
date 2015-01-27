@@ -169,6 +169,7 @@
   <string name="coordinate_degminsec">DD° MM\' SS.SSS\"</string>
   <string name="coordinate_utmups">UTM/UPS</string>
   <string name="coordinate_mgrs">MGRS</string>
+  <string name="abbr_milliseconds">ms</string>
   <string name="waypoint_deleted">Waypoint deleted</string>
   <string name="badmaps">Erreur d’indexation des cartes</string>
   <string name="nomaps">Pas de cartes trouv�es</string>
@@ -258,6 +259,7 @@
   <string name="pref_onlinemapscale_summary">Niveau de zoom qui sera interprété comme 100%</string>
   <string name="pref_onlinemapprescalefactor_title">Facteur d\'échelle de bitmap</string>
   <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
+  <string name="pref_onlinemapexpiration_title">Tile expiration</string>
   <string name="pref_loc_title">Position</string>
   <string name="pref_loc_gpstimeout_title">Délai de position GPS </string>
   <string name="pref_loc_gpstimeout_summary">Specifies timeout in seconds of last GPS fix after which location will be forgotten</string>
@@ -404,17 +406,17 @@
   <string name="perm_read_map_data_title">Obtenir des données de la carte Androzic</string>
   <string name="perm_write_map_data_title">Ajouter des données à la carte Androzic</string>
   <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
-  <string name="showcase_panel_title">Actions rapides</string>
-  <string name="showcase_panel_description">Faire glisser ou déplacer le panneau coulissant pour accéder aux actions rapides. Les actions rapides peuvent être configurées dans les paramètres.</string>
-  <string name="showcase_follow_title">Suivi des emplacements</string>
   <string name="showcase_follow_description">Presser l\'icône de suivi pour activer le mode de suivi. Dans ce mode la carte sera bloquée sur votre position actuelle. Alternativement vous pouvez touchez deux fois la carte pour activer et désactiver le mode de suivi.</string>
-  <string name="showcase_add_waypoint_title">Ajouter un waypoint</string>
   <string name="showcase_add_waypoint_description">Appuyez sur l\'icône action pour ajouter rapidement un nouveau waypoint à la position actuelle du curseur.</string>
-  <string name="showcase_search_title">Recherche</string>
   <string name="showcase_search_description">Vous pouvez taper des coordonnées spécifiques dans différents formats pour les trouver sur la carte, faire des recherche dans les noms de point de cheminement, les  itinéraire chargés et les descriptions, faire des recherches de lieux et d\'adresses via le service de géocodage de Google (Une connexion Internet est nécessaire pour que cela fonctionne).</string>
-  <string name="showcase_load_waypoints_title">Charger les waypoints</string>
   <string name="showcase_load_waypoints_description">Touchez l\'icône action pour charger le fichier des waypoints. Les waypoints chargés sont regroupés en ensemble. Chaque fois que vous modifiez un ensemble, le fichier correspondant est automatiquement mis à jour.</string>
-  <string name="showcase_waypointset_actions_title">Action de définition d\'un waypoint</string>
-  <string name="showcase_waypointset_actions_description">Clic long sur un titre d\'ensemble de waypoints pour accéder aux actions supplémentaires.</string>
+  <string name="showcase_map_buttons">Tap current map zoom to show and hide map buttons.</string>
+  <string name="showcase_quick_zoom">Slide from plus to minus icon to quickly return to 100% zoom.</string>
+  <string name="showcase_switch_map">Tap current map title to select another map for current location.</string>
+  <string name="showcase_load_map">Tap icon to open list of all available maps.</string>
+  <string name="showcase_current_location">Tap current coordinates to access location actions.</string>
+  <string name="showcase_utm_zone">If zone is left blank coordinates are saved in UPS format.</string>
+  <string name="showcase_data_list">Slide item left to access quick actions.</string>
+  <string name="showcase_waypoint_coordinates">Tap coordinates to cycle through all supported formats.</string>
   <string name="app_eula">Ce programme est distribué sous les termes de la GNU General Public License telle que publiée par la Free Software Foundation, soit la version 3 de la License./n/n cette application est distribué dans l\'espoir qu\'il sera utile, mais sans aucune garantie ; sans même la garantie implicite de qualité marchande ou d\'adéquation à un but particulier. Voir la GNU General Public License pour plus de details./n/n tous les droits accordés en vertu de cette licence sont accordées pour la durée du droit d\'auteur sur le programme et sont irrévocables fourni que les conditions énoncées sont remplies.     Cette licence affirme explicitement votre permission illimitée pour exécuter le Program./n/n non modifiées vous n\'êtes pas tenu d\'accepter cette licence afin de recevoir ou d\'exécuter une copie du programme. Accessoire propagation d\'un travail couvert se produisant uniquement comme conséquence d\'à l\'aide de transmission to-peer pour recevoir une copie de la même manière ne nécessite pas l\'acceptation. Cependant, rien d\'autre que cette licence vous accorde la permission de propager ou de modifier tout couvert de travail. Ces actions violent le droit d\'auteur si vous n\'acceptez pas cette licence. Par conséquent, en modifiant ou en se propageant un travail couvert, vous signifiez votre acceptation de la présente licence ne so. / n/n pour une copie complète de la licence publique générale GNU voir http://www.gnu.org/licenses/gpl.html</string>
 </resources>

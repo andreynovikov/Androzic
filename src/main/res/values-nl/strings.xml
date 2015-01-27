@@ -127,14 +127,14 @@
   <string name="alg_a">Cruise</string>
   <string name="alg_b">Strook</string>
   <string name="update_almanac">Almanak update aanvragen</string>
-  <string name="degrees">Degrees</string>
+  <string name="degrees">Graden</string>
   <string name="easting">Oosten</string>
   <string name="northing">Noorden</string>
   <string name="zone">Zone</string>
   <string name="hemisphere">Halfrond</string>
   <string name="s">Z</string>
   <string name="n">N</string>
-  <string name="mgrs_string">MGRS string</string>
+  <string name="mgrs_string">MGRS tekenreeks</string>
   <string name="waypointset">Instellen</string>
   <string name="markercolor">Markeer kleur</string>
   <string name="textcolor">Naam kleur</string>
@@ -169,6 +169,7 @@
   <string name="coordinate_degminsec">DD° MM\' SS.SSS\"</string>
   <string name="coordinate_utmups">UTM/UPS</string>
   <string name="coordinate_mgrs">MGRS</string>
+  <string name="abbr_milliseconds">ms</string>
   <string name="waypoint_deleted">Waypoint verwijderd</string>
   <string name="badmaps">Kaart index fout</string>
   <string name="nomaps">Geen kaarten gevonden</string>
@@ -258,6 +259,7 @@
   <string name="pref_onlinemapscale_summary">Zoom niveau die zal worden geïnterpreteerd als 100 %</string>
   <string name="pref_onlinemapprescalefactor_title">Bitmap schaalfactor</string>
   <string name="pref_onlinemapprescalefactor_summary">Gedownloade tegel bitmaps kunnen vooraf geschaald met opgegeven schaalfactor om tekst leesbaar te houden op hoge dichtheid schermen</string>
+  <string name="pref_onlinemapexpiration_title">Tegel vervaldatum</string>
   <string name="pref_loc_title">Locatie</string>
   <string name="pref_loc_gpstimeout_title">GPS locatie timeout</string>
   <string name="pref_loc_gpstimeout_summary">Hiermee geeft u de time-out in seconden van de laatste GPS-fix waarna locatie zal worden vergeten</string>
@@ -329,9 +331,9 @@
   <string name="pref_unitelevation_title">Hoogte</string>
   <string name="pref_unitdistance_title">Afstand</string>
   <string name="pref_unitcoordinate_title">Coördinaten</string>
-  <string name="pref_unitangle_title">Angle</string>
+  <string name="pref_unitangle_title">Hoek</string>
   <string name="pref_unitsunrise_title">Zonsopgang/zonsondergang</string>
-  <string name="pref_unitanglemagnetic_title">Consider magnetic declination</string>
+  <string name="pref_unitanglemagnetic_title">Magnetische declinatie overwegen</string>
   <string name="pref_unitprecision_title">Extra precisie</string>
   <string name="pref_grid_title">Rasters</string>
   <string name="pref_grid_mapshow_title">Toon kaart raster</string>
@@ -404,18 +406,18 @@
   <string name="perm_read_map_data_title">Gegevens ophalen uit Androzic kaart</string>
   <string name="perm_write_map_data_title">Gegevens toevoegen aan Androzic kaart</string>
   <string name="faquri">http://androzic.com/wiki/nl/FAQ</string>
-  <string name="showcase_panel_title">Snelle acties</string>
-  <string name="showcase_panel_description">Schuif of sleep glijdend paneel voor toegang tot snelle acties. Snelle acties kunnen worden geconfigureerd in de instellingen.</string>
-  <string name="showcase_follow_title">De volgende locatie</string>
   <string name="showcase_follow_description">Pers Volg pictogram na modus inschakelen. In deze modus zal de kaart op uw huidige positie worden bevestigd. Als alternatief kunt u dubbele klik op de kaart om te schakelen na modus in- en uitschakelen.</string>
-  <string name="showcase_add_waypoint_title">Waypoint toevoegen</string>
   <string name="showcase_add_waypoint_description">Tik op de actie pictogram als u een nieuwe waypoint snel wilt toevoegen op de huidige cursorpositie.</string>
-  <string name="showcase_search_title">Zoeken</string>
   <string name="showcase_search_description">U kunt specifieke coördinaten typen in verschillende formaten om ze te vinden op kaart, doorzoeken geladen waypoint of route namen en beschrijvingen, zoeken naar plaatsen en adressen via Google geocoding service (Internet-verbinding vereist).</string>
-  <string name="showcase_load_waypoints_title">Laden van waypoints</string>
   <string name="showcase_load_waypoints_description">Tik op de actie pictogram om waypoint file te laden. Geladen waypoints zijn gegroepeerd in een set. Telkens wanneer die u een reeks wijzigt wordt bijbehorende bestand automatisch bijgewerkt.</string>
-  <string name="showcase_waypointset_actions_title">Waypoint instellen acties</string>
-  <string name="showcase_waypointset_actions_description">Lange klik op een waypoint titel voor toegang tot aanvullende acties instellen.</string>
+  <string name="showcase_map_buttons">Tik op de huidige kaart om zoom te tonen en verbergen kaart knoppen.</string>
+  <string name="showcase_quick_zoom">Schuif van plus naar min pictogram om snel terug te keren naar 100% zoom.</string>
+  <string name="showcase_switch_map">Tik op de huidige titel van de kaart om een andere toewijzing voor de huidige locatie te selecteren.</string>
+  <string name="showcase_load_map">Tik pictogram om lijst van alle beschikbare kaarten te openen.</string>
+  <string name="showcase_current_location">Tik op de huidige coördinaten voor toegang tot locatie acties.</string>
+  <string name="showcase_utm_zone">Als zone leeg wordt gelaten zijn coördinaten in UPS indeling opgeslagen.</string>
+  <string name="showcase_data_list">Schuif item links voor toegang tot snelle acties.</string>
+  <string name="showcase_waypoint_coordinates">Tik op coördinaten om alle ondersteunde formaten te doorlopen.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

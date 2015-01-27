@@ -7,4 +7,13 @@
   <plurals name="numberOfSegments">
     <item quantity="other">%d 段</item>
   </plurals>
+  <plurals name="weeksValue">
+    <item quantity="other">%s weeks</item>
+  </plurals>
+  <plurals name="secondsValue">
+    <item quantity="other">%s seconds</item>
+  </plurals>
+  <plurals name="pixelsValue">
+    <item quantity="other">%s pixels</item>
+  </plurals>
 </resources>

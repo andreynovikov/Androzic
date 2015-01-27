@@ -169,6 +169,7 @@
   <string name="coordinate_degminsec">DD° MM\' SS.SSS\"</string>
   <string name="coordinate_utmups">UTM/UPS</string>
   <string name="coordinate_mgrs">MGRS</string>
+  <string name="abbr_milliseconds">ms</string>
   <string name="waypoint_deleted">删除的航点</string>
   <string name="badmaps">地图索引错误</string>
   <string name="nomaps">没有发现地图</string>
@@ -258,6 +259,7 @@
   <string name="pref_onlinemapscale_summary">缩放级别,将被解读为100%</string>
   <string name="pref_onlinemapprescalefactor_title">Bitmap scale factor</string>
   <string name="pref_onlinemapprescalefactor_summary">Downloaded tile bitmaps can be pre-scaled with specified scale factor to make containing text legible on high density screens</string>
+  <string name="pref_onlinemapexpiration_title">Tile expiration</string>
   <string name="pref_loc_title">位置</string>
   <string name="pref_loc_gpstimeout_title">GPS 位置超时</string>
   <string name="pref_loc_gpstimeout_summary">指定超时值以秒为单位的最后一个 GPS 修正位置会被遗忘</string>
@@ -404,18 +406,18 @@
   <string name="perm_read_map_data_title">从 Androzic 地图获取数据</string>
   <string name="perm_write_map_data_title">将数据添加到 Androzic 地图</string>
   <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
-  <string name="showcase_panel_title">快速操作</string>
-  <string name="showcase_panel_description">滑动或拖动滑动面板可以进行快速操作。可以在设置中进行配置。</string>
-  <string name="showcase_follow_title">位置跟随</string>
   <string name="showcase_follow_description">按跟随图标可以启用跟随模式。在此模式下地图将固定为您当前的位置。另外，您也可以在地图上双击开启或关闭跟随模式。</string>
-  <string name="showcase_add_waypoint_title">添加路点</string>
   <string name="showcase_add_waypoint_description">点击操作图标在当前光标位置快速添加新航点。</string>
-  <string name="showcase_search_title">搜索</string>
   <string name="showcase_search_description">您可以输入各种不同的坐标格式在地图上找到它们，通过加载航点或路线名称和说明，通过谷歌地理编码服务检索地址（此功能需要联网）。</string>
-  <string name="showcase_load_waypoints_title">载入航点</string>
   <string name="showcase_load_waypoints_description">点击操作图标加载航点文件。加载的航点被分成一组。每次修改设置，都将自动更新相应的文件。</string>
-  <string name="showcase_waypointset_actions_title">航点设置操作</string>
-  <string name="showcase_waypointset_actions_description">长按航点可以设置标题或进行额外的操作。</string>
+  <string name="showcase_map_buttons">Tap current map zoom to show and hide map buttons.</string>
+  <string name="showcase_quick_zoom">Slide from plus to minus icon to quickly return to 100% zoom.</string>
+  <string name="showcase_switch_map">Tap current map title to select another map for current location.</string>
+  <string name="showcase_load_map">Tap icon to open list of all available maps.</string>
+  <string name="showcase_current_location">Tap current coordinates to access location actions.</string>
+  <string name="showcase_utm_zone">If zone is left blank coordinates are saved in UPS format.</string>
+  <string name="showcase_data_list">Slide item left to access quick actions.</string>
+  <string name="showcase_waypoint_coordinates">Tap coordinates to cycle through all supported formats.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n

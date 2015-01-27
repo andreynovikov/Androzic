@@ -66,7 +66,7 @@
     <item>stopnie</item>
     <item>tysięczna NATO</item>
     <item>tysięczna Sowiecka</item>
-    <item>gradów</item>
+    <item>grady</item>
   </string-array>
   <string-array name="angle_abbrs">
     <item>stopni</item>

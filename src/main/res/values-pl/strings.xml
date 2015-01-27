@@ -169,6 +169,7 @@
   <string name="coordinate_degminsec">DD° MM\'SS.SSS\"</string>
   <string name="coordinate_utmups">UTM/UPS</string>
   <string name="coordinate_mgrs">MGRS</string>
+  <string name="abbr_milliseconds">ms</string>
   <string name="waypoint_deleted">Punkt nawigacyjny usunięty</string>
   <string name="badmaps">Błąd indeksu mapy</string>
   <string name="nomaps">Nie znaleziono map</string>
@@ -258,6 +259,7 @@
   <string name="pref_onlinemapscale_summary">Poziom powiększenia, który będzie interpretowany jako 100%</string>
   <string name="pref_onlinemapprescalefactor_title">Współczynnik skali mapy bitowej</string>
   <string name="pref_onlinemapprescalefactor_summary">Pobrane fragmenty map bitowych mogą być wstępnie skalowane z określonym współczynnikiem skali aby zawarty w nich tekst był czytelny na ekranach o wysokiej gęstości</string>
+  <string name="pref_onlinemapexpiration_title">Przeterminowanie fragmentu</string>
   <string name="pref_loc_title">Lokalizacja</string>
   <string name="pref_loc_gpstimeout_title">Limit czasu lokalizacji GPS</string>
   <string name="pref_loc_gpstimeout_summary">Określa limit czasu w sekundach od ostatniej pozycji GPS, po którym lokalizacja będzie zapomniana</string>
@@ -331,7 +333,7 @@
   <string name="pref_unitcoordinate_title">Współrzędne</string>
   <string name="pref_unitangle_title">Kąt</string>
   <string name="pref_unitsunrise_title">Wschód/Zachód Słońca</string>
-  <string name="pref_unitanglemagnetic_title">Należy wziąć pod uwagę deklinację magnetyczną</string>
+  <string name="pref_unitanglemagnetic_title">Uwzględnij deklinację magnetyczną</string>
   <string name="pref_unitprecision_title">Ekstra dokładność</string>
   <string name="pref_grid_title">Siatki</string>
   <string name="pref_grid_mapshow_title">Pokaż siatkę mapy</string>
@@ -404,18 +406,18 @@
   <string name="perm_read_map_data_title">Pobierz dane z mapy Androzica</string>
   <string name="perm_write_map_data_title">Dodaj dane do mapy Androzica</string>
   <string name="faquri">http://androzic.com/wiki/en/FAQ</string>
-  <string name="showcase_panel_title">Szybkie działania</string>
-  <string name="showcase_panel_description">Przesuń lub pociągnij uchwyt panelu aby uzyskać dostęp do szybkich akcji. Szybkie akcje mogą być skonfigurowane w ustawieniach.</string>
-  <string name="showcase_follow_title">Śledzenie lokalizacji</string>
   <string name="showcase_follow_description">Naciśnij ikonę śledzenia aby włączyć tryb śledzenia. W tym trybie mapa będzie ustalona na twojej aktualnej pozycji. Tryb śledzenia można również włączać i wyłączać klikając dwukrotnie na mapę.</string>
-  <string name="showcase_add_waypoint_title">Dodaj punkt trasy</string>
   <string name="showcase_add_waypoint_description">Dotknij ikony akcji, aby szybko dodać nowy punkt orientacyjny w bieżącej pozycji kursora.</string>
-  <string name="showcase_search_title">Wyszukiwanie</string>
   <string name="showcase_search_description">Możesz wpisać współrzędne określone w różnych formatach, znaleźć je na mapie, przeszukiwać  nazwy i opisy załadowanych punktów orientacyjnych lub tras, szukać miejsc i adresów za pośrednictwem usługi geokodowania Google (połączenie internetowe jest wymagane do działania).</string>
-  <string name="showcase_load_waypoints_title">Wczytaj waypointy</string>
   <string name="showcase_load_waypoints_description">Dotknij ikony akcji, aby załadować plik waypointów. Załadowane punkty są zgrupowane w zestaw. Po każdej zmianie zestawu, odpowiedni plik jest automatycznie aktualizowany.</string>
-  <string name="showcase_waypointset_actions_title">Akcje zbioru waypointów</string>
-  <string name="showcase_waypointset_actions_description">Długo przytrzymaj nazwę zestawu waypointów aby uzyskać dostęp do dodatkowych działań.</string>
+  <string name="showcase_map_buttons">Stuknij w aktualny poziom powiększenia mapy aby pokazać i ukryć przyciski mapy.</string>
+  <string name="showcase_quick_zoom">Przesuń szybko od ikony plusa do minusa aby szybko powrócić do 100% zbliżenia.</string>
+  <string name="showcase_switch_map">Stuknij w nazwę aktualnej mapy aby wybrać inną mapę dla aktualnej lokalizacji.</string>
+  <string name="showcase_load_map">Stuknij w ikonę aby otworzyć listę wszystkich dostępnych map.</string>
+  <string name="showcase_current_location">Stuknij w aktualne współrzędne aby wywołać akcje lokalizacji.</string>
+  <string name="showcase_utm_zone">Jeśli strefa jest pusta współrzędne są zapisywane w formacie UPS.</string>
+  <string name="showcase_data_list">Przesuń element w lewo aby uzyskać dostęp do szybkich akcji.</string>
+  <string name="showcase_waypoint_coordinates">Stuknij we współrzędne aby przełączać między wszystkimi dostępnymi formatami.</string>
   <string name="app_eula">This program is distributed under the terms of
 	the GNU General Public License as published by the Free Software Foundation,
 	either version 3 of the License./n/n
