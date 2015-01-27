@@ -484,6 +484,7 @@ public class Splash extends Activity implements OnClickListener
 
 			// initialize maps
 			application.initializeMaps();
+			application.moveTileCache();
 
 			total += PROGRESS_STEP;
 			msg = mHandler.obtainMessage(MSG_PROGRESS);

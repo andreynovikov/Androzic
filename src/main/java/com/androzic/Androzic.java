@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -98,6 +100,7 @@ import com.androzic.map.OzfDecoder;
 import com.androzic.map.SASMapLoader;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.OpenStreetMapTileProvider;
+import com.androzic.map.online.TileFactory;
 import com.androzic.map.online.TileProvider;
 import com.androzic.map.online.TileProviderFactory;
 import com.androzic.navigation.NavigationService;
@@ -2090,6 +2093,68 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			//noinspection ResultOfMethodCallIgnored
 			index.delete();
 		initializeMaps();
+	}
+
+	public void moveTileCache()
+	{
+		File oldTilesCache = new File(rootPath, "tiles");
+		if (! oldTilesCache.isDirectory())
+			return;
+
+		File newCache = getCacheDir();
+
+		Pattern p = Pattern.compile("(\\d+)-(\\d+)");
+		Matcher m;
+
+		for (File providerDir : oldTilesCache.listFiles())
+		{
+			if (! providerDir.isDirectory())
+			{
+				providerDir.delete();
+				continue;
+			}
+			String provider = providerDir.getName();
+			for (File zoom : providerDir.listFiles())
+			{
+				if (! zoom.isDirectory())
+				{
+					zoom.delete();
+					continue;
+				}
+				byte z;
+				try
+				{
+					z = Byte.valueOf(zoom.getName());
+				}
+				catch (NumberFormatException e)
+				{
+					e.printStackTrace();
+					zoom.delete();
+					continue;
+				}
+				for (File tile : zoom.listFiles())
+				{
+					m = p.matcher(tile.getName());
+					if (m.find())
+					{
+						int x = Integer.parseInt(m.group(1));
+						int y = Integer.parseInt(m.group(2));
+						File newTile = TileFactory.getTileFile(newCache, provider, x, y, z);
+						try
+						{
+							FileUtils.copyFile(tile, newTile);
+						} catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+					}
+					tile.delete();
+				}
+				zoom.delete();
+			}
+			providerDir.delete();
+		}
+		oldTilesCache.delete();
 	}
 
 	/**
