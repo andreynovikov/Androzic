@@ -38,6 +38,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -62,7 +63,7 @@ import com.androzic.data.MapObject;
 import com.androzic.data.Route;
 import com.androzic.data.Track;
 import com.androzic.data.Waypoint;
-import com.androzic.map.Map;
+import com.androzic.map.BaseMap;
 import com.androzic.map.MapInformation;
 import com.androzic.map.OnMapActionListener;
 import com.androzic.route.OnRouteActionListener;
@@ -154,7 +155,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		// set a custom shadow that overlays the main content when the drawer opens
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 		// set up the drawer's list view with items and click listener
-		mDrawerItems = new ArrayList<DrawerItem>();
+		mDrawerItems = new ArrayList<>();
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 		mDrawerAdapter = new DrawerAdapter(this, mDrawerItems);
 		mDrawerList.setAdapter(mDrawerAdapter);
@@ -395,7 +396,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	}
 
 	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState)
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState)
 	{
 		super.onRestoreInstanceState(savedInstanceState);
 		int pos = savedInstanceState.getInt("drawerPosition");
@@ -510,7 +511,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	}
 
 	@Override
-	public void onMapDetails(Map map)
+	public void onMapDetails(BaseMap map)
 	{
 		//TODO Should show any map information, not only current
         MapInformation mapInformation = (MapInformation) Fragment.instantiate(this, MapInformation.class.getName());
@@ -518,14 +519,14 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	}
 
 	@Override
-	public void onMapSelectedAtPosition(Map map)
+	public void onMapSelectedAtPosition(BaseMap map)
 	{
 		if (application.setMap(map))
 			application.getMapHolder().mapChanged();
 	}
 
 	@Override
-	public void onMapSelected(Map map)
+	public void onMapSelected(BaseMap map)
 	{
 		if (application.loadMap(map))
 			application.getMapHolder().mapChanged();
@@ -574,7 +575,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		application.editingRoute = route;
 		application.editingRoute.show = true;
 		application.editingRoute.editing = true;
-		application.routeEditingWaypoints = new Stack<Waypoint>();
+		application.routeEditingWaypoints = new Stack<>();
 		application.dispatchRoutePropertiesChanged(route);
 		selectItem(0);
 	}

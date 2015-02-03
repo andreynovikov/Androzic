@@ -29,15 +29,15 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.Log;
 
-import com.androzic.MapView;
 import com.androzic.R;
+import com.androzic.map.BaseMap;
 import com.androzic.map.Grid;
-import com.androzic.map.Map;
+import com.androzic.ui.Viewport;
 import com.androzic.util.Geo;
 
 public class OtherGridOverlay extends MapOverlay
 {
-	ArrayList<Path> paths = new ArrayList<Path>();
+	ArrayList<Path> paths = new ArrayList<>();
 	Paint linePaint;
 	Rect clip;
 	int spacing = 100000;
@@ -66,7 +66,7 @@ public class OtherGridOverlay extends MapOverlay
 	public synchronized void onMapChanged()
 	{
 		paths.clear();
-    	Map map = application.getCurrentMap();
+    	BaseMap map = application.getCurrentMap();
     	if (map == null)
     		return;
     	
@@ -76,8 +76,8 @@ public class OtherGridOverlay extends MapOverlay
 
     	clip = new Rect(0, 0, map.getScaledWidth(), map.getScaledHeight());
 
-    	ArrayList<int[]> points = new ArrayList<int[]>();
-    	ArrayList<double[]> refPoints = new ArrayList<double[]>();
+    	ArrayList<int[]> points = new ArrayList<>();
+    	ArrayList<double[]> refPoints = new ArrayList<>();
 
     	// find map center coordinates
     	double[] cll = new double[2];
@@ -302,7 +302,7 @@ public class OtherGridOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBuffer(final Viewport viewport, final Canvas c)
 	{
 		c.save();
 		c.translate(-viewport.mapCenterXY[0], -viewport.mapCenterXY[1]);
@@ -318,7 +318,7 @@ public class OtherGridOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBufferEx(final Viewport viewport, final Canvas c)
 	{
 	}
 }

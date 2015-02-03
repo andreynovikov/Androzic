@@ -30,7 +30,7 @@ public class SASMapLoader
 	public static SASMap load(File file) throws IOException
 	{
 		String name = file.getName();
-		String ext = null;
+		String ext;
 		boolean ellipsoid = false;
 		String[] zooms = file.list();
 		if (zooms == null)
@@ -60,14 +60,14 @@ public class SASMapLoader
 			map.ellipsoid = ellipsoid;
 			
 			map.setCornersAmount(4);
-			map.cornerMarkers[0].x = corners[0] * SASMap.TILE_WIDTH;
-			map.cornerMarkers[0].y = corners[1] * SASMap.TILE_HEIGHT;
-			map.cornerMarkers[1].x = corners[0] * SASMap.TILE_WIDTH;
-			map.cornerMarkers[1].y = (corners[3] + 1) * SASMap.TILE_HEIGHT;
-			map.cornerMarkers[2].x = (corners[2] + 1) * SASMap.TILE_WIDTH;
-			map.cornerMarkers[2].y = (corners[3] + 1) * SASMap.TILE_HEIGHT;
-			map.cornerMarkers[3].x = (corners[2] + 1) * SASMap.TILE_WIDTH;
-			map.cornerMarkers[3].y = corners[1] * SASMap.TILE_HEIGHT;
+			map.cornerMarkers[0].x = corners[0] * SASMap.TILE_SIZE;
+			map.cornerMarkers[0].y = corners[1] * SASMap.TILE_SIZE;
+			map.cornerMarkers[1].x = corners[0] * SASMap.TILE_SIZE;
+			map.cornerMarkers[1].y = (corners[3] + 1) * SASMap.TILE_SIZE;
+			map.cornerMarkers[2].x = (corners[2] + 1) * SASMap.TILE_SIZE;
+			map.cornerMarkers[2].y = (corners[3] + 1) * SASMap.TILE_SIZE;
+			map.cornerMarkers[3].x = (corners[2] + 1) * SASMap.TILE_SIZE;
+			map.cornerMarkers[3].y = corners[1] * SASMap.TILE_SIZE;
 			double[] ll = new double[2];
 			for (int i = 0; i < 4; i++)
 			{

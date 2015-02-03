@@ -41,8 +41,9 @@ import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.MapObject;
 import com.androzic.data.Marker;
-import com.androzic.map.Map;
+import com.androzic.map.BaseMap;
 import com.androzic.ui.MarkerFactory;
+import com.androzic.ui.Viewport;
 
 public class MapObjectsOverlay extends MapOverlay
 {
@@ -97,7 +98,7 @@ public class MapObjectsOverlay extends MapOverlay
 
 		mpp = 0;
 
-		bitmaps = new WeakHashMap<MapObject, Bitmap>();
+		bitmaps = new WeakHashMap<>();
 
 		onPreferencesChanged(PreferenceManager.getDefaultSharedPreferences(application));
 	}
@@ -117,7 +118,7 @@ public class MapObjectsOverlay extends MapOverlay
 	@Override
 	public synchronized void onMapChanged()
 	{
-		Map map = application.getCurrentMap();
+		BaseMap map = application.getCurrentMap();
 		if (map == null)
 			return;
 
@@ -286,12 +287,12 @@ public class MapObjectsOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBuffer(final Viewport viewport, final Canvas c)
 	{
 	}
 
 	@Override
-	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBufferEx(final Viewport viewport, final Canvas c)
 	{
 		Androzic application = Androzic.getApplication();
 

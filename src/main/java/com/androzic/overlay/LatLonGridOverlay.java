@@ -28,11 +28,11 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 
-import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Bounds;
+import com.androzic.map.BaseMap;
 import com.androzic.map.Grid;
-import com.androzic.map.Map;
+import com.androzic.ui.Viewport;
 
 public class LatLonGridOverlay extends MapOverlay
 {
@@ -72,7 +72,7 @@ public class LatLonGridOverlay extends MapOverlay
 	public synchronized void onMapChanged()
 	{
 		grid.clear();
-    	Map map = application.getCurrentMap();
+    	BaseMap map = application.getCurrentMap();
     	if (map == null)
     		return;
     	clip = new Rect(0, 0, map.getScaledWidth(), map.getScaledHeight());
@@ -124,7 +124,7 @@ public class LatLonGridOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBuffer(final Viewport viewport, final Canvas c)
 	{
 		c.save();
 		c.translate(-viewport.mapCenterXY[0], -viewport.mapCenterXY[1]);
@@ -146,7 +146,7 @@ public class LatLonGridOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBufferEx(final Viewport viewport, final Canvas c)
 	{
 	}
 

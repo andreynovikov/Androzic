@@ -26,7 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.androzic.map.Map;
+import com.androzic.map.BaseMap;
 import com.androzic.map.OnMapActionListener;
 import com.androzic.ui.TooltipManager;
 
@@ -39,9 +39,9 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 
 	private View openButton;
 
-	private List<Map> maps;
+	private List<BaseMap> maps;
 	private String mapsPath;
-	private Map currentMap;
+	private BaseMap currentMap;
 
 	private Handler tooltipCallback = new Handler();
 
@@ -178,7 +178,7 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 		}
 
 		@Override
-		public Map getItem(int position)
+		public BaseMap getItem(int position)
 		{
 			return maps.get(position);
 		}
@@ -207,7 +207,7 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 			{
 				v = convertView;
 			}
-			Map map = getItem(position);
+			BaseMap map = getItem(position);
 			TextView title = (TextView) v.findViewById(R.id.name);
 			title.setText(map.title);
 			TextView scale = (TextView) v.findViewById(R.id.scale);
@@ -216,9 +216,9 @@ public class SuitableMapsList extends DialogFragment implements OnItemClickListe
 			String fmt = pct < 0.1 ? "1:%,d (%.2f%%)" : pct < 1 ? "1:%,d (%.1f%%)" : "1:%,d (%.0f%%)";
 			scale.setText(String.format(fmt, mpcm, pct));
 			TextView path = (TextView) v.findViewById(R.id.filename);
-			if (map.mappath != null)
+			if (map.path != null)
 			{
-				String filepath = map.mappath.startsWith(mapsPath) ? map.mappath.substring(mapsPath.length() + 1, map.mappath.length()) : map.mappath;
+				String filepath = map.path.startsWith(mapsPath) ? map.path.substring(mapsPath.length() + 1, map.path.length()) : map.path;
 				path.setText(filepath);
 			}
 			else

@@ -28,6 +28,7 @@ import android.view.MotionEvent;
 
 import com.androzic.MapView;
 import com.androzic.data.Waypoint;
+import com.androzic.ui.Viewport;
 
 public class WaypointsOverlay extends MapObjectsOverlay
 {
@@ -64,12 +65,12 @@ public class WaypointsOverlay extends MapObjectsOverlay
 	}
 
 	@Override
-	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBuffer(final Viewport viewport, final Canvas c)
 	{
 	}
 
 	@Override
-	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBufferEx(final Viewport viewport, final Canvas c)
 	{
 		final int[] cxy = viewport.mapCenterXY;
 

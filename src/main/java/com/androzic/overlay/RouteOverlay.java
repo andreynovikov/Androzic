@@ -42,6 +42,7 @@ import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
+import com.androzic.ui.Viewport;
 
 public class RouteOverlay extends MapOverlay
 {
@@ -202,7 +203,7 @@ public class RouteOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBuffer(final Viewport viewport, final Canvas c)
 	{
 		if (!route.show)
 			return;
@@ -241,7 +242,7 @@ public class RouteOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBufferEx(final Viewport viewport, final Canvas c)
 	{
 		if (!route.show)
 			return;

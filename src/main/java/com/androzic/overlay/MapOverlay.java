@@ -28,6 +28,7 @@ import android.view.MotionEvent;
 
 import com.androzic.Androzic;
 import com.androzic.MapView;
+import com.androzic.ui.Viewport;
 
 public abstract class MapOverlay
 {
@@ -46,9 +47,9 @@ public abstract class MapOverlay
 	 */
 	public abstract void onPreferencesChanged(final SharedPreferences settings);
 	
-	public abstract void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c);
+	public abstract void onPrepareBuffer(final Viewport viewport, final Canvas c);
 		
-	public abstract void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c);
+	public abstract void onPrepareBufferEx(final Viewport viewport, final Canvas c);
 	
 	public void onBeforeDestroy()
 	{

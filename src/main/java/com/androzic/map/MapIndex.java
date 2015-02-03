@@ -43,9 +43,9 @@ public class MapIndex implements Serializable
 	private static final long serialVersionUID = 7L;
 	
 	private HashSet<Integer>[][] maps;
-	private HashMap<Integer,Map> mapIndex;
+	private HashMap<Integer,BaseMap> mapIndex;
 	private int hashCode;
-	private transient Comparator<Map> comparator = new MapComparator();
+	private transient Comparator<BaseMap> comparator = new MapComparator();
 
 	@SuppressWarnings("unused")
 	MapIndex()
@@ -64,7 +64,7 @@ public class MapIndex implements Serializable
 		{
 			try
 			{
-				Map map = MapLoader.load(file, charset);
+				BaseMap map = MapLoader.load(file, charset);
 				addMap(map);
 			}
 			catch (IOException e)
@@ -99,7 +99,7 @@ public class MapIndex implements Serializable
 		return hashCode;
 	}
 
-	public void addMap(Map map)
+	public void addMap(BaseMap map)
 	{
 		if (mapIndex.containsKey(map.id))
 			return;
@@ -139,7 +139,7 @@ public class MapIndex implements Serializable
 		}
 	}
 
-	public void removeMap(Map map)
+	public void removeMap(BaseMap map)
 	{
 		mapIndex.remove(map.id);
 		if (map.loadError != null)
@@ -161,10 +161,10 @@ public class MapIndex implements Serializable
 		}
 	}
 
-	public List<Map> getCoveringMaps(Map refMap, Bounds area, boolean covered, boolean bestmap)
+	public List<BaseMap> getCoveringMaps(BaseMap refMap, Bounds area, boolean covered, boolean bestmap)
 	{
-		List<Map> llmaps = new ArrayList<>();
-		Set<Map> llmapsidx = new HashSet<>();
+		List<BaseMap> llmaps = new ArrayList<>();
+		Set<BaseMap> llmapsidx = new HashSet<>();
 
 		int minLat = (int) Math.floor(area.minLat);
 		int maxLat = (int) Math.ceil(area.maxLat);
@@ -182,7 +182,7 @@ public class MapIndex implements Serializable
 					{
 						for (Integer id : lli)
 						{
-							Map map = mapIndex.get(id);
+							BaseMap map = mapIndex.get(id);
 							if (llmapsidx.contains(map))
 								continue;
 							if (map.mpp > 200 || map.equals(refMap))
@@ -210,9 +210,9 @@ public class MapIndex implements Serializable
 		return llmaps;		
 	}
 
-	public List<Map> getMaps(double latitude, double longitude)
+	public List<BaseMap> getMaps(double latitude, double longitude)
 	{
-		List<Map> llmaps = new ArrayList<>();
+		List<BaseMap> llmaps = new ArrayList<>();
 		
 		int minLat = (int) Math.floor(latitude);
 		int maxLat = (int) Math.ceil(latitude);
@@ -228,7 +228,7 @@ public class MapIndex implements Serializable
 				{
 					for (Integer id : lli)
 					{
-						Map map = mapIndex.get(id);
+						BaseMap map = mapIndex.get(id);
 						if (!llmaps.contains(map) && map.coversLatLon(latitude, longitude))
 						{
 							llmaps.add(map);
@@ -243,35 +243,35 @@ public class MapIndex implements Serializable
 		return llmaps;		
 	}
 
-	public Collection<Map> getMaps()
+	public Collection<BaseMap> getMaps()
 	{
 		return mapIndex.values();
 	}
 
 	public void cleanBadMaps()
 	{
-		HashSet<Map> badMaps = new HashSet<>();
+		HashSet<BaseMap> badMaps = new HashSet<>();
 		
 		for (Integer id : mapIndex.keySet())
 		{
-			Map map = mapIndex.get(id);
+			BaseMap map = mapIndex.get(id);
 			if (map.loadError != null)
 			{
 				badMaps.add(map);
 			}
 		}
-		for (Map map : badMaps)
+		for (BaseMap map : badMaps)
 		{
 			removeMap(map);
 		}		
 	}
 	
-	private class MapComparator implements Comparator<Map>, Serializable
+	private class MapComparator implements Comparator<BaseMap>, Serializable
     {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-        public int compare(Map o1, Map o2)
+        public int compare(BaseMap o1, BaseMap o2)
         {
         	return Double.compare(o1.mpp, o2.mpp);
         }

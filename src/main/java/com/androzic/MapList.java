@@ -54,22 +54,21 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.androzic.map.Map;
+import com.androzic.map.BaseMap;
 import com.androzic.map.OnMapActionListener;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.sas.SASMap;
 
 public class MapList extends ListFragment
 {
-	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
 	private final Handler handler = new Handler();
 
 	private OnMapActionListener mapActionsCallback;
 	private MapListAdapter adapter;
-	private TreeNode<Map> mapsTree = new TreeNode<Map>();
+	private TreeNode<BaseMap> mapsTree = new TreeNode<>();
 	private MapComparator mapComparator = new MapComparator();
 	private boolean populated;
-	private TreeNode<Map> currentTree;
+	private TreeNode<BaseMap> currentTree;
 	private ProgressBar progressBar;
 	private int shortAnimationDuration;
 	
@@ -214,36 +213,36 @@ public class MapList extends ListFragment
 			{
 				populated = true;
 				Androzic application = Androzic.getApplication();
-				TreeNode<Map> onlinemaps = null;
-				TreeNode<Map> sasmaps = null;
+				TreeNode<BaseMap> onlinemaps = null;
+				TreeNode<BaseMap> sasmaps = null;
 				String mappath = application.getMapPath();
 	   	        
-				for (Map map : application.getMaps())
+				for (BaseMap map : application.getMaps())
 				{
 					if (map instanceof OnlineMap)
 					{
 						if (onlinemaps == null)
 							onlinemaps = mapsTree.addChild(getResources().getString(R.string.online_maps));
-						onlinemaps.addChild(map.mappath, map);
+						onlinemaps.addChild(map.path, map);
 					}
 					else if (map instanceof SASMap)
 					{
 						if (sasmaps == null)
 							sasmaps = mapsTree.addChild(getResources().getString(R.string.sas_maps));
-						sasmaps.addChild(map.mappath, map);
+						sasmaps.addChild(map.path, map);
 					}
 					else
 					{
-						String fn = new String(map.mappath);
+						String fn = map.path;
 						if (fn.startsWith(mappath))
 						{
 							fn = fn.substring(mappath.length() + 1);
 						}
 						String[] components = fn.split(File.separator);
-						TreeNode<Map> folder = mapsTree;
+						TreeNode<BaseMap> folder = mapsTree;
 						for (int i = 0; i < components.length - 1; i++)
 						{
-							TreeNode<Map> subfolder = folder.findChild(components[i]);
+							TreeNode<BaseMap> subfolder = folder.findChild(components[i]);
 							if (subfolder == null)
 								subfolder = folder.addChild(components[i]);
 							folder = subfolder;
@@ -280,7 +279,7 @@ public class MapList extends ListFragment
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) 
 	{
-		TreeNode<Map> item = currentTree.children.get(position);
+		TreeNode<BaseMap> item = currentTree.children.get(position);
 		if (item.data != null)
 		{
 			mapActionsCallback.onMapSelected(item.data);
@@ -350,7 +349,7 @@ public class MapList extends ListFragment
 		@Override
 		public int getItemViewType(int position)
 		{
-			TreeNode<Map> item = getItem(position);
+			TreeNode<BaseMap> item = getItem(position);
 			if (item.data != null)
 			{
 				return VIEW_TYPE_MAP;
@@ -362,7 +361,7 @@ public class MapList extends ListFragment
 		}
 
 		@Override
-		public TreeNode<Map> getItem(int position)
+		public TreeNode<BaseMap> getItem(int position)
 		{
 			return currentTree.children.get(position);
 		}
@@ -383,7 +382,7 @@ public class MapList extends ListFragment
 		public View getView(int position, View convertView, ViewGroup parent)
 		{
 			MapListItemHolder itemHolder;
-			TreeNode<Map> item = getItem(position);
+			TreeNode<BaseMap> item = getItem(position);
 
 			int type = getItemViewType(position);
 			if (convertView == null)
@@ -509,10 +508,10 @@ public class MapList extends ListFragment
 		}
 	}
 
-	class MapComparator implements Comparator<TreeNode<Map>>
+	class MapComparator implements Comparator<TreeNode<BaseMap>>
 	{
 		@Override
-		public int compare(TreeNode<Map> a, TreeNode<Map> b)
+		public int compare(TreeNode<BaseMap> a, TreeNode<BaseMap> b)
 		{
 			if (a.data != null && b.data != null)
 				return a.data.title.compareToIgnoreCase(b.data.title);

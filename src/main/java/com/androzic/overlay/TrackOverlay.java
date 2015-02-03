@@ -29,9 +29,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.preference.PreferenceManager;
 
-import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Track;
+import com.androzic.ui.Viewport;
 
 public class TrackOverlay extends MapOverlay
 {
@@ -128,7 +128,7 @@ public class TrackOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBuffer(final Viewport viewport, final Canvas c)
 	{
 		if (!track.show)
 			return;
@@ -212,7 +212,7 @@ public class TrackOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBufferEx(final Viewport viewport, final Canvas c)
 	{
 	}
 

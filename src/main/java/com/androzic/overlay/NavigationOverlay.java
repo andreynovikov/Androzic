@@ -28,10 +28,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.preference.PreferenceManager;
 
-import com.androzic.MapView;
 import com.androzic.R;
 import com.androzic.data.Waypoint;
-import com.androzic.map.Map;
+import com.androzic.map.BaseMap;
+import com.androzic.ui.Viewport;
 
 public class NavigationOverlay extends MapOverlay
 {
@@ -61,7 +61,7 @@ public class NavigationOverlay extends MapOverlay
 	public synchronized void onMapChanged()
 	{
 		mpp = 0;
-    	Map map = application.getCurrentMap();
+    	BaseMap map = application.getCurrentMap();
     	if (map == null)
     		return;
     	
@@ -69,7 +69,7 @@ public class NavigationOverlay extends MapOverlay
 	}
 	
 	@Override
-	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBuffer(final Viewport viewport, final Canvas c)
 	{
 		if (application.navigationService.navWaypoint == null)
 			return;
@@ -103,7 +103,7 @@ public class NavigationOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBufferEx(final Viewport viewport, final Canvas c)
 	{
 	}
 

@@ -11,8 +11,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.androzic.Androzic;
-import com.androzic.MapView;
-import com.androzic.map.Map;
+import com.androzic.map.BaseMap;
+import com.androzic.ui.Viewport;
 
 public class HillShadeOverlay extends MapOverlay
 {
@@ -92,13 +92,13 @@ public class HillShadeOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBuffer(final Viewport viewport, final Canvas c)
 	{
 		Androzic application = Androzic.getApplication();
 		final int[] cxy = viewport.mapCenterXY;
 		cxy[0] -= viewport.width / 2;
 		cxy[1] -= viewport.height / 2;
-    	Map map = application.getCurrentMap();
+    	BaseMap map = application.getCurrentMap();
 		int w = viewport.width;
 		int h = viewport.height;
     	double[] cll = new double[2];
@@ -113,7 +113,7 @@ public class HillShadeOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBufferEx(final Viewport viewport, final Canvas c)
 	{
 	}
 

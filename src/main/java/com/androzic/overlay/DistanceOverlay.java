@@ -29,8 +29,8 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 
-import com.androzic.MapView;
 import com.androzic.R;
+import com.androzic.ui.Viewport;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 
@@ -86,11 +86,6 @@ public class DistanceOverlay extends MapOverlay
         ancorXY = application.getXYbyLatLon(this.ancor[0], this.ancor[1]);
     }
 
-	public double[] getAncor()
-	{
-		return ancor;
-	}
-
 	@Override
 	public void onMapChanged()
 	{
@@ -101,7 +96,7 @@ public class DistanceOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBuffer(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBuffer(final Viewport viewport, final Canvas c)
 	{
 		if (ancor == null)
 			return;
@@ -131,7 +126,7 @@ public class DistanceOverlay extends MapOverlay
 	}
 
 	@Override
-	public void onPrepareBufferEx(final MapView.Viewport viewport, final Canvas c)
+	public void onPrepareBufferEx(final Viewport viewport, final Canvas c)
 	{
 		if (ancor == null)
 			return;

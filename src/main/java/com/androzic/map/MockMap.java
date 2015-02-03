@@ -23,9 +23,13 @@ package com.androzic.map;
 import android.graphics.Canvas;
 import android.util.DisplayMetrics;
 
-public class MockMap extends Map
+import com.androzic.ui.Viewport;
+
+import java.util.List;
+
+public class MockMap extends BaseMap
 {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	
 	private static MockMap currentMap;
 
@@ -43,7 +47,7 @@ public class MockMap extends Map
 	}
 
 	@Override
-	public void activate(DisplayMetrics metrics, double zoom)
+	public void activate(OnMapTileStateChangeListener listener, DisplayMetrics metrics, double zoom)
 	{
 	}
 
@@ -64,9 +68,32 @@ public class MockMap extends Map
 	}
 
 	@Override
-	public boolean drawMap(double[] loc, int[] lookAhead, int width, int height, boolean cropBorder, boolean drawBorder, Canvas c) throws OutOfMemoryError
+	public int getScaledWidth()
+	{
+		return (int) (50000 * zoom);
+	}
+
+	@Override
+	public int getScaledHeight()
+	{
+		return (int) (50000 * zoom);
+	}
+
+	@Override
+	public boolean drawMap(Viewport viewport, boolean cropBorder, boolean drawBorder, Canvas c) throws OutOfMemoryError
 	{
 		return false;
+	}
+
+	@Override
+	public void recalculateCache()
+	{
+	}
+
+	@Override
+	public List<String> info()
+	{
+		return null;
 	}
 
 	@Override
@@ -85,6 +112,19 @@ public class MockMap extends Map
 		xy[1] = (int) ((lat - this.lat) * 50000 * zoom);
 		xy[0] = (int) ((lon - this.lon) * 50000 * zoom);
 		return true;
+	}
+
+	@Override
+	public void getMapCenter(double[] center)
+	{
+		center[0] = lat;
+		center[1] = lon;
+	}
+
+	@Override
+	public double getMPP()
+	{
+		return 0;
 	}
 
 	@Override
@@ -117,7 +157,7 @@ public class MockMap extends Map
 		if (zoom < 0.001) zoom = 0.001;
 	}
 
-	public static Map getMap(double lat, double lon)
+	public static BaseMap getMap(double lat, double lon)
 	{
 		int ilat = (int) (90 - lat);
 		int ilon = (int) (180 + lon);

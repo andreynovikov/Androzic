@@ -24,11 +24,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Hashtable;
 
 import android.util.Log;
 
+import com.androzic.map.forge.ForgeMap;
 import com.androzic.util.CSV;
 import com.androzic.util.OziExplorerFiles;
 import com.jhlabs.Point2D;
@@ -77,13 +80,26 @@ public class MapLoader
 												Ellipsoid.HAYFORD
 	                                        };
 
-	public static Map load(File file, String charset) throws IOException
+	public static BaseMap load(File file, String charset) throws IOException
 	{
 		if (projections == null)
 		{
             initialize();
         }
-		
+
+		byte[] buffer = new byte[20];
+		InputStream is = new FileInputStream(file);
+		if (is.read(buffer) != buffer.length) {
+			throw new IOException("Unknown map file format");
+		}
+		is.close();
+		Log.e("IDX", "Magic: " + new String(buffer));
+		if (Arrays.equals(ForgeMap.MAGIC, buffer))
+		{
+			ForgeMap forgeMap = new ForgeMap(file.getCanonicalPath());
+			return forgeMap;
+		}
+
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
 	    
 	    Map map = new Map(file.getCanonicalPath());
@@ -94,7 +110,7 @@ public class MapLoader
 		    if (line == null || ! line.startsWith("OziExplorer Map Data File"))
 		    {
 		    	reader.close();
-				throw new IllegalArgumentException("Bad map header: " + map.mappath);
+				throw new IllegalArgumentException("Bad map header: " + map.path);
 		    }
 		    line = reader.readLine();
 		    map.title = line;
@@ -153,7 +169,7 @@ public class MapLoader
 					{
 				    	reader.close();
 						e.printStackTrace();
-						throw new IllegalArgumentException("Bad XY corner marker: " + map.mappath);
+						throw new IllegalArgumentException("Bad XY corner marker: " + map.path);
 					}
 				}
 				if ("MMPLL".equals(fields[0]))
@@ -170,7 +186,7 @@ public class MapLoader
 					{
 				    	reader.close();
 						e.printStackTrace();
-						throw new IllegalArgumentException("Bad LL corner marker: " + map.mappath);
+						throw new IllegalArgumentException("Bad LL corner marker: " + map.path);
 					}
 				}
 				if ("MM1B".equals(fields[0]))

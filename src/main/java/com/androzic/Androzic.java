@@ -92,6 +92,7 @@ import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
 import com.androzic.map.Grid;
+import com.androzic.map.BaseMap;
 import com.androzic.map.Map;
 import com.androzic.map.MapIndex;
 import com.androzic.map.MapPoint;
@@ -109,6 +110,7 @@ import com.androzic.overlay.OverlayManager;
 import com.androzic.overlay.RouteOverlay;
 import com.androzic.overlay.TrackOverlay;
 import com.androzic.ui.TooltipManager;
+import com.androzic.ui.Viewport;
 import com.androzic.util.Astro.Zenith;
 import com.androzic.util.CSV;
 import com.androzic.util.CoordinateParser;
@@ -122,6 +124,8 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.jhlabs.map.proj.Projection;
 import com.jhlabs.map.proj.ProjectionException;
+
+import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 public class Androzic extends BaseApplication implements OnSharedPreferenceChangeListener
 {
@@ -140,9 +144,9 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 	private List<TileProvider> onlineMaps;
 	private MapIndex maps;
-	private List<Map> suitableMaps;
-	private List<Map> coveringMaps;
-	private Map currentMap;
+	private List<BaseMap> suitableMaps;
+	private List<BaseMap> coveringMaps;
+	private BaseMap currentMap;
 	/**
 	 * Indicates whether current map covers all screen or not
 	 */
@@ -241,7 +245,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(displayMetrics, 1.);
+				currentMap.activate(mapHolder, displayMetrics, 1.);
 			}
 			catch (final Throwable e)
 			{
@@ -259,8 +263,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 		}
 
-		if (currentMap != null)
-			overlayManager.initGrids(currentMap);
+		if (currentMap != null && currentMap instanceof Map)
+			overlayManager.initGrids((Map) currentMap);
 	}
 	
 	public java.util.Map<String, Intent> getPluginsPreferences()
@@ -1061,7 +1065,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		if (covers && !findbest)
 			return false;
 
-		Map newMap = null;
+		BaseMap newMap = null;
 		if (suitableMaps.size() > 0)
 		{
 			newMap = suitableMaps.get(0);
@@ -1219,17 +1223,17 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return null;
 	}
 
-	public Map getCurrentMap()
+	public BaseMap getCurrentMap()
 	{
 		return currentMap;
 	}
 	
-	public Collection<Map> getMaps()
+	public Collection<BaseMap> getMaps()
 	{
 		return maps.getMaps();
 	}
 			
-	public List<Map> getMaps(double[] loc)
+	public List<BaseMap> getMaps(double[] loc)
 	{
 		return maps.getMaps(loc[0], loc[1]);
 	}
@@ -1296,8 +1300,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		if (currentMap != null && currentMap.id == id)
 			return false;
 		
-		Map newMap = null;
-		for (Map map : suitableMaps)
+		BaseMap newMap = null;
+		for (BaseMap map : suitableMaps)
 		{
 			if (map.id == id)
 			{
@@ -1310,8 +1314,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	
 	public boolean loadMap(int id)
 	{
-		Map newMap = null;
-		for (Map map : maps.getMaps())
+		BaseMap newMap = null;
+		for (BaseMap map : maps.getMaps())
 		{
 			if (map.id == id)
 			{
@@ -1322,7 +1326,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return loadMap(newMap);
 	}
 
-	public boolean loadMap(Map newMap)
+	public boolean loadMap(BaseMap newMap)
 	{
 		boolean newmap = setMap(newMap);
 		if (currentMap != null)
@@ -1334,7 +1338,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return newmap;
 	}
 
-	synchronized boolean setMap(final Map newMap)
+	synchronized boolean setMap(final BaseMap newMap)
 	{
 		// TODO should override equals()?
 		if (newMap != null && ! newMap.equals(currentMap))
@@ -1344,7 +1348,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				try
 				{
-					newMap.activate(displayMetrics, 1.);
+					newMap.activate(mapHolder, displayMetrics, 1.);
 				}
 				catch (final Throwable e)
 				{
@@ -1359,7 +1363,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 			invalidCoveringMaps = true;
 			currentMap = newMap;
-			overlayManager.initGrids(currentMap);
+			if (currentMap instanceof Map)
+				overlayManager.initGrids((Map) currentMap);
 			return true;
 		}
 		return false;
@@ -1424,24 +1429,24 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				currentMap.getLatLonByXY(xy[0] + (int) coveringScreen.right, xy[1] + (int) coveringScreen.bottom, ll);
 				area.minLat = ll[0];
 				area.maxLon = ll[1];
-				List<Map> cmr = new ArrayList<>();
+				List<BaseMap> cmr = new ArrayList<>();
 				if (coveringMaps != null)
 					cmr.addAll(coveringMaps);
-				List<Map> cma = maps.getCoveringMaps(currentMap, area, coveredAll, coveringBestMap);
-				Iterator<Map> icma = cma.iterator();
+				List<BaseMap> cma = maps.getCoveringMaps(currentMap, area, coveredAll, coveringBestMap);
+				Iterator<BaseMap> icma = cma.iterator();
 				while (icma.hasNext())
 				{
-					Map map = icma.next();
+					BaseMap map = icma.next();
 					try
 					{
 						double zoom = map.getAbsoluteMPP() / currentMap.getAbsoluteMPP() * currentMap.getZoom();
 						if (!map.activated())
-							map.activate(displayMetrics, zoom);
+							map.activate(mapHolder, displayMetrics, zoom);
 						else if (zoom != map.getZoom())
 							map.setTemporaryZoom(zoom);
 						cmr.remove(map);
 					}
-					catch (Exception e)
+					catch (Throwable e)
 					{
 						icma.remove();
 						e.printStackTrace();
@@ -1449,7 +1454,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				}
 				synchronized (Androzic.this)
 				{
-					for (Map map : cmr)
+					for (BaseMap map : cmr)
 					{
 						if (map != currentMap)
 							map.deactivate();
@@ -1465,9 +1470,9 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		mapsHandler.sendMessage(m);
 	}
 	
-	public void drawMap(MapView.Viewport viewport, boolean bestmap, Canvas c)
+	public void drawMap(Viewport viewport, boolean bestmap, Canvas c)
 	{
-		Map cm = currentMap;
+		BaseMap cm = currentMap;
 		
 		if (cm != null)
 		{
@@ -1496,23 +1501,23 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				if (coveringMaps != null && !coveringMaps.isEmpty())
 				{
 					boolean drawn = false;
-					for (Map map : coveringMaps)
+					for (BaseMap map : coveringMaps)
 					{
 						if (! drawn && coveringBestMap && map.getMPP() < cm.getMPP())
 						{
-							coveredAll = cm.drawMap(viewport.mapCenter, viewport.lookAheadXY, viewport.width, viewport.height, cropMapBorder, drawMapBorder, c);
+							coveredAll = cm.drawMap(viewport, cropMapBorder, drawMapBorder, c);
 							drawn = true;
 						}
-						map.drawMap(viewport.mapCenter, viewport.lookAheadXY, viewport.width, viewport.height, cropMapBorder, drawMapBorder, c);
+						map.drawMap(viewport, cropMapBorder, drawMapBorder, c);
 					}
 					if (! drawn)
 					{
-						coveredAll = cm.drawMap(viewport.mapCenter, viewport.lookAheadXY, viewport.width, viewport.height, cropMapBorder, drawMapBorder, c);
+						coveredAll = cm.drawMap(viewport, cropMapBorder, drawMapBorder, c);
 					}
 				}
 				else
 				{
-					coveredAll = cm.drawMap(viewport.mapCenter, viewport.lookAheadXY, viewport.width, viewport.height, cropMapBorder, drawMapBorder, c);
+					coveredAll = cm.drawMap(viewport, cropMapBorder, drawMapBorder, c);
 				}
 			}
 			catch (OutOfMemoryError err)
@@ -1929,6 +1934,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 	public void initializeMaps()
 	{
+		AndroidGraphicFactory.createInstance(this);
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean useIndex = settings.getBoolean(getString(R.string.pref_usemapindex), getResources().getBoolean(R.bool.def_usemapindex));
 		maps = null;
@@ -1969,11 +1975,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			maps = new MapIndex(mapPath, charset);
 			StringBuilder sb = new StringBuilder();
-			for (Map mp : maps.getMaps())
+			for (BaseMap mp : maps.getMaps())
 			{
 				if (mp.loadError != null)
 				{
-					String fn = new String(mp.mappath);
+					String fn = new String(mp.path);
 					if (fn.startsWith(mapPath))
 					{
 						fn = fn.substring(mapPath.length() + 1);
@@ -2080,7 +2086,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 		}
 		setOnlineMaps(settings.getString(getString(R.string.pref_onlinemap), getResources().getString(R.string.def_onlinemap)));
-		suitableMaps = new ArrayList<Map>();
+		suitableMaps = new ArrayList<BaseMap>();
 		coveredAll = false;
 		coveringBestMap = true;
 		mapsInited = true;
@@ -2469,21 +2475,25 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		else if (getString(R.string.pref_grid_mapshow).equals(key))
 		{
 			overlayManager.mapGrid = sharedPreferences.getBoolean(key, false);
-			overlayManager.initGrids(currentMap);
+			if (currentMap instanceof Map)
+				overlayManager.initGrids((Map) currentMap);
 		}
 		else if (getString(R.string.pref_grid_usershow).equals(key))
 		{
 			overlayManager.userGrid = sharedPreferences.getBoolean(key, false);
-			overlayManager.initGrids(currentMap);
+			if (currentMap instanceof Map)
+				overlayManager.initGrids((Map) currentMap);
 		}
 		else if (getString(R.string.pref_grid_preference).equals(key))
 		{
 			overlayManager.gridPrefer = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			overlayManager.initGrids(currentMap);
+			if (currentMap instanceof Map)
+				overlayManager.initGrids((Map) currentMap);
 		}
 		else if (getString(R.string.pref_grid_userscale).equals(key) || getString(R.string.pref_grid_userunit).equals(key) || getString(R.string.pref_grid_usermpp).equals(key))
 		{
-			overlayManager.initGrids(currentMap);
+			if (currentMap instanceof Map)
+				overlayManager.initGrids((Map) currentMap);
 		}
 		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
 		{
@@ -2497,12 +2507,9 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			int factor = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_onlinemapprescalefactor));
 			OnlineMap.setPrescaleFactor(factor);
+			// Hack to recalculate cache and mpp
 			if (currentMap != null && currentMap instanceof OnlineMap)
-			{
-				currentMap.recalculateCache();
-				// Hack to recalculate mpp
 				currentMap.setZoom(currentMap.getZoom());
-			}
 		}
 		else if (getString(R.string.pref_onlinemapexpiration).equals(key))
 		{
@@ -2730,10 +2737,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 	private class MapActivationError implements Runnable
 	{
-		private Map map;
+		private BaseMap map;
 		private Throwable e;
 
-		MapActivationError(Map map, Throwable e)
+		MapActivationError(BaseMap map, Throwable e)
 		{
 			this.map = map;
 			this.e = e;
@@ -2742,7 +2749,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		@Override
 		public void run()
 		{
-			Toast.makeText(Androzic.this, map.imagePath + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+			Toast.makeText(Androzic.this, map.path + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 	}
 }
