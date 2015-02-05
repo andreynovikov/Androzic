@@ -49,7 +49,6 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -59,7 +58,6 @@ import android.widget.Toast;
 
 import com.androzic.data.Bounds;
 import com.androzic.map.BaseMap;
-import com.androzic.map.Map;
 import com.androzic.overlay.MapOverlay;
 import com.androzic.overlay.OverlayManager;
 import com.androzic.ui.Viewport;
@@ -283,7 +281,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
-		Log.i(TAG, "surfaceChanged(" + width + "," + height + ")");
+		Log.d(TAG, "surfaceChanged(" + width + "," + height + ")");
 		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
 		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
 		calculateViewportBounds();
@@ -296,7 +294,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		Log.i(TAG, "surfaceCreated(" + holder + ")");
+		Log.d(TAG, "surfaceCreated(" + holder + ")");
 		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
 		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
 		calculateViewportBounds();
@@ -316,7 +314,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
-		Log.i(TAG, "surfaceDestroyed(" + holder + ")");
+		Log.d(TAG, "surfaceDestroyed(" + holder + ")");
 		boolean retry = true;
 		drawingThread.setRunning(false);
 		while (retry)
@@ -636,7 +634,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private void refreshBufferInternal()
 	{
-		Log.i(TAG, "refreshBufferInternal("+currentViewport.width+","+currentViewport.height+")");
+		Log.d(TAG, "refreshBufferInternal("+currentViewport.width+","+currentViewport.height+")");
 
 		if (currentViewport.width == 0 || currentViewport.height == 0)
 			return;
@@ -745,7 +743,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	public void updateMapInfo()
 	{
-		Log.i(TAG, "updateMapInfo()");
+		Log.d(TAG, "updateMapInfo()");
 		scale = 1;
 		BaseMap map = application.getCurrentMap();
 		if (map == null)
@@ -1145,7 +1143,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	public void updateViewArea(Rect area)
 	{
-		Log.e(TAG, "updateViewArea()");
+		Log.d(TAG, "updateViewArea()");
 		currentViewport.viewArea.set(area);
 		setLookAhead(lookAheadPst);
 	}
@@ -1562,7 +1560,6 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		if (obj == null)
 		{
 			pinch = 0;
-			Log.e(TAG, "Scale: " + scale);
 			try
 			{
 				mapHolder.zoomMap(scale);
