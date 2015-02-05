@@ -126,8 +126,14 @@ import com.jhlabs.map.proj.Projection;
 import com.jhlabs.map.proj.ProjectionException;
 
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
+import org.mapsforge.map.android.rendertheme.BufferedAssetsRenderTheme;
+import org.mapsforge.map.rendertheme.InternalRenderTheme;
+import org.mapsforge.map.rendertheme.XmlRenderTheme;
+import org.mapsforge.map.rendertheme.XmlRenderThemeMenuCallback;
+import org.mapsforge.map.rendertheme.XmlRenderThemeStyleLayer;
+import org.mapsforge.map.rendertheme.XmlRenderThemeStyleMenu;
 
-public class Androzic extends BaseApplication implements OnSharedPreferenceChangeListener
+public class Androzic extends BaseApplication implements OnSharedPreferenceChangeListener, XmlRenderThemeMenuCallback
 {
 	private static final String TAG = "Androzic";
 
@@ -194,7 +200,9 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	// Plugins
 	private AbstractMap<String, Intent> pluginPreferences = new HashMap<>();
 	private AbstractMap<String, Pair<Drawable, Intent>> pluginViews = new HashMap<String, Pair<Drawable, Intent>>();
-	
+
+	public XmlRenderTheme xmlRenderTheme;
+
 	private boolean memmsg = false;
 	
 	private Locale locale = null;
@@ -1418,7 +1426,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			@Override
 			public void run()
 			{
-				Log.i(TAG, "updateCoveringMaps()");
+				Log.d(TAG, "updateCoveringMaps()");
 				Bounds area = new Bounds();
 				int[] xy = new int[2];
 				double[] ll = new double[2];
@@ -1437,6 +1445,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				while (icma.hasNext())
 				{
 					BaseMap map = icma.next();
+					Log.i(TAG, "-> " + map.title);
 					try
 					{
 						double zoom = map.getAbsoluteMPP() / currentMap.getAbsoluteMPP() * currentMap.getZoom();
@@ -1935,6 +1944,16 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public void initializeMaps()
 	{
 		AndroidGraphicFactory.createInstance(this);
+		try
+		{
+			xmlRenderTheme = new BufferedAssetsRenderTheme(this, "", "renderthemes/rendertheme-v4.xml", this);
+			this.getFilesDir();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			xmlRenderTheme = InternalRenderTheme.OSMARENDER;
+		}
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean useIndex = settings.getBoolean(getString(R.string.pref_usemapindex), getResources().getBoolean(R.bool.def_usemapindex));
 		maps = null;
@@ -2733,6 +2752,29 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		mapsInited = false;
 		memmsg = false;
 		cacheDir = null;
+	}
+
+	@Override
+	public Set<String> getCategories(XmlRenderThemeStyleMenu menuStyle)
+	{
+		String id = "topo"; // simple, standard
+
+		XmlRenderThemeStyleLayer baseLayer = menuStyle.getLayer(id);
+		if (baseLayer == null)
+		{
+			Log.e(TAG, "Invalid forgemap style " + id);
+			return null;
+		}
+		Set<String> result = baseLayer.getCategories();
+
+		// add the categories from overlays that are enabled
+		for (XmlRenderThemeStyleLayer overlay : baseLayer.getOverlays())
+		{
+			//if (this.sharedPreferences.getBoolean(overlay.getId(), overlay.isEnabled()))
+			result.addAll(overlay.getCategories());
+		}
+
+		return result;
 	}
 
 	private class MapActivationError implements Runnable

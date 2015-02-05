@@ -24,19 +24,21 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Path;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
+import com.androzic.Androzic;
 import com.androzic.BaseApplication;
 import com.androzic.map.OnMapTileStateChangeListener;
 import com.androzic.map.TileMap;
 import com.androzic.ui.Viewport;
 
-import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.model.Point;
 import org.mapsforge.core.model.Tile;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
-import org.mapsforge.map.layer.Layer;
+import org.mapsforge.map.layer.ForgeLayer;
 import org.mapsforge.map.layer.Redrawer;
 import org.mapsforge.map.layer.TilePosition;
 import org.mapsforge.map.layer.cache.FileSystemTileCache;
@@ -46,14 +48,14 @@ import org.mapsforge.map.layer.cache.TwoLevelTileCache;
 import org.mapsforge.map.layer.queue.Job;
 import org.mapsforge.map.layer.queue.JobQueue;
 import org.mapsforge.map.layer.renderer.DatabaseRenderer;
-import org.mapsforge.map.layer.renderer.DestroyThread;
+import org.mapsforge.map.layer.renderer.DestroyThreadHelper;
 import org.mapsforge.map.layer.renderer.MapWorker;
 import org.mapsforge.map.layer.renderer.RendererJob;
 import org.mapsforge.map.model.DisplayModel;
 import org.mapsforge.map.model.MapViewPosition;
 import org.mapsforge.map.reader.MapDatabase;
 import org.mapsforge.map.reader.header.MapFileInfo;
-import org.mapsforge.map.rendertheme.InternalRenderTheme;
+import org.mapsforge.map.rendertheme.XmlRenderTheme;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,18 +70,23 @@ public class ForgeMap extends TileMap implements Redrawer
 	@SuppressWarnings("SpellCheckingInspection")
 	public static final byte[] MAGIC = "mapsforge binary OSM".getBytes();
 
-	private float textScale = 1f;
+	private float textScale = 0.75f;
 
 	private MapDatabase mapDatabase;
+	private MapFileInfo mapInfo;
 	private LatLong mapCenter;
 
 	private transient File mapFile;
+	private transient XmlRenderTheme xmlRenderTheme;
 	private transient DatabaseRenderer databaseRenderer;
 	private transient MapWorker mapWorker;
 	private transient JobQueue<RendererJob> jobQueue;
 	private transient TileCache tileCache;
 	private transient MapViewPosition mapViewPosition;
 	private transient final DisplayModel displayModel = new DisplayModel();
+
+	private transient int[] minCR = new int[2];
+	private transient int[] maxCR = new int[2];
 
 	public ForgeMap(String path)
 	{
@@ -88,7 +95,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		mapFile = new File(path);
 		mapDatabase = new MapDatabase();
 		mapDatabase.openFile(mapFile);
-		MapFileInfo mapInfo = mapDatabase.getMapFileInfo();
+		mapInfo = mapDatabase.getMapFileInfo();
 		mapDatabase.closeFile();
 		mapViewPosition = new MapViewPosition(displayModel);
 
@@ -103,9 +110,9 @@ public class ForgeMap extends TileMap implements Redrawer
 		nameSb.setCharAt(0, Character.toUpperCase(nameSb.charAt(0)));
 		name = nameSb.toString();
 
-		initializeZooms((byte) 0, (byte) 24, mapInfo.startZoomLevel);
+		initializeZooms((byte) 0, (byte) 22, mapInfo.startZoomLevel);
 		mapViewPosition.setZoomLevelMin((byte) 0);
-		mapViewPosition.setZoomLevelMax((byte) 24);
+		mapViewPosition.setZoomLevelMax((byte) 22);
 
 		setCornersAmount(4);
 		cornerMarkers[0].lat = mapInfo.boundingBox.maxLatitude;
@@ -133,10 +140,15 @@ public class ForgeMap extends TileMap implements Redrawer
 	@Override
 	public synchronized void activate(OnMapTileStateChangeListener listener, DisplayMetrics metrics, double zoom) throws Throwable
 	{
+		Log.e("FM", "activate " + name);
+		if (xmlRenderTheme == null)
+		{
+			Androzic application = Androzic.getApplication();
+			xmlRenderTheme = application.xmlRenderTheme;
+		}
 		mapDatabase.openFile(mapFile);
 		tileCache = getCache();
 		databaseRenderer = new DatabaseRenderer(mapDatabase, AndroidGraphicFactory.INSTANCE, tileCache);
-
 		jobQueue = new JobQueue<>(mapViewPosition, displayModel);
 		ForgeLayer layer = new ForgeLayer(this);
 		mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, layer);
@@ -148,14 +160,15 @@ public class ForgeMap extends TileMap implements Redrawer
 	public synchronized void deactivate()
 	{
 		super.deactivate();
+		Log.e("FM", "deactivate " + name);
 
 		mapWorker.pause();
-		new DestroyThread(mapWorker, mapDatabase, databaseRenderer).start();
+		DestroyThreadHelper.destroy(mapWorker, mapDatabase, databaseRenderer);
 		tileCache.destroy();
 	}
 
 	@Override
-	public boolean drawMap(Viewport viewport, boolean cropBorder, boolean drawBorder, Canvas c) throws OutOfMemoryError
+	public synchronized boolean drawMap(Viewport viewport, boolean cropBorder, boolean drawBorder, Canvas c) throws OutOfMemoryError
 	{
 		if (!isActive)
 			return false;
@@ -190,24 +203,24 @@ public class ForgeMap extends TileMap implements Redrawer
 
 		boolean result = true;
 
-		if (c_min < 0)
+		if (c_min < minCR[0])
 		{
-			c_min = 0;
+			c_min = minCR[0];
 			result = false;
 		}
-		if (r_min < 0)
+		if (r_min < minCR[1])
 		{
-			r_min = 0;
+			r_min = minCR[1];
 			result = false;
 		}
-		if (c_max > Math.pow(2.0, srcZoom))
+		if (c_max > maxCR[0])
 		{
-			c_max = (int) (Math.pow(2.0, srcZoom));
+			c_max = maxCR[0];
 			result = false;
 		}
-		if (r_max > Math.pow(2.0, srcZoom))
+		if (r_max > maxCR[1])
 		{
-			r_max = (int) (Math.pow(2.0, srcZoom));
+			r_max = maxCR[1];
 			result = false;
 		}
 
@@ -215,35 +228,14 @@ public class ForgeMap extends TileMap implements Redrawer
 		float h2my = viewport.height / 2 - map_xy[1];
 		int twh = Math.round(tile_wh);
 
-		int i = osm_y, j = osm_x, dx = 0, dy = -1;
-		int t = Math.max(c_max - c_min + 1, r_max - r_min + 1);
-		int maxI = t * t;
-
 		List<TilePosition> tilePositions = new ArrayList<>();
-		for (int k = 0; k < maxI; k++)
-		{
-			if (c_min <= j && j <= c_max && r_min <= i && i <= r_max)
-			{
+		for (int i = r_min; i <= r_max; i++)
+			for (int j = c_min; j <= c_max; j++)
 				tilePositions.add(new TilePosition(new Tile(j, i, srcZoom, TILE_SIZE), new Point(j, i)));
-			}
-
-			int x = j - osm_x, y = i - osm_y;
-			if ((x == y) || ((x < 0) && (x == -y)) || ((x > 0) && (x == 1 - y)))
-			{
-				t = dx;
-				dx = -dy;
-				dy = t;
-			}
-			j += dx;
-			i += dy;
-		}
 
 		Set<Job> jobs = new HashSet<>();
 		for (TilePosition tilePosition : tilePositions)
-		{
-			RendererJob job = new RendererJob(tilePosition.tile, mapFile, InternalRenderTheme.OSMARENDER, displayModel, textScale, false, false);
-			jobs.add(job);
-		}
+			jobs.add(getJob(tilePosition.tile));
 		tileCache.setWorkingSet(jobs);
 
 		for (int k = tilePositions.size() - 1; k >= 0; k--)
@@ -298,22 +290,12 @@ public class ForgeMap extends TileMap implements Redrawer
 
 	public org.mapsforge.core.graphics.Bitmap loadTile(Tile tile)
 	{
-		try
-		{
-			RendererJob job = new RendererJob(tile, mapFile, InternalRenderTheme.OSMARENDER, displayModel, textScale, false, false);
-			org.mapsforge.core.graphics.Bitmap bitmap = tileCache.getImmediately(job);
-			if (bitmap == null && !tileCache.containsKey(job))
-				jobQueue.add(job);
-
-			jobQueue.notifyWorkers();
-
-			return bitmap;
-		} catch (IllegalArgumentException e)
-		{
-			//TODO Check X,Y values for limits
-			e.printStackTrace();
-		}
-		return null;
+		RendererJob job = getJob(tile);
+		org.mapsforge.core.graphics.Bitmap bitmap = tileCache.getImmediately(job);
+		if (bitmap == null && !tileCache.containsKey(job))
+			jobQueue.add(job);
+		jobQueue.notifyWorkers();
+		return bitmap;
 	}
 
 	public Bitmap generateTile(Tile tile)
@@ -334,8 +316,7 @@ public class ForgeMap extends TileMap implements Redrawer
 				e.printStackTrace();
 				continue;
 			}
-			RendererJob job = new RendererJob(parentTile, mapFile, InternalRenderTheme.OSMARENDER, displayModel, textScale, false, false);
-			org.mapsforge.core.graphics.Bitmap bitmap = tileCache.getImmediately(job);
+			org.mapsforge.core.graphics.Bitmap bitmap = tileCache.getImmediately(getJob(parentTile));
 			if (bitmap == null)
 				continue;
 			Bitmap tileBitmap = AndroidGraphicFactory.getBitmap(bitmap);
@@ -361,24 +342,23 @@ public class ForgeMap extends TileMap implements Redrawer
 		return null;
 	}
 
+	private RendererJob getJob(Tile tile)
+	{
+		return new RendererJob(tile, mapFile, xmlRenderTheme, displayModel, textScale, true, false);
+	}
+
 	@Override
 	public synchronized void setZoom(double z)
 	{
 		super.setZoom(z);
 		mapViewPosition.setZoomLevel(srcZoom);
+		getTileXYByLatLon(mapInfo.boundingBox.maxLatitude, mapInfo.boundingBox.minLongitude, minCR);
+		getTileXYByLatLon(mapInfo.boundingBox.minLatitude, mapInfo.boundingBox.maxLongitude, maxCR);
 	}
 
 	@Override
 	public void recalculateCache()
 	{
-		/*
-		if (cache != null)
-			cache.destroy();
-		int nx = (int) Math.ceil(displayWidth * 1. / (TILE_WIDTH * dynZoom)) + 2;
-		int ny = (int) Math.ceil(displayHeight * 1. / (TILE_HEIGHT * dynZoom)) + 2;
-		int cacheSize = nx * ny;
-		cache = new TileRAMCache(cacheSize);
-		*/
 	}
 
 	private TileCache getCache()
@@ -394,7 +374,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		if (cache == null) // cache is not available now
 			return firstLevelTileCache;
 
-		File cacheDirectory = new File(cache, "mapsforge");
+		File cacheDirectory = new File(cache, "mapsforge" + File.separator + id);
 		if (cacheDirectory.exists() || cacheDirectory.mkdir())
 		{
 			int tileCacheFiles = 2000; //estimateSizeOfFileSystemCache(cacheDirectoryName, firstLevelSize, tileSize);
@@ -424,10 +404,11 @@ public class ForgeMap extends TileMap implements Redrawer
 	{
 		ArrayList<String> info = new ArrayList<>();
 
-		info.add("title: " + title);
+		info.add("title: " + name);
 		info.add("path: " + path);
 		info.add("minimum zoom: " + minZoom);
 		info.add("maximum zoom: " + maxZoom);
+		info.add("start zoom: " + mapInfo.startZoomLevel);
 		if (projection != null)
 		{
 			info.add("projection: " + projection.getName() + " (" + projection.getEPSGCode() + ")");
@@ -435,6 +416,13 @@ public class ForgeMap extends TileMap implements Redrawer
 		}
 		info.add("datum: " + datum);
 		info.add("scale (mpp): " + mpp);
+		info.add("map projection: " + mapInfo.projectionName);
+		info.add("start position: " + mapInfo.startPosition.toString());
+		info.add("language: " + mapInfo.languagePreference);
+		info.add("creation date: " + DateFormat.getDateFormat(Androzic.getApplication()).format(mapInfo.mapDate));
+		info.add("created by: " + mapInfo.createdBy);
+		if (mapInfo.comment != null)
+			info.add("comment: " + mapInfo.comment);
 
 		return info;
 	}
@@ -442,18 +430,7 @@ public class ForgeMap extends TileMap implements Redrawer
 	@Override
 	public void redrawLayers()
 	{
-		listener.onTileObtained();
-	}
-
-	protected class ForgeLayer extends Layer
-	{
-		public ForgeLayer(Redrawer redrawer)
-		{
-			assign(redrawer);
-		}
-		@Override
-		public void draw(BoundingBox boundingBox, byte zoomLevel, org.mapsforge.core.graphics.Canvas canvas, Point topLeftPoint)
-		{
-		}
+		if (listener != null)
+			listener.onTileObtained();
 	}
 }
