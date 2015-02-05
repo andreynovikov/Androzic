@@ -40,7 +40,7 @@ import com.androzic.util.MapFilenameFilter;
 
 public class MapIndex implements Serializable
 {
-	private static final long serialVersionUID = 7L;
+	private static final long serialVersionUID = 8L;
 	
 	private HashSet<Integer>[][] maps;
 	private HashMap<Integer,BaseMap> mapIndex;
@@ -185,14 +185,24 @@ public class MapIndex implements Serializable
 							BaseMap map = mapIndex.get(id);
 							if (llmapsidx.contains(map))
 								continue;
-							if (map.mpp > 200 || map.equals(refMap))
+							if (map.equals(refMap))
 								continue;
 							double ratio = refMap.mpp / map.mpp;
-							if (((! covered && ratio > 0.2) || ratio > 1) && ((bestmap || ! covered) && ratio < 5) && map.containsArea(area))
-							{
-								llmaps.add(map);
-								llmapsidx.add(map);
-							}
+							// If map has smaller scale and reference map covers all screen do not use it
+							if ((covered || ratio < 0.2) && ratio < 0.99)
+								continue;
+
+							// If map has bigger scale but best map is not enabled do not use it
+							if ((! bestmap && covered) || ratio > 5)
+								continue;
+
+							// If map does not cover referencing area do not use it
+							// We put it at last place because this check is expensive
+							if (!map.containsArea(area))
+								continue;
+
+							llmaps.add(map);
+							llmapsidx.add(map);
 						}
 					}
 				}
@@ -268,12 +278,12 @@ public class MapIndex implements Serializable
 	
 	private class MapComparator implements Comparator<BaseMap>, Serializable
     {
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 2L;
 
 		@Override
         public int compare(BaseMap o1, BaseMap o2)
         {
-        	return Double.compare(o1.mpp, o2.mpp);
+        	return Double.compare(o1.getAbsoluteMPP(), o2.getAbsoluteMPP());
         }
     }
 }
