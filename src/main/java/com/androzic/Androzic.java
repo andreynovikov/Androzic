@@ -20,28 +20,6 @@
 
 package com.androzic;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
@@ -91,11 +69,9 @@ import com.androzic.data.WaypointSet;
 import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
-import com.androzic.map.Grid;
 import com.androzic.map.BaseMap;
 import com.androzic.map.Map;
 import com.androzic.map.MapIndex;
-import com.androzic.map.MapPoint;
 import com.androzic.map.MockMap;
 import com.androzic.map.OzfDecoder;
 import com.androzic.map.SASMapLoader;
@@ -119,10 +95,6 @@ import com.androzic.util.Geo;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
 import com.androzic.util.WaypointFileHelper;
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import com.jhlabs.map.proj.Projection;
 import com.jhlabs.map.proj.ProjectionException;
 
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
@@ -132,6 +104,27 @@ import org.mapsforge.map.rendertheme.XmlRenderTheme;
 import org.mapsforge.map.rendertheme.XmlRenderThemeMenuCallback;
 import org.mapsforge.map.rendertheme.XmlRenderThemeStyleLayer;
 import org.mapsforge.map.rendertheme.XmlRenderThemeStyleMenu;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Androzic extends BaseApplication implements OnSharedPreferenceChangeListener, XmlRenderThemeMenuCallback
 {
@@ -253,7 +246,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(mapHolder, displayMetrics, 1.);
+				currentMap.activate(mapHolder, displayMetrics);
 			}
 			catch (final Throwable e)
 			{
@@ -1266,10 +1259,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			id = suitableMaps.get(suitableMaps.size()-1).id;
 		}
-		if (id != 0)
-			return selectMap(id);
-		else
-			return false;
+		return id != 0 && selectMap(id);
 	}
 
 	public boolean nextMap()
@@ -1292,10 +1282,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			id = suitableMaps.get(0).id;
 		}
-		if (id != 0)
-			return selectMap(id);
-		else
-			return false;
+		return id != 0 && selectMap(id);
 	}
 
 	/**
@@ -1356,7 +1343,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				try
 				{
-					newMap.activate(mapHolder, displayMetrics, 1.);
+					newMap.activate(mapHolder, displayMetrics);
 				}
 				catch (final Throwable e)
 				{
@@ -1450,9 +1437,9 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					{
 						double zoom = map.getAbsoluteMPP() / currentMap.getAbsoluteMPP() * currentMap.getZoom();
 						if (!map.activated())
-							map.activate(mapHolder, displayMetrics, zoom);
-						else if (zoom != map.getZoom())
-							map.setTemporaryZoom(zoom);
+							map.activate(mapHolder, displayMetrics);
+						if (zoom != map.getZoom())
+							map.setZoom(zoom);
 						cmr.remove(map);
 					}
 					catch (Throwable e)
@@ -1957,33 +1944,15 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean useIndex = settings.getBoolean(getString(R.string.pref_usemapindex), getResources().getBoolean(R.bool.def_usemapindex));
 		maps = null;
-		File index = new File(rootPath, "maps.idx");
-		if (useIndex && index.exists())
+		File indexFile = new File(rootPath, "maps.idx");
+		if (useIndex && indexFile.exists())
 		{
 			try
 			{
-				//com.esotericsoftware.minlog.Log.DEBUG();
-		    	Kryo kryo = new Kryo();
-		    	kryo.register(MapIndex.class);
-		    	kryo.register(Map.class);
-		    	kryo.register(Grid.class);
-		    	kryo.register(MapPoint.class);
-		    	kryo.register(MapPoint[].class);
-		    	kryo.register(Projection.class);
-		    	kryo.register(Integer.class);
-		    	kryo.register(String.class);
-		    	kryo.register(ArrayList.class);
-		    	kryo.register(HashSet.class);
-		    	kryo.register(HashMap.class);
-		    	Input input = new Input(new FileInputStream(index));
-		    	maps = kryo.readObject(input, MapIndex.class);
-		    	input.close();
-
+		    	maps = MapIndex.loadIndex(indexFile);
 		    	int hash = MapIndex.getMapsHash(mapPath);
 				if (hash != maps.hashCode())
-				{
 					maps = null;
-				}
 			}
 			catch (Throwable e)
 			{
@@ -1998,7 +1967,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				if (mp.loadError != null)
 				{
-					String fn = new String(mp.path);
+					String fn = mp.path;
 					if (fn.startsWith(mapPath))
 					{
 						fn = fn.substring(mapPath.length() + 1);
@@ -2024,21 +1993,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 			    try
 			    {
-			    	Kryo kryo = new Kryo();
-			    	kryo.register(MapIndex.class);
-			    	kryo.register(Map.class);
-			    	kryo.register(Grid.class);
-			    	kryo.register(MapPoint.class);
-			    	kryo.register(MapPoint[].class);
-			    	kryo.register(Projection.class);
-			    	kryo.register(Integer.class);
-			    	kryo.register(String.class);
-			    	kryo.register(ArrayList.class);
-			    	kryo.register(HashSet.class);
-			    	kryo.register(HashMap.class);
-			    	Output output = new Output(new FileOutputStream(index));
-			    	kryo.writeObject(output, maps);
-			    	output.close();
+				    MapIndex.saveIndex(maps, indexFile);
 			    }
 			    //FIXME We should fall back to old index then...
 			    catch (Throwable e)
@@ -2059,7 +2014,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				{
 					try
 					{
-						maps.addMap(SASMapLoader.load(file));
+						BaseMap map = SASMapLoader.load(file);
+						maps.addMap(map);
 					}
 					catch (IOException e)
 					{
@@ -2744,6 +2700,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.commit();
 		
 		setOnlineMaps("");
+		maps.clear();
 		onlineMaps = null;
 		mapHolder = null;
 		currentMap = null;

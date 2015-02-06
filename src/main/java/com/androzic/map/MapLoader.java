@@ -93,11 +93,9 @@ public class MapLoader
 			throw new IOException("Unknown map file format");
 		}
 		is.close();
-		Log.e("IDX", "Magic: " + new String(buffer));
 		if (Arrays.equals(ForgeMap.MAGIC, buffer))
 		{
-			ForgeMap forgeMap = new ForgeMap(file.getCanonicalPath());
-			return forgeMap;
+			return new ForgeMap(file.getCanonicalPath());
 		}
 
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));

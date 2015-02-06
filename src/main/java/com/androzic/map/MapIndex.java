@@ -21,6 +21,8 @@
 package com.androzic.map;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,8 +37,13 @@ import java.util.Set;
 import android.annotation.SuppressLint;
 
 import com.androzic.data.Bounds;
+import com.androzic.map.forge.ForgeMap;
 import com.androzic.util.FileList;
 import com.androzic.util.MapFilenameFilter;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.jhlabs.map.proj.Projection;
 
 public class MapIndex implements Serializable
 {
@@ -108,6 +115,8 @@ public class MapIndex implements Serializable
 		if (map.loadError != null)
 			return;
 
+		map.initialize();
+
 		// TODO Use corner markers instead
 		Bounds bounds = map.getBounds();
 		int minLat = (int) Math.floor(bounds.minLat);
@@ -144,6 +153,7 @@ public class MapIndex implements Serializable
 		mapIndex.remove(map.id);
 		if (map.loadError != null)
 			return;
+		map.destroy();
 		// TODO Use corner markers instead
 		Bounds bounds = map.getBounds();
 		int minLat = (int) Math.floor(bounds.minLat);
@@ -275,7 +285,61 @@ public class MapIndex implements Serializable
 			removeMap(map);
 		}		
 	}
-	
+
+	public void clear()
+	{
+		for (BaseMap map : mapIndex.values())
+			map.destroy();
+		mapIndex.clear();
+		//TODO Should we also clean maps array?
+	}
+
+	public static MapIndex loadIndex(File file) throws Throwable
+	{
+		//com.esotericsoftware.minlog.Log.DEBUG();
+		Kryo kryo = new Kryo();
+		kryo.register(MapIndex.class);
+		kryo.register(BaseMap.class);
+		kryo.register(Map.class);
+		kryo.register(ForgeMap.class);
+		kryo.register(Grid.class);
+		kryo.register(MapPoint.class);
+		kryo.register(MapPoint[].class);
+		kryo.register(Projection.class);
+		kryo.register(Integer.class);
+		kryo.register(String.class);
+		kryo.register(ArrayList.class);
+		kryo.register(HashSet.class);
+		kryo.register(HashMap.class);
+		Input input = new Input(new FileInputStream(file));
+		MapIndex index = kryo.readObject(input, MapIndex.class);
+		input.close();
+		for (BaseMap map : index.getMaps())
+			map.initialize();
+		return index;
+	}
+
+	public static void saveIndex(MapIndex index, File file) throws Throwable
+	{
+		Kryo kryo = new Kryo();
+		kryo.register(MapIndex.class);
+		kryo.register(BaseMap.class);
+		kryo.register(Map.class);
+		kryo.register(ForgeMap.class);
+		kryo.register(Grid.class);
+		kryo.register(MapPoint.class);
+		kryo.register(MapPoint[].class);
+		kryo.register(Projection.class);
+		kryo.register(Integer.class);
+		kryo.register(String.class);
+		kryo.register(ArrayList.class);
+		kryo.register(HashSet.class);
+		kryo.register(HashMap.class);
+		Output output = new Output(new FileOutputStream(file));
+		kryo.writeObject(output, index);
+		output.close();
+	}
+
 	private class MapComparator implements Comparator<BaseMap>, Serializable
     {
 		private static final long serialVersionUID = 2L;
