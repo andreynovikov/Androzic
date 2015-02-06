@@ -47,7 +47,17 @@ public class MockMap extends BaseMap
 	}
 
 	@Override
-	public void activate(OnMapTileStateChangeListener listener, DisplayMetrics metrics, double zoom)
+	public void initialize()
+	{
+	}
+
+	@Override
+	public void destroy()
+	{
+	}
+
+	@Override
+	public void activate(OnMapTileStateChangeListener listener, DisplayMetrics metrics)
 	{
 	}
 
@@ -83,11 +93,6 @@ public class MockMap extends BaseMap
 	public boolean drawMap(Viewport viewport, boolean cropBorder, boolean drawBorder, Canvas c) throws OutOfMemoryError
 	{
 		return false;
-	}
-
-	@Override
-	public void recalculateCache()
-	{
 	}
 
 	@Override
@@ -152,9 +157,9 @@ public class MockMap extends BaseMap
 	@Override
 	public void setZoom(double zoom)
 	{
-		zoom = Math.floor(zoom * 1000) / 1000;
-		if (zoom > 10) zoom = 10;
-		if (zoom < 0.001) zoom = 0.001;
+		this.zoom = Math.floor(zoom * 1000) / 1000;
+		if (this.zoom > 10) this.zoom = 10;
+		if (this.zoom < 0.001) this.zoom = 0.001;
 	}
 
 	public static BaseMap getMap(double lat, double lon)
