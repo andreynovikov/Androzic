@@ -11,6 +11,8 @@
     <string name="featureuri">https://getsatisfaction.com/androzic</string>
     
    	<string name="pref_usemapindex">usemapindex</string>
+    <string name="pref_vectormap_theme">vectormap_theme</string>
+    <string name="pref_vectormap_poi">vectormap_poi</string>
    	<string name="pref_onlinemap">onlinemap</string>
    	<string name="pref_onlinemapscale">onlinemapscale</string>
    	<string name="pref_onlinemapprescalefactor">onlinemapprescalefactor</string>
@@ -27,6 +29,7 @@
     <string name="pref_maprenderinterval">maprenderinterval</string>
     <string name="pref_mapbest">mapbest</string>
     <string name="pref_mapbestinterval">mapbestint</string>
+    <string name="pref_mapforcezoom">mapforcezoom</string>
     <string name="pref_mapadjacent">mapadjacent</string>
     <string name="pref_mapfollowonloc">mapfollowonloc</string>
     <string name="pref_maplistscale">maplistscale</string>

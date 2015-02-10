@@ -52,10 +52,7 @@ public class CoordinatesReceived extends DialogFragment
 			public void onClick(DialogInterface dialog, int whichButton)
 			{
 				Androzic application = Androzic.getApplication();
-				if (application.ensureVisible(lat, lon))
-					application.getMapHolder().mapChanged();
-				else
-					application.getMapHolder().conditionsChanged();
+				application.ensureVisible(lat, lon);
 				CoordinatesReceived.this.dismiss();
 			}
 		});

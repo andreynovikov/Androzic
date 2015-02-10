@@ -8,10 +8,12 @@ public interface MapHolder extends OnMapTileStateChangeListener
 {
 	void setFollowing(boolean follow);
 	void zoomMap(float factor);
+
 	/**
 	 * Called when current map have changed
+	 * @param forced True if new map was selected by user
 	 */
-	void mapChanged();
+	void mapChanged(boolean forced);
 	/**
 	 * Called when location, zoom or other map conditions that need map redraw have changed
 	 */

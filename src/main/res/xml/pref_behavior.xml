@@ -31,6 +31,14 @@
         app:max="30"
         app:min="3" />
 
+    <ListPreference
+        android:defaultValue="1"
+        android:dialogTitle="@string/pref_mapforcezoom_title"
+        android:entries="@array/forcezoom_names"
+        android:entryValues="@array/forcezoom_values"
+        android:key="@string/pref_mapforcezoom"
+        android:title="@string/pref_mapforcezoom_title" />
+
     <CheckBoxPreference
         android:defaultValue="@bool/def_mapadjacent"
         android:key="@string/pref_mapadjacent"
@@ -47,7 +55,17 @@
         android:defaultValue="@bool/def_unfollowontap"
         android:key="@string/pref_unfollowontap"
         android:title="@string/pref_unfollowontap_title" />
-
+    <PreferenceCategory android:title="@string/pref_vectormaps_title" >
+        <ListPreference
+            android:dialogTitle="@string/pref_vectormap_theme_title"
+            android:key="@string/pref_vectormap_theme"
+            android:title="@string/pref_vectormap_theme_title" />
+        <org.droidparts.widget.MultiSelectListPreference
+            android:defaultValue="---"
+            android:dialogTitle="@string/pref_vectormap_poi_title"
+            android:key="@string/pref_vectormap_poi"
+            android:title="@string/pref_vectormap_poi_title" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_onlinemaps_title" >
         <org.droidparts.widget.MultiSelectListPreference
             android:defaultValue="osm"

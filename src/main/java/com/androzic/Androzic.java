@@ -75,6 +75,7 @@ import com.androzic.map.MapIndex;
 import com.androzic.map.MockMap;
 import com.androzic.map.OzfDecoder;
 import com.androzic.map.SASMapLoader;
+import com.androzic.map.forge.ForgeMap;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.OpenStreetMapTileProvider;
 import com.androzic.map.online.TileFactory;
@@ -192,9 +193,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	
 	// Plugins
 	private AbstractMap<String, Intent> pluginPreferences = new HashMap<>();
-	private AbstractMap<String, Pair<Drawable, Intent>> pluginViews = new HashMap<String, Pair<Drawable, Intent>>();
+	private AbstractMap<String, Pair<Drawable, Intent>> pluginViews = new HashMap<>();
 
+	// Mapsforge vector maps style
 	public XmlRenderTheme xmlRenderTheme;
+	XmlRenderThemeStyleMenu xmlRenderThemeStyleMenu;
 
 	private boolean memmsg = false;
 	
@@ -246,7 +249,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(mapHolder, displayMetrics);
+				currentMap.activate(mapHolder, displayMetrics, currentMap.getAbsoluteMPP());
 			}
 			catch (final Throwable e)
 			{
@@ -548,7 +551,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	{
 		if (mapHolder != null)
 			mapHolder.setFollowing(false);
-		return setMapCenter(lat, lon, true, true, false);
+		boolean mapChanged = setMapCenter(lat, lon, true, true, false);
+		if (!mapChanged && mapHolder != null)
+			mapHolder.conditionsChanged();
+		return mapChanged;
 	}
 	
 	public int addWaypointSet(final WaypointSet newWaypointSet)
@@ -1075,7 +1081,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			newMap = MockMap.getMap(mapCenter[0], mapCenter[1]);
 		}
-		return setMap(newMap);
+		return setMap(newMap, false);
 	}
 	
 	public boolean scrollMap(int dx, int dy, boolean checkcoverage)
@@ -1137,6 +1143,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			currentMap.setZoom(zoom);
 			invalidCoveringMaps = true;
+			if (mapHolder != null)
+				mapHolder.conditionsChanged();
 			return true;
 		}
 		return false;
@@ -1151,6 +1159,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				currentMap.setZoom(zoom);
 				invalidCoveringMaps = true;
+				if (mapHolder != null)
+					mapHolder.conditionsChanged();
 				return true;
 			}
 		}
@@ -1166,6 +1176,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				currentMap.setZoom(zoom);
 				invalidCoveringMaps = true;
+				if (mapHolder != null)
+					mapHolder.conditionsChanged();
 				return true;
 			}
 		}
@@ -1194,6 +1206,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			currentMap.zoomBy(factor);
 			invalidCoveringMaps = true;
+			if (mapHolder != null)
+				mapHolder.conditionsChanged();
 			return true;
 		}
 		return false;
@@ -1304,26 +1318,12 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				break;
 			}
 		}
-		return setMap(newMap);
+		return setMap(newMap, true);
 	}
 	
-	public boolean loadMap(int id)
-	{
-		BaseMap newMap = null;
-		for (BaseMap map : maps.getMaps())
-		{
-			if (map.id == id)
-			{
-				newMap = map;
-				break;
-			}
-		}
-		return loadMap(newMap);
-	}
-
 	public boolean loadMap(BaseMap newMap)
 	{
-		boolean newmap = setMap(newMap);
+		boolean newmap = setMap(newMap, true);
 		if (currentMap != null)
 		{
 			currentMap.getMapCenter(mapCenter);
@@ -1333,17 +1333,18 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return newmap;
 	}
 
-	synchronized boolean setMap(final BaseMap newMap)
+	synchronized boolean setMap(final BaseMap newMap, boolean forced)
 	{
 		// TODO should override equals()?
 		if (newMap != null && ! newMap.equals(currentMap))
 		{
-			Log.i(TAG, "Set map: " + newMap.title);
+			double mpp = currentMap != null ? currentMap.getMPP() : newMap.getAbsoluteMPP();
+			Log.w(TAG, "Set map: " + newMap.title + " " + mpp);
 			if (mapHolder != null)
 			{
 				try
 				{
-					newMap.activate(mapHolder, displayMetrics);
+					newMap.activate(mapHolder, displayMetrics, mpp);
 				}
 				catch (final Throwable e)
 				{
@@ -1358,6 +1359,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 			invalidCoveringMaps = true;
 			currentMap = newMap;
+			if (mapHolder != null)
+				mapHolder.mapChanged(forced);
 			if (currentMap instanceof Map)
 				overlayManager.initGrids((Map) currentMap);
 			return true;
@@ -1435,11 +1438,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					Log.i(TAG, "-> " + map.title);
 					try
 					{
-						double zoom = map.getAbsoluteMPP() / currentMap.getAbsoluteMPP() * currentMap.getZoom();
 						if (!map.activated())
-							map.activate(mapHolder, displayMetrics);
-						if (zoom != map.getZoom())
-							map.setZoom(zoom);
+							map.activate(mapHolder, displayMetrics, currentMap.getMPP());
+						else
+							map.zoomTo(currentMap.getMPP());
 						cmr.remove(map);
 					}
 					catch (Throwable e)
@@ -1931,16 +1933,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public void initializeMaps()
 	{
 		AndroidGraphicFactory.createInstance(this);
-		try
-		{
-			xmlRenderTheme = new BufferedAssetsRenderTheme(this, "", "renderthemes/rendertheme-v4.xml", this);
-			this.getFilesDir();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			xmlRenderTheme = InternalRenderTheme.OSMARENDER;
-		}
+		initializeRenderTheme();
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean useIndex = settings.getBoolean(getString(R.string.pref_usemapindex), getResources().getBoolean(R.bool.def_usemapindex));
 		maps = null;
@@ -2267,7 +2260,20 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 		}
 	}
-	
+
+	private void initializeRenderTheme()
+	{
+		try
+		{
+			xmlRenderTheme = new BufferedAssetsRenderTheme(this, "", "renderthemes/rendertheme-v4.xml", this);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			xmlRenderTheme = InternalRenderTheme.OSMARENDER;
+		}
+	}
+
 	/**
 	 * Load default and selected waypoint files.
 	 */
@@ -2394,6 +2400,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
+		Log.e(TAG, "onSharedPreferenceChanged(" + key + ")");
 		Resources resources = getResources();
 		
 		if (getString(R.string.pref_folder_data).equals(key))
@@ -2469,6 +2476,17 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			if (currentMap instanceof Map)
 				overlayManager.initGrids((Map) currentMap);
+		}
+		else if (getString(R.string.pref_vectormap_theme).equals(key) || getString(R.string.pref_vectormap_poi).equals(key))
+		{
+			// We do not do this on theme setting change to eliminate double reinitialization
+			// because poi setting change is forced after theme setting change
+			initializeRenderTheme();
+			for (BaseMap map : maps.getMaps())
+			{
+				if (map instanceof ForgeMap)
+					((ForgeMap)map).onRenderThemeChanged();
+			}
 		}
 		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
 		{
@@ -2714,21 +2732,44 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	@Override
 	public Set<String> getCategories(XmlRenderThemeStyleMenu menuStyle)
 	{
-		String id = "topo"; // simple, standard
+		Log.e(TAG, "RenderTheme getCategories()");
+		xmlRenderThemeStyleMenu = menuStyle;
 
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+		String id = settings.getString(getString(R.string.pref_vectormap_theme), xmlRenderThemeStyleMenu.getDefaultValue());
+		Log.e(TAG, "id: " + id);
 		XmlRenderThemeStyleLayer baseLayer = menuStyle.getLayer(id);
 		if (baseLayer == null)
 		{
-			Log.e(TAG, "Invalid forgemap style " + id);
+			Log.e(TAG, "Invalid forgemap style: " + id);
 			return null;
 		}
 		Set<String> result = baseLayer.getCategories();
 
+		List<String> selectedPlaces;
+		String places = settings.getString(getString(R.string.pref_vectormap_poi), "---");
+		Log.e(TAG, "Places: " + places);
+		if ("---".equals(places))
+		{
+			selectedPlaces = new ArrayList<>();
+			for (XmlRenderThemeStyleLayer overlay : baseLayer.getOverlays())
+			{
+				if (overlay.isEnabled())
+					selectedPlaces.add(overlay.getId());
+			}
+		}
+		else
+		{
+			selectedPlaces = Arrays.asList(places.split("\\|"));
+		}
+		Log.e(TAG, "Selected places: " + Arrays.toString(selectedPlaces.toArray()));
+
 		// add the categories from overlays that are enabled
 		for (XmlRenderThemeStyleLayer overlay : baseLayer.getOverlays())
 		{
-			//if (this.sharedPreferences.getBoolean(overlay.getId(), overlay.isEnabled()))
-			result.addAll(overlay.getCategories());
+			if (selectedPlaces.contains(overlay.getId()))
+				result.addAll(overlay.getCategories());
 		}
 
 		return result;

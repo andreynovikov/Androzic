@@ -79,6 +79,7 @@ import android.widget.Toast;
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
 import com.androzic.location.LocationService;
+import com.androzic.map.BaseMap;
 import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteEdit;
@@ -88,6 +89,9 @@ import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.listeners.ActionClickListener;
+import com.nispok.snackbar.listeners.EventListener;
 
 public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, View.OnClickListener, View.OnTouchListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
@@ -109,6 +113,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	private int dimInterval;
 	private int dimValue;
 	private boolean mapButtonsVisible;
+	private int forceZoomMap;
 
 	private int mapInfoHideDelay = Integer.MAX_VALUE; // never
 	private int satInfoHideDelay = Integer.MAX_VALUE; // never
@@ -317,6 +322,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_lookahead));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapbest));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapbestinterval));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_mapforcezoom));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarbg));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarcolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarbgcolor));
@@ -887,11 +893,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 			@Override
 			public void waitFor()
 			{
-				synchronized (map)
-				{
-					if (application.zoomBy(factor))
-						conditionsChanged();
-				}
+				application.zoomBy(factor);
 			}
 		});
 	}
@@ -911,7 +913,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
-	public void conditionsChanged()
+	public synchronized void conditionsChanged()
 	{
 		if (map == null)
 			return;
@@ -920,13 +922,70 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	}
 
 	@Override
-	public void mapChanged()
+	public synchronized void mapChanged(boolean forced)
 	{
 		if (map == null)
 			return;
-		map.suspendBestMap();
+		if (forced)
+			map.suspendBestMap();
 		map.updateMapInfo();
 		map.updateMapCenter();
+		BaseMap newMap = application.getCurrentMap();
+		if (newMap.getMPP() != newMap.getAbsoluteMPP())
+		{
+			boolean resetZoom = false;
+			switch (forceZoomMap)
+			{
+				case 0:
+					application.setZoom(1.);
+					break;
+				case 1:
+					resetZoom = true;
+				case 2:
+					Snackbar snackbar = Snackbar.with(application);
+					int text = resetZoom ? R.string.gently_reset_zoom : R.string.gently_keep_zoom;
+					snackbar.setTag(R.id.reset_zoom, resetZoom);
+					snackbar.text(text);
+					snackbar.actionLabel(R.string.undo);
+					snackbar.eventListener(new EventListener() {
+						@Override
+						public void onShow(Snackbar snackbar)
+						{
+						}
+
+						@Override
+						public void onShown(Snackbar snackbar)
+						{
+						}
+
+						@Override
+						public void onDismiss(Snackbar snackbar)
+						{
+						}
+
+						@Override
+						public void onDismissed(Snackbar snackbar)
+						{
+							boolean setZoom = (boolean) snackbar.getTag(R.id.reset_zoom);
+							if (setZoom)
+								application.setZoom(1.);
+						}
+					});
+					final boolean finalResetZoom = resetZoom;
+					snackbar.actionListener(new ActionClickListener() {
+						@Override
+						public void onActionClicked(Snackbar snackbar)
+						{
+							snackbar.setTag(R.id.reset_zoom, !finalResetZoom);
+						}
+					});
+					snackbar.duration(Snackbar.SnackbarDuration.LENGTH_LONG);
+					snackbar.show(getActivity());
+					break;
+				case 3:
+					break;
+			}
+		}
 	}
 
 	private void updatePanels()
@@ -1160,6 +1219,10 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		{
 			map.setBestMapInterval(sharedPreferences.getInt(key, resources.getInteger(R.integer.def_mapbestinterval)) * 1000);
 		}
+		else if (getString(R.string.pref_mapforcezoom).equals(key))
+		{
+			forceZoomMap = Integer.parseInt(sharedPreferences.getString(key, "1"));
+		}
 		else if (getString(R.string.pref_scalebarbg).equals(key))
 		{
 			map.setDrawScaleBarBackground(sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_scalebarbg)));
@@ -1223,11 +1286,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					@Override
 					public void waitFor()
 					{
-						synchronized (map)
-						{
-							if (application.zoomIn())
-								conditionsChanged();
-						}
+						application.zoomIn();
 					}
 				});
 				break;
@@ -1238,11 +1297,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					@Override
 					public void waitFor()
 					{
-						synchronized (map)
-						{
-							if (application.zoomOut())
-								conditionsChanged();
-						}
+						application.zoomOut();
 					}
 				});
 				break;
@@ -1251,11 +1306,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					@Override
 					public void waitFor()
 					{
-						synchronized (map)
-						{
-							if (application.prevMap())
-								mapChanged();
-						}
+						application.prevMap();
 					}
 				});
 				break;
@@ -1264,11 +1315,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					@Override
 					public void waitFor()
 					{
-						synchronized (map)
-						{
-							if (application.nextMap())
-								mapChanged();
-						}
+						application.nextMap();
 					}
 				});
 				break;
@@ -1396,14 +1443,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						@Override
 						public void waitFor()
 						{
-							synchronized (map)
-							{
-								if (application.setZoom(1.))
-								{
-									map.updateMapInfo();
-									map.updateMapCenter();
-								}
-							}
+							application.setZoom(1.);
 						}});
 					zoom100X = 0;
 					zoom100Y = 0;
@@ -1453,10 +1493,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						@Override
 						public void waitFor()
 						{
-							if (application.ensureVisible(l.getLatitude(), l.getLongitude()))
-								mapChanged();
-							else
-								conditionsChanged();
+							application.ensureVisible(l.getLatitude(), l.getLongitude());
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
 								public void run()

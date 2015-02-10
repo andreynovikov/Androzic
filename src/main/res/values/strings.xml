@@ -193,7 +193,9 @@
 	sensitivity can add unnecessary waypoints.</string>
 	<string name="new_coordinates">New coordinates received from %s</string>
 	<string name="donation_required">This feature is available only for donators</string>
-    
+    <string name="gently_reset_zoom">Zoom will be set to 100% shortly</string>
+    <string name="gently_keep_zoom">Current zoom will be left unchanged</string>
+
     <string name="menu_addwaypoint">Add waypoint</string>
     <string name="menu_addtoroute">Add to route</string>
     <string name="menu_tracks">Tracks</string>
@@ -270,6 +272,9 @@
     <string name="pref_plugins_title">Plugins</string>
     <string name="pref_advanced_title">Advanced</string>
 	<string name="pref_usemapindex_title">Use map index</string>
+    <string name="pref_vectormaps_title">Vector maps</string>
+    <string name="pref_vectormap_theme_title">Map style</string>
+    <string name="pref_vectormap_poi_title">Places</string>
 	<string name="pref_onlinemaps_title">Online maps</string>
 	<string name="pref_onlinemap_title">Map providers</string>
 	<string name="pref_onlinemapscale_title">Default zoom level</string>
@@ -294,6 +299,8 @@
     <string name="pref_mapbest_summary">Lets application try to load best map for current location</string>
     <string name="pref_mapbestinterval_title">Best map interval</string>
     <string name="pref_mapbestinterval_summary">Time period between best map lookups</string>
+    <string name="pref_mapforcezoom_title">Set 100% zoom on map change</string>
+    <string name="pref_mapforcezoom_summary">If application switches to another map when better map is found or displayed map does not cover current location, newly selected map can be zoomed to 100% or can be set to the scale of previously displayed map.</string>
     <string name="pref_mapadjacent_title">Adjacent maps</string>
     <string name="pref_mapadjacent_summary">Display adjacent maps outside the border of current map (<b>experimental</b>, can significantly degrade performance!)</string>
     <string name="pref_mapfollowonloc_title">Follow on first location</string>

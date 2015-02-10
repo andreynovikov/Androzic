@@ -3,7 +3,7 @@
     xmlns:androzic="http://schemas.android.com/apk/res-auto" >
 
     <header
-        androzic:fragment="com.androzic.Preferences$OnlineMapPreferencesFragment"
+        androzic:fragment="com.androzic.Preferences$MapPreferencesFragment"
         androzic:help="@+id/map_section"
         androzic:title="@string/pref_map_title" >
         <extra

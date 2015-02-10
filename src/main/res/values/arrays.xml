@@ -99,6 +99,12 @@
         <item>Manually</item>
         <item>Always</item>
     </string-array>
+    <string-array name="forcezoom_names">
+        <item>Yes</item>
+        <item>Gently yes</item>
+        <item>Gently no</item>
+        <item>No</item>
+    </string-array>
     <string-array name="elementhide_names">
         <item>1 second</item>
         <item>3 seconds</item>

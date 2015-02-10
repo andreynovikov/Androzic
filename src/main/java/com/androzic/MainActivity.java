@@ -231,10 +231,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 		}
 		else if (intent.hasExtra("lat") && intent.hasExtra("lon"))
 		{
-			if (application.ensureVisible(intent.getExtras().getDouble("lat"), intent.getExtras().getDouble("lon")))
-				application.getMapHolder().mapChanged();
-			else
-				application.getMapHolder().conditionsChanged();
+			application.ensureVisible(intent.getExtras().getDouble("lat"), intent.getExtras().getDouble("lon"));
 			selectItem(0);
 		}
 	}
@@ -409,10 +406,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	@Override
 	public void onWaypointView(Waypoint waypoint)
 	{
-		if (application.ensureVisible(waypoint))
-			application.getMapHolder().mapChanged();
-		else
-			application.getMapHolder().conditionsChanged();
+		application.ensureVisible(waypoint);
 		selectItem(0);
 	}
 
@@ -521,15 +515,13 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	@Override
 	public void onMapSelectedAtPosition(BaseMap map)
 	{
-		if (application.setMap(map))
-			application.getMapHolder().mapChanged();
+		application.setMap(map, true);
 	}
 
 	@Override
 	public void onMapSelected(BaseMap map)
 	{
-		if (application.loadMap(map))
-			application.getMapHolder().mapChanged();
+		application.loadMap(map);
 	}
 
 	@Override
@@ -604,10 +596,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	{
 		Track.TrackPoint tp = track.getPoint(0);
 		MapObject mo = new MapObject(tp.latitude, tp.longitude);
-		if (application.ensureVisible(mo))
-			application.getMapHolder().mapChanged();
-		else
-			application.getMapHolder().conditionsChanged();
+		application.ensureVisible(mo);
 		selectItem(0);
 	}
 

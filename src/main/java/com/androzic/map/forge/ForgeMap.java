@@ -48,7 +48,6 @@ import org.mapsforge.map.layer.cache.TwoLevelTileCache;
 import org.mapsforge.map.layer.queue.Job;
 import org.mapsforge.map.layer.queue.JobQueue;
 import org.mapsforge.map.layer.renderer.DatabaseRenderer;
-import org.mapsforge.map.layer.renderer.DestroyThreadHelper;
 import org.mapsforge.map.layer.renderer.MapWorker;
 import org.mapsforge.map.layer.renderer.RendererJob;
 import org.mapsforge.map.model.DisplayModel;
@@ -88,6 +87,7 @@ public class ForgeMap extends TileMap implements Redrawer
 
 	private transient int[] minCR;
 	private transient int[] maxCR;
+	private transient DisplayMetrics metrics;
 
 	public ForgeMap(String path)
 	{
@@ -142,8 +142,10 @@ public class ForgeMap extends TileMap implements Redrawer
 
 		mapCenter = mapInfo.startPosition;
 
+		Androzic application = Androzic.getApplication();
+		xmlRenderTheme = application.xmlRenderTheme;
+
 		updateTitle();
-		recalculateMPP();
 	}
 
 	@Override
@@ -157,14 +159,9 @@ public class ForgeMap extends TileMap implements Redrawer
 	}
 
 	@Override
-	public synchronized void activate(OnMapTileStateChangeListener listener, DisplayMetrics metrics) throws Throwable
+	public synchronized void activate(OnMapTileStateChangeListener listener, DisplayMetrics metrics, double mpp) throws Throwable
 	{
 		Log.e("FM", "activate " + name);
-		if (xmlRenderTheme == null)
-		{
-			Androzic application = Androzic.getApplication();
-			xmlRenderTheme = application.xmlRenderTheme;
-		}
 		MapDatabase mapDatabase = new MapDatabase();
 		mapDatabase.openFile(mapFile);
 		tileCache = getCache();
@@ -173,7 +170,9 @@ public class ForgeMap extends TileMap implements Redrawer
 		ForgeLayer layer = new ForgeLayer(this);
 		mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, layer);
 		mapWorker.start();
-		super.activate(listener, metrics);
+		//TODO This is a temporary hack for reactivation
+		this.metrics = metrics;
+		super.activate(listener, metrics, mpp);
 	}
 
 	@Override
@@ -451,6 +450,30 @@ public class ForgeMap extends TileMap implements Redrawer
 	{
 		center[0] = mapCenter.latitude;
 		center[1] = mapCenter.longitude;
+	}
+
+	public synchronized void onRenderThemeChanged()
+	{
+		Androzic application = Androzic.getApplication();
+		xmlRenderTheme = application.xmlRenderTheme;
+		Log.e("MF", "onRenderThemeChanged()");
+		boolean active = isActive;
+		OnMapTileStateChangeListener l = listener;
+		if (active)
+			deactivate();
+		if (fileSystemTileCache != null)
+			fileSystemTileCache.destroy();
+		fileSystemTileCache = null;
+		if (active)
+		{
+			try
+			{
+				activate(l, metrics, getMPP());
+			} catch (Throwable e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public List<String> info()

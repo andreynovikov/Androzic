@@ -24,9 +24,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.droidparts.widget.MultiSelectListPreference;
+import org.mapsforge.map.rendertheme.XmlRenderThemeStyleLayer;
+import org.mapsforge.map.rendertheme.XmlRenderThemeStyleMenu;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -58,9 +61,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.preference.PreferenceFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.util.Xml;
+import android.util.*;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -765,7 +766,7 @@ public class Preferences extends ListFragment
 			}
 		}
 
-		private void setPrefSummary(Preference pref)
+		protected void setPrefSummary(Preference pref)
 		{
 			if (pref instanceof MultiSelectListPreference)
 			{
@@ -851,40 +852,157 @@ public class Preferences extends ListFragment
 	}
 
 	@SuppressWarnings("UnusedDeclaration")
-	public static class OnlineMapPreferencesFragment extends Preferences.PreferencesFragment
+	public static class MapPreferencesFragment extends Preferences.PreferencesFragment
 	{
+		String themeSelection;
+
 		@Override
 		public void onResume()
 		{
+			initThemeList();
+			initPoiList();
+			initProviderList();
+
+			super.onResume();
+		}
+
+		@Override
+		public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key)
+		{
+			android.util.Log.e("PREF", "onSharedPreferenceChanged(" + key + ")");
+			if (key.equals(getString(R.string.pref_vectormap_theme)))
+			{
+				Androzic application = Androzic.getApplication();
+				XmlRenderThemeStyleMenu xmlRenderThemeStyleMenu = application.xmlRenderThemeStyleMenu;
+				themeSelection = sharedPreferences.getString(key, xmlRenderThemeStyleMenu.getDefaultValue());
+				initPoiList();
+			}
+			else if (key.equals(getString(R.string.pref_vectormap_poi)))
+			{
+				SharedPreferences.Editor editor = sharedPreferences.edit();
+				editor.putString(key + "_" + themeSelection, sharedPreferences.getString(key, "---"));
+				editor.commit();
+			}
+			super.onSharedPreferenceChanged(sharedPreferences, key);
+		}
+
+		private void initThemeList()
+		{
+			Androzic application = Androzic.getApplication();
+			XmlRenderThemeStyleMenu xmlRenderThemeStyleMenu = application.xmlRenderThemeStyleMenu;
+
+			ListPreference themePreference = (ListPreference) findPreference(getString(R.string.pref_vectormap_theme));
+			// This is the user language for the app, in 'en', 'de' etc format
+			// No dialects are supported at the moment
+			String language = Locale.getDefault().getLanguage();
+			Map<String, XmlRenderThemeStyleLayer> baseLayers = xmlRenderThemeStyleMenu.getLayers();
+			int visibleStyles = 0;
+			for (XmlRenderThemeStyleLayer baseLayer : baseLayers.values())
+			{
+				if (baseLayer.isVisible())
+					visibleStyles++;
+			}
+
+			String[] entries = new String[visibleStyles];
+			String[] values = new String[visibleStyles];
+			int i = 0;
+			for (XmlRenderThemeStyleLayer baseLayer : baseLayers.values())
+			{
+				if (baseLayer.isVisible())
+				{
+					entries[i] = baseLayer.getTitle(language);
+					values[i] = baseLayer.getId();
+					i++;
+				}
+			}
+
+			themePreference.setDefaultValue(xmlRenderThemeStyleMenu.getDefaultValue());
+			themePreference.setEntries(entries);
+			themePreference.setEntryValues(values);
+
+			themeSelection = themePreference.getValue();
+			// We need to check that the selection stored is actually a valid getLayer in the current
+			// rendertheme.
+			if (themeSelection == null || !xmlRenderThemeStyleMenu.getLayers().containsKey(themeSelection))
+			{
+				themeSelection = xmlRenderThemeStyleMenu.getLayer(xmlRenderThemeStyleMenu.getDefaultValue()).getId();
+				themePreference.setValue(themeSelection);
+			}
+			themePreference.setSummary(xmlRenderThemeStyleMenu.getLayer(themeSelection).getTitle(language));
+		}
+
+		private void initPoiList()
+		{
+			Androzic application = Androzic.getApplication();
+			XmlRenderThemeStyleMenu xmlRenderThemeStyleMenu = application.xmlRenderThemeStyleMenu;
+
+			String language = Locale.getDefault().getLanguage();
+
+			MultiSelectListPreference poiPreference = (MultiSelectListPreference) findPreference(getString(R.string.pref_vectormap_poi));
+
+			int poiTypes = 0, defaultTypes = 0;
+			for (XmlRenderThemeStyleLayer overlay : xmlRenderThemeStyleMenu.getLayer(themeSelection).getOverlays())
+			{
+				poiTypes++;
+				if (overlay.isEnabled())
+					defaultTypes++;
+			}
+
+			String[] entries = new String[poiTypes];
+			String[] values = new String[poiTypes];
+			String[] defaults = new String[defaultTypes];
+			int i=0, j=0;
+			for (XmlRenderThemeStyleLayer overlay : xmlRenderThemeStyleMenu.getLayer(themeSelection).getOverlays())
+			{
+				entries[i] = overlay.getTitle(language);
+				values[i] = overlay.getId();
+				i++;
+				if (overlay.isEnabled())
+				{
+					defaults[j] = overlay.getId();
+					j++;
+				}
+			}
+			StringBuilder sb = new StringBuilder();
+			for (i = 0; i < defaultTypes; i++)
+			{
+				sb.append(defaults[i]);
+				if (i < defaultTypes - 1)
+					sb.append(MultiSelectListPreference.SEP);
+			}
+			String defaultPoi = sb.toString();
+			Log.e("PREF", "Default: " + defaultPoi);
+			String value = poiPreference.getSharedPreferences().getString(poiPreference.getKey() + "_" + themeSelection, "---");
+			Log.e("PREF", "Value: " + value);
+			if ("---".equals(value))
+				poiPreference.setValue(defaultPoi);
+			else
+				poiPreference.setValue(value);
+			poiPreference.setDefaultValue(defaultPoi);
+			poiPreference.setEntries(entries);
+			poiPreference.setEntryValues(values);
+			setPrefSummary(poiPreference);
+		}
+
+		private void initProviderList()
+		{
 			Androzic application = Androzic.getApplication();
 
-			MultiSelectListPreference maps = (MultiSelectListPreference) findPreference(getString(R.string.pref_onlinemap));
-			SeekbarPreference mapzoom = (SeekbarPreference) findPreference(getString(R.string.pref_onlinemapscale));
+			// Enumerate online providers
+			MultiSelectListPreference mapPreference = (MultiSelectListPreference) findPreference(getString(R.string.pref_onlinemap));
 			// initialize map list
 			List<TileProvider> providers = application.getOnlineMaps();
 			String[] entries = new String[providers.size()];
-			String[] entryValues = new String[providers.size()];
-			String current = getPreferenceScreen().getSharedPreferences().getString(getString(R.string.pref_onlinemap), getResources().getString(R.string.def_onlinemap));
-			TileProvider curProvider = null;
+			String[] values = new String[providers.size()];
 			int i = 0;
 			for (TileProvider provider : providers)
 			{
 				entries[i] = provider.name;
-				entryValues[i] = provider.code;
-				if (current.equals(provider.code))
-					curProvider = provider;
+				values[i] = provider.code;
 				i++;
 			}
-			maps.setEntries(entries);
-			maps.setEntryValues(entryValues);
-
-			if (curProvider != null)
-			{
-				mapzoom.setMin(curProvider.minZoom);
-				mapzoom.setMax(curProvider.maxZoom);
-			}
-
-			super.onResume();
+			mapPreference.setEntries(entries);
+			mapPreference.setEntryValues(values);
 		}
 	}
 }
