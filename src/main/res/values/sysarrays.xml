@@ -98,6 +98,11 @@
         <item>10000</item>
         <item>2147483647</item>
     </string-array>
+    <string-array name="scale_values">
+        <item>0.7</item>
+        <item>1.0</item>
+        <item>1.5</item>
+    </string-array>
     <string-array name="track_types">
         <item>.plt</item>
         <item>.kml</item>

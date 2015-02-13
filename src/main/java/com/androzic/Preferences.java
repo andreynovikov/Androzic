@@ -869,7 +869,6 @@ public class Preferences extends ListFragment
 		@Override
 		public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key)
 		{
-			android.util.Log.e("PREF", "onSharedPreferenceChanged(" + key + ")");
 			if (key.equals(getString(R.string.pref_vectormap_theme)))
 			{
 				Androzic application = Androzic.getApplication();

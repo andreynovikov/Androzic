@@ -65,6 +65,18 @@
             android:dialogTitle="@string/pref_vectormap_poi_title"
             android:key="@string/pref_vectormap_poi"
             android:title="@string/pref_vectormap_poi_title" />
+        <ListPreference
+            android:defaultValue="1.0"
+            android:dialogTitle="@string/pref_vectormap_textscale_title"
+            android:entries="@array/scale_names"
+            android:entryValues="@array/scale_values"
+            android:key="@string/pref_vectormap_textscale"
+            android:title="@string/pref_vectormap_textscale_title" />
+        <CheckBoxPreference
+            android:dependency="@string/pref_mapadjacent"
+            android:defaultValue="@bool/def_vectormap_transparency"
+            android:key="@string/pref_vectormap_transparency"
+            android:title="@string/pref_vectormap_transparency_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_onlinemaps_title" >
         <org.droidparts.widget.MultiSelectListPreference
