@@ -133,6 +133,12 @@ public class MockMap extends BaseMap
 	}
 
 	@Override
+	public double getCoveringRatio(double refMpp)
+	{
+		return Double.MIN_VALUE;
+	}
+
+	@Override
 	public double getNextZoom()
 	{
 		if (zoom >= 10)

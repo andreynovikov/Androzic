@@ -185,41 +185,33 @@ public class MapIndex implements Serializable
 		{
 			for (int lon = minLon; lon <= maxLon; lon++)
 			{
-				try
+				HashSet<Integer> lli = maps[lat+90][lon+180];
+				if (lli != null)
 				{
-					HashSet<Integer> lli = maps[lat+90][lon+180];
-					if (lli != null)
+					for (Integer id : lli)
 					{
-						for (Integer id : lli)
-						{
-							BaseMap map = mapIndex.get(id);
-							if (llmapsidx.contains(map))
-								continue;
-							if (map.equals(refMap))
-								continue;
-							double ratio = refMap.mpp / map.mpp;
-							// If map has smaller scale and reference map covers all screen do not use it
-							if ((covered || ratio < 0.2) && ratio < 0.99)
-								continue;
+						BaseMap map = mapIndex.get(id);
+						if (llmapsidx.contains(map))
+							continue;
+						if (map.equals(refMap))
+							continue;
+						double ratio = map.getCoveringRatio(refMap.mpp);
+						// If map has smaller scale and reference map covers all screen do not use it
+						if ((covered || ratio < 0.2) && ratio < 0.99)
+							continue;
 
-							// If map has bigger scale but best map is not enabled do not use it
-							if ((! bestmap && covered) || ratio > 5)
-								continue;
+						// If map has bigger scale but best map is not enabled do not use it
+						if ((! bestmap && covered) || ratio > 5d)
+							continue;
 
-							// If map does not cover referencing area do not use it
-							// We put it at last place because this check is expensive
-							if (!map.containsArea(area))
-								continue;
+						// If map does not cover referencing area do not use it
+						// We put it at last place because this check is expensive
+						if (!map.containsArea(area))
+							continue;
 
-							llmaps.add(map);
-							llmapsidx.add(map);
-						}
+						llmaps.add(map);
+						llmapsidx.add(map);
 					}
-				}
-				catch (ArrayIndexOutOfBoundsException e)
-				{
-					// TODO Weird! Needs investigation.
-					e.printStackTrace();
 				}
 			}
 		}
@@ -227,7 +219,7 @@ public class MapIndex implements Serializable
 		Collections.sort(llmaps, comparator);
 		Collections.reverse(llmaps);
 
-		return llmaps;		
+		return llmaps;
 	}
 
 	public List<BaseMap> getMaps(double latitude, double longitude)
@@ -260,7 +252,7 @@ public class MapIndex implements Serializable
 		
 		Collections.sort(llmaps, comparator);
 
-		return llmaps;		
+		return llmaps;
 	}
 
 	public Collection<BaseMap> getMaps()
@@ -291,7 +283,19 @@ public class MapIndex implements Serializable
 		for (BaseMap map : mapIndex.values())
 			map.destroy();
 		mapIndex.clear();
-		//TODO Should we also clean maps array?
+		for (int lat = 0; lat < 181; lat++)
+		{
+			for (int lon = 0; lon < 361; lon++)
+			{
+				HashSet<Integer> lli = maps[lat][lon];
+				if (lli != null)
+				{
+					lli.clear();
+					maps[lat][lon] = null;
+				}
+			}
+		}
+		maps = null;
 	}
 
 	public static MapIndex loadIndex(File file) throws Throwable

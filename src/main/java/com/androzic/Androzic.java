@@ -2404,7 +2404,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
-		Log.e(TAG, "onSharedPreferenceChanged(" + key + ")");
 		Resources resources = getResources();
 		
 		if (getString(R.string.pref_folder_data).equals(key))
