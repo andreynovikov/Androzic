@@ -96,9 +96,11 @@ import com.androzic.util.Geo;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
 import com.androzic.util.WaypointFileHelper;
+import com.jhlabs.Ellipse2D;
 import com.jhlabs.map.proj.ProjectionException;
 
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
+import org.mapsforge.map.android.graphics.AndroidSvgBitmapStore;
 import org.mapsforge.map.android.rendertheme.BufferedAssetsRenderTheme;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
 import org.mapsforge.map.rendertheme.XmlRenderTheme;
@@ -1427,6 +1429,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				currentMap.getLatLonByXY(xy[0] + (int) coveringScreen.right, xy[1] + (int) coveringScreen.bottom, ll);
 				area.minLat = ll[0];
 				area.maxLon = ll[1];
+				area.fix();
 				List<BaseMap> cmr = new ArrayList<>();
 				if (coveringMaps != null)
 					cmr.addAll(coveringMaps);
@@ -2266,6 +2269,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		try
 		{
 			xmlRenderTheme = new BufferedAssetsRenderTheme(this, "", "renderthemes/rendertheme-v4.xml", this);
+			//AndroidSvgBitmapStore.clear();
 		}
 		catch (IOException e)
 		{
@@ -2479,14 +2483,27 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		else if (getString(R.string.pref_vectormap_theme).equals(key) || getString(R.string.pref_vectormap_poi).equals(key))
 		{
-			// We do not do this on theme setting change to eliminate double reinitialization
-			// because poi setting change is forced after theme setting change
 			initializeRenderTheme();
-			for (BaseMap map : maps.getMaps())
-			{
-				if (map instanceof ForgeMap)
-					((ForgeMap)map).onRenderThemeChanged();
-			}
+			if (maps != null)
+				for (BaseMap map : maps.getMaps())
+					if (map instanceof ForgeMap)
+						((ForgeMap)map).onRenderThemeChanged();
+		}
+		else if (getString(R.string.pref_vectormap_textscale).equals(key))
+		{
+			ForgeMap.textScale = Float.parseFloat(sharedPreferences.getString(getString(R.string.pref_vectormap_textscale), "1.0"));
+			if (maps != null)
+				for (BaseMap map : maps.getMaps())
+					if (map instanceof ForgeMap)
+						((ForgeMap)map).onRenderThemeChanged();
+		}
+		else if (getString(R.string.pref_vectormap_transparency).equals(key))
+		{
+			ForgeMap.transparency = adjacentMaps && sharedPreferences.getBoolean(getString(R.string.pref_vectormap_transparency), resources.getBoolean(R.bool.def_vectormap_transparency));
+			if (maps != null)
+				for (BaseMap map : maps.getMaps())
+					if (map instanceof ForgeMap)
+						((ForgeMap)map).onRenderThemeChanged();
 		}
 		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
 		{
@@ -2495,6 +2512,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		else if (getString(R.string.pref_mapadjacent).equals(key))
 		{
 			adjacentMaps = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapadjacent));
+			onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_vectormap_transparency));
 		}
 		else if (getString(R.string.pref_onlinemapprescalefactor).equals(key))
 		{
@@ -2647,6 +2665,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitprecision));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitsunrise));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_vectormap_textscale));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_vectormap_transparency));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_onlinemapprescalefactor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_onlinemapexpiration));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
