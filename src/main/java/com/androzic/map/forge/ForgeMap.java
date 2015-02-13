@@ -69,7 +69,8 @@ public class ForgeMap extends TileMap implements Redrawer
 	@SuppressWarnings("SpellCheckingInspection")
 	public static final byte[] MAGIC = "mapsforge binary OSM".getBytes();
 
-	private float textScale = 0.75f;
+	public static float textScale = 1f;
+	public static boolean transparency = false;
 
 	private transient MapFileInfo mapInfo;
 	private transient LatLong mapCenter;
@@ -241,7 +242,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		int r_min = osm_y - tiles_per_y;
 		int r_max = osm_y + tiles_per_y + 1;
 
-		boolean result = true;
+		boolean result = !transparency;
 
 		if (c_min < minCR[0])
 		{
@@ -384,7 +385,7 @@ public class ForgeMap extends TileMap implements Redrawer
 
 	private RendererJob getJob(Tile tile)
 	{
-		return new RendererJob(tile, mapFile, xmlRenderTheme, displayModel, textScale, true, false);
+		return new RendererJob(tile, mapFile, xmlRenderTheme, displayModel, textScale, transparency, false);
 	}
 
 	@Override
@@ -432,7 +433,6 @@ public class ForgeMap extends TileMap implements Redrawer
 		int tileCacheFiles = 2000; //estimateSizeOfFileSystemCache(cacheDirectoryName, firstLevelSize, tileSize);
 		if (! cacheDirectory.canWrite() || tileCacheFiles == 0)
 			return null;
-
 
 		try
 		{
