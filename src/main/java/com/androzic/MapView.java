@@ -204,8 +204,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		density = metrics.density;
 
 		// We set defaults to display size because we will get actual viewport size much later
-		currentViewport.width = metrics.widthPixels;
-		currentViewport.height = metrics.heightPixels;
+		currentViewport.width = metrics.widthPixels + VIEWPORT_EXCESS * 2;
+		currentViewport.height = metrics.heightPixels + VIEWPORT_EXCESS * 2;
 
 		scaleLinePaint = new Paint();
 		scaleLinePaint.setAntiAlias(false);

@@ -54,10 +54,8 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.androzic.data.Bounds;
@@ -96,7 +94,6 @@ import com.androzic.util.Geo;
 import com.androzic.util.OziExplorerFiles;
 import com.androzic.util.StringFormatter;
 import com.androzic.util.WaypointFileHelper;
-import com.jhlabs.Ellipse2D;
 import com.jhlabs.map.proj.ProjectionException;
 
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
@@ -216,7 +213,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public boolean mapsInited = false;
 	private MapHolder mapHolder;
 	protected OverlayManager overlayManager;
-	private DisplayMetrics displayMetrics;
 	public Drawable customCursor = null;
 	public boolean iconsEnabled = false;
 	public int iconX = 0;
@@ -2644,20 +2640,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		File sdcard = Environment.getExternalStorageDirectory();
 		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this, sdcard.getAbsolutePath()));
 		
-		displayMetrics = new DisplayMetrics();
-
-		WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-		if (wm != null)
-		{
-			wm.getDefaultDisplay().getMetrics(displayMetrics);
-		}
-		else
-		{
-			displayMetrics.setTo(resources.getDisplayMetrics());
-		}
-		displayMetrics.widthPixels += MapView.VIEWPORT_EXCESS * 2;
-		displayMetrics.heightPixels += MapView.VIEWPORT_EXCESS * 2;
-
 		charset = settings.getString(getString(R.string.pref_charset), "UTF-8");
 		String lang = settings.getString(getString(R.string.pref_locale), "");
 		if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang))
