@@ -84,6 +84,7 @@ import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteEdit;
 import com.androzic.ui.TooltipManager;
+import com.androzic.ui.Viewport;
 import com.androzic.util.Astro;
 import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
@@ -986,6 +987,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 					break;
 			}
 		}
+	}
+
+	@Override
+	public Viewport getViewport()
+	{
+		return map.getViewport();
 	}
 
 	private void updatePanels()

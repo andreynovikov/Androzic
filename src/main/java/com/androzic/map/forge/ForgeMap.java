@@ -88,7 +88,6 @@ public class ForgeMap extends TileMap implements Redrawer
 
 	private transient int[] minCR;
 	private transient int[] maxCR;
-	private transient DisplayMetrics metrics;
 
 	public ForgeMap(String path)
 	{
@@ -160,20 +159,18 @@ public class ForgeMap extends TileMap implements Redrawer
 	}
 
 	@Override
-	public synchronized void activate(OnMapTileStateChangeListener listener, DisplayMetrics metrics, double mpp) throws Throwable
+	public synchronized void activate(OnMapTileStateChangeListener listener, Viewport viewport, double mpp) throws Throwable
 	{
 		Log.e("FM", "activate " + name);
 		MapDatabase mapDatabase = new MapDatabase();
 		mapDatabase.openFile(mapFile);
-		tileCache = getCache();
+		tileCache = getCache(mpp, viewport.width, viewport.height);
 		databaseRenderer = new DatabaseRenderer(mapDatabase, AndroidGraphicFactory.INSTANCE, tileCache);
 		jobQueue = new JobQueue<>(mapViewPosition, displayModel);
 		ForgeLayer layer = new ForgeLayer(this);
 		mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, layer);
 		mapWorker.start();
-		//TODO This is a temporary hack for reactivation
-		this.metrics = metrics;
-		super.activate(listener, metrics, mpp);
+		super.activate(listener, viewport, mpp);
 	}
 
 	@Override
@@ -228,7 +225,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		if (cropBorder || drawBorder)
 			mapClipPath.offset(-map_xy[0] + viewport.width / 2, -map_xy[1] + viewport.height / 2, clipPath);
 
-		float tile_wh = (float) (TILE_SIZE * dynZoom);
+		float tile_wh = (float) (tileSize * dynZoom);
 
 		int osm_x = (int) (map_xy[0] / tile_wh);
 		int osm_y = (int) (map_xy[1] / tile_wh);
@@ -272,7 +269,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		List<TilePosition> tilePositions = new ArrayList<>();
 		for (int i = r_min; i <= r_max; i++)
 			for (int j = c_min; j <= c_max; j++)
-				tilePositions.add(new TilePosition(new Tile(j, i, srcZoom, TILE_SIZE), new Point(j, i)));
+				tilePositions.add(new TilePosition(new Tile(j, i, srcZoom, tileSize), new Point(j, i)));
 
 		Set<Job> jobs = new HashSet<>();
 		for (TilePosition tilePosition : tilePositions)
@@ -322,7 +319,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		{
 			if (dynZoom != 1.0)
 			{
-				int ss = (int) (dynZoom * TILE_SIZE);
+				int ss = (int) (dynZoom * tileSize);
 				tileBitmap = Bitmap.createScaledBitmap(tileBitmap, ss, ss, true);
 			}
 		}
@@ -350,7 +347,7 @@ public class ForgeMap extends TileMap implements Redrawer
 			Tile parentTile;
 			try
 			{
-				parentTile = new Tile(parentTileX, parentTileY, parentTileZoom, TILE_SIZE);
+				parentTile = new Tile(parentTileX, parentTileY, parentTileZoom, tileSize);
 			} catch (IllegalArgumentException e)
 			{
 				//TODO Check X,Y values for limits
@@ -402,10 +399,33 @@ public class ForgeMap extends TileMap implements Redrawer
 	{
 	}
 
-	private TileCache getCache()
+	private TileCache getCache(double mpp, int width, int height)
 	{
-		//FIXME Cache size
-		memoryTileCache = new InMemoryTileCache(80);
+		com.androzic.Log.e("ForgeMap", width + "x" + height);
+		int nx = (int) Math.ceil(width * 1. / (tileSize * dynZoom)) + 2;
+		int ny = (int) Math.ceil(height * 1. / (tileSize * dynZoom)) + 2;
+
+		// We need this redundancy to break from circular dependency
+		int zDiff = (int) Math.round(Math.log(getAbsoluteMPP() / mpp) / Math.log(2));
+		srcZoom = (byte) (defZoom + zDiff);
+		if (srcZoom > maxZoom)
+			srcZoom = maxZoom;
+		if (srcZoom < minZoom)
+			srcZoom = minZoom;
+
+		getTileXYByLatLon(mapInfo.boundingBox.maxLatitude, mapInfo.boundingBox.minLongitude, minCR);
+		getTileXYByLatLon(mapInfo.boundingBox.minLatitude, mapInfo.boundingBox.maxLongitude, maxCR);
+
+		int mnx = maxCR[0] - minCR[0] + 2;
+		int mny = maxCR[1] - minCR[1] + 2;
+		if (nx > mnx)
+			nx = mnx;
+		if (ny > mny)
+			ny = mny;
+		int cacheSize = (int) Math.ceil(nx * ny * 1.3);
+		com.androzic.Log.e("ForgeMap", "Cache size: " + cacheSize);
+
+		memoryTileCache = new InMemoryTileCache(cacheSize);
 		TileCache secondLevelTileCache = getSecondLevelCache();
 		if (secondLevelTileCache != null)
 			return new TwoLevelTileCache(memoryTileCache, secondLevelTileCache);
@@ -459,6 +479,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		Log.e("MF", "onRenderThemeChanged()");
 		boolean active = isActive;
 		OnMapTileStateChangeListener l = listener;
+		Viewport v = viewport;
 		if (active)
 			deactivate();
 		if (fileSystemTileCache != null)
@@ -468,7 +489,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		{
 			try
 			{
-				activate(l, metrics, getMPP());
+				activate(l, v, getMPP());
 			} catch (Throwable e)
 			{
 				e.printStackTrace();

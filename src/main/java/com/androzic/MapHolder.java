@@ -3,6 +3,7 @@ package com.androzic;
 import com.androzic.data.Route;
 import com.androzic.data.Waypoint;
 import com.androzic.map.OnMapTileStateChangeListener;
+import com.androzic.ui.Viewport;
 
 public interface MapHolder extends OnMapTileStateChangeListener
 {
@@ -29,4 +30,6 @@ public interface MapHolder extends OnMapTileStateChangeListener
 	boolean waypointTapped(Waypoint waypoint, int x, int y);
 	boolean routeWaypointTapped(Route route, int index, int x, int y);
 	boolean mapObjectTapped(long id, int x, int y);
+
+	Viewport getViewport();
 }

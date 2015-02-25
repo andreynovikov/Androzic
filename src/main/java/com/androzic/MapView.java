@@ -49,6 +49,7 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -199,9 +200,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		getHolder().addCallback(this);
 
 		Resources resources = getResources();
-		
-		density = resources.getDisplayMetrics().density;
-		
+		DisplayMetrics metrics = resources.getDisplayMetrics();
+		density = metrics.density;
+
+		// We set defaults to display size because we will get actual viewport size much later
+		currentViewport.width = metrics.widthPixels;
+		currentViewport.height = metrics.heightPixels;
+
 		scaleLinePaint = new Paint();
 		scaleLinePaint.setAntiAlias(false);
 		scaleLinePaint.setStrokeWidth(density);
@@ -762,6 +767,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		finally
 		{
 		}
+	}
+
+	public Viewport getViewport()
+	{
+		return currentViewport.copy();
 	}
 
 	private void calculateViewportBounds()

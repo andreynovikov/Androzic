@@ -21,7 +21,6 @@
 package com.androzic.map;
 
 import android.graphics.Canvas;
-import android.util.DisplayMetrics;
 
 import com.androzic.ui.Viewport;
 
@@ -57,7 +56,7 @@ public class MockMap extends BaseMap
 	}
 
 	@Override
-	public void activate(OnMapTileStateChangeListener listener, DisplayMetrics metrics, double mpp)
+	public void activate(OnMapTileStateChangeListener listener, Viewport viewport, double mpp)
 	{
 	}
 

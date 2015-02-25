@@ -221,6 +221,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public boolean iconsEnabled = false;
 	public int iconX = 0;
 	public int iconY = 0;
+	private int onlineMapPrescaleFactor;
+	private int onlineMapTileExpiration;
 	
 	public boolean isPaid = false;
 
@@ -251,7 +253,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(mapHolder, displayMetrics, currentMap.getAbsoluteMPP());
+				currentMap.activate(mapHolder, mapHolder.getViewport(), currentMap.getAbsoluteMPP());
 			}
 			catch (final Throwable e)
 			{
@@ -1346,7 +1348,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				try
 				{
-					newMap.activate(mapHolder, displayMetrics, mpp);
+					newMap.activate(mapHolder, mapHolder.getViewport(), mpp);
 				}
 				catch (final Throwable e)
 				{
@@ -1395,6 +1397,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			if (selectedProviders.contains(map.code) && map.instance == null)
 			{
 				OnlineMap onlineMap = new OnlineMap(map, zoom);
+				onlineMap.setPrescaleFactor(onlineMapPrescaleFactor);
 				maps.addMap(onlineMap);
 				map.instance = onlineMap;
 				map.listener = mapHolder;
@@ -1442,7 +1445,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					try
 					{
 						if (!map.activated())
-							map.activate(mapHolder, displayMetrics, currentMap.getMPP());
+							map.activate(mapHolder, mapHolder.getViewport(), currentMap.getMPP());
 						else
 							map.zoomTo(currentMap.getMPP());
 						cmr.remove(map);
@@ -2024,13 +2027,18 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 				
 		// Online maps
 		onlineMaps = new ArrayList<>();
-		onlineMaps.add(new OpenStreetMapTileProvider());
+		TileProvider provider = new OpenStreetMapTileProvider();
+		provider.tileExpiration = onlineMapTileExpiration;
+		onlineMaps.add(provider);
 		String[] om = getResources().getStringArray(R.array.online_maps);
 		for (String s : om)
 		{
-			TileProvider provider = TileProviderFactory.fromString(s);
+			provider = TileProviderFactory.fromString(s);
 			if (provider != null)
+			{
+				provider.tileExpiration = onlineMapTileExpiration;
 				onlineMaps.add(provider);
+			}
 		}
 		initializeOnlineMapProviders();
 		File mapproviders = new File(rootPath, "providers.dat");
@@ -2045,9 +2053,12 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			    	line = line.trim();
 			    	if (line.startsWith("#") || "".equals(line))
 			    		continue;
-					TileProvider provider = TileProviderFactory.fromString(line);
+					provider = TileProviderFactory.fromString(line);
 					if (provider != null)
+					{
+						provider.tileExpiration = onlineMapTileExpiration;
 						onlineMaps.add(provider);
+					}
 				}
 			    reader.close();
 			}
@@ -2268,8 +2279,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	{
 		try
 		{
+			AndroidSvgBitmapStore.clear();
 			xmlRenderTheme = new BufferedAssetsRenderTheme(this, "", "renderthemes/rendertheme-v4.xml", this);
-			//AndroidSvgBitmapStore.clear();
 		}
 		catch (IOException e)
 		{
@@ -2397,6 +2408,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			sendBroadcast(intent);
 
 			List<TileProvider> tileProviders = TileProviderFactory.fromPlugin(packageManager, provider);
+			for (TileProvider tileProvider : tileProviders)
+			{
+				tileProvider.tileExpiration = onlineMapTileExpiration;
+			}
 			onlineMaps.addAll(tileProviders);
 		}
 	}
@@ -2515,8 +2530,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		else if (getString(R.string.pref_onlinemapprescalefactor).equals(key))
 		{
-			int factor = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_onlinemapprescalefactor));
-			OnlineMap.setPrescaleFactor(factor);
+			onlineMapPrescaleFactor = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_onlinemapprescalefactor));
+			if (maps != null)
+				for (BaseMap map : maps.getMaps())
+					if (map instanceof OnlineMap)
+						((OnlineMap)map).setPrescaleFactor(onlineMapPrescaleFactor);
 			// Hack to recalculate cache and mpp
 			if (currentMap != null && currentMap instanceof OnlineMap)
 				currentMap.setZoom(currentMap.getZoom());
@@ -2524,13 +2542,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		else if (getString(R.string.pref_onlinemapexpiration).equals(key))
 		{
 			// in weeks
-			int expiration = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_onlinemapexpiration));
+			onlineMapTileExpiration = sharedPreferences.getInt(key, resources.getInteger(R.integer.def_onlinemapexpiration));
 			// in milliseconds
-			expiration *= 1000 * 3600 * 24 * 7;
+			onlineMapTileExpiration *= 1000 * 3600 * 24 * 7;
 			if (onlineMaps != null)
 			{
 				for (TileProvider provider : onlineMaps)
-					provider.tileExpiration = expiration;
+					provider.tileExpiration = onlineMapTileExpiration;
 			}
 		}
 		else if (getString(R.string.pref_mapcropborder).equals(key))
