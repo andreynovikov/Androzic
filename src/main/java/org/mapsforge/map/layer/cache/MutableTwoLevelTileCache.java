@@ -119,6 +119,15 @@ public class MutableTwoLevelTileCache implements TileCache
 	}
 
 	@Override
+	public void purge()
+	{
+		if (this.firstLevelTileCache != null)
+			this.firstLevelTileCache.purge();
+		if (this.secondLevelTileCache != null)
+			this.secondLevelTileCache.purge();
+	}
+
+	@Override
 	public void put(Job key, TileBitmap bitmap)
 	{
 		if (this.firstLevelTileCache == null)

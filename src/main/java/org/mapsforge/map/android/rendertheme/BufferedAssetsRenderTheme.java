@@ -59,32 +59,6 @@ public class BufferedAssetsRenderTheme implements XmlRenderTheme
 	}
 
 	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-		{
-			return true;
-		}
-		else if (!(obj instanceof BufferedAssetsRenderTheme))
-		{
-			return false;
-		}
-		BufferedAssetsRenderTheme other = (BufferedAssetsRenderTheme) obj;
-		if (this.assetName == null)
-		{
-			if (other.assetName != null)
-			{
-				return false;
-			}
-		}
-		else if (!this.assetName.equals(other.assetName))
-		{
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public XmlRenderThemeMenuCallback getMenuCallback()
 	{
 		return this.menuCallback;
@@ -100,15 +74,5 @@ public class BufferedAssetsRenderTheme implements XmlRenderTheme
 	public InputStream getRenderThemeAsStream()
 	{
 		return new ByteArrayInputStream(data);
-	}
-
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((this.assetName == null) ? 0 : this.assetName.hashCode());
-		result = prime * result + ((this.relativePathPrefix == null) ? 0 : this.relativePathPrefix.hashCode());
-		return result;
 	}
 }

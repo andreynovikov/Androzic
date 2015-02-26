@@ -54,8 +54,10 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.androzic.data.Bounds;
@@ -202,6 +204,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	
 	private Locale locale = null;
 	public String charset;
+	private DisplayMetrics displayMetrics;
 
 	public String dataPath;
 	private String rootPath;
@@ -249,7 +252,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(mapHolder, mapHolder.getViewport(), currentMap.getAbsoluteMPP());
+				currentMap.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, currentMap.getAbsoluteMPP());
 			}
 			catch (final Throwable e)
 			{
@@ -1344,7 +1347,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				try
 				{
-					newMap.activate(mapHolder, mapHolder.getViewport(), mpp);
+					newMap.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, mpp);
 				}
 				catch (final Throwable e)
 				{
@@ -1441,7 +1444,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					try
 					{
 						if (!map.activated())
-							map.activate(mapHolder, mapHolder.getViewport(), currentMap.getMPP());
+							map.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, currentMap.getMPP());
 						else
 							map.zoomTo(currentMap.getMPP());
 						cmr.remove(map);
@@ -2639,7 +2642,21 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 		File sdcard = Environment.getExternalStorageDirectory();
 		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this, sdcard.getAbsolutePath()));
-		
+
+		displayMetrics = new DisplayMetrics();
+
+		WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+		if (wm != null)
+		{
+			wm.getDefaultDisplay().getMetrics(displayMetrics);
+		}
+		else
+		{
+			displayMetrics.setTo(resources.getDisplayMetrics());
+		}
+		displayMetrics.widthPixels += MapView.VIEWPORT_EXCESS * 2;
+		displayMetrics.heightPixels += MapView.VIEWPORT_EXCESS * 2;
+
 		charset = settings.getString(getString(R.string.pref_charset), "UTF-8");
 		String lang = settings.getString(getString(R.string.pref_locale), "");
 		if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang))

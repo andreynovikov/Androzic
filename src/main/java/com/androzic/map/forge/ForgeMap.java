@@ -25,7 +25,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Path;
 import android.text.format.DateFormat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.androzic.Androzic;
@@ -45,7 +44,6 @@ import org.mapsforge.map.layer.cache.FileSystemTileCache;
 import org.mapsforge.map.layer.cache.InMemoryTileCache;
 import org.mapsforge.map.layer.cache.MutableTwoLevelTileCache;
 import org.mapsforge.map.layer.cache.TileCache;
-import org.mapsforge.map.layer.cache.TwoLevelTileCache;
 import org.mapsforge.map.layer.queue.Job;
 import org.mapsforge.map.layer.queue.JobQueue;
 import org.mapsforge.map.layer.renderer.DatabaseRenderer;
@@ -54,6 +52,7 @@ import org.mapsforge.map.layer.renderer.RendererJob;
 import org.mapsforge.map.model.DisplayModel;
 import org.mapsforge.map.model.MapViewPosition;
 import org.mapsforge.map.reader.MapDatabase;
+import org.mapsforge.map.reader.header.FileOpenResult;
 import org.mapsforge.map.reader.header.MapFileInfo;
 import org.mapsforge.map.rendertheme.XmlRenderTheme;
 
@@ -103,13 +102,19 @@ public class ForgeMap extends TileMap implements Redrawer
 
 		mapFile = new File(path);
 		MapDatabase mapDatabase = new MapDatabase();
-		mapDatabase.openFile(mapFile);
+		FileOpenResult result = mapDatabase.openFile(mapFile);
+		if (!result.isSuccess())
+		{
+			Log.e("ForgeMap", result.getErrorMessage());
+			this.loadError = new Error(result.getErrorMessage());
+			return;
+		}
 		mapInfo = mapDatabase.getMapFileInfo();
 		mapDatabase.closeFile();
 		displayModel = new DisplayModel();
 		mapViewPosition = new MapViewPosition(displayModel);
 
-		// Remove extention
+		// Remove extension
 		name = mapFile.getName();
 		int e = name.lastIndexOf(".map");
 		if (e > 0)
@@ -160,7 +165,7 @@ public class ForgeMap extends TileMap implements Redrawer
 	}
 
 	@Override
-	public synchronized void activate(OnMapTileStateChangeListener listener, Viewport viewport, double mpp) throws Throwable
+	public synchronized void activate(OnMapTileStateChangeListener listener, int width, int height, double mpp) throws Throwable
 	{
 		Log.e("FM", "activate " + name);
 		MapDatabase mapDatabase = new MapDatabase();
@@ -172,7 +177,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		ForgeLayer layer = new ForgeLayer(this);
 		mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, layer);
 		mapWorker.start();
-		super.activate(listener, viewport, mpp);
+		super.activate(listener, width, height, mpp);
 	}
 
 	@Override
@@ -399,9 +404,9 @@ public class ForgeMap extends TileMap implements Redrawer
 	@Override
 	public void recalculateCache()
 	{
-		com.androzic.Log.e("ForgeMap", viewport.width + "x" + viewport.height);
-		int nx = (int) Math.ceil(viewport.width * 1. / (tileSize * dynZoom)) + 2;
-		int ny = (int) Math.ceil(viewport.height * 1. / (tileSize * dynZoom)) + 2;
+		com.androzic.Log.e("ForgeMap", width + "x" + height);
+		int nx = (int) Math.ceil(width * 1. / (tileSize * dynZoom)) + 2;
+		int ny = (int) Math.ceil(height * 1. / (tileSize * dynZoom)) + 2;
 
 		getTileXYByLatLon(mapInfo.boundingBox.maxLatitude, mapInfo.boundingBox.minLongitude, minCR);
 		getTileXYByLatLon(mapInfo.boundingBox.minLatitude, mapInfo.boundingBox.maxLongitude, maxCR);
@@ -412,7 +417,7 @@ public class ForgeMap extends TileMap implements Redrawer
 			nx = mnx;
 		if (ny > mny)
 			ny = mny;
-		int cacheSize = (int) Math.ceil(nx * ny * 1.3);
+		int cacheSize = (int) Math.ceil(nx * ny * 1.2);
 		com.androzic.Log.e("ForgeMap", "Cache size: " + cacheSize);
 		com.androzic.Log.e("ForgeMap", "Capacity: " + tileCache.getCapacityFirstLevel());
 
@@ -467,25 +472,10 @@ public class ForgeMap extends TileMap implements Redrawer
 	{
 		Androzic application = Androzic.getApplication();
 		xmlRenderTheme = application.xmlRenderTheme;
-		Log.e("MF", "onRenderThemeChanged()");
-		boolean active = isActive;
-		OnMapTileStateChangeListener l = listener;
-		Viewport v = viewport;
-		if (active)
-			deactivate();
-		if (fileSystemTileCache != null)
-			fileSystemTileCache.destroy();
-		fileSystemTileCache = null;
-		if (active)
-		{
-			try
-			{
-				activate(l, v, getMPP());
-			} catch (Throwable e)
-			{
-				e.printStackTrace();
-			}
-		}
+		if (tileCache != null)
+			tileCache.purge();
+		else if (fileSystemTileCache != null)
+			fileSystemTileCache.purge();
 	}
 
 	public List<String> info()
@@ -505,6 +495,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		info.add("datum: " + datum);
 		info.add("scale (mpp): " + mpp);
 		info.add("map projection: " + mapInfo.projectionName);
+		info.add("bounding box: " + mapInfo.boundingBox.toString());
 		info.add("start position: " + mapInfo.startPosition.toString());
 		info.add("language: " + mapInfo.languagePreference);
 		info.add("creation date: " + DateFormat.getDateFormat(Androzic.getApplication()).format(mapInfo.mapDate));

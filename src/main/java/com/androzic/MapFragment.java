@@ -989,12 +989,6 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		}
 	}
 
-	@Override
-	public Viewport getViewport()
-	{
-		return map.getViewport();
-	}
-
 	private void updatePanels()
 	{
 		long now = SystemClock.uptimeMillis();
