@@ -116,6 +116,9 @@ public class MapIndex implements Serializable
 			return;
 
 		map.initialize();
+		// Error can be raised during initialization.
+		if (map.loadError != null)
+			return;
 
 		// TODO Use corner markers instead
 		Bounds bounds = map.getBounds();
