@@ -43,6 +43,7 @@ import org.mapsforge.map.layer.Redrawer;
 import org.mapsforge.map.layer.TilePosition;
 import org.mapsforge.map.layer.cache.FileSystemTileCache;
 import org.mapsforge.map.layer.cache.InMemoryTileCache;
+import org.mapsforge.map.layer.cache.MutableTwoLevelTileCache;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.cache.TwoLevelTileCache;
 import org.mapsforge.map.layer.queue.Job;
@@ -80,7 +81,7 @@ public class ForgeMap extends TileMap implements Redrawer
 	private transient DatabaseRenderer databaseRenderer;
 	private transient MapWorker mapWorker;
 	private transient JobQueue<RendererJob> jobQueue;
-	private transient TileCache tileCache;
+	private transient MutableTwoLevelTileCache tileCache;
 	private transient TileCache memoryTileCache;
 	private transient TileCache fileSystemTileCache;
 	private transient MapViewPosition mapViewPosition;
@@ -164,7 +165,8 @@ public class ForgeMap extends TileMap implements Redrawer
 		Log.e("FM", "activate " + name);
 		MapDatabase mapDatabase = new MapDatabase();
 		mapDatabase.openFile(mapFile);
-		tileCache = getCache(mpp, viewport.width, viewport.height);
+		tileCache = new MutableTwoLevelTileCache();
+		tileCache.setSecondLevelCache(getSecondLevelCache());
 		databaseRenderer = new DatabaseRenderer(mapDatabase, AndroidGraphicFactory.INSTANCE, tileCache);
 		jobQueue = new JobQueue<>(mapViewPosition, displayModel);
 		ForgeLayer layer = new ForgeLayer(this);
@@ -390,28 +392,16 @@ public class ForgeMap extends TileMap implements Redrawer
 	{
 		super.setZoom(z);
 		mapViewPosition.setZoomLevel(srcZoom);
-		getTileXYByLatLon(mapInfo.boundingBox.maxLatitude, mapInfo.boundingBox.minLongitude, minCR);
-		getTileXYByLatLon(mapInfo.boundingBox.minLatitude, mapInfo.boundingBox.maxLongitude, maxCR);
+		//getTileXYByLatLon(mapInfo.boundingBox.maxLatitude, mapInfo.boundingBox.minLongitude, minCR);
+		//getTileXYByLatLon(mapInfo.boundingBox.minLatitude, mapInfo.boundingBox.maxLongitude, maxCR);
 	}
 
 	@Override
 	public void recalculateCache()
 	{
-	}
-
-	private TileCache getCache(double mpp, int width, int height)
-	{
-		com.androzic.Log.e("ForgeMap", width + "x" + height);
-		int nx = (int) Math.ceil(width * 1. / (tileSize * dynZoom)) + 2;
-		int ny = (int) Math.ceil(height * 1. / (tileSize * dynZoom)) + 2;
-
-		// We need this redundancy to break from circular dependency
-		int zDiff = (int) Math.round(Math.log(getAbsoluteMPP() / mpp) / Math.log(2));
-		srcZoom = (byte) (defZoom + zDiff);
-		if (srcZoom > maxZoom)
-			srcZoom = maxZoom;
-		if (srcZoom < minZoom)
-			srcZoom = minZoom;
+		com.androzic.Log.e("ForgeMap", viewport.width + "x" + viewport.height);
+		int nx = (int) Math.ceil(viewport.width * 1. / (tileSize * dynZoom)) + 2;
+		int ny = (int) Math.ceil(viewport.height * 1. / (tileSize * dynZoom)) + 2;
 
 		getTileXYByLatLon(mapInfo.boundingBox.maxLatitude, mapInfo.boundingBox.minLongitude, minCR);
 		getTileXYByLatLon(mapInfo.boundingBox.minLatitude, mapInfo.boundingBox.maxLongitude, maxCR);
@@ -424,13 +414,13 @@ public class ForgeMap extends TileMap implements Redrawer
 			ny = mny;
 		int cacheSize = (int) Math.ceil(nx * ny * 1.3);
 		com.androzic.Log.e("ForgeMap", "Cache size: " + cacheSize);
+		com.androzic.Log.e("ForgeMap", "Capacity: " + tileCache.getCapacityFirstLevel());
 
-		memoryTileCache = new InMemoryTileCache(cacheSize);
-		TileCache secondLevelTileCache = getSecondLevelCache();
-		if (secondLevelTileCache != null)
-			return new TwoLevelTileCache(memoryTileCache, secondLevelTileCache);
-		else
-			return memoryTileCache;
+		if (cacheSize != tileCache.getCapacityFirstLevel())
+		{
+			memoryTileCache = new InMemoryTileCache(cacheSize);
+			tileCache.setFirstLevelCache(memoryTileCache);
+		}
 	}
 
 	private TileCache getSecondLevelCache()
@@ -458,7 +448,8 @@ public class ForgeMap extends TileMap implements Redrawer
 		{
 			fileSystemTileCache = new FileSystemTileCache(tileCacheFiles, cacheDirectory, AndroidGraphicFactory.INSTANCE, false, 0);
 			return fileSystemTileCache;
-		} catch (IllegalArgumentException e)
+		}
+		catch (IllegalArgumentException e)
 		{
 			e.printStackTrace();
 		}
