@@ -39,6 +39,7 @@ dependencies {
     compile project(':libraries:drag-sort-listview:library')
     compile project(':libraries:color-picker-view:library')
     compile project(':libraries:android-support-v4-preferencefragment')
+    compile project(':libraries:mapsforge')
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.daimajia.swipelayout:library:1.1.7'
     compile 'com.nispok:snackbar:2.7.1'

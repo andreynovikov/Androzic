@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+<module external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" external.system.module.group="Androzic" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
@@ -9,6 +9,7 @@
     <facet type="android" name="Android">
       <configuration>
         <option name="SELECTED_BUILD_VARIANT" value="debug" />
+        <option name="SELECTED_TEST_ARTIFACT" value="_android_test_" />
         <option name="ASSEMBLE_TASK_NAME" value="assembleDebug" />
         <option name="COMPILE_JAVA_TASK_NAME" value="compileDebugSources" />
         <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleDebugTest" />
@@ -24,6 +25,7 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/build/intermediates/classes/debug" />
+    <output-test url="file://$MODULE_DIR$/build/intermediates/classes/test/debug" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/debug" isTestSource="false" generated="true" />
@@ -83,22 +85,25 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="snackbar-2.7.1" level="project" />
-    <orderEntry type="library" exported="" name="asm-4.2" level="project" />
-    <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
-    <orderEntry type="library" exported="" name="objenesis-2.1" level="project" />
-    <orderEntry type="library" exported="" name="fab-0.0.6" level="project" />
+    <orderEntry type="library" exported="" name="androidsvg-1.2.2-beta-1" level="project" />
     <orderEntry type="library" exported="" name="kryo-3.0.0" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />
-    <orderEntry type="library" exported="" name="library-1.1.7" level="project" />
+    <orderEntry type="library" exported="" name="kxml2-2.3.0" level="project" />
     <orderEntry type="library" exported="" name="reflectasm-1.10.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-21.0.2" level="project" />
     <orderEntry type="library" exported="" name="minlog-1.3.0" level="project" />
+    <orderEntry type="library" exported="" name="asm-4.2" level="project" />
+    <orderEntry type="library" exported="" name="snackbar-2.7.1" level="project" />
+    <orderEntry type="library" exported="" name="objenesis-2.1" level="project" />
+    <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
+    <orderEntry type="library" exported="" name="fab-0.0.6" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project" />
+    <orderEntry type="library" exported="" name="library-1.1.7" level="project" />
     <orderEntry type="module" module-name="android-support-v4-preferencefragment" exported="" />
     <orderEntry type="module" module-name="library" exported="" />
     <orderEntry type="module" module-name="color-picker-view-library" exported="" />
     <orderEntry type="module" module-name="geo-coordinate-conversion" exported="" />
+    <orderEntry type="module" module-name="mapsforge" exported="" />
     <orderEntry type="module" module-name="drag-sort-listview-library" exported="" />
   </component>
 </module>
