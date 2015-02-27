@@ -31,8 +31,8 @@ import android.preference.PreferenceManager;
 
 import com.androzic.Androzic;
 import com.androzic.R;
-import com.androzic.map.Grid;
-import com.androzic.map.Map;
+import com.androzic.map.ozf.Grid;
+import com.androzic.map.ozf.OzfMap;
 
 public class OverlayManager
 {
@@ -257,7 +257,7 @@ public class OverlayManager
 		}
 	}
 
-	public void initGrids(Map currentMap)
+	public void initGrids(OzfMap currentMap)
 	{
 		llGridOverlay = null;
 		grGridOverlay = null;

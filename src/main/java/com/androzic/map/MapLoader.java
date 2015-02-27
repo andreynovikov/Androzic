@@ -32,6 +32,8 @@ import java.util.Hashtable;
 import android.util.Log;
 
 import com.androzic.map.forge.ForgeMap;
+import com.androzic.map.ozf.Grid;
+import com.androzic.map.ozf.OzfMap;
 import com.androzic.util.CSV;
 import com.androzic.util.OziExplorerFiles;
 import com.jhlabs.Point2D;
@@ -100,7 +102,7 @@ public class MapLoader
 
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
 	    
-	    Map map = new Map(file.getCanonicalPath());
+	    OzfMap map = new OzfMap(file.getCanonicalPath());
 	    try
 	    {
 		    String[] fields;
@@ -250,7 +252,7 @@ public class MapLoader
 		return map;
 	}
 
-	private static void fixCoords(Map map, Datum datum)
+	private static void fixCoords(OzfMap map, Datum datum)
 	{
 		Log.d("OZI", "map datum: " + datum);
 		
@@ -282,7 +284,7 @@ public class MapLoader
 		Log.d("OZI", "new datum: " + map.datum);
 	}
 
-	private static void fixCalibration(Map map)
+	private static void fixCalibration(OzfMap map)
 	{
 		for (MapPoint mp : map.calibrationPoints)
 		{
@@ -353,7 +355,7 @@ public class MapLoader
 		}
 	}
 	
-	private static void fixCornerMarkers(Map map)
+	private static void fixCornerMarkers(OzfMap map)
 	{
 		if (map.cornerMarkers != null)
 		{
@@ -388,7 +390,7 @@ public class MapLoader
 		}
 	}
 	
-	private static void parseProjectionParams(Map map, String[] fields)
+	private static void parseProjectionParams(OzfMap map, String[] fields)
 	{
 		try
 		{
@@ -454,7 +456,7 @@ public class MapLoader
 		}
 	}
 
-	private static MapPoint parsePoint(Map map, String[] fields)
+	private static MapPoint parsePoint(OzfMap map, String[] fields)
 	{
 		MapPoint point = new MapPoint();
 		//int n = Integer.parseInt(fields[0].substring("Point".length()));
@@ -525,7 +527,7 @@ public class MapLoader
 		return point;
 	}
 
-	private static void parseLLGrid(Map map, String[] fields)
+	private static void parseLLGrid(OzfMap map, String[] fields)
 	{
 		Grid grid = new Grid();
 		grid.enabled = "Yes".equals(fields[1]);
@@ -621,7 +623,7 @@ public class MapLoader
 		map.llGrid = grid;
 	}
 
-	private static void parseOtherGrid(Map map, String[] fields)
+	private static void parseOtherGrid(OzfMap map, String[] fields)
 	{
 		Grid grid = new Grid();
 		grid.enabled = "Yes".equals(fields[1]);

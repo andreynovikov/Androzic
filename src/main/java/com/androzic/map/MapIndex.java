@@ -38,6 +38,8 @@ import android.annotation.SuppressLint;
 
 import com.androzic.data.Bounds;
 import com.androzic.map.forge.ForgeMap;
+import com.androzic.map.ozf.Grid;
+import com.androzic.map.ozf.OzfMap;
 import com.androzic.util.FileList;
 import com.androzic.util.MapFilenameFilter;
 import com.esotericsoftware.kryo.Kryo;
@@ -307,7 +309,7 @@ public class MapIndex implements Serializable
 		Kryo kryo = new Kryo();
 		kryo.register(MapIndex.class);
 		kryo.register(BaseMap.class);
-		kryo.register(Map.class);
+		kryo.register(OzfMap.class);
 		kryo.register(ForgeMap.class);
 		kryo.register(Grid.class);
 		kryo.register(MapPoint.class);
@@ -331,7 +333,7 @@ public class MapIndex implements Serializable
 		Kryo kryo = new Kryo();
 		kryo.register(MapIndex.class);
 		kryo.register(BaseMap.class);
-		kryo.register(Map.class);
+		kryo.register(OzfMap.class);
 		kryo.register(ForgeMap.class);
 		kryo.register(Grid.class);
 		kryo.register(MapPoint.class);

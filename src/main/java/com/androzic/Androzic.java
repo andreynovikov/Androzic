@@ -70,10 +70,10 @@ import com.androzic.location.ILocationListener;
 import com.androzic.location.ILocationService;
 import com.androzic.location.LocationService;
 import com.androzic.map.BaseMap;
-import com.androzic.map.Map;
+import com.androzic.map.ozf.OzfMap;
 import com.androzic.map.MapIndex;
 import com.androzic.map.MockMap;
-import com.androzic.map.OzfDecoder;
+import com.androzic.map.ozf.OzfDecoder;
 import com.androzic.map.SASMapLoader;
 import com.androzic.map.forge.ForgeMap;
 import com.androzic.map.online.OnlineMap;
@@ -270,8 +270,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 		}
 
-		if (currentMap != null && currentMap instanceof Map)
-			overlayManager.initGrids((Map) currentMap);
+		if (currentMap != null && currentMap instanceof OzfMap)
+			overlayManager.initGrids((OzfMap) currentMap);
 	}
 	
 	public java.util.Map<String, Intent> getPluginsPreferences()
@@ -1364,8 +1364,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			currentMap = newMap;
 			if (mapHolder != null)
 				mapHolder.mapChanged(forced);
-			if (currentMap instanceof Map)
-				overlayManager.initGrids((Map) currentMap);
+			if (currentMap instanceof OzfMap)
+				overlayManager.initGrids((OzfMap) currentMap);
 			return true;
 		}
 		return false;
@@ -2474,25 +2474,25 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		else if (getString(R.string.pref_grid_mapshow).equals(key))
 		{
 			overlayManager.mapGrid = sharedPreferences.getBoolean(key, false);
-			if (currentMap instanceof Map)
-				overlayManager.initGrids((Map) currentMap);
+			if (currentMap instanceof OzfMap)
+				overlayManager.initGrids((OzfMap) currentMap);
 		}
 		else if (getString(R.string.pref_grid_usershow).equals(key))
 		{
 			overlayManager.userGrid = sharedPreferences.getBoolean(key, false);
-			if (currentMap instanceof Map)
-				overlayManager.initGrids((Map) currentMap);
+			if (currentMap instanceof OzfMap)
+				overlayManager.initGrids((OzfMap) currentMap);
 		}
 		else if (getString(R.string.pref_grid_preference).equals(key))
 		{
 			overlayManager.gridPrefer = Integer.parseInt(sharedPreferences.getString(key, "0"));
-			if (currentMap instanceof Map)
-				overlayManager.initGrids((Map) currentMap);
+			if (currentMap instanceof OzfMap)
+				overlayManager.initGrids((OzfMap) currentMap);
 		}
 		else if (getString(R.string.pref_grid_userscale).equals(key) || getString(R.string.pref_grid_userunit).equals(key) || getString(R.string.pref_grid_usermpp).equals(key))
 		{
-			if (currentMap instanceof Map)
-				overlayManager.initGrids((Map) currentMap);
+			if (currentMap instanceof OzfMap)
+				overlayManager.initGrids((OzfMap) currentMap);
 		}
 		else if (getString(R.string.pref_vectormap_theme).equals(key) || getString(R.string.pref_vectormap_poi).equals(key))
 		{

@@ -31,7 +31,7 @@ import android.graphics.Rect;
 import com.androzic.R;
 import com.androzic.data.Bounds;
 import com.androzic.map.BaseMap;
-import com.androzic.map.Grid;
+import com.androzic.map.ozf.Grid;
 import com.androzic.ui.Viewport;
 
 public class LatLonGridOverlay extends MapOverlay
