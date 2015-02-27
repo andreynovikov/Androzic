@@ -32,6 +32,16 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    productFlavors {
+        generic {
+            applicationId "com.androzic.v2"
+            versionName "2.1"
+        }
+        SeaVenti {
+            applicationId "com.androzic.v2"
+            versionName "2.1-SeaVenti"
+        }
+    }
 }
 
 dependencies {

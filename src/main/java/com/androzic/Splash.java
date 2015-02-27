@@ -473,7 +473,7 @@ public class Splash extends Activity implements OnClickListener
 
 			// put world map if no any found
 			String[] mapfiles = mapdir.list();
-			if (mapfiles != null && mapfiles.length == 0)
+			if (Variants.ALWAYS_WRITE_MAP_ASSETS || mapfiles != null && mapfiles.length == 0)
 				application.copyAssets("maps", mapdir);
 
 			msg = mHandler.obtainMessage(MSG_STATUS);
