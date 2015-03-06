@@ -65,7 +65,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ForgeMap extends TileMap implements Redrawer
+public class ForgeMap extends TileMap
 {
 	private static final long serialVersionUID = 1L;
 
@@ -85,6 +85,7 @@ public class ForgeMap extends TileMap implements Redrawer
 	private transient static DatabaseRenderer databaseRenderer;
 	private transient static JobQueue<RendererJob> jobQueue;
 	private transient static MapWorker mapWorker;
+	private transient static MapRedrawer mapRedrawer;
 
 	private transient MapFile mapFile;
 	private transient MapFileInfo mapInfo;
@@ -99,6 +100,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		mapViewPosition = new MapViewPosition(displayModel);
 		mapViewPosition.setZoomLevelMin((byte) 0);
 		mapViewPosition.setZoomLevelMax((byte) 22);
+		mapRedrawer = new MapRedrawer();
 	}
 
 	public ForgeMap(String path)
@@ -184,6 +186,7 @@ public class ForgeMap extends TileMap implements Redrawer
 	public synchronized void activate(OnMapTileStateChangeListener listener, int width, int height, double mpp, boolean current) throws Throwable
 	{
 		Log.e("FM", "activate " + name);
+		mapRedrawer.setListener(listener);
 		if (!mapDataStore.contains(mapFile))
 		{
 			if (mapWorker != null)
@@ -213,7 +216,7 @@ public class ForgeMap extends TileMap implements Redrawer
 			jobQueue = new JobQueue<>(mapViewPosition, displayModel);
 		if (mapWorker == null)
 		{
-			mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, new ForgeLayer(this));
+			mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, new ForgeLayer(mapRedrawer));
 			mapWorker.start();
 		}
 		super.activate(listener, width, height, mpp, current);
@@ -226,9 +229,11 @@ public class ForgeMap extends TileMap implements Redrawer
 		synchronized (mapWorker)
 		{
 			Log.e("FM", "deactivate " + name);
+			Log.e("FM", "  state: " + mapWorker.getState().toString());
 			mapWorker.pause();
 			if (mapWorker.getState() != Thread.State.WAITING)
 				mapWorker.awaitPausing();
+			Log.e("FM", "  remove file");
 			mapDataStore.removeMapDataStore(mapFile);
 			if (!mapDataStore.isEmpty())
 			{
@@ -570,10 +575,20 @@ public class ForgeMap extends TileMap implements Redrawer
 		return info;
 	}
 
-	@Override
-	public void redrawLayers()
+	private static class MapRedrawer implements Redrawer
 	{
-		if (listener != null)
-			listener.onTileObtained();
+		private OnMapTileStateChangeListener listener;
+
+		protected void setListener(OnMapTileStateChangeListener listener)
+		{
+			this.listener = listener;
+		}
+
+		@Override
+		public void redrawLayers()
+		{
+			if (listener != null)
+				listener.onTileObtained();
+		}
 	}
 }
