@@ -252,7 +252,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, currentMap.getAbsoluteMPP());
+				currentMap.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, currentMap.getAbsoluteMPP(), true);
 			}
 			catch (final Throwable e)
 			{
@@ -1347,7 +1347,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				try
 				{
-					newMap.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, mpp);
+					newMap.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, mpp, true);
 				}
 				catch (final Throwable e)
 				{
@@ -1444,7 +1444,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					try
 					{
 						if (!map.activated())
-							map.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, currentMap.getMPP());
+							map.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, currentMap.getMPP(), false);
 						else
 							map.zoomTo(currentMap.getMPP());
 						cmr.remove(map);
@@ -2286,6 +2286,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			e.printStackTrace();
 			xmlRenderTheme = InternalRenderTheme.OSMARENDER;
 		}
+		ForgeMap.onRenderThemeChanged();
 	}
 
 	/**
@@ -2497,26 +2498,17 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		else if (getString(R.string.pref_vectormap_theme).equals(key) || getString(R.string.pref_vectormap_poi).equals(key))
 		{
 			initializeRenderTheme();
-			if (maps != null)
-				for (BaseMap map : maps.getMaps())
-					if (map instanceof ForgeMap)
-						((ForgeMap)map).onRenderThemeChanged();
+			ForgeMap.onRenderThemeChanged();
 		}
 		else if (getString(R.string.pref_vectormap_textscale).equals(key))
 		{
 			ForgeMap.textScale = Float.parseFloat(sharedPreferences.getString(getString(R.string.pref_vectormap_textscale), "1.0"));
-			if (maps != null)
-				for (BaseMap map : maps.getMaps())
-					if (map instanceof ForgeMap)
-						((ForgeMap)map).onRenderThemeChanged();
+			ForgeMap.onRenderThemeChanged();
 		}
 		else if (getString(R.string.pref_vectormap_transparency).equals(key))
 		{
 			ForgeMap.transparency = adjacentMaps && sharedPreferences.getBoolean(getString(R.string.pref_vectormap_transparency), resources.getBoolean(R.bool.def_vectormap_transparency));
-			if (maps != null)
-				for (BaseMap map : maps.getMaps())
-					if (map instanceof ForgeMap)
-						((ForgeMap)map).onRenderThemeChanged();
+			ForgeMap.onRenderThemeChanged();
 		}
 		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
 		{

@@ -33,6 +33,7 @@ import com.androzic.map.OnMapTileStateChangeListener;
 import com.androzic.map.TileMap;
 import com.androzic.ui.Viewport;
 
+import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.model.Point;
 import org.mapsforge.core.model.Tile;
@@ -51,10 +52,12 @@ import org.mapsforge.map.layer.renderer.MapWorker;
 import org.mapsforge.map.layer.renderer.RendererJob;
 import org.mapsforge.map.model.DisplayModel;
 import org.mapsforge.map.model.MapViewPosition;
-import org.mapsforge.map.reader.MapDatabase;
-import org.mapsforge.map.reader.header.FileOpenResult;
+import org.mapsforge.map.reader.MapFile;
+import org.mapsforge.map.reader.MultiMapDataStore;
+import org.mapsforge.map.reader.header.MapFileException;
 import org.mapsforge.map.reader.header.MapFileInfo;
 import org.mapsforge.map.rendertheme.XmlRenderTheme;
+import org.mapsforge.map.rendertheme.rule.RenderThemeFuture;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -72,22 +75,31 @@ public class ForgeMap extends TileMap implements Redrawer
 	public static float textScale = 1f;
 	public static boolean transparency = false;
 
+	private transient static RenderThemeFuture renderTheme;
+	private transient static DisplayModel displayModel = new DisplayModel();
+	private transient static MapViewPosition mapViewPosition;
+	private transient static MutableTwoLevelTileCache tileCache;
+	private transient static TileCache memoryTileCache;
+	private transient static TileCache fileSystemTileCache;
+	private transient static MultiMapDataStore mapDataStore = new MultiMapDataStore(MultiMapDataStore.DataPolicy.RETURN_ALL);
+	private transient static DatabaseRenderer databaseRenderer;
+	private transient static JobQueue<RendererJob> jobQueue;
+	private transient static MapWorker mapWorker;
+
+	private transient MapFile mapFile;
 	private transient MapFileInfo mapInfo;
 	private transient LatLong mapCenter;
 
-	private transient File mapFile;
-	private transient XmlRenderTheme xmlRenderTheme;
-	private transient DatabaseRenderer databaseRenderer;
-	private transient MapWorker mapWorker;
-	private transient JobQueue<RendererJob> jobQueue;
-	private transient MutableTwoLevelTileCache tileCache;
-	private transient TileCache memoryTileCache;
-	private transient TileCache fileSystemTileCache;
-	private transient MapViewPosition mapViewPosition;
-	private transient DisplayModel displayModel;
 
 	private transient int[] minCR;
 	private transient int[] maxCR;
+
+	static
+	{
+		mapViewPosition = new MapViewPosition(displayModel);
+		mapViewPosition.setZoomLevelMin((byte) 0);
+		mapViewPosition.setZoomLevelMax((byte) 22);
+	}
 
 	public ForgeMap(String path)
 	{
@@ -100,22 +112,20 @@ public class ForgeMap extends TileMap implements Redrawer
 		minCR = new int[2];
 		maxCR = new int[2];
 
-		mapFile = new File(path);
-		MapDatabase mapDatabase = new MapDatabase();
-		FileOpenResult result = mapDatabase.openFile(mapFile);
-		if (!result.isSuccess())
+		File file = new File(path);
+		try
 		{
-			Log.e("ForgeMap", result.getErrorMessage());
-			this.loadError = new Error(result.getErrorMessage());
+			mapFile = new MapFile(file);
+			mapInfo = mapFile.getMapFileInfo();
+		}
+		catch (MapFileException e)
+		{
+			loadError = e;
 			return;
 		}
-		mapInfo = mapDatabase.getMapFileInfo();
-		mapDatabase.closeFile();
-		displayModel = new DisplayModel();
-		mapViewPosition = new MapViewPosition(displayModel);
 
 		// Remove extension
-		name = mapFile.getName();
+		name = file.getName();
 		int e = name.lastIndexOf(".map");
 		if (e > 0)
 			name = name.substring(0, e);
@@ -126,8 +136,6 @@ public class ForgeMap extends TileMap implements Redrawer
 		name = nameSb.toString();
 
 		initializeZooms((byte) 0, (byte) 22, mapInfo.startZoomLevel);
-		mapViewPosition.setZoomLevelMin((byte) 0);
-		mapViewPosition.setZoomLevelMax((byte) 22);
 
 		setCornersAmount(4);
 		cornerMarkers[0].lat = mapInfo.boundingBox.maxLatitude;
@@ -148,8 +156,11 @@ public class ForgeMap extends TileMap implements Redrawer
 
 		mapCenter = mapInfo.startPosition;
 
-		Androzic application = Androzic.getApplication();
-		xmlRenderTheme = application.xmlRenderTheme;
+		if (renderTheme == null)
+		{
+			Androzic application = Androzic.getApplication();
+			compileRenderTheme(application.xmlRenderTheme);
+		}
 
 		updateTitle();
 	}
@@ -157,58 +168,94 @@ public class ForgeMap extends TileMap implements Redrawer
 	@Override
 	public void destroy()
 	{
-		if (fileSystemTileCache != null)
+		if (mapDataStore.isEmpty())
 		{
-			fileSystemTileCache.destroy();
-			fileSystemTileCache = null;
+			if (fileSystemTileCache != null)
+			{
+				fileSystemTileCache.destroy();
+				fileSystemTileCache = null;
+			}
 		}
+
+		mapFile.close();
 	}
 
 	@Override
-	public synchronized void activate(OnMapTileStateChangeListener listener, int width, int height, double mpp) throws Throwable
+	public synchronized void activate(OnMapTileStateChangeListener listener, int width, int height, double mpp, boolean current) throws Throwable
 	{
 		Log.e("FM", "activate " + name);
-		MapDatabase mapDatabase = new MapDatabase();
-		mapDatabase.openFile(mapFile);
-		tileCache = new MutableTwoLevelTileCache();
-		tileCache.setSecondLevelCache(getSecondLevelCache());
-		databaseRenderer = new DatabaseRenderer(mapDatabase, AndroidGraphicFactory.INSTANCE, tileCache);
-		jobQueue = new JobQueue<>(mapViewPosition, displayModel);
-		ForgeLayer layer = new ForgeLayer(this);
-		mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, layer);
-		mapWorker.start();
-		super.activate(listener, width, height, mpp);
+		if (!mapDataStore.contains(mapFile))
+		{
+			if (mapWorker != null)
+			{
+				synchronized (mapWorker)
+				{
+					mapWorker.pause();
+					if (mapWorker.getState() != Thread.State.WAITING)
+						mapWorker.awaitPausing();
+					mapDataStore.addMapDataStore(mapFile, false, false);
+					mapWorker.proceed();
+				}
+			}
+			else
+			{
+				mapDataStore.addMapDataStore(mapFile, false, false);
+			}
+		}
+		if (tileCache == null)
+		{
+			tileCache = new MutableTwoLevelTileCache();
+			tileCache.setSecondLevelCache(getSecondLevelCache());
+		}
+		if (databaseRenderer == null)
+			databaseRenderer = new DatabaseRenderer(mapDataStore, AndroidGraphicFactory.INSTANCE, tileCache);
+		if (jobQueue == null)
+			jobQueue = new JobQueue<>(mapViewPosition, displayModel);
+		if (mapWorker == null)
+		{
+			mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, new ForgeLayer(this));
+			mapWorker.start();
+		}
+		super.activate(listener, width, height, mpp, current);
 	}
 
 	@Override
 	public synchronized void deactivate()
 	{
 		super.deactivate();
-		Log.e("FM", "deactivate " + name);
+		synchronized (mapWorker)
+		{
+			Log.e("FM", "deactivate " + name);
+			mapWorker.pause();
+			if (mapWorker.getState() != Thread.State.WAITING)
+				mapWorker.awaitPausing();
+			mapDataStore.removeMapDataStore(mapFile);
+			if (!mapDataStore.isEmpty())
+			{
+				mapWorker.proceed();
+				return;
+			}
 
-		mapWorker.pause();
-		//DestroyThreadHelper.destroy(mapWorker, mapDatabase, databaseRenderer);
-		try
-		{
-			mapWorker.interrupt();
-			mapWorker.join();
-		}
-		catch (InterruptedException ignore)
-		{
-		}
-		finally
-		{
-			Log.e("FM", "destroy and close " + name);
-			MapDatabase mapDatabase = databaseRenderer.getMapDatabase();
-			databaseRenderer.destroy();
-			mapDatabase.closeFile();
-		}
-
-		tileCache = null;
-		if (memoryTileCache != null)
-		{
-			memoryTileCache.destroy();
-			memoryTileCache = null;
+			try
+			{
+				mapWorker.interrupt();
+				mapWorker.join();
+			}
+			catch (InterruptedException ignore)
+			{
+			}
+			finally
+			{
+				mapWorker = null;
+				databaseRenderer.destroy();
+				databaseRenderer = null;
+				tileCache = null;
+				if (memoryTileCache != null)
+				{
+					memoryTileCache.destroy();
+					memoryTileCache = null;
+				}
+			}
 		}
 	}
 
@@ -220,6 +267,10 @@ public class ForgeMap extends TileMap implements Redrawer
 
 		lastLatitude = viewport.mapCenter[0];
 		recalculateMPP();
+
+		if (!isCurrent)
+			return false;
+
 		mapViewPosition.setCenter(new LatLong(viewport.mapCenter[0], viewport.mapCenter[1]));
 
 		int[] map_xy = new int[2];
@@ -387,29 +438,33 @@ public class ForgeMap extends TileMap implements Redrawer
 		return null;
 	}
 
-	private RendererJob getJob(Tile tile)
+	private static RendererJob getJob(Tile tile)
 	{
-		return new RendererJob(tile, mapFile, xmlRenderTheme, displayModel, textScale, transparency, false);
+		return new RendererJob(tile, mapDataStore, renderTheme, displayModel, textScale, transparency, false);
 	}
 
 	@Override
 	public synchronized void setZoom(double z)
 	{
 		super.setZoom(z);
-		mapViewPosition.setZoomLevel(srcZoom);
-		//getTileXYByLatLon(mapInfo.boundingBox.maxLatitude, mapInfo.boundingBox.minLongitude, minCR);
-		//getTileXYByLatLon(mapInfo.boundingBox.minLatitude, mapInfo.boundingBox.maxLongitude, maxCR);
+		if (isCurrent && mapViewPosition.getZoomLevel() != srcZoom)
+			mapViewPosition.setZoomLevel(srcZoom);
 	}
 
 	@Override
 	public void recalculateCache()
 	{
+		if (!isCurrent)
+			return;
+
 		com.androzic.Log.e("ForgeMap", width + "x" + height);
 		int nx = (int) Math.ceil(width * 1. / (tileSize * dynZoom)) + 2;
 		int ny = (int) Math.ceil(height * 1. / (tileSize * dynZoom)) + 2;
 
-		getTileXYByLatLon(mapInfo.boundingBox.maxLatitude, mapInfo.boundingBox.minLongitude, minCR);
-		getTileXYByLatLon(mapInfo.boundingBox.minLatitude, mapInfo.boundingBox.maxLongitude, maxCR);
+		BoundingBox boundingBox = mapDataStore.boundingBox();
+
+		getTileXYByLatLon(boundingBox.maxLatitude, boundingBox.minLongitude, minCR);
+		getTileXYByLatLon(boundingBox.minLatitude, boundingBox.maxLongitude, maxCR);
 
 		int mnx = maxCR[0] - minCR[0] + 2;
 		int mny = maxCR[1] - minCR[1] + 2;
@@ -423,12 +478,15 @@ public class ForgeMap extends TileMap implements Redrawer
 
 		if (cacheSize != tileCache.getCapacityFirstLevel())
 		{
+			TileCache oldCache = memoryTileCache;
 			memoryTileCache = new InMemoryTileCache(cacheSize);
 			tileCache.setFirstLevelCache(memoryTileCache);
+			if (oldCache != null)
+				oldCache.destroy();
 		}
 	}
 
-	private TileCache getSecondLevelCache()
+	private static TileCache getSecondLevelCache()
 	{
 		if (fileSystemTileCache != null)
 			return fileSystemTileCache;
@@ -441,7 +499,7 @@ public class ForgeMap extends TileMap implements Redrawer
 		if (cache == null) // cache is not available now
 			return null;
 
-		File cacheDirectory = new File(cache, "mapsforge" + File.separator + id);
+		File cacheDirectory = new File(cache, "mapsforge");
 		if (!cacheDirectory.exists() && !cacheDirectory.mkdirs())
 			return null;
 
@@ -468,14 +526,20 @@ public class ForgeMap extends TileMap implements Redrawer
 		center[1] = mapCenter.longitude;
 	}
 
-	public synchronized void onRenderThemeChanged()
+	public static void onRenderThemeChanged()
 	{
 		Androzic application = Androzic.getApplication();
-		xmlRenderTheme = application.xmlRenderTheme;
+		compileRenderTheme(application.xmlRenderTheme);
 		if (tileCache != null)
 			tileCache.purge();
 		else if (fileSystemTileCache != null)
 			fileSystemTileCache.purge();
+	}
+
+	private static void compileRenderTheme(XmlRenderTheme xmlRenderTheme)
+	{
+		renderTheme = new RenderThemeFuture(AndroidGraphicFactory.INSTANCE, xmlRenderTheme, displayModel);
+		new Thread(renderTheme).run();
 	}
 
 	public List<String> info()
