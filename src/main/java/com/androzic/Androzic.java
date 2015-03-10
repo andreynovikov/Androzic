@@ -2746,6 +2746,16 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.commit();
 		
 		setOnlineMaps("");
+		if (coveringMaps != null)
+		{
+			for (BaseMap map : coveringMaps)
+				map.deactivate();
+			coveringMaps.clear();
+			coveringMaps = null;
+		}
+		if (currentMap != null)
+			currentMap.deactivate();
+		suitableMaps.clear();
 		maps.clear();
 		onlineMaps = null;
 		mapHolder = null;
