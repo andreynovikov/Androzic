@@ -97,6 +97,7 @@ public class ForgeMap extends TileMap
 
 	static
 	{
+		displayModel.setMaxTextWidthFactor(1f);
 		mapViewPosition = new MapViewPosition(displayModel);
 		mapViewPosition.setZoomLevelMin((byte) 0);
 		mapViewPosition.setZoomLevelMax((byte) 22);
@@ -182,69 +183,17 @@ public class ForgeMap extends TileMap
 		mapFile.close();
 	}
 
-	@Override
-	public synchronized void activate(OnMapTileStateChangeListener listener, int width, int height, double mpp, boolean current) throws Throwable
+	public static void clear()
 	{
-		Log.e("FM", "activate " + name);
-		mapRedrawer.setListener(listener);
-		if (!mapDataStore.contains(mapFile))
+		synchronized (MAGIC)
 		{
-			if (mapWorker != null)
-			{
-				synchronized (mapWorker)
-				{
-					mapWorker.pause();
-					if (mapWorker.getState() != Thread.State.WAITING)
-						mapWorker.awaitPausing();
-					mapDataStore.addMapDataStore(mapFile, false, false);
-					mapWorker.proceed();
-				}
-			}
-			else
-			{
-				mapDataStore.addMapDataStore(mapFile, false, false);
-			}
-		}
-		if (tileCache == null)
-		{
-			tileCache = new MutableTwoLevelTileCache();
-			tileCache.setSecondLevelCache(getSecondLevelCache());
-		}
-		if (databaseRenderer == null)
-			databaseRenderer = new DatabaseRenderer(mapDataStore, AndroidGraphicFactory.INSTANCE, tileCache);
-		if (jobQueue == null)
-			jobQueue = new JobQueue<>(mapViewPosition, displayModel);
-		if (mapWorker == null)
-		{
-			mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, new ForgeLayer(mapRedrawer));
-			mapWorker.start();
-		}
-		super.activate(listener, width, height, mpp, current);
-	}
-
-	@Override
-	public synchronized void deactivate()
-	{
-		super.deactivate();
-		synchronized (mapWorker)
-		{
-			Log.e("FM", "deactivate " + name);
-			Log.e("FM", "  state: " + mapWorker.getState().toString());
-			mapWorker.pause();
-			if (mapWorker.getState() != Thread.State.WAITING)
-				mapWorker.awaitPausing();
-			Log.e("FM", "  remove file");
-			mapDataStore.removeMapDataStore(mapFile);
-			if (!mapDataStore.isEmpty())
-			{
-				mapWorker.proceed();
-				return;
-			}
-
 			try
 			{
-				mapWorker.interrupt();
-				mapWorker.join();
+				if (mapWorker != null)
+				{
+					mapWorker.interrupt();
+					mapWorker.join();
+				}
 			}
 			catch (InterruptedException ignore)
 			{
@@ -252,8 +201,11 @@ public class ForgeMap extends TileMap
 			finally
 			{
 				mapWorker = null;
-				databaseRenderer.destroy();
-				databaseRenderer = null;
+				if (databaseRenderer != null)
+				{
+					databaseRenderer.destroy();
+					databaseRenderer = null;
+				}
 				tileCache = null;
 				if (memoryTileCache != null)
 				{
@@ -261,6 +213,72 @@ public class ForgeMap extends TileMap
 					memoryTileCache = null;
 				}
 			}
+		}
+	}
+
+	@Override
+	public synchronized void activate(OnMapTileStateChangeListener listener, int width, int height, double mpp, boolean current) throws Throwable
+	{
+		Log.e("FM", "activate " + name);
+		synchronized (MAGIC)
+		{
+			mapRedrawer.setListener(listener);
+			if (!mapDataStore.contains(mapFile))
+			{
+				if (mapWorker != null)
+				{
+					mapWorker.pause();
+					if (mapWorker.getState() != Thread.State.WAITING)
+						mapWorker.awaitPausing();
+					mapDataStore.addMapDataStore(mapFile, false, false);
+					mapWorker.proceed();
+				}
+				else
+				{
+					mapDataStore.addMapDataStore(mapFile, false, false);
+				}
+			}
+			if (tileCache == null)
+			{
+				tileCache = new MutableTwoLevelTileCache();
+				tileCache.setSecondLevelCache(getSecondLevelCache());
+			}
+			if (databaseRenderer == null)
+				databaseRenderer = new DatabaseRenderer(mapDataStore, AndroidGraphicFactory.INSTANCE, tileCache);
+			if (jobQueue == null)
+				jobQueue = new JobQueue<>(mapViewPosition, displayModel);
+			if (mapWorker == null)
+			{
+				mapWorker = new MapWorker(tileCache, jobQueue, databaseRenderer, new ForgeLayer(mapRedrawer));
+				mapWorker.start();
+			}
+			super.activate(listener, width, height, mpp, current);
+		}
+	}
+
+	@Override
+	public synchronized void deactivate()
+	{
+		Log.e("FM", "deactivate " + name);
+		synchronized (MAGIC)
+		{
+			super.deactivate();
+			if (mapWorker != null)
+			{
+				Log.e("FM", "  state: " + mapWorker.getState().toString());
+				mapWorker.pause();
+				if (mapWorker.getState() != Thread.State.WAITING)
+					mapWorker.awaitPausing();
+			}
+			Log.e("FM", "  remove file");
+			mapDataStore.removeMapDataStore(mapFile);
+			if (!mapDataStore.isEmpty())
+			{
+				if (mapWorker != null)
+					mapWorker.proceed();
+				return;
+			}
+			clear();
 		}
 	}
 
@@ -565,7 +583,8 @@ public class ForgeMap extends TileMap
 		info.add("scale (mpp): " + mpp);
 		info.add("map projection: " + mapInfo.projectionName);
 		info.add("bounding box: " + mapInfo.boundingBox.toString());
-		info.add("start position: " + mapInfo.startPosition.toString());
+		if (mapInfo.startPosition != null)
+			info.add("start position: " + mapInfo.startPosition.toString());
 		info.add("language: " + mapInfo.languagePreference);
 		info.add("creation date: " + DateFormat.getDateFormat(Androzic.getApplication()).format(mapInfo.mapDate));
 		info.add("created by: " + mapInfo.createdBy);

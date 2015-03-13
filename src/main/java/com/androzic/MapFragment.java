@@ -401,6 +401,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		super.onDestroyView();
 		Log.e(TAG, "onDestroyView()");
 
+		map.pause();
 		map = null;
 		coordinates = null;
 		satellites = null;

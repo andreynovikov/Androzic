@@ -2607,6 +2607,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		renderingThread.start();
 		
 		longOperationsThread = new HandlerThread("LongOperationsThread");
+		longOperationsThread.setPriority(Thread.MIN_PRIORITY);
 		longOperationsThread.start();
 		
 		uiHandler = new Handler();
@@ -2690,6 +2691,15 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	@SuppressLint("NewApi")
 	public void clear()
 	{
+		mapsHandler.removeMessages(1);
+		longOperationsThread.interrupt();
+
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+
+		// save last location
+		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
+		editor.commit();
+
 		// send finalization broadcast
 		sendBroadcast(new Intent("com.androzic.plugins.action.FINALIZE"));
 
@@ -2698,14 +2708,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 		overlayManager.clear();
 
-		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-
 		if (navigationService != null)
 		{
 			if (navigationService.isNavigatingViaRoute() && navigationService.navRoute.filepath != null)
 			{
 				// save active route point
 				editor.putInt(getString(R.string.nav_route_wpt), navigationService.navCurrentRoutePoint);
+				editor.commit();
 			}
 			unbindService(navigationConnection);
 			navigationService = null;
@@ -2732,6 +2741,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					sets.add(set.path);
 			}
 			editor.putStringSet(getString(R.string.wpt_sets), sets);
+			editor.commit();
 		}
 
 		// clear data
@@ -2740,12 +2750,18 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		clearWaypoints();
 		clearWaypointSets();
 		clearMapObjects();
-		
-		// save last location
-		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
-		editor.commit();
-		
+
+		try
+		{
+			longOperationsThread.join();
+		}
+		catch (InterruptedException ignore)
+		{
+		}
+		longOperationsThread = null;
+
 		setOnlineMaps("");
+		ForgeMap.clear();
 		if (coveringMaps != null)
 		{
 			for (BaseMap map : coveringMaps)
