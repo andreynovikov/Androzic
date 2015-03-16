@@ -276,8 +276,6 @@
     <string name="pref_vectormap_theme_title">Map style</string>
     <string name="pref_vectormap_poi_title">Places</string>
     <string name="pref_vectormap_textscale_title">Text scale</string>
-    <string name="pref_vectormap_transparency_title">Transparent background</string>
-    <string name="pref_vectormap_transparency_summary">The complicated consequences of this setting are described in F.A.Q.</string>
 	<string name="pref_onlinemaps_title">Online maps</string>
 	<string name="pref_onlinemap_title">Map providers</string>
 	<string name="pref_onlinemapscale_title">Default zoom level</string>

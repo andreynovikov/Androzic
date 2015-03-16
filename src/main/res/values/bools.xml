@@ -10,7 +10,6 @@
 <bool name="def_hidestatusbar">false</bool>
 <bool name="def_mapbest">true</bool>
 <bool name="def_mapadjacent">true</bool>
-<bool name="def_vectormap_transparency">true</bool>
 <bool name="def_mapdim">false</bool>
 <bool name="def_mapcropborder">true</bool>
 <bool name="def_mapdrawborder">false</bool>

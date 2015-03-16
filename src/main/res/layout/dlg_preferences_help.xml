@@ -99,19 +99,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:layout_marginTop="8dp"
-            android:text="@string/pref_vectormap_transparency_title"
-            android:textColor="?android:textColorPrimary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pref_vectormap_transparency_summary" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="8dp"
             android:text="@string/pref_onlinemapscale_title"
             android:textColor="?android:textColorPrimary" />
 

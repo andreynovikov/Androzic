@@ -240,6 +240,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return renderingThread.getLooper();
 	}
 
+	public Looper getLongOperationsThreadLooper()
+	{
+		return longOperationsThread.getLooper();
+	}
+
 	public MapHolder getMapHolder()
 	{
 		return mapHolder;
@@ -2079,6 +2084,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		if (index.exists())
 			//noinspection ResultOfMethodCallIgnored
 			index.delete();
+		clearMaps();
+		ForgeMap.reset();
 		initializeMaps();
 	}
 
@@ -2505,11 +2512,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			ForgeMap.textScale = Float.parseFloat(sharedPreferences.getString(getString(R.string.pref_vectormap_textscale), "1.0"));
 			ForgeMap.onRenderThemeChanged();
 		}
-		else if (getString(R.string.pref_vectormap_transparency).equals(key))
-		{
-			ForgeMap.transparency = adjacentMaps && sharedPreferences.getBoolean(getString(R.string.pref_vectormap_transparency), resources.getBoolean(R.bool.def_vectormap_transparency));
-			ForgeMap.onRenderThemeChanged();
-		}
 		else if (getString(R.string.pref_onlinemap).equals(key) || getString(R.string.pref_onlinemapscale).equals(key))
 		{
 			setOnlineMaps(sharedPreferences.getString(getString(R.string.pref_onlinemap), resources.getString(R.string.def_onlinemap)));
@@ -2517,7 +2519,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		else if (getString(R.string.pref_mapadjacent).equals(key))
 		{
 			adjacentMaps = sharedPreferences.getBoolean(key, resources.getBoolean(R.bool.def_mapadjacent));
-			onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_vectormap_transparency));
 		}
 		else if (getString(R.string.pref_onlinemapprescalefactor).equals(key))
 		{
@@ -2675,7 +2676,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		onSharedPreferenceChanged(settings, getString(R.string.pref_unitsunrise));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapadjacent));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_vectormap_textscale));
-		onSharedPreferenceChanged(settings, getString(R.string.pref_vectormap_transparency));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_onlinemapprescalefactor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_onlinemapexpiration));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapcropborder));
@@ -2687,10 +2687,34 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 		settings.registerOnSharedPreferenceChangeListener(this);
 	}
-	
+
+	private void clearMaps()
+	{
+		setOnlineMaps("");
+		ForgeMap.clear();
+		if (coveringMaps != null)
+		{
+			for (BaseMap map : coveringMaps)
+				map.deactivate();
+			coveringMaps.clear();
+			coveringMaps = null;
+		}
+		if (currentMap != null)
+			currentMap.deactivate();
+		suitableMaps.clear();
+		maps.clear();
+		onlineMaps = null;
+		mapHolder = null;
+		currentMap = null;
+		suitableMaps = null;
+		maps = null;
+		mapsInited = false;
+	}
+
 	@SuppressLint("NewApi")
 	public void clear()
 	{
+		Log.e(TAG, "clear()");
 		mapsHandler.removeMessages(1);
 		longOperationsThread.interrupt();
 
@@ -2760,25 +2784,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		}
 		longOperationsThread = null;
 
-		setOnlineMaps("");
-		ForgeMap.clear();
-		if (coveringMaps != null)
-		{
-			for (BaseMap map : coveringMaps)
-				map.deactivate();
-			coveringMaps.clear();
-			coveringMaps = null;
-		}
-		if (currentMap != null)
-			currentMap.deactivate();
-		suitableMaps.clear();
-		maps.clear();
-		onlineMaps = null;
-		mapHolder = null;
-		currentMap = null;
-		suitableMaps = null;
-		maps = null;
-		mapsInited = false;
+		clearMaps();
 		memmsg = false;
 		cacheDir = null;
 	}

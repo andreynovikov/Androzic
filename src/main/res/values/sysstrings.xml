@@ -14,7 +14,6 @@
     <string name="pref_vectormap_theme">vectormap_theme</string>
     <string name="pref_vectormap_poi">vectormap_poi</string>
     <string name="pref_vectormap_textscale">vectormap_textscale</string>
-    <string name="pref_vectormap_transparency">vectormap_transparency</string>
    	<string name="pref_onlinemap">onlinemap</string>
    	<string name="pref_onlinemapscale">onlinemapscale</string>
    	<string name="pref_onlinemapprescalefactor">onlinemapprescalefactor</string>
