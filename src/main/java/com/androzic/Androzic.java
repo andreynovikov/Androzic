@@ -2087,6 +2087,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		clearMaps();
 		ForgeMap.reset();
 		initializeMaps();
+		updateLocationMaps(true, true);
 	}
 
 	public void moveTileCache()
