@@ -95,6 +95,12 @@ public class MockMap extends BaseMap
 	}
 
 	@Override
+	public int getPriority()
+	{
+		return 99;
+	}
+
+	@Override
 	public List<String> info()
 	{
 		return null;

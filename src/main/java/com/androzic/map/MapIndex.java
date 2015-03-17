@@ -351,12 +351,18 @@ public class MapIndex implements Serializable
 
 	private class MapComparator implements Comparator<BaseMap>, Serializable
     {
-		private static final long serialVersionUID = 2L;
+		private static final long serialVersionUID = 3L;
 
 		@Override
         public int compare(BaseMap o1, BaseMap o2)
         {
-        	return Double.compare(o1.getAbsoluteMPP(), o2.getAbsoluteMPP());
+        	int res = Double.compare(o1.getAbsoluteMPP(), o2.getAbsoluteMPP());
+	        if (res != 0)
+		        return res;
+	        res = o1.getPriority() - o2.getPriority();
+	        if (res != 0)
+		        return res;
+	        return o1.title.compareTo(o2.title);
         }
     }
 }

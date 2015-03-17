@@ -363,6 +363,12 @@ public class ForgeMap extends TileMap
 	}
 
 	@Override
+	public int getPriority()
+	{
+		return 2;
+	}
+
+	@Override
 	protected Bitmap getTile(int x, int y) throws OutOfMemoryError
 	{
 		return null;
