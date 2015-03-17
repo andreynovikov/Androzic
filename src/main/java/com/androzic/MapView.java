@@ -464,7 +464,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		// Draw scale bar
 		if (mpp > 0)
 		{
-			int t = 2000;
+			int t = 10000;
 			if (scaleBarMeters <= t && scaleBarMeters * 2 > t)
 				t = scaleBarMeters * 3;
 			String[] d = StringFormatter.distanceC(scaleBarMeters, t);
@@ -902,7 +902,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		int d = w > h ? 8 : 6;
 		
 		scaleBarMeters = (int) (mpp * w / d);
-		if (scaleBarMeters < 40)
+		Log.e(TAG, "Scale bar: " + scaleBarMeters);
+		if (scaleBarMeters == 0)
+			scaleBarMeters = 1;
+		else if (scaleBarMeters < 10) {}
+		else if (scaleBarMeters < 40)
 			scaleBarMeters = scaleBarMeters / 10 * 10;
 		else if (scaleBarMeters < 80)
 			scaleBarMeters = 50;
@@ -926,9 +930,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			scaleBarMeters = (int) (Math.ceil(scaleBarMeters * 1. / 10000) * 10000);
 		else
 			scaleBarMeters = (int) (Math.ceil(scaleBarMeters * 1. / 100000) * 100000);
-		
+
 		scaleBarWidth = (int) (scaleBarMeters / mpp);
-		
+
 		if (scaleBarWidth > (currentViewport.width - VIEWPORT_EXCESS * 2) / 4)
 		{
 			scaleBarWidth /= 2;
