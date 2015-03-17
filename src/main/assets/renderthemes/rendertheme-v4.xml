@@ -1137,22 +1137,30 @@
 
 	<!-- public transport -->
 	<rule cat="public_transport" e="any" k="*" v="*">
-		<rule e="any" k="railway" v="station" zoom-min="13">
-			<symbol id="train-station" src="assets:symbols/transport/train_station.svg"/>
-			<rule e="any" k="*" v="*" zoom-min="15">
-				<caption priority="20" symbol-id="train-station" k="name" font-style="bold" font-size="12" fill="#0092DA" stroke="#FFFFFF" stroke-width="2.0"/>
-			</rule>
-		</rule>
-		<rule e="any" k="building" v="train_station" zoom-min="13">
-			<symbol id="train-station2" src="assets:symbols/transport/train_station.svg"/>
-			<rule e="any" k="*" v="*" zoom-min="15">
-				<caption priority="20" symbol-id="train-station2" k="name" font-style="bold" font-size="12" fill="#0092DA" stroke="#FFFFFF" stroke-width="2.0"/>
-			</rule>
-		</rule>
-		<rule e="node" k="station" v="light_rail|subway" zoom-min="14">
-			<symbol id="train-station3" src="assets:symbols/transport/train_station.svg"/>
+        <rule e="node" k="station" v="~" zoom-min="13">
+            <rule e="any" k="railway" v="station" zoom-min="13">
+                <symbol id="train-station" src="assets:symbols/transport/train_station.svg"/>
+                <rule e="any" k="*" v="*" zoom-min="15">
+                    <caption priority="20" symbol-id="train-station" k="name" font-style="bold" font-size="12" fill="#0092DA" stroke="#FFFFFF" stroke-width="2.0"/>
+                </rule>
+            </rule>
+            <rule e="any" k="building" v="train_station" zoom-min="13">
+                <symbol id="train-station2" src="assets:symbols/transport/train_station.svg"/>
+                <rule e="any" k="*" v="*" zoom-min="15">
+                    <caption priority="20" symbol-id="train-station2" k="name" font-style="bold" font-size="12" fill="#0092DA" stroke="#FFFFFF" stroke-width="2.0"/>
+                </rule>
+            </rule>
+        </rule>
+        <rule e="node" k="station" v="light_rail" zoom-min="14">
+            <symbol id="train-station3" src="assets:symbols/transport/train_station2.svg"/>
+            <rule e="any" k="*" v="*" zoom-min="16">
+                <caption priority="20" symbol-id="train-station3" k="name" font-style="bold" font-size="12" fill="#0092DA" stroke="#FFFFFF" stroke-width="2.0"/>
+            </rule>
+        </rule>
+		<rule e="node" k="station" v="subway" zoom-min="14">
+			<symbol id="train-station4" src="assets:symbols/transport/subway.svg"/>
 			<rule e="any" k="*" v="*" zoom-min="16">
-				<caption priority="20" symbol-id="train-station3" k="name" font-style="bold" font-size="12" fill="#0092DA" stroke="#FFFFFF" stroke-width="2.0"/>
+				<caption priority="20" symbol-id="train-station4" k="name" font-style="bold" font-size="12" fill="#0092DA" stroke="#FFFFFF" stroke-width="2.0"/>
 			</rule>
 		</rule>
 		<rule e="node" k="railway" v="halt|tram_stop" zoom-min="14">
