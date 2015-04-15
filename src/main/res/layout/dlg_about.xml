@@ -14,13 +14,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:drawableRight="@drawable/olya_s"
-            android:drawablePadding="5dp"
-            android:gravity="center_vertical"
             android:clickable="true"
             android:paddingBottom="10dip"
-            android:text="@string/msg_dedicated"
-            android:textSize="12sp"/>
+            android:text="@string/msg_dedicated"/>
 
         <ImageView
             android:id="@+id/photo"
@@ -51,7 +47,8 @@
         <TextView
             android:id="@+id/homelinks"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5sp"/>
 
         <TextView
             android:layout_width="fill_parent"
