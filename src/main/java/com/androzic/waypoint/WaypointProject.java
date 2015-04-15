@@ -165,9 +165,9 @@ public class WaypointProject extends DialogFragment
         		if (bf == 1)
         		{
         			GeomagneticField mag = new GeomagneticField((float) loc[0], (float) loc[1], 0.0f, System.currentTimeMillis());
-        			bearing -= mag.getDeclination();
-			        if (bearing < 0)
-				        bearing += 360d;
+        			bearing += mag.getDeclination();
+			        if (bearing > 360d)
+				        bearing -= 360d;
         		}
         		double[] prj = Geo.projection(loc[0], loc[1], distance, bearing);
         		waypoint.latitude = prj[0];

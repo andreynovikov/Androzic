@@ -974,18 +974,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		return routes.size() > 0;
 	}
 
-	public double getDeclination()
-	{
-		if (!angleMagnetic)
-		{
-			double lat = Double.isNaN(location[0]) ? mapCenter[0] : location[0];
-			double lon = Double.isNaN(location[1]) ? mapCenter[1] : location[1];
-			magneticDeclination = getDeclination(lat, lon);
-		}
-		return magneticDeclination;
-	}
-
-
 	public double getDeclination(double lat, double lon)
 	{
 		GeomagneticField mag = new GeomagneticField((float) lat, (float) lon, 0.0f, System.currentTimeMillis());
