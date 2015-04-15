@@ -58,15 +58,15 @@ template <class T> const T& min ( const T& a, const T& b )
 }
 
 extern "C" {
-    JNIEXPORT jlong JNICALL Java_com_androzic_map_OzfDecoder_openImageNative(JNIEnv* env, jclass clazz, jstring path);
-    JNIEXPORT void JNICALL Java_com_androzic_map_OzfDecoder_closeImageNative(JNIEnv* env, jclass clazz, jlong fileptr);
-    JNIEXPORT jintArray JNICALL Java_com_androzic_map_OzfDecoder_getTileNative(JNIEnv* env, jclass clazz, jlong fileptr, jint type, jint key, jint depth, jint offset, jint i, jint w, jint h, jbyteArray p);
+    JNIEXPORT jlong JNICALL Java_com_androzic_map_ozf_OzfDecoder_openImageNative(JNIEnv* env, jclass clazz, jstring path);
+    JNIEXPORT void JNICALL Java_com_androzic_map_ozf_OzfDecoder_closeImageNative(JNIEnv* env, jclass clazz, jlong fileptr);
+    JNIEXPORT jintArray JNICALL Java_com_androzic_map_ozf_OzfDecoder_getTileNative(JNIEnv* env, jclass clazz, jlong fileptr, jint type, jint key, jint depth, jint offset, jint i, jint w, jint h, jbyteArray p);
 };
 
 void ozf_get_tile(FILE*	file, int type, unsigned char key, int encryption_depth, int scale_offset, int i, unsigned char* decompressed);
 void Resize_HQ_4ch(unsigned char* src, int w1, int h1, unsigned char* dest, int w2, int h2);
 
-jlong Java_com_androzic_map_OzfDecoder_openImageNative(JNIEnv* env, jclass clazz, jstring path)
+jlong Java_com_androzic_map_ozf_OzfDecoder_openImageNative(JNIEnv* env, jclass clazz, jstring path)
 {
     const char* filename_utf8 = env->GetStringUTFChars(path, JNI_FALSE);
 
@@ -86,7 +86,7 @@ jlong Java_com_androzic_map_OzfDecoder_openImageNative(JNIEnv* env, jclass clazz
     return ret;
 }
 
-void Java_com_androzic_map_OzfDecoder_closeImageNative(JNIEnv* env, jclass clazz, jlong fileptr)
+void Java_com_androzic_map_ozf_OzfDecoder_closeImageNative(JNIEnv* env, jclass clazz, jlong fileptr)
 {
 	__android_log_print(ANDROID_LOG_INFO, "OZF", "native close image");
 
@@ -94,7 +94,7 @@ void Java_com_androzic_map_OzfDecoder_closeImageNative(JNIEnv* env, jclass clazz
 	fclose(file);
 }
 
-jintArray Java_com_androzic_map_OzfDecoder_getTileNative(JNIEnv* env, jclass clazz, jlong fileptr, jint type, jint key, jint depth, jint offset, jint i, jint w, jint h, jbyteArray p)
+jintArray Java_com_androzic_map_ozf_OzfDecoder_getTileNative(JNIEnv* env, jclass clazz, jlong fileptr, jint type, jint key, jint depth, jint offset, jint i, jint w, jint h, jbyteArray p)
 {
 	//__android_log_print(ANDROID_LOG_INFO, "OZF", "native get tile\t%d\t%d\t%d\t%d\t%d\t%d\t%d", type, key, depth, offset, i, w, h);
 
