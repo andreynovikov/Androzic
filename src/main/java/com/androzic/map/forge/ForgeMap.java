@@ -220,7 +220,8 @@ public class ForgeMap extends TileMap
 			}
 
 			activeCount++;
-
+			if (Math.abs(1 - mpp / getMPP()) < 0.1)
+				mpp = getMPP();
 			super.activate(listener, width, height, mpp, current);
 		}
 	}
@@ -337,7 +338,10 @@ public class ForgeMap extends TileMap
 		Set<Job> jobs = new HashSet<>();
 		for (TilePosition tilePosition : tilePositions)
 			jobs.add(getJob(tilePosition.tile));
-		tileCache.setWorkingSet(jobs);
+		synchronized (MAGIC)
+		{
+			tileCache.setWorkingSet(jobs);
+		}
 
 		for (int k = tilePositions.size() - 1; k >= 0; k--)
 		{
@@ -487,7 +491,7 @@ public class ForgeMap extends TileMap
 		com.androzic.Log.e("ForgeMap", "Cache size: " + cacheSize);
 		com.androzic.Log.e("ForgeMap", "Capacity: " + tileCache.getCapacityFirstLevel());
 
-		if (cacheSize != tileCache.getCapacityFirstLevel())
+		if (cacheSize > tileCache.getCapacityFirstLevel())
 		{
 			TileCache oldCache = memoryTileCache;
 			memoryTileCache = new InMemoryTileCache(cacheSize);
