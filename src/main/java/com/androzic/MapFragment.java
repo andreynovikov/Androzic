@@ -723,6 +723,9 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		if (!application.isNavigating())
 			return;
 
+		if (!map.isFollowing())
+			map.refreshMap();
+
 		long now = System.currentTimeMillis();
 		
 		double distance = application.navigationService.navDistance;
