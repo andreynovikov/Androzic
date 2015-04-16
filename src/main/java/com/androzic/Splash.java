@@ -100,6 +100,7 @@ public class Splash extends Activity implements OnClickListener
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		application = (Androzic) getApplication();
+		application.onCreateEx();
 
 		PreferenceManager.setDefaultValues(this, R.xml.pref_behavior, true);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_folder, true);

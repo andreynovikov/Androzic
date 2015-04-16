@@ -189,14 +189,14 @@ public class ForgeMap extends TileMap
 			fileSystemTileCache = null;
 		}
 		mapDataStore.close();
-		mapDataStore = null;
+		reset();
 		application = null;
 	}
 
 	@Override
 	public synchronized void activate(OnMapTileStateChangeListener listener, int width, int height, double mpp, boolean current) throws Throwable
 	{
-		Log.e("FM", "activate " + name);
+		Log.e("FM", "activate(): " + name);
 		synchronized (MAGIC)
 		{
 			mapRedrawer.setListener(listener);
@@ -229,7 +229,7 @@ public class ForgeMap extends TileMap
 	@Override
 	public synchronized void deactivate()
 	{
-		Log.e("FM", "deactivate " + name);
+		Log.e("FM", "deactivate(): " + name);
 		synchronized (MAGIC)
 		{
 			super.deactivate();
@@ -240,6 +240,7 @@ public class ForgeMap extends TileMap
 
 			try
 			{
+				Log.w("FM", "  stop mapworker thread");
 				mapWorker.interrupt();
 				mapWorker.join();
 			}

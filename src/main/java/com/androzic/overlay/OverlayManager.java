@@ -323,5 +323,8 @@ public class OverlayManager
 
 		mapObjectsOverlay = null;
 		waypointsOverlay = null;
+
+		executionHandler.removeCallbacksAndMessages(null);
+		executionHandler = null;
 	}
 }

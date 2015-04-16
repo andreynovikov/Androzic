@@ -143,6 +143,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public boolean angleMagnetic = false;
 	public int sunriseType = 0;
 
+	private boolean initialized = false;
 	private List<TileProvider> onlineMaps;
 	private MapIndex maps;
 	private List<BaseMap> suitableMaps;
@@ -2579,6 +2580,13 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	{
 		super.onCreate();
 		Log.e(TAG, "Application onCreate()");
+		onCreateEx();
+	}
+
+	public void onCreateEx()
+	{
+		if (initialized)
+			return;
 
 		try
 		{
@@ -2675,6 +2683,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		onSharedPreferenceChanged(settings, getString(R.string.pref_showdistance_int));
 
 		settings.registerOnSharedPreferenceChangeListener(this);
+
+		initialized = true;
 	}
 
 	private void clearMaps()
@@ -2713,14 +2723,17 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		editor.putString(getString(R.string.loc_last), StringFormatter.coordinates(0, " ", mapCenter[0], mapCenter[1]));
 		editor.commit();
 
+		Log.w(TAG, "  stopping plugins...");
 		// send finalization broadcast
 		sendBroadcast(new Intent("com.androzic.plugins.action.FINALIZE"));
 
 		// clear services
 		unregisterReceiver(broadcastReceiver);
 
+		Log.w(TAG, "  clearing overlays...");
 		overlayManager.clear();
 
+		Log.w(TAG, "  stopping services...");
 		if (navigationService != null)
 		{
 			if (navigationService.isNavigatingViaRoute() && navigationService.navRoute.filepath != null)
@@ -2743,6 +2756,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		stopService(new Intent(this, NavigationService.class));
 		stopService(new Intent(this, LocationService.class));
 
+		Log.w(TAG, "  saving data...");
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 		{
 			// save opened waypoint sets
@@ -2757,6 +2771,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			editor.commit();
 		}
 
+		Log.w(TAG, "  clearing data...");
 		// clear data
 		clearRoutes();
 		clearTracks();
@@ -2764,18 +2779,20 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		clearWaypointSets();
 		clearMapObjects();
 
-		try
-		{
-			longOperationsThread.join();
-		}
-		catch (InterruptedException ignore)
-		{
-		}
+		Log.w(TAG, "  clearing maps...");
+		clearMaps();
+
+		Log.w(TAG, "  stopping threads...");
+		uiHandler.removeCallbacksAndMessages(null);
+		mapsHandler.removeCallbacksAndMessages(null);
+		longOperationsThread.quit();
 		longOperationsThread = null;
 
-		clearMaps();
 		memmsg = false;
 		cacheDir = null;
+		initialized = false;
+
+		Log.w(TAG, "  finished clearing");
 	}
 
 	@Override
