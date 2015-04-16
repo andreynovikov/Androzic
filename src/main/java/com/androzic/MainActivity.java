@@ -35,8 +35,10 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -117,12 +119,15 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 	protected Androzic application;
 	private boolean restarting = false;
 
-	@SuppressLint("ShowToast")
+	@SuppressLint({"ShowToast", "NewApi"})
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		Log.e(TAG, "onCreate()");
+
+		if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
+			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
 
 		application = Androzic.getApplication();
 
