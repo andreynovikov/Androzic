@@ -137,7 +137,7 @@ public class WaypointProject extends DialogFragment
         		View view = getView();
         		waypoint.name = ((TextView) view.findViewById(R.id.name_text)).getText().toString();
         		double distance = Integer.parseInt(((TextView) view.findViewById(R.id.distance_text)).getText().toString());
-        		double bearing = Integer.parseInt(((TextView) view.findViewById(R.id.bearing_text)).getText().toString());
+        		double bearing = Double.parseDouble(((TextView) view.findViewById(R.id.bearing_text)).getText().toString());
         		int src = ((Spinner) view.findViewById(R.id.source_spinner)).getSelectedItemPosition();
         		int df = ((Spinner) view.findViewById(R.id.distance_spinner)).getSelectedItemPosition();
         		int bf = ((Spinner) view.findViewById(R.id.bearing_spinner)).getSelectedItemPosition();
