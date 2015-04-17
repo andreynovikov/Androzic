@@ -1336,6 +1336,10 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		if (newMap != null && ! newMap.equals(currentMap))
 		{
 			double mpp = currentMap != null ? currentMap.getMPP() : newMap.getAbsoluteMPP();
+			double ratio = newMap.getCoveringRatio(mpp);
+			// IF current map scale is too different, use new map scale
+			if (ratio > 10d || ratio < 0.01)
+				mpp = newMap.getAbsoluteMPP();
 			Log.w(TAG, "Set map: " + newMap.title + " " + mpp);
 			if (mapHolder != null)
 			{
