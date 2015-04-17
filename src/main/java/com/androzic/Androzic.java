@@ -235,6 +235,11 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	private Handler mapsHandler;
 	private Handler uiHandler;
 
+	public Handler getUIHandler()
+	{
+		return uiHandler;
+	}
+
 	public Looper getRenderingThreadLooper()
 	{
 		//return Looper.getMainLooper();

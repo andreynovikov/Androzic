@@ -947,7 +947,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				case 1:
 					resetZoom = true;
 				case 2:
-					Snackbar snackbar = Snackbar.with(application);
+					final Snackbar snackbar = Snackbar.with(application);
 					int text = resetZoom ? R.string.gently_reset_zoom : R.string.gently_keep_zoom;
 					snackbar.setTag(R.id.reset_zoom, resetZoom);
 					snackbar.text(text);
@@ -985,7 +985,15 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						}
 					});
 					snackbar.duration(Snackbar.SnackbarDuration.LENGTH_LONG);
-					snackbar.show(getActivity());
+					// Code can be called from different threads, but layout can be
+					// changed only in UI thread
+					application.getUIHandler().post(new Runnable() {
+						@Override
+						public void run()
+						{
+							snackbar.show(getActivity());
+						}
+					});
 					break;
 				case 3:
 					break;
