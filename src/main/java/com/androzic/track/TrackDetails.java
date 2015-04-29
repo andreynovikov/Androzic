@@ -28,7 +28,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -183,7 +183,7 @@ public class TrackDetails extends Fragment
 
 	private void updateTrackDetails()
 	{
-		ActionBarActivity activity = (ActionBarActivity) getActivity();
+		AppCompatActivity activity = (AppCompatActivity) getActivity();
 		Resources resources = getResources();
 		
 		activity.getSupportActionBar().setTitle(track.name);

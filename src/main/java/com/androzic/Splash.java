@@ -27,7 +27,6 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
@@ -42,6 +41,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;

@@ -959,6 +959,11 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						}
 
 						@Override
+						public void onShowByReplace(Snackbar snackbar)
+						{
+						}
+
+						@Override
 						public void onShown(Snackbar snackbar)
 						{
 						}
@@ -966,6 +971,12 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 						@Override
 						public void onDismiss(Snackbar snackbar)
 						{
+						}
+
+						@Override
+						public void onDismissByReplace(Snackbar snackbar)
+						{
+							//FIXME Should handle replacement properly
 						}
 
 						@Override

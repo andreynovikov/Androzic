@@ -25,8 +25,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -40,7 +38,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -148,7 +146,7 @@ public class MapList extends ListFragment
 	public void onResume()
 	{
 		super.onResume();
-		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.maplist_name);
+		((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.maplist_name);
 		if (!populated)
 			populateItems();
 	}

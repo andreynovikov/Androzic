@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,8 +46,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Pair;
@@ -92,7 +92,7 @@ import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.listeners.ActionClickListener;
 import com.shamanland.fab.FloatingActionButton;
 
-public class MainActivity extends ActionBarActivity implements FragmentHolder, OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener
+public class MainActivity extends AppCompatActivity implements FragmentHolder, OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "MainActivity";
 
@@ -169,8 +169,8 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
-		
-		mHomeDrawable = getV7DrawerToggleDelegate().getThemeUpIndicator();
+
+		mHomeDrawable = getDrawerToggleDelegate().getThemeUpIndicator();
 		
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
 			public void onDrawerClosed(View drawerView)
@@ -772,7 +772,7 @@ public class MainActivity extends ActionBarActivity implements FragmentHolder, O
 			mDrawerToggle.setDrawerIndicatorEnabled(false);
 			
 			// FIXME This is the uggliest hack I have ever seen!
-			getV7DrawerToggleDelegate().setActionBarUpIndicator(mHomeDrawable, R.string.cancel);
+			getDrawerToggleDelegate().setActionBarUpIndicator(mHomeDrawable, R.string.cancel);
 		    setSupportActionBar(mToolbar);
 		    // End of hack
 			

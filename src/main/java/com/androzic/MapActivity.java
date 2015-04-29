@@ -27,7 +27,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +38,7 @@ import android.widget.TextView;
 import com.androzic.data.Track;
 import com.androzic.util.StringFormatter;
 
-public class MapActivity extends ActionBarActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener
+public class MapActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener
 {
 	private static final String TAG = "MapActivity";
 

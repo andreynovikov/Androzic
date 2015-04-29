@@ -26,7 +26,7 @@ import java.util.List;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -92,7 +92,7 @@ public class TrackProperties extends Fragment
 	public void onResume()
 	{
 		super.onResume();
-		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.trackproperties_name);
+		((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.trackproperties_name);
 	}
 
 	@Override

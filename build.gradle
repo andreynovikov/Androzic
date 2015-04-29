@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "com.androzic.v2"
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 108
-        versionName "2.1"
+        versionCode 109
+        versionName "2.2-alpha"
 
         ndk {
             moduleName "ozfdecoder"
@@ -50,9 +50,9 @@ dependencies {
     compile project(':libraries:color-picker-view:library')
     compile project(':libraries:android-support-v4-preferencefragment')
     compile project(':libraries:mapsforge')
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.daimajia.swipelayout:library:1.1.7'
-    compile 'com.nispok:snackbar:2.7.1'
-    compile 'com.shamanland:fab:0.0.6'
-    compile 'com.esotericsoftware:kryo:3.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.daimajia.swipelayout:library:1.2.0'
+    compile 'com.nispok:snackbar:2.10.7'
+    compile 'com.shamanland:fab:0.0.8'
+    compile 'com.esotericsoftware:kryo:3.0.1'
 }

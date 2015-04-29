@@ -24,14 +24,13 @@ import java.io.File;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,12 +58,16 @@ public class RouteSave extends DialogFragment
 		setRetainInstance(true);
 	}
 
+	@NonNull
+	@SuppressLint("InflateParams")
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public Dialog onCreateDialog(Bundle savedInstanceState)
 	{
-		View rootView = inflater.inflate(R.layout.act_save, container);
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(getString(R.string.saveroute_name));
+		final View view = getActivity().getLayoutInflater().inflate(R.layout.act_save, null);
 
-		filename = (TextView) rootView.findViewById(R.id.filename_text);
+		filename = (TextView) view.findViewById(R.id.filename_text);
 
 		if (route.filepath != null)
 		{
@@ -75,26 +78,21 @@ public class RouteSave extends DialogFragment
 		{
 			filename.setText(FileUtils.sanitizeFilename(route.name) + ".rt2");
 		}
-		
-		final Dialog dialog = getDialog();
 
-		Button cancelButton = (Button) rootView.findViewById(R.id.cancel_button);
-		cancelButton.setOnClickListener(new View.OnClickListener() {
+		builder.setView(view);
+		builder.setPositiveButton(R.string.save, saveOnClickListener);
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+		{
 			@Override
-			public void onClick(View v)
+			public void onClick(DialogInterface dialog, int which)
 			{
-				dialog.cancel();
+				getDialog().cancel();
 			}
 		});
-		Button saveButton = (Button) rootView.findViewById(R.id.save_button);
-		saveButton.setOnClickListener(saveOnClickListener);
 
-		dialog.setTitle(R.string.savetrack_name);
-		dialog.setCanceledOnTouchOutside(false);
-
-		return rootView;
+		return builder.create();
 	}
-	
+
 	@Override
 	public void onDestroyView()
 	{
@@ -103,9 +101,11 @@ public class RouteSave extends DialogFragment
 		super.onDestroyView();
 	}
 
-	private OnClickListener saveOnClickListener = new OnClickListener()
+	private DialogInterface.OnClickListener saveOnClickListener = new DialogInterface.OnClickListener()
 	{
-        public void onClick(View v)
+
+		@Override
+		public void onClick(DialogInterface dialog, int which)
         {
     		String fname = filename.getText().toString();
     		fname = fname.replace("../", "");
@@ -137,5 +137,5 @@ public class RouteSave extends DialogFragment
     			Log.e("ANDROZIC", e.toString(), e);
     		}
         }
-    };
+	};
 }

@@ -49,7 +49,7 @@ import com.jhlabs.map.proj.Projection;
 
 public class MapIndex implements Serializable
 {
-	private static final long serialVersionUID = 8L;
+	private static final long serialVersionUID = 9L;
 	
 	private HashSet<Integer>[][] maps;
 	private HashMap<Integer,BaseMap> mapIndex;

@@ -25,12 +25,12 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.TextView;
 

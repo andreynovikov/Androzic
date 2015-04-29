@@ -52,7 +52,7 @@ import com.androzic.data.Route;
 import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.daimajia.swipe.implments.SwipeItemMangerImpl;
+import com.daimajia.swipe.util.Attributes;
 import com.shamanland.fab.FloatingActionButton;
 import com.shamanland.fab.ShowHideOnScroll;
 
@@ -103,7 +103,7 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 
 		adapter = new RouteListAdapter(getActivity());
 		setListAdapter(adapter);
-		adapter.setMode(SwipeItemMangerImpl.Mode.Single);
+		adapter.setMode(Attributes.Mode.Single);
 	}
 
 	@Override

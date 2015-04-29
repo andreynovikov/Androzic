@@ -33,7 +33,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -218,7 +218,7 @@ public class WaypointProperties extends Fragment implements AdapterView.OnItemSe
 	public void onResume()
 	{
 		super.onResume();
-		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.waypointproperties_name);
+		((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.waypointproperties_name);
 		//tooltipCallback.postDelayed(showTooltip, TooltipManager.TOOLTIP_DELAY_SHORT);
 	}
 

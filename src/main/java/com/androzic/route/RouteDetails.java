@@ -33,7 +33,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.internal.view.SupportMenuInflater;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.internal.view.menu.MenuPopupHelper;
@@ -324,7 +324,7 @@ public class RouteDetails extends ListFragment implements OnSharedPreferenceChan
 
 	private void updateRouteDetails()
 	{
-		ActionBarActivity activity = (ActionBarActivity) getActivity();
+		AppCompatActivity activity = (AppCompatActivity) getActivity();
 		activity.getSupportActionBar().setTitle(navigation ? "\u21d2 " + route.name : route.name);
 		
 		adapter = new WaypointListAdapter(activity, route);

@@ -47,7 +47,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -74,7 +74,7 @@ import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 import com.jhlabs.map.GeodeticPosition;
 
-public class SearchableActivity extends ActionBarActivity implements AdapterView.OnItemClickListener
+public class SearchableActivity extends AppCompatActivity implements AdapterView.OnItemClickListener
 {
 	private static final int MSG_FINISH = 1;
 

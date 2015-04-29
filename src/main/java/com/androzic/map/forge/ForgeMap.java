@@ -104,6 +104,10 @@ public class ForgeMap extends TileMap
 		mapViewPosition.setZoomLevelMax((byte) 22);
 	}
 
+	protected ForgeMap()
+	{
+	}
+
 	public ForgeMap(String path)
 	{
 		super(path);

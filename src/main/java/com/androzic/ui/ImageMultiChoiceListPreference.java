@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import android.app.AlertDialog.Builder;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -55,7 +55,7 @@ public class ImageMultiChoiceListPreference extends ListPreference
 	}
 
 	@Override
-	protected void onPrepareDialogBuilder(Builder builder)
+	protected void onPrepareDialogBuilder(AlertDialog.Builder builder)
 	{
 		CharSequence[] entries = getEntries();
 		CharSequence[] entryValues = getEntryValues();

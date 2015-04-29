@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -39,6 +38,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,7 +55,7 @@ import com.androzic.data.Track;
 import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.daimajia.swipe.implments.SwipeItemMangerImpl;
+import com.daimajia.swipe.util.Attributes;
 
 public class TrackList extends ListFragment implements FileListDialog.OnFileListDialogListener
 {
@@ -93,7 +93,7 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 
 		adapter = new TrackListAdapter(getActivity());
 		setListAdapter(adapter);
-		adapter.setMode(SwipeItemMangerImpl.Mode.Single);
+		adapter.setMode(Attributes.Mode.Single);
 	}
 	
 	@Override

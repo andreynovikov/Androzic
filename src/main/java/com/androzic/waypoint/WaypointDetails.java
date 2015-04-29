@@ -32,7 +32,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -212,7 +212,7 @@ public class WaypointDetails extends Fragment
 	private void updateWaypointDetails(double lat, double lon)
 	{
 		Androzic application = Androzic.getApplication();
-		ActionBarActivity activity = (ActionBarActivity) getActivity();
+		AppCompatActivity activity = (AppCompatActivity) getActivity();
 		
 		activity.getSupportActionBar().setTitle(waypoint.name);
 

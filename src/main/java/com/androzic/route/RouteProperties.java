@@ -26,7 +26,7 @@ import java.util.List;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -96,7 +96,7 @@ public class RouteProperties extends Fragment
 	public void onResume()
 	{
 		super.onResume();
-		((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.routeproperties_name);
+		((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.routeproperties_name);
 	}
 
 	@Override

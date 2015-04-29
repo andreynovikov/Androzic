@@ -35,7 +35,6 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
 import android.content.Context;
@@ -59,9 +58,12 @@ import android.preference.PreferenceScreen;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.preference.PreferenceFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.*;
+import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -664,7 +666,7 @@ public class Preferences extends ListFragment
 			// initialize list summaries
 			initSummaries(getPreferenceScreen());
 			getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-			((ActionBarActivity) getActivity()).getSupportActionBar().setSubtitle(getArguments().getString("title"));
+			((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getArguments().getString("title"));
 		}
 
 		@Override
@@ -673,7 +675,7 @@ public class Preferences extends ListFragment
 			super.onPause();
 
 			getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-			((ActionBarActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+			((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(null);
 		}
 
 		@Override

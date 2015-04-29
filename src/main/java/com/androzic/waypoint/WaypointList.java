@@ -26,7 +26,6 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -47,6 +46,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -68,7 +68,7 @@ import com.androzic.ui.TooltipManager;
 import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.daimajia.swipe.implments.SwipeItemMangerImpl;
+import com.daimajia.swipe.util.Attributes;
 import com.shamanland.fab.FloatingActionButton;
 import com.shamanland.fab.ShowHideOnScroll;
 
@@ -121,7 +121,7 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 
 		adapter = new WaypointListAdapter(getActivity());
 		setListAdapter(adapter);
-		adapter.setMode(SwipeItemMangerImpl.Mode.Single);
+		adapter.setMode(Attributes.Mode.Single);
 	}
 
 	@Override
