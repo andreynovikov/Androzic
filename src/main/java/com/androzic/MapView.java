@@ -975,15 +975,15 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				{
 					// Location is inside current viewport
 					lookAheadS = (float) Math.sqrt(dx * dx + dy * dy);
-					smoothB = (float) Math.toDegrees(Math.atan(1. * dx / dy));
-					
+					smoothB = dx == 0 ? 0f : dy == 0 ? (float) Math.signum(dx) * 90 : (float) Math.toDegrees(Math.atan(1. * dx / dy));
+
 					if (dy < 0)
 						smoothB = 180 - smoothB;
 					if (dy > 0)
 						smoothB = -smoothB;
 					if (smoothB < 0)
 						smoothB = 360 + smoothB;
-					
+
 					currentViewport.lookAheadXY[0] = dx;
 					currentViewport.lookAheadXY[1] = dy;
 				}
