@@ -185,6 +185,8 @@
 	высокая чувствительность может вызвать появление лишних точек.</string>
   <string name="new_coordinates">Получены новые координаты, отправитель: %s</string>
   <string name="donation_required">Эта функция доступна только для жертвователей</string>
+  <string name="gently_reset_zoom">Вскоре масштаб будет установлен в 100%</string>
+  <string name="gently_keep_zoom">Текущий масштаб будет оставлен без изменений</string>
   <string name="menu_addwaypoint">Добавить точку</string>
   <string name="menu_addtoroute">Добавить в маршрут</string>
   <string name="menu_tracks">Треки</string>
@@ -258,6 +260,10 @@
   <string name="pref_plugins_title">Плагины</string>
   <string name="pref_advanced_title">Дополнительно</string>
   <string name="pref_usemapindex_title">Использовать индекс карт</string>
+  <string name="pref_vectormaps_title">Vector maps</string>
+  <string name="pref_vectormap_theme_title">Стиль карты</string>
+  <string name="pref_vectormap_poi_title">Места</string>
+  <string name="pref_vectormap_textscale_title">Масштаб текста</string>
   <string name="pref_onlinemaps_title">Онлайн карты</string>
   <string name="pref_onlinemap_title">Поставщики карт</string>
   <string name="pref_onlinemapscale_title">Масштаб по-умолчанию</string>
@@ -275,13 +281,15 @@
   <string name="pref_folder_data_title">Папка данных</string>
   <string name="pref_folder_icon_title">Папка иконок</string>
   <string name="pref_folder_prefix_caution">Данная настройка предназначена только для продвинутых пользователей. Изменяйте её с осторожностью: некорректные значения могут привести к невозможности запуска приложения.</string>
-  <string name="pref_map_title">Карта</string>
+  <string name="pref_map_title">Карты</string>
   <string name="pref_maprenderinterval_title">Интервал обновления</string>
   <string name="pref_maprenderinterval_summary">Минимальный интервал, через который будет обновляться карта</string>
   <string name="pref_mapbest_title">Подгружать лучшую карту</string>
   <string name="pref_mapbest_summary">Позволяет приложению пробовать загрузить лучшую карту для текущего местоположения</string>
   <string name="pref_mapbestinterval_title">Интервал поиска карты</string>
   <string name="pref_mapbestinterval_summary">Интервал, через который будет осуществляться поиск лучшей карты</string>
+  <string name="pref_mapforcezoom_title">Устанавливать масштаб 100% при смене карты</string>
+  <string name="pref_mapforcezoom_summary">Если приложение переключается на другую карту, когда найдена лучшая карта или отображаемая карта не покрывает текущее местоположение, свежевыбранная карта может быть смасштабирована до 100% или до масштаба ранее отображаемой карты.</string>
   <string name="pref_mapadjacent_title">Прилегающие карты</string>
   <string name="pref_mapadjacent_summary">Отображение прилегающих карт за пределами границы текущей карты (<b>экспериментальный функционал</b>, может значительно ухудшить производительность!)</string>
   <string name="pref_mapfollowonloc_title">Автоматическое слежение</string>

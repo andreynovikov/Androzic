@@ -181,6 +181,8 @@
   <string name="t2r_explained"><b>Bu özellik deneyseldir.</b> İz mantıklı olmalıdır. Bundan kasıt A noktasından B noktasına gidişi tanımlamalıdır fakat tek noktayı her yerde aramamalıdır. Her iki algoritmayı da deneyin ve hangisinin daha iyi olduğunu görün. `Cruise´ algoritması doğrusaldır ve rota oluşturması zaman bağlı olarak tahmin edilebilir oysa `Fırfır´ algoritması tamamen tahmin edilemezdir. \"Kaba\" hassasiyeti bazı dönüşlerin kaçırılmasına neden olabilirken aynı zamanda \"ince\" hassasiyet gereksiz noktaların eklenmesine neden olabilir.</string>
   <string name="new_coordinates">%s kişisinden yeni koordinatlar alındı</string>
   <string name="donation_required">Bu özelliği yalnızca bağışçılar kullanabilir</string>
+  <string name="gently_reset_zoom">Zoom will be set to 100% shortly</string>
+  <string name="gently_keep_zoom">Current zoom will be left unchanged</string>
   <string name="menu_addwaypoint">Yer imi ekle</string>
   <string name="menu_addtoroute">Rotaya ekle</string>
   <string name="menu_tracks">İzler</string>
@@ -254,6 +256,10 @@
   <string name="pref_plugins_title">Eklentiler</string>
   <string name="pref_advanced_title">Gelişmiş</string>
   <string name="pref_usemapindex_title">Harita indeksleme kullan</string>
+  <string name="pref_vectormaps_title">Vector maps</string>
+  <string name="pref_vectormap_theme_title">Map style</string>
+  <string name="pref_vectormap_poi_title">Places</string>
+  <string name="pref_vectormap_textscale_title">Text scale</string>
   <string name="pref_onlinemaps_title">Çevirimiçi haritalar</string>
   <string name="pref_onlinemap_title">Harita sağlayıcıları</string>
   <string name="pref_onlinemapscale_title">Varsayılan yakınlaştırma düzeyi</string>
@@ -271,13 +277,15 @@
   <string name="pref_folder_data_title">Veri Klasörü</string>
   <string name="pref_folder_icon_title">Simgeler klasörü</string>
   <string name="pref_folder_prefix_caution">Bu seçenek yalnızca gelişmiş kullanıcılar içindir. Dikkatli kullanın: Eğer doğru ayarlanmazsa uygulamayı başlatamayabilirsiniz.</string>
-  <string name="pref_map_title">Harita</string>
+  <string name="pref_map_title">Haritalar</string>
   <string name="pref_maprenderinterval_title">Yenileme sıklığı</string>
   <string name="pref_maprenderinterval_summary">Harita yenileme zaman aralığı</string>
   <string name="pref_mapbest_title">En iyi ölçekli haritayı göster</string>
   <string name="pref_mapbest_summary">Uygulama mevcut konumda bulunan en iyi haritayı yüklemeye çalışır</string>
   <string name="pref_mapbestinterval_title">En iyi haritayı arama sıklığı</string>
   <string name="pref_mapbestinterval_summary">En iyi ölçekli harita arama sıklığı</string>
+  <string name="pref_mapforcezoom_title">Set 100% zoom on map change</string>
+  <string name="pref_mapforcezoom_summary">If application switches to another map when better map is found or displayed map does not cover current location, newly selected map can be zoomed to 100% or can be set to the scale of previously displayed map.</string>
   <string name="pref_mapadjacent_title">Bitişik haritalar</string>
   <string name="pref_mapadjacent_summary">Display adjacent maps outside the border of current map (<b>experimental</b>, can significantly degrade performance!)</string>
   <string name="pref_mapfollowonloc_title">İlk konumda otomatik takip et</string>

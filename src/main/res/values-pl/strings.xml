@@ -180,6 +180,8 @@
   <string name="t2r_explained"><b>Ta funkcja jest eksperymentalna.</b> Trasa powinien być rozsądna. Oznacza to, że należy opisać podróż z punktu A do punktu B, ale nie szukając wciąż jednego punktu. Spróbuj obu algorytmów i zobacz który bardziej Ci odpowiada. Algorytm \"Cruise\" jest liniowy i czas generowania trasy jest przewidywalny, a algorytm \"Flounce\" jest całkowicie nieprzewidywalny. Szeroka czułość może sprawić, że zabraknie kilku zakrętów, podczas gdy wąska czułość może dodać niepotrzebne punkty.</string>
   <string name="new_coordinates">Nowe współrzędne otrzymane od %s</string>
   <string name="donation_required">Ta funkcja jest dostępna tylko dla dotujących</string>
+  <string name="gently_reset_zoom">Powiększenie wkrótce zostanie ustawione na 100%</string>
+  <string name="gently_keep_zoom">Aktualne powiększenie pozostanie bez zmian</string>
   <string name="menu_addwaypoint">Dodaj punkt trasy</string>
   <string name="menu_addtoroute">Dodaj do trasy</string>
   <string name="menu_tracks">Ślady</string>
@@ -253,6 +255,10 @@
   <string name="pref_plugins_title">Wtyczki</string>
   <string name="pref_advanced_title">Zaawansowane</string>
   <string name="pref_usemapindex_title">Użyj indeksu mapy</string>
+  <string name="pref_vectormaps_title">Mapy wektorowe</string>
+  <string name="pref_vectormap_theme_title">Styl mapy</string>
+  <string name="pref_vectormap_poi_title">Miejsca</string>
+  <string name="pref_vectormap_textscale_title">Skala tekstu</string>
   <string name="pref_onlinemaps_title">Mapy online</string>
   <string name="pref_onlinemap_title">Dostawcy map</string>
   <string name="pref_onlinemapscale_title">Domyślny poziom powiększenia</string>
@@ -270,13 +276,15 @@
   <string name="pref_folder_data_title">Folder danych</string>
   <string name="pref_folder_icon_title">Folder ikon</string>
   <string name="pref_folder_prefix_caution">Ta opcja jest tylko dla zaawansowanych użytkowników. Używaj jej ostrożnie: jeśli ustawiona nieprawidłowo aplikacja może nie uruchomić się.</string>
-  <string name="pref_map_title">Mapa</string>
+  <string name="pref_map_title">Mapy</string>
   <string name="pref_maprenderinterval_title">Częstotliwość aktualizacji</string>
   <string name="pref_maprenderinterval_summary">Minimalny czas między aktualizacjami map</string>
   <string name="pref_mapbest_title">Załaduj najlepszą mapę</string>
   <string name="pref_mapbest_summary">Aplikacja spróbuje załadować najlepszą mapę dla bieżącej lokalizacji</string>
   <string name="pref_mapbestinterval_title">Najlepszy przedział mapy</string>
   <string name="pref_mapbestinterval_summary">Okres pomiędzy wyszukiwaniami najlepszej mapy</string>
+  <string name="pref_mapforcezoom_title">Ustaw powiększenie 100% po zmianie mapy</string>
+  <string name="pref_mapforcezoom_summary">Jeśli aplikacja przełącza się na inną mapę, gdy znajduje lepszą mapę lub aktualna mapa nie obejmuje bieżącej lokalizacji, nowo wybrana mapa może być powiększona do 100% lub można ustawić skalę poprzednio wyświetlanej mapy.</string>
   <string name="pref_mapadjacent_title">Sąsiednie mapy</string>
   <string name="pref_mapadjacent_summary">Wyświetla mapy sąsiadujące poza granicą aktualnej mapy (<b>funkcja eksperymentalna</b>, może znacząco obniżyć wydajność!)</string>
   <string name="pref_mapfollowonloc_title">Śledzenie na pierwszej pozycji</string>

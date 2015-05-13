@@ -180,6 +180,8 @@
   <string name="t2r_explained"><b>Experimenteel</b> Track moet logisch zijn. Het moet gaan van punt A naar punt B dus niet naar een willekeurig punt. Probeer beide algoritmes en kijk wat het beste voor u. Het \'Cruise\' algoritme is lineair en de route tijd die gegenereerd wordt is de meest waarschijnlijke, terwijl \'Flounce\' onvoorspelbaar is. Coarse gevoeligheid kan bepaalde waypoints niet aangeven terwijl Fine gevoeligheid ongewenste waypoints kan toevoegen.</string>
   <string name="new_coordinates">Nieuwe coördinaten gekregen van %s</string>
   <string name="donation_required">Deze functie is alleen beschikbaar voor donateurs</string>
+  <string name="gently_reset_zoom">Zoom zal binnenkort worden ingesteld op 100%</string>
+  <string name="gently_keep_zoom">Huidige zoom blijft ongewijzigd</string>
   <string name="menu_addwaypoint">Waypoint toevoegen</string>
   <string name="menu_addtoroute">Route toevoegen</string>
   <string name="menu_tracks">Tracks</string>
@@ -253,6 +255,10 @@
   <string name="pref_plugins_title">Plugins</string>
   <string name="pref_advanced_title">Geavanceerd</string>
   <string name="pref_usemapindex_title">Gebruik kaart index</string>
+  <string name="pref_vectormaps_title">Vector maps</string>
+  <string name="pref_vectormap_theme_title">Kaart-stijl</string>
+  <string name="pref_vectormap_poi_title">Plaatsen</string>
+  <string name="pref_vectormap_textscale_title">Tekst schaal</string>
   <string name="pref_onlinemaps_title">Online kaarten</string>
   <string name="pref_onlinemap_title">Kaart-provider</string>
   <string name="pref_onlinemapscale_title">Standaard zoomniveau</string>
@@ -270,13 +276,15 @@
   <string name="pref_folder_data_title">Datamap</string>
   <string name="pref_folder_icon_title">Pictogram folder</string>
   <string name="pref_folder_prefix_caution">Deze optie is alleen voor gevorderde gebruikers. Gebruik het met voorzichtigheid: Als verkeerd is ingesteld kan het programma niet starten.</string>
-  <string name="pref_map_title">Kaart</string>
+  <string name="pref_map_title">Kaarten</string>
   <string name="pref_maprenderinterval_title">Update-interval</string>
   <string name="pref_maprenderinterval_summary">Minimale periode tussen kaartupdates</string>
   <string name="pref_mapbest_title">Beste kaart laden</string>
   <string name="pref_mapbest_summary">Laat de toepassing probeert te laden beste kaart voor de huidige locatie</string>
   <string name="pref_mapbestinterval_title">Beste kaart interval</string>
   <string name="pref_mapbestinterval_summary">Tijd tussen beste kaart zoekactie</string>
+  <string name="pref_mapforcezoom_title">Instellen van 100% zoom op kaart wijzigen</string>
+  <string name="pref_mapforcezoom_summary">Als het programma naar een andere kaart overschakelt als een betere kaart wordt gevonden of weergegeven, heeft dit geen betrekking op de huidige locatie, de zojuist geselecteerde kaart kan worden ingezoomd tot 100% of kan worden ingesteld op de schaal van eerder weergegeven kaart.</string>
   <string name="pref_mapadjacent_title">Aangrenzende kaarten</string>
   <string name="pref_mapadjacent_summary">Aangrenzende kaarten buiten de rand van huidige kaart weergeven (<b>experimenteel</b>, kan aanzienlijk te traag wordt!)</string>
   <string name="pref_mapfollowonloc_title">Volgen van eerste locatie</string>

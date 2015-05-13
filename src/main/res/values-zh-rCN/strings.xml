@@ -180,6 +180,8 @@
   <string name="t2r_explained"><b>这个功能是实验性的.</b> 航迹应当是明显的.这意味着它应该描述从A点到B点但是不能搜索周围的一个点.尝试这两个算法并且看那个更适合你.‘Cruise’ 算法是线性和路线创建时间是可预见的，而‘Flounce’ 算法是完全不可预见的. 低敏感度会导致丢失一些转弯而高敏感度将增加不必要的路点.</string>
   <string name="new_coordinates">收到来自 %s 的新坐标</string>
   <string name="donation_required">此功能仅捐赠者可用</string>
+  <string name="gently_reset_zoom">Zoom will be set to 100% shortly</string>
+  <string name="gently_keep_zoom">Current zoom will be left unchanged</string>
   <string name="menu_addwaypoint">添加路点</string>
   <string name="menu_addtoroute">添加到路线</string>
   <string name="menu_tracks">航迹</string>
@@ -253,6 +255,10 @@
   <string name="pref_plugins_title">插件</string>
   <string name="pref_advanced_title">高级</string>
   <string name="pref_usemapindex_title">使用地图索引</string>
+  <string name="pref_vectormaps_title">Vector maps</string>
+  <string name="pref_vectormap_theme_title">Map style</string>
+  <string name="pref_vectormap_poi_title">Places</string>
+  <string name="pref_vectormap_textscale_title">Text scale</string>
   <string name="pref_onlinemaps_title">在线地图</string>
   <string name="pref_onlinemap_title">地图提供商</string>
   <string name="pref_onlinemapscale_title">默认缩放级别</string>
@@ -277,6 +283,8 @@
   <string name="pref_mapbest_summary">让应用程序尝试加载当前所在地区最好的地图</string>
   <string name="pref_mapbestinterval_title">加载最佳地图时间间隔</string>
   <string name="pref_mapbestinterval_summary">最佳地图时间查找时间间隔</string>
+  <string name="pref_mapforcezoom_title">Set 100% zoom on map change</string>
+  <string name="pref_mapforcezoom_summary">If application switches to another map when better map is found or displayed map does not cover current location, newly selected map can be zoomed to 100% or can be set to the scale of previously displayed map.</string>
   <string name="pref_mapadjacent_title">相邻地图</string>
   <string name="pref_mapadjacent_summary">显示当前地图的边界外的相邻地图 (<b>实验</b>，可能显著地降低性能!)</string>
   <string name="pref_mapfollowonloc_title">跟随第一个位置</string>

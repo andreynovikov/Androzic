@@ -100,12 +100,23 @@
     <item>Ръчно</item>
     <item>Винаги</item>
   </string-array>
+  <string-array name="forcezoom_names">
+    <item>Да</item>
+    <item>Gently yes</item>
+    <item>Gently no</item>
+    <item>Не</item>
+  </string-array>
   <string-array name="elementhide_names">
     <item>1 секунда</item>
     <item>3 seconds</item>
     <item>5 секунди</item>
     <item>10 секунди</item>
     <item>Никога</item>
+  </string-array>
+  <string-array name="scale_names">
+    <item>Small</item>
+    <item>Normal</item>
+    <item>Large</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Поддръжка на карти ozf2 и ozf3 формат</item>
@@ -128,5 +139,6 @@
     <item>Шведска локализация</item>
     <item>Украински локализация</item>
     <item>Португалска локализация</item>
+    <item>Serbian localization</item>
   </string-array>
 </resources>

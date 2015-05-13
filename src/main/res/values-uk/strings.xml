@@ -182,6 +182,8 @@
   <string name="t2r_explained"><b>Ця функція є експериментальною.</b> Трек має бути змістовним. Це означає, що він має описувати рух з точки А в точку Б, а не пошук однієї точки довкола. Спробуйте обидва алгоритми, і оберіть результат, який Вас задовольнить більше. Алгоритм `Круїз´ є лінійним, тому час генерації маршруту можна передбачити. Алгоритм `Метання´, в свою чергу, є непередбачуваним. Низька чутливість може призвести до пропуску поворотів, в той час як висока може викликати появу зайвих точок.</string>
   <string name="new_coordinates">Отримано координати від %s</string>
   <string name="donation_required">Ця функція доступна тільки для жертводавців</string>
+  <string name="gently_reset_zoom">Незабаром масштаб буде виставлено на 100%</string>
+  <string name="gently_keep_zoom">Поточний масштаб залишиться без змін</string>
   <string name="menu_addwaypoint">Додати точку</string>
   <string name="menu_addtoroute">Додати до маршруту</string>
   <string name="menu_tracks">Треки</string>
@@ -255,6 +257,10 @@
   <string name="pref_plugins_title">Плагіни</string>
   <string name="pref_advanced_title">Розширені налаштування</string>
   <string name="pref_usemapindex_title">Використовувати індекс мап</string>
+  <string name="pref_vectormaps_title">Vector maps</string>
+  <string name="pref_vectormap_theme_title">Стиль мапи</string>
+  <string name="pref_vectormap_poi_title">Місця</string>
+  <string name="pref_vectormap_textscale_title">Масштаб тексту</string>
   <string name="pref_onlinemaps_title">Online maps</string>
   <string name="pref_onlinemap_title">Постачальники карт</string>
   <string name="pref_onlinemapscale_title">Стандартний рівень наближення</string>
@@ -272,13 +278,15 @@
   <string name="pref_folder_data_title">Тека даних</string>
   <string name="pref_folder_icon_title">Тека значків</string>
   <string name="pref_folder_prefix_caution">Ця опція лише для досвідчених користувачів. Використовуйте обережно: при невірному значенні програма може не запускатися.</string>
-  <string name="pref_map_title">Мапа</string>
+  <string name="pref_map_title">Мапи</string>
   <string name="pref_maprenderinterval_title">Інтервал оновлення</string>
   <string name="pref_maprenderinterval_summary">Мінімальний час між оновленнями мапи</string>
   <string name="pref_mapbest_title">Завантажувати найкращу мапу</string>
   <string name="pref_mapbest_summary">Дає можливість додатку спробувати завантажити найкращу карту для поточного розташування</string>
   <string name="pref_mapbestinterval_title">Інтервал вибору мапи</string>
   <string name="pref_mapbestinterval_summary">Інтервал, через який буде здійснюватися пошук найкращої мапи</string>
+  <string name="pref_mapforcezoom_title">Встановити масштаб 100% при зміні мапи</string>
+  <string name="pref_mapforcezoom_summary">Якщо додаток перемикається на іншу мапу, коли знайдена краща мапа або мапа не охоплює поточне місце розташування, наново вибрана мапа може бути збільшена до 100% або може бути встановлений масштаб попередньої мапи.</string>
   <string name="pref_mapadjacent_title">Прилеглі мапи</string>
   <string name="pref_mapadjacent_summary">Показувати суміжні карти поза межами рамки поточної карти (<b>експериментальна функція</b>, може істотно знизити продуктивність!)</string>
   <string name="pref_mapfollowonloc_title">Автоматичне слідкування</string>

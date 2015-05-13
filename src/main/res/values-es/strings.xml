@@ -184,6 +184,8 @@
         puede añadir waypoints innecesarios.</string>
   <string name="new_coordinates">Nuevas coordenadas recibidas de %s</string>
   <string name="donation_required">Esta función está disponible sólo para donantes</string>
+  <string name="gently_reset_zoom">Zoom will be set to 100% shortly</string>
+  <string name="gently_keep_zoom">Current zoom will be left unchanged</string>
   <string name="menu_addwaypoint">Añadir waypoint</string>
   <string name="menu_addtoroute">Añadir a ruta</string>
   <string name="menu_tracks">Tracks</string>
@@ -257,6 +259,10 @@
   <string name="pref_plugins_title">Complementos</string>
   <string name="pref_advanced_title">Avanzada</string>
   <string name="pref_usemapindex_title">Utilizar indice de mapa</string>
+  <string name="pref_vectormaps_title">Vector maps</string>
+  <string name="pref_vectormap_theme_title">Map style</string>
+  <string name="pref_vectormap_poi_title">Places</string>
+  <string name="pref_vectormap_textscale_title">Text scale</string>
   <string name="pref_onlinemaps_title">Online maps</string>
   <string name="pref_onlinemap_title">Map providers</string>
   <string name="pref_onlinemapscale_title">Nivel de zoom predeterminado</string>
@@ -274,13 +280,15 @@
   <string name="pref_folder_data_title">Carpeta de datos</string>
   <string name="pref_folder_icon_title">Carpeta de iconos</string>
   <string name="pref_folder_prefix_caution">Opcion solo para usuarios avanzados. Si no se aplica correctamente la aplicación no podra comenzar.</string>
-  <string name="pref_map_title">Mapa</string>
+  <string name="pref_map_title">Mapas</string>
   <string name="pref_maprenderinterval_title">Intervalo de actualización</string>
   <string name="pref_maprenderinterval_summary">Minimo periodo entre actualizaciones de mapa</string>
   <string name="pref_mapbest_title">Cargar mejor mapa</string>
   <string name="pref_mapbest_summary">Lets application try to load best map for current location</string>
   <string name="pref_mapbestinterval_title">Mejor intervalo de mapa</string>
   <string name="pref_mapbestinterval_summary">Perido de busqueda de mapas</string>
+  <string name="pref_mapforcezoom_title">Set 100% zoom on map change</string>
+  <string name="pref_mapforcezoom_summary">If application switches to another map when better map is found or displayed map does not cover current location, newly selected map can be zoomed to 100% or can be set to the scale of previously displayed map.</string>
   <string name="pref_mapadjacent_title">Mapas adyacentes</string>
   <string name="pref_mapadjacent_summary">Display adjacent maps outside the border of current map (<b>experimental</b>, can significantly degrade performance!)</string>
   <string name="pref_mapfollowonloc_title">Seguimiento a partir de la primera ubicación</string>

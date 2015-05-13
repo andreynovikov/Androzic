@@ -100,12 +100,23 @@
     <item>İsteğe göre</item>
     <item>Her zaman</item>
   </string-array>
+  <string-array name="forcezoom_names">
+    <item>Evet</item>
+    <item>Gently yes</item>
+    <item>Gently no</item>
+    <item>Hayır</item>
+  </string-array>
   <string-array name="elementhide_names">
     <item>1 saniye</item>
     <item>3 saniye</item>
     <item>5 saniye</item>
     <item>10 saniye</item>
     <item>Asla</item>
+  </string-array>
+  <string-array name="scale_names">
+    <item>Small</item>
+    <item>Normal</item>
+    <item>Large</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 harita desteği</item>
@@ -128,5 +139,6 @@
     <item>İsveççe yerelleştirme</item>
     <item>Ukraynaca yerelleştirme</item>
     <item>Portekizce yerelleştirme</item>
+    <item>Serbian localization</item>
   </string-array>
 </resources>

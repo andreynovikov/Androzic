@@ -100,12 +100,23 @@
     <item>Вручную</item>
     <item>Всегда</item>
   </string-array>
+  <string-array name="forcezoom_names">
+    <item>Да</item>
+    <item>Мягко нет</item>
+    <item>Мягко да</item>
+    <item>Нет</item>
+  </string-array>
   <string-array name="elementhide_names">
     <item>1 секунда</item>
     <item>3 секунды</item>
     <item>5 секунд</item>
     <item>10 секунд</item>
     <item>Никогда</item>
+  </string-array>
+  <string-array name="scale_names">
+    <item>Маленький</item>
+    <item>Нормальный</item>
+    <item>Большой</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Поддержка карт формата ozf2, ozfx3</item>
@@ -128,5 +139,6 @@
     <item>Перевод на шведский</item>
     <item>Перевод на украинский</item>
     <item>Перевод на португальский</item>
+    <item>Перевод на сербский</item>
   </string-array>
 </resources>

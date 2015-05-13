@@ -100,12 +100,23 @@
     <item>Вручну</item>
     <item>Завжди</item>
   </string-array>
+  <string-array name="forcezoom_names">
+    <item>Так</item>
+    <item>М\'яко так</item>
+    <item>М\'яко ні</item>
+    <item>Ні</item>
+  </string-array>
   <string-array name="elementhide_names">
     <item>1 секунда</item>
     <item>3 секунди</item>
     <item>5 секунд</item>
     <item>10 секунд</item>
     <item>Ніколи</item>
+  </string-array>
+  <string-array name="scale_names">
+    <item>Малий</item>
+    <item>Нормальний</item>
+    <item>Великий</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Підтримка мап ozf2, ozfx3</item>
@@ -128,5 +139,6 @@
     <item>Шведська локалізація</item>
     <item>Українська локалізація</item>
     <item>Португальська локалізація</item>
+    <item>Сербська локалізація</item>
   </string-array>
 </resources>

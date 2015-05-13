@@ -100,12 +100,23 @@
     <item>手动</item>
     <item>总是</item>
   </string-array>
+  <string-array name="forcezoom_names">
+    <item>是</item>
+    <item>Gently yes</item>
+    <item>Gently no</item>
+    <item>否</item>
+  </string-array>
   <string-array name="elementhide_names">
     <item>1 秒</item>
     <item>3 秒</item>
     <item>5 秒</item>
     <item>10 秒</item>
     <item>从不</item>
+  </string-array>
+  <string-array name="scale_names">
+    <item>Small</item>
+    <item>Normal</item>
+    <item>Large</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Ozf2,ozfx3地图支持</item>
@@ -128,5 +139,6 @@
     <item>瑞典语翻译</item>
     <item>乌克兰语翻译</item>
     <item>葡萄牙语翻译</item>
+    <item>Serbian localization</item>
   </string-array>
 </resources>

@@ -100,12 +100,23 @@
     <item>Manuaalisesti</item>
     <item>Aina</item>
   </string-array>
+  <string-array name="forcezoom_names">
+    <item>Kyllä</item>
+    <item>Gently yes</item>
+    <item>Gently no</item>
+    <item>Ei</item>
+  </string-array>
   <string-array name="elementhide_names">
     <item>1 second</item>
     <item>3 seconds</item>
     <item>5 seconds</item>
     <item>10 seconds</item>
     <item>Never</item>
+  </string-array>
+  <string-array name="scale_names">
+    <item>Small</item>
+    <item>Normal</item>
+    <item>Large</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 karttatuki</item>
@@ -128,5 +139,6 @@
     <item>Swedish localization</item>
     <item>Ukrainian localization</item>
     <item>Portuguese localization</item>
+    <item>Serbian localization</item>
   </string-array>
 </resources>

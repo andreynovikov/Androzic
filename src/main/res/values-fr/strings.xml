@@ -180,6 +180,8 @@
   <string name="t2r_explained"><b>Cette fonctionnalité est expérimentale.</b> La trace doit être représentative. Cela signifie qu\'elle doit décrire un trajet d\'un point A à un point B mais pas la recherche d\'un point tout autour. Essayez les deux algorithmes  et voyez ce qui vous convient le mieux. L\'algorithme «Cruise» est linéaire et le temps de génération de la route est prévisible, alors que l\'algorithme «Flounce» est totalement imprévisible. La sensitivité grossière peut entraîner un manque de points tournants alors que la sensitivité fine risque d\'ajouter quelques points inutiles.</string>
   <string name="new_coordinates">Nouvelles coordonnées reçues de %s</string>
   <string name="donation_required">Cette fonctionnalité n\'est disponible que pour les donateurs</string>
+  <string name="gently_reset_zoom">Zoom will be set to 100% shortly</string>
+  <string name="gently_keep_zoom">Current zoom will be left unchanged</string>
   <string name="menu_addwaypoint">Ajouter un waypoint</string>
   <string name="menu_addtoroute">Ajouter à la route</string>
   <string name="menu_tracks">Traces</string>
@@ -253,6 +255,10 @@
   <string name="pref_plugins_title">Plugins</string>
   <string name="pref_advanced_title">Avancé</string>
   <string name="pref_usemapindex_title">Utilise l’indexation des cartes</string>
+  <string name="pref_vectormaps_title">Vector maps</string>
+  <string name="pref_vectormap_theme_title">Map style</string>
+  <string name="pref_vectormap_poi_title">Places</string>
+  <string name="pref_vectormap_textscale_title">Text scale</string>
   <string name="pref_onlinemaps_title">Cartes en ligne</string>
   <string name="pref_onlinemap_title">Fournisseurs de carte</string>
   <string name="pref_onlinemapscale_title">Niveau de zoom par défaut</string>
@@ -270,13 +276,15 @@
   <string name="pref_folder_data_title">Dossier de données</string>
   <string name="pref_folder_icon_title">Dossier des icones</string>
   <string name="pref_folder_prefix_caution">Cette option est réservée uniquement aux utilisateurs expérimentés. A utiliser avec précautions : en cas de mauvais paramétrage, l\'application pourrait ne plus démarrer.</string>
-  <string name="pref_map_title">Carte</string>
+  <string name="pref_map_title">Cartes</string>
   <string name="pref_maprenderinterval_title">Délai de mise à jour</string>
   <string name="pref_maprenderinterval_summary">Interval de temps minimum entre les rafraichissements de la carte</string>
   <string name="pref_mapbest_title">Carte plus détaillée</string>
   <string name="pref_mapbest_summary">Lets application try to load best map for current location</string>
   <string name="pref_mapbestinterval_title">Délai de recherche</string>
   <string name="pref_mapbestinterval_summary">Intervalle de temps pour la recherche de carte plus détaillées</string>
+  <string name="pref_mapforcezoom_title">Set 100% zoom on map change</string>
+  <string name="pref_mapforcezoom_summary">If application switches to another map when better map is found or displayed map does not cover current location, newly selected map can be zoomed to 100% or can be set to the scale of previously displayed map.</string>
   <string name="pref_mapadjacent_title">Cartes adjacentes</string>
   <string name="pref_mapadjacent_summary">Display adjacent maps outside the border of current map (<b>experimental</b>, can significantly degrade performance!)</string>
   <string name="pref_mapfollowonloc_title">Suivre au premier emplacement</string>

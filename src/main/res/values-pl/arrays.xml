@@ -100,12 +100,23 @@
     <item>Ręcznie</item>
     <item>Zawsze</item>
   </string-array>
+  <string-array name="forcezoom_names">
+    <item>Tak</item>
+    <item>Delikatnie tak</item>
+    <item>Delikatnie nie</item>
+    <item>Nie</item>
+  </string-array>
   <string-array name="elementhide_names">
     <item>1 sekunda</item>
     <item>3 sekundy</item>
     <item>5 sekund</item>
     <item>10 sekund</item>
     <item>Nigdy</item>
+  </string-array>
+  <string-array name="scale_names">
+    <item>Małe</item>
+    <item>Normalne</item>
+    <item>Duże</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Wsparcie map ozf2, ozfx3</item>
@@ -128,5 +139,6 @@
     <item>Tłumaczenie na szwedzki</item>
     <item>Tłumaczenie na ukraiński</item>
     <item>Tłumaczenie na portugalski</item>
+    <item>Tłumaczenie na serbski</item>
   </string-array>
 </resources>
