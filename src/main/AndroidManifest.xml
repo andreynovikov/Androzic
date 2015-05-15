@@ -22,8 +22,9 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.androzic"
-    android:installLocation="auto" >
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.androzic"
+          android:installLocation="auto">
 
     <supports-screens
         android:anyDensity="true"
@@ -70,6 +71,7 @@
         android:label="@string/perm_write_map_data_title"
         android:protectionLevel="dangerous" />
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
