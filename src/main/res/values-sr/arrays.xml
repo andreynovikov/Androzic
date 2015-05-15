@@ -120,12 +120,13 @@
   </string-array>
   <string-array name="credit_merits">
     <item>Подршка за карте Ozf2, ozfx3</item>
-    <item>Иконица програма</item>
-    <item>Бирач боја</item>
-    <item>Почетни код својстава траке претраге</item>
-    <item>Прорачун изласка/заласка сунца</item>
-    <item>Управљање са више додира</item>
-    <item>Списак уредив превлачењем</item>
+    <item>OSM vector maps support</item>
+    <item>Application icon</item>
+    <item>Color picker</item>
+    <item>Seekbar preference initial code</item>
+    <item>Sunrise/sunset calculation</item>
+    <item>Multitouch controller</item>
+    <item>Drag sort list</item>
     <item>Waypoint marker icons</item>
     <item>Waypoint marker pins</item>
     <item>Czech localization</item>

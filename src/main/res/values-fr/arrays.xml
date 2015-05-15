@@ -120,10 +120,11 @@
   </string-array>
   <string-array name="credit_merits">
     <item>Prise en charge des cartes Ozf2, ozfx3 </item>
-    <item>Icônes de l\'application</item>
+    <item>OSM vector maps support</item>
+    <item>Application icon</item>
     <item>Color picker</item>
-    <item>Code initial de la barre de recherche des préférences</item>
-    <item>Calcul de lever et du coucher du soleil</item>
+    <item>Seekbar preference initial code</item>
+    <item>Sunrise/sunset calculation</item>
     <item>Multitouch controller</item>
     <item>Drag sort list</item>
     <item>Waypoint marker icons</item>

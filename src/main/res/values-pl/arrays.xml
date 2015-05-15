@@ -120,25 +120,26 @@
   </string-array>
   <string-array name="credit_merits">
     <item>Wsparcie map ozf2, ozfx3</item>
-    <item>Ikona aplikacji</item>
-    <item>Wybór kolorów</item>
-    <item>Wstępny kod preferencji paska wyszukiwania</item>
-    <item>Obliczenia wschodu/zachodu słońca</item>
-    <item>Kontroler multitouch</item>
-    <item>Lista sortowana przeciąganiem</item>
-    <item>Ikony znacznika punktu nawigacyjnego</item>
-    <item>Pinezki znacznika punktu nawigacyjnego</item>
-    <item>Tłumaczenie na czeski</item>
-    <item>Tłumaczenie na francuski</item>
-    <item>Tłumaczenie na fiński</item>
-    <item>Tłumaczenie na Bułgarski</item>
-    <item>Tłumaczenie na niemiecki</item>
-    <item>Tłumaczenie na turecki</item>
-    <item>Tłumaczenie na włoski</item>
-    <item>Tłumaczenie na hiszpański</item>
-    <item>Tłumaczenie na szwedzki</item>
-    <item>Tłumaczenie na ukraiński</item>
-    <item>Tłumaczenie na portugalski</item>
-    <item>Tłumaczenie na serbski</item>
+    <item>OSM vector maps support</item>
+    <item>Application icon</item>
+    <item>Color picker</item>
+    <item>Seekbar preference initial code</item>
+    <item>Sunrise/sunset calculation</item>
+    <item>Multitouch controller</item>
+    <item>Drag sort list</item>
+    <item>Waypoint marker icons</item>
+    <item>Waypoint marker pins</item>
+    <item>Czech localization</item>
+    <item>French localization</item>
+    <item>Finnish localization</item>
+    <item>Bulgarian localization</item>
+    <item>German localization</item>
+    <item>Turkish localization</item>
+    <item>Italian localization</item>
+    <item>Spanish localization</item>
+    <item>Swedish localization</item>
+    <item>Ukrainian localization</item>
+    <item>Portuguese localization</item>
+    <item>Serbian localization</item>
   </string-array>
 </resources>

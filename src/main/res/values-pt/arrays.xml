@@ -120,10 +120,11 @@
   </string-array>
   <string-array name="credit_merits">
     <item>Suporte de mapas ozf2, ozfx3 </item>
-    <item>Ícone do aplicativo</item>
+    <item>OSM vector maps support</item>
+    <item>Application icon</item>
     <item>Color picker</item>
-    <item>Preferência de código inicial da barra de procura</item>
-    <item>Cálculo do Nascer/Pôr do sol</item>
+    <item>Seekbar preference initial code</item>
+    <item>Sunrise/sunset calculation</item>
     <item>Multitouch controller</item>
     <item>Drag sort list</item>
     <item>Waypoint marker icons</item>
