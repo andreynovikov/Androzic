@@ -9,7 +9,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 21
         versionCode 109
-        versionName "2.2-alpha"
+        versionName "2.2"
 
         ndk {
             moduleName "ozfdecoder"
