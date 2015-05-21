@@ -127,6 +127,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private double mpp = 0;
 	private int vectorLength = 0;
 	private int proximity = 0;
+	private boolean mapRotate = true;
 
 	// cursors
 	private Drawable movingCursor = null;
@@ -490,7 +491,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			int cty = 0;
 	
 			int pos;
-			if (currentViewport.bearing >= 0 && currentViewport.bearing < 90)
+			if (mapRotate || !isFollowing)
+				pos = 1;
+			else if (currentViewport.bearing >= 0 && currentViewport.bearing < 90)
 				pos = 1;
 			else if (currentViewport.bearing >= 90 && currentViewport.bearing < 180)
 				pos = 2;
@@ -582,7 +585,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			
 			canvas.save();
 			canvas.translate(sx, sy);
-			canvas.rotate(currentViewport.bearing, 0, 0);
+			canvas.rotate(currentViewport.bearing - currentViewport.mapHeading, 0, 0);
 			if (movingCursor != null)
 				movingCursor.draw(canvas);
 			else
@@ -656,7 +659,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		int cx = viewport.width / 2;
 		int cy = viewport.height / 2;
 
-		// canvas.rotate(-bearing, lookAheadXY[0] + cx, lookAheadXY[1] + cy);
+		if (mapRotate && isFollowing)
+			canvas.rotate(-currentViewport.mapHeading, currentViewport.lookAheadXY[0] + cx, currentViewport.lookAheadXY[1] + cy);
+
 		application.drawMap(viewport, loadBestMap, canvas);
 
 		canvas.translate(viewport.lookAheadXY[0] + cx, viewport.lookAheadXY[1] + cy);
@@ -703,6 +708,22 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		}
 		if (Math.abs(turn) > 10)
 			lookAheadB = currentViewport.bearing;
+
+		if (mapRotate && isFollowing)
+		{
+			turn = currentViewport.mapHeading - currentViewport.bearing;
+			if (Math.abs(turn) > 180)
+			{
+				turn = turn - Math.signum(turn) * 360;
+			}
+			if (Math.abs(turn) > 10)
+			{
+				currentViewport.mapHeading = currentViewport.bearing;
+				refreshBuffer();
+			}
+
+			lookAheadB = 0;
+		}
 
 		long lastLocationMillis = loc.getTime();
 
@@ -987,9 +1008,16 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 					currentViewport.lookAheadXY[0] = dx;
 					currentViewport.lookAheadXY[1] = dy;
 				}
+				if (mapRotate)
+				{
+					currentViewport.mapHeading = currentViewport.bearing;
+					refreshBuffer();
+				}
 			}
 			else
 			{
+				currentViewport.mapHeading = 0f;
+				refreshBuffer();
 				Toast.makeText(getContext(), R.string.following_disabled, Toast.LENGTH_SHORT).show();
 				boolean mapChanged = application.scrollMap(-currentViewport.lookAheadXY[0], -currentViewport.lookAheadXY[1], true);
 				if (mapChanged)
@@ -1174,6 +1202,14 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private final void onDrag(int deltaX, int deltaY)
 	{
+		if (currentViewport.mapHeading != 0f)
+		{
+			double rad = Math.toRadians(-currentViewport.mapHeading);
+			int dX = (int) (1. * deltaX * Math.cos(rad) + 1. * deltaY * Math.sin(rad));
+			int dY = (int) (1. * deltaX * Math.sin(-rad) + 1. * deltaY * Math.cos(rad));
+			deltaX = dX;
+			deltaY = dY;
+		}
 		lastDragTime = SystemClock.uptimeMillis();
 		application.scrollMap(-deltaX, -deltaY, false);
 		updateMapCenter();
@@ -1181,9 +1217,14 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private final void onDragFinished(int deltaX, int deltaY)
 	{
-		// double rad = Math.toRadians(-bearing);
-		// int dX = (int) (deltaX * Math.cos(rad) + deltaY * Math.sin(rad));
-		// int dY = (int) (deltaX * Math.sin(-rad) + deltaY * Math.cos(rad));
+		if (currentViewport.mapHeading != 0f)
+		{
+			double rad = Math.toRadians(-currentViewport.mapHeading);
+			int dX = (int) (deltaX * Math.cos(rad) + deltaY * Math.sin(rad));
+			int dY = (int) (deltaX * Math.sin(-rad) + deltaY * Math.cos(rad));
+			deltaX = dX;
+			deltaY = dY;
+		}
 		lastDragTime = SystemClock.uptimeMillis();
 		mapHolder.mapTapped();
 		boolean mapChanged = application.scrollMap(-deltaX, -deltaY, true);
@@ -1194,14 +1235,26 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private void onSingleTap(int x, int y)
 	{
-		int mapTapX = x + currentViewport.mapCenterXY[0] - getWidth() / 2;
-		int mapTapY = y + currentViewport.mapCenterXY[1] - getHeight() / 2;
+		x = x - getWidth() / 2;
+		y = y - getHeight() / 2;
 
 		if (isMoving && isFollowing && isFixed)
 		{
-			mapTapX -= currentViewport.lookAheadXY[0];
-			mapTapY -= currentViewport.lookAheadXY[1];
+			x -= currentViewport.lookAheadXY[0];
+			y -= currentViewport.lookAheadXY[1];
 		}
+
+		if (currentViewport.mapHeading != 0f)
+		{
+			double rad = Math.toRadians(-currentViewport.mapHeading);
+			int dX = (int) (1. * x * Math.cos(rad) + 1. * y * Math.sin(rad));
+			int dY = (int) (1. * x * Math.sin(-rad) + 1. * y * Math.cos(rad));
+			x = dX;
+			y = dY;
+		}
+
+		int mapTapX = x + currentViewport.mapCenterXY[0];
+		int mapTapY = y + currentViewport.mapCenterXY[1];
 
 		int dt = GESTURE_THRESHOLD_DP / 2;
 		Rect tap = new Rect(mapTapX - dt, mapTapY - dt, mapTapX + dt, mapTapY + dt);
@@ -1489,6 +1542,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			currentViewport.location = bundle.getDoubleArray("currentLocation");
 			currentViewport.mapCenterXY = bundle.getIntArray("mapCenterXY");
 			currentViewport.locationXY = bundle.getIntArray("currentLocationXY");
+			currentViewport.mapHeading = bundle.getFloat("mapHeading");
 			currentViewport.bearing = bundle.getFloat("bearing");
 			currentViewport.speed = bundle.getFloat("speed");
 			mpp = bundle.getDouble("mpp");
@@ -1540,6 +1594,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		bundle.putDoubleArray("currentLocation", currentViewport.location);
 		bundle.putIntArray("mapCenterXY", currentViewport.mapCenterXY);
 		bundle.putIntArray("currentLocationXY", currentViewport.locationXY);
+		bundle.putFloat("mapHeading", currentViewport.mapHeading);
 		bundle.putFloat("bearing", currentViewport.bearing);
 		bundle.putFloat("speed", currentViewport.speed);
 		bundle.putDouble("mpp", mpp);

@@ -30,6 +30,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
@@ -294,7 +295,12 @@ public class RouteOverlay extends MapOverlay
 					bitmaps.put(wpt, bitmap);
 				}
 				int[] xy = application.getXYbyLatLon(wpt.latitude, wpt.longitude);
-				c.drawBitmap(bitmap, xy[0] - half - cxy[0], xy[1] - half - cxy[1], null);
+
+				Matrix matrix = new Matrix();
+				if (viewport.mapHeading != 0f)
+					matrix.preRotate(viewport.mapHeading, half, half);
+				matrix.postTranslate(xy[0] - half - cxy[0], xy[1] - half - cxy[1]);
+				c.drawBitmap(bitmap, matrix, null);
 			}
 		}
 	}

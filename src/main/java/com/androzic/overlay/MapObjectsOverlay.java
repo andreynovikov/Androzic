@@ -29,6 +29,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Rect;
@@ -144,7 +145,7 @@ public class MapObjectsOverlay extends MapOverlay
 		return false;
 	}
 
-	protected void drawMapObject(Canvas c, MapObject mo, Androzic application, int[] cxy)
+	protected void drawMapObject(Viewport viewport, Canvas c, MapObject mo, Androzic application, int[] cxy)
 	{
 		int[] xy = application.getXYbyLatLon(mo.latitude, mo.longitude);
 		
@@ -280,10 +281,22 @@ public class MapObjectsOverlay extends MapOverlay
 			dy = mo.drawImage ? mo.anchorY : bitmap.getHeight() / 2;
 		}
 
-		if (mo.proximity > 0 && mpp > 0)
-			c.drawCircle(xy[0] - cxy[0], xy[1] - cxy[1], (float) (mo.proximity / mpp), proximityPaint);
+		int x = xy[0] - cxy[0];
+		int y = xy[1] - cxy[1];
 
-		c.drawBitmap(bitmap, xy[0] - dx - cxy[0], xy[1] - dy - cxy[1], null);		
+		if (mo.proximity > 0 && mpp > 0)
+			c.drawCircle(x, y, (float) (mo.proximity / mpp), proximityPaint);
+
+		Matrix matrix = new Matrix();
+		if (viewport.mapHeading != 0f)
+			matrix.preRotate(viewport.mapHeading, dx, dy);
+
+		x -= dx;
+		y -= dy;
+
+		matrix.postTranslate(x, y);
+
+		c.drawBitmap(bitmap, matrix, null);
 	}
 
 	@Override
@@ -304,7 +317,7 @@ public class MapObjectsOverlay extends MapOverlay
 			MapObject mo = mapObjects.next();
 			synchronized (mo)
 			{
-				drawMapObject(c, mo, application, cxy);
+				drawMapObject(viewport, c, mo, application, cxy);
 			}
 		}
 	}

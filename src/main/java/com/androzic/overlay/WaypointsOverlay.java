@@ -78,7 +78,7 @@ public class WaypointsOverlay extends MapObjectsOverlay
 		{
 			for (Waypoint wpt : waypoints)
 			{
-				drawMapObject(c, wpt, application, cxy);
+				drawMapObject(viewport, c, wpt, application, cxy);
 			}
 		}
 	}
