@@ -135,8 +135,8 @@ public class TrackOverlay extends MapOverlay
 
 		final int[] cxy = viewport.mapCenterXY;
 
-		int w2 = viewport.width / 2;
-		int h2 = viewport.height / 2;
+		int w2 = viewport.canvasWidth / 2;
+		int h2 = viewport.canvasHeight / 2;
 		int left = cxy[0] - w2;
 		int right = cxy[0] + w2;
 		int top = cxy[1] - h2;

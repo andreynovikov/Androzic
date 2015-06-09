@@ -1122,7 +1122,7 @@ public class LocationService extends BaseLocationService implements LocationList
 			lastKnownLocation.setAltitude(39);
 			lastKnownLocation.setLatitude(34.865792);
 			lastKnownLocation.setLongitude(32.351646);
-			//lastKnownLocation.setBearing((System.currentTimeMillis() / 166) % 360);
+			lastKnownLocation.setBearing((System.currentTimeMillis() / 166) % 360);
 			//lastKnownLocation.setAltitude(169);
 			//lastKnownLocation.setLatitude(55.852527);
 			//lastKnownLocation.setLongitude(29.451150);

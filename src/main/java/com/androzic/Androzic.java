@@ -205,7 +205,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	
 	private Locale locale = null;
 	public String charset;
-	private DisplayMetrics displayMetrics;
 
 	public String dataPath;
 	private String rootPath;
@@ -263,7 +262,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			try
 			{
-				currentMap.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, currentMap.getAbsoluteMPP(), true);
+				currentMap.activate(mapHolder, currentMap.getAbsoluteMPP(), true);
 			}
 			catch (final Throwable e)
 			{
@@ -283,6 +282,14 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 		if (currentMap != null && currentMap instanceof OzfMap)
 			overlayManager.initGrids((OzfMap) currentMap);
+	}
+
+	public void updateViewportDimensions(int width, int height)
+	{
+		BaseMap.viewportWidth = width;
+		BaseMap.viewportHeight = height;
+		if (currentMap != null && currentMap.activated())
+			currentMap.recalculateCache();
 	}
 	
 	public java.util.Map<String, Intent> getPluginsPreferences()
@@ -1350,7 +1357,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			{
 				try
 				{
-					newMap.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, mpp, true);
+					newMap.activate(mapHolder, mpp, true);
 				}
 				catch (final Throwable e)
 				{
@@ -1447,7 +1454,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 					try
 					{
 						if (!map.activated())
-							map.activate(mapHolder, displayMetrics.widthPixels, displayMetrics.heightPixels, currentMap.getMPP(), false);
+							map.activate(mapHolder, currentMap.getMPP(), false);
 						else
 							map.zoomTo(currentMap.getMPP());
 						cmr.remove(map);
@@ -2643,7 +2650,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		File sdcard = Environment.getExternalStorageDirectory();
 		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this, sdcard.getAbsolutePath()));
 
-		displayMetrics = new DisplayMetrics();
+		DisplayMetrics displayMetrics = new DisplayMetrics();
 
 		WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 		if (wm != null)
@@ -2654,8 +2661,8 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		{
 			displayMetrics.setTo(resources.getDisplayMetrics());
 		}
-		displayMetrics.widthPixels += MapView.VIEWPORT_EXCESS * 2;
-		displayMetrics.heightPixels += MapView.VIEWPORT_EXCESS * 2;
+		BaseMap.viewportWidth = displayMetrics.widthPixels;
+		BaseMap.viewportHeight = displayMetrics.heightPixels;
 
 		charset = settings.getString(getString(R.string.pref_charset), "UTF-8");
 		String lang = settings.getString(getString(R.string.pref_locale), "");

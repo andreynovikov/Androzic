@@ -27,7 +27,6 @@ import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCa
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -48,6 +47,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -75,7 +75,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private static final float MAX_SHIFT_SPEED = 20f;
 	private static final float INC_SHIFT_SPEED = 2f;
 	
-	protected static final int VIEWPORT_EXCESS = 64;
+	private static final int VIEWPORT_EXCESS = 64;
 
 	private static final int GESTURE_THRESHOLD_DP = (int) (ViewConfiguration.get(Androzic.getApplication()).getScaledTouchSlop() * 3);
 	private static final int DOUBLE_TAP_TIMEOUT = ViewConfiguration.getDoubleTapTimeout();
@@ -127,7 +127,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private double mpp = 0;
 	private int vectorLength = 0;
 	private int proximity = 0;
-	private boolean mapRotate = true;
+	private boolean mapRotate = false;
 
 	// cursors
 	private Drawable movingCursor = null;
@@ -272,7 +272,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			movingCursor.setBounds(-movingCursor.getIntrinsicWidth() / 2, 0, movingCursor.getIntrinsicWidth() / 2, movingCursor.getIntrinsicHeight());
 		}
 
-		multiTouchController = new MultiTouchController<Object>(this, false);
+		multiTouchController = new MultiTouchController<>(this, false);
 		tapHandler = new GestureHandler(this);
 
 		Log.d(TAG, "Map initialize");
@@ -281,9 +281,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
-		Log.d(TAG, "surfaceChanged(" + width + "," + height + ")");
-		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
-		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
+		Log.e(TAG, "surfaceChanged(" + width + "," + height + ")");
+		currentViewport.width = width;
+		currentViewport.height = height;
+		calculateViewportCanvas();
 		calculateViewportBounds();
 		calculateScaleBar();
 		setLookAhead(lookAheadPst);
@@ -294,9 +295,10 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		Log.d(TAG, "surfaceCreated(" + holder + ")");
-		currentViewport.width = getWidth() + VIEWPORT_EXCESS * 2;
-		currentViewport.height = getHeight() + VIEWPORT_EXCESS * 2;
+		Log.e(TAG, "surfaceCreated(" + holder + ")");
+		currentViewport.width = getWidth();
+		currentViewport.height = getHeight();
+		calculateViewportCanvas();
 		calculateViewportBounds();
 		calculateScaleBar();
 		setLookAhead(lookAheadPst);
@@ -326,6 +328,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			}
 			catch (InterruptedException e)
 			{
+				//ignore
 			}
 		}
 		if (bufferBitmap != null)
@@ -359,6 +362,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	/**
 	 * Checks if map drawing is paused
 	 */
+	@SuppressWarnings("unused")
 	public boolean isPaused()
 	{
 		return cachedHolder != null;
@@ -399,6 +403,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 					}
 					catch (InterruptedException e)
 					{
+						//ignore
 					}
 				}
 				prevTime = SystemClock.uptimeMillis();
@@ -424,15 +429,15 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	protected void doDraw(Canvas canvas)
 	{
 		long now = SystemClock.uptimeMillis();
-		
-		canvas.translate(-VIEWPORT_EXCESS, -VIEWPORT_EXCESS);
+
 		Matrix matrix = new Matrix();
+		matrix.postTranslate((currentViewport.width - currentViewport.canvasWidth) / 2, (currentViewport.height - currentViewport.canvasHeight) / 2);
 		
 		boolean scaled = scale > 1.1 || scale < 0.9;
 		if (scaled)
 		{
-			float dx = currentViewport.width * (1 - scale) / 2;
-			float dy = currentViewport.height * (1 - scale) / 2;
+			float dx = currentViewport.canvasWidth * (1 - scale) / 2;
+			float dy = currentViewport.canvasWidth * (1 - scale) / 2;
 			canvas.translate(dx, dy);
 			matrix.postScale(scale, scale);
 		}
@@ -456,11 +461,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			}
 		}
 
+		if (scaled)
+			return;
+
 		int cx = currentViewport.width / 2;
 		int cy = currentViewport.height / 2;
 
-		if (scaled)
-			return;
+		//canvas.translate(-currentViewport.width + currentViewport.canvasWidth, -currentViewport.height + currentViewport.canvasHeight);
 
 		// Draw scale bar
 		if (mpp > 0)
@@ -486,9 +493,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			int dp3 = (int) (3 * density);
 			int dp6 = (int) (6 * density);
 
-			int scaleX = VIEWPORT_EXCESS;
-			int scaleY = VIEWPORT_EXCESS;
-			int cty = 0;
+			int scaleX = 0;
+			int scaleY = 0;
+			int cty;
 	
 			int pos;
 			if (mapRotate || !isFollowing)
@@ -598,7 +605,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			sy += cy;
 
 			// Draw overflow bearing triangle
-			if (showCross && (sx < VIEWPORT_EXCESS || sy < VIEWPORT_EXCESS || sx > currentViewport.width - VIEWPORT_EXCESS || sy > currentViewport.height - VIEWPORT_EXCESS))
+			if (showCross && (sx < 0 || sy < 0 || sx > currentViewport.width || sy > currentViewport.height))
 			{
 				canvas.save();
 				double bearing = Geo.bearing(currentViewport.mapCenter[0], currentViewport.mapCenter[1], currentViewport.location[0], currentViewport.location[1]);
@@ -636,9 +643,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 	private void refreshBufferInternal()
 	{
-		Log.d(TAG, "refreshBufferInternal("+currentViewport.width+","+currentViewport.height+")");
+		Log.d(TAG, "refreshBufferInternal("+currentViewport.canvasWidth+","+currentViewport.canvasHeight+")");
 
-		if (currentViewport.width == 0 || currentViewport.height == 0)
+		if (currentViewport.canvasWidth == 0 || currentViewport.canvasHeight == 0)
 			return;
 
 		if (recreateBuffers || bufferBitmapTmp == null || bufferBitmapTmp.isRecycled())
@@ -647,7 +654,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			{
 				if (bufferBitmapTmp != null)
 					bufferBitmapTmp.recycle();
-				bufferBitmapTmp = Bitmap.createBitmap(currentViewport.width, currentViewport.height, Bitmap.Config.RGB_565);
+				bufferBitmapTmp = Bitmap.createBitmap(currentViewport.canvasWidth, currentViewport.canvasHeight, Bitmap.Config.RGB_565);
 			}
 		}
 		
@@ -656,8 +663,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		
 		canvas.drawRGB(0xFF, 0xFF, 0xFF);
 
-		int cx = viewport.width / 2;
-		int cy = viewport.height / 2;
+		int cx = viewport.canvasWidth / 2;
+		int cy = viewport.canvasHeight / 2;
 
 		if (mapRotate && isFollowing)
 			canvas.rotate(-currentViewport.mapHeading, currentViewport.lookAheadXY[0] + cx, currentViewport.lookAheadXY[1] + cy);
@@ -729,7 +736,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 		if (isFollowing)
 		{
-			boolean newMap = false;
+			boolean newMap;
 			if (bestMapEnabled && bestMapInterval > 0 && lastLocationMillis - lastBestMap >= bestMapInterval)
 			{
 				newMap = application.setMapCenter(currentViewport.location[0], currentViewport.location[1], true, false, loadBestMap);
@@ -779,14 +786,35 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		{
 			mapHolder.updateFileInfo();
 		}
-		finally
+		catch (Exception e)
 		{
+			//ignore
 		}
 	}
 
 	public Viewport getViewport()
 	{
 		return currentViewport.copy();
+	}
+
+	private void calculateViewportCanvas()
+	{
+		int excess = VIEWPORT_EXCESS * 2;
+		if (mapRotate)
+		{
+			int a = currentViewport.width < currentViewport.height ? currentViewport.height : currentViewport.width;
+			int e = (int) (0.41421356237 * a);
+			if (e < excess)
+				e = excess;
+			currentViewport.canvasWidth = a + e;
+			currentViewport.canvasHeight = a + e;
+		}
+		else
+		{
+			currentViewport.canvasWidth = currentViewport.width + excess;
+			currentViewport.canvasHeight = currentViewport.height + excess;
+		}
+		application.updateViewportDimensions(currentViewport.canvasWidth, currentViewport.canvasHeight);
 	}
 
 	private void calculateViewportBounds()
@@ -926,7 +954,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		Log.e(TAG, "Scale bar: " + scaleBarMeters);
 		if (scaleBarMeters == 0)
 			scaleBarMeters = 1;
-		else if (scaleBarMeters < 10) {}
+		else //noinspection StatementWithEmptyBody
+			if (scaleBarMeters < 10) {}
 		else if (scaleBarMeters < 40)
 			scaleBarMeters = scaleBarMeters / 10 * 10;
 		else if (scaleBarMeters < 80)
@@ -954,7 +983,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 
 		scaleBarWidth = (int) (scaleBarMeters / mpp);
 
-		if (scaleBarWidth > (currentViewport.width - VIEWPORT_EXCESS * 2) / 4)
+		if (scaleBarWidth > currentViewport.width / 4)
 		{
 			scaleBarWidth /= 2;
 			scaleBarMeters /= 2;
@@ -996,7 +1025,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				{
 					// Location is inside current viewport
 					lookAheadS = (float) Math.sqrt(dx * dx + dy * dy);
-					smoothB = dx == 0 ? 0f : dy == 0 ? (float) Math.signum(dx) * 90 : (float) Math.toDegrees(Math.atan(1. * dx / dy));
+					smoothB = dx == 0 ? 0f : dy == 0 ? Math.signum(dx) * 90 : (float) Math.toDegrees(Math.atan(1. * dx / dy));
 
 					if (dy < 0)
 						smoothB = 180 - smoothB;
@@ -1069,6 +1098,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		loadBestMap = false;
 	}
 
+	@SuppressWarnings("unused")
 	public boolean isBestMapEnabled()
 	{
 		return loadBestMap;
@@ -1195,12 +1225,13 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		{
 			mapHolder.updateCoordinates(currentViewport.mapCenter);
 		}
-		finally
+		catch (Exception e)
 		{
+			//ignore
 		}
 	}
 
-	private final void onDrag(int deltaX, int deltaY)
+	private void onDrag(int deltaX, int deltaY)
 	{
 		if (currentViewport.mapHeading != 0f)
 		{
@@ -1215,7 +1246,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		updateMapCenter();
 	}
 
-	private final void onDragFinished(int deltaX, int deltaY)
+	private void onDragFinished(int deltaX, int deltaY)
 	{
 		if (currentViewport.mapHeading != 0f)
 		{
@@ -1263,6 +1294,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				break;
 	}
 
+	@SuppressWarnings("UnusedParameters")
 	private void onDoubleTap(int x, int y)
 	{
 		setFollowingThroughContext(!isFollowing);
@@ -1271,15 +1303,14 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private static final int TAP = 1;
 	private static final int CANCEL = 2;
 
-	@SuppressLint("HandlerLeak")
-	private class GestureHandler extends Handler
+	private static class GestureHandler extends Handler
 	{
 		private final WeakReference<MapView> target;
 		
 		GestureHandler(MapView view)
 		{
 			super();
-			this.target = new WeakReference<MapView>(view);
+			this.target = new WeakReference<>(view);
 		}
 
 		@Override
@@ -1291,7 +1322,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			switch (msg.what)
 			{
 				case TAP:
-					mapView.onSingleTap(penOX, penOY);
+					mapView.onSingleTap(mapView.penOX, mapView.penOY);
 					mapView.cancelMotionEvent();
 					break;
 				case CANCEL:
@@ -1318,7 +1349,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event)
+	public boolean onTouchEvent(@NonNull MotionEvent event)
 	{
 		if (multiTouchController.onTouchEvent(event))
 		{
@@ -1411,7 +1442,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(int keyCode, @NonNull KeyEvent event)
 	{
 		switch (keyCode)
 		{
@@ -1627,8 +1658,9 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			{
 				mapHolder.zoomMap(scale);
 			}
-			finally
+			catch (Exception e)
 			{
+				//ignore
 			}
 		}
 	}

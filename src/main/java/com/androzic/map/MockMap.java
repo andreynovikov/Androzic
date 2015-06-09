@@ -56,7 +56,7 @@ public class MockMap extends BaseMap
 	}
 
 	@Override
-	public void activate(OnMapTileStateChangeListener listener, int width, int height, double mpp, boolean current)
+	public void activate(OnMapTileStateChangeListener listener, double mpp, boolean current)
 	{
 	}
 
