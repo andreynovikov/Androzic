@@ -648,6 +648,8 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		if (currentViewport.canvasWidth == 0 || currentViewport.canvasHeight == 0)
 			return;
 
+		boolean recreatedBuffer = false;
+
 		if (recreateBuffers || bufferBitmapTmp == null || bufferBitmapTmp.isRecycled())
 		{
 			synchronized (this)
@@ -655,6 +657,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 				if (bufferBitmapTmp != null)
 					bufferBitmapTmp.recycle();
 				bufferBitmapTmp = Bitmap.createBitmap(currentViewport.canvasWidth, currentViewport.canvasHeight, Bitmap.Config.RGB_565);
+				if (recreateBuffers)
+				{
+					recreatedBuffer = true;
+					recreateBuffers = false;
+				}
 			}
 		}
 		
@@ -689,12 +696,11 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			bufferBitmap = bufferBitmapTmp;
 			bufferBitmapTmp = t;
 			
-			if (recreateBuffers)
+			if (recreatedBuffer)
 			{
 				if (bufferBitmapTmp != null)
 					bufferBitmapTmp.recycle();
 				bufferBitmapTmp = null;
-				recreateBuffers = false;
 			}
 		}
 	}
@@ -1158,6 +1164,15 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 			currentViewport.lookAheadXY[0] = 0;
 			currentViewport.lookAheadXY[1] = 0;
 		}
+	}
+
+	public void setMapRotation(final int rotation)
+	{
+		mapRotate = rotation > 0;
+		calculateViewportCanvas();
+		currentViewport.mapHeading = 0;
+		recreateBuffers = true;
+		refreshBuffer();
 	}
 
 	public void setScaleBarColor(final int color)

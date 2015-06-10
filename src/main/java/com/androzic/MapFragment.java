@@ -60,7 +60,6 @@ import android.support.v7.internal.view.menu.MenuPresenter;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -84,7 +83,6 @@ import com.androzic.navigation.NavigationService;
 import com.androzic.route.OnRouteActionListener;
 import com.androzic.route.RouteEdit;
 import com.androzic.ui.TooltipManager;
-import com.androzic.ui.Viewport;
 import com.androzic.util.Astro;
 import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
@@ -324,6 +322,7 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapbest));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapbestinterval));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_mapforcezoom));
+		onSharedPreferenceChanged(settings, getString(R.string.pref_maprotation));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarbg));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarcolor));
 		onSharedPreferenceChanged(settings, getString(R.string.pref_scalebarbgcolor));
@@ -894,7 +893,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	@Override
 	public void zoomMap(final float factor)
 	{
-		wait(new Waitable() {
+		wait(new Waitable()
+		{
 			@Override
 			public void waitFor()
 			{
@@ -1118,7 +1118,8 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 	{
 		final String title = application.getMapTitle();
 		final String license = application.getMapLicense();
-		getActivity().runOnUiThread(new Runnable() {
+		getActivity().runOnUiThread(new Runnable()
+		{
 
 			@Override
 			public void run()
@@ -1246,6 +1247,11 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 		else if (getString(R.string.pref_mapforcezoom).equals(key))
 		{
 			forceZoomMap = Integer.parseInt(sharedPreferences.getString(key, "1"));
+		}
+		else if (getString(R.string.pref_maprotation).equals(key))
+		{
+			int rotation = Integer.parseInt(sharedPreferences.getString(key, resources.getString(R.string.def_maprotation)));
+			map.setMapRotation(rotation);
 		}
 		else if (getString(R.string.pref_scalebarbg).equals(key))
 		{

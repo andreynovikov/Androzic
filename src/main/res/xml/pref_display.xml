@@ -42,6 +42,14 @@
         android:key="@string/pref_showdistance_int"
         android:title="@string/pref_showdistance_title" />
 
+    <ListPreference
+        android:defaultValue="@string/def_maprotation"
+        android:dialogTitle="@string/pref_maprotation_title"
+        android:entries="@array/maprotation_names"
+        android:entryValues="@array/maprotation_values"
+        android:key="@string/pref_maprotation"
+        android:title="@string/pref_maprotation_title" />
+
     <PreferenceCategory android:title="@string/pref_map_title" >
         <CheckBoxPreference
             android:defaultValue="@bool/def_mapcropborder"

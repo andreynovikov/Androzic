@@ -318,6 +318,7 @@
     <string name="pref_mapcropborder_summary">Crop map along borer (corner markers)</string>
     <string name="pref_mapdrawborder_title">Draw map border</string>
     <string name="pref_mapdrawborder_summary">Draw border (along corner markers)</string>
+	<string name="pref_maprotation_title">Map rotation</string>
     <string name="pref_unfollowontap_title">Stop following on drag</string>
     <string name="pref_exit_title">Exit confirmation</string>
     <string name="pref_charset_title">Text file encoding</string>
