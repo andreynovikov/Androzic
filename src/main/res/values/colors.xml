@@ -5,6 +5,7 @@
 <color name="theme_accent_color">#33b5e5</color> <!-- Holo Blue Light -->
 <color name="drawer_selected_text">@color/theme_accent_color</color>
 <color name="cursor">#FFFF0000</color>
+<color name="north">#FF5050FF</color>
 <color name="currenttrack">#FFA565FE</color>
 <color name="mapcross">#AA333333</color>
 <color name="waypoint">#FFFFFF00</color>

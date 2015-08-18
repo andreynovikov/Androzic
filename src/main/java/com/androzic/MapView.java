@@ -133,6 +133,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 	private Drawable movingCursor = null;
 	private Paint crossPaint = null;
 	private Paint pointerPaint = null;
+	private Paint compassPaint = null;
 	private int activeColor = Color.RED;
 	private PorterDuffColorFilter active = null;
 	private Path movingPath = null;
@@ -237,6 +238,12 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		pointerPaint.setStrokeWidth(2 * density);
 		pointerPaint.setStyle(Paint.Style.STROKE);
 		pointerPaint.setColor(resources.getColor(R.color.cursor));
+
+		compassPaint = new Paint();
+		compassPaint.setAntiAlias(true);
+		compassPaint.setStrokeWidth(2 * density);
+		compassPaint.setStyle(Paint.Style.STROKE);
+		compassPaint.setColor(resources.getColor(R.color.north));
 
 		crossPath = new Path();
 		crossPath.addCircle(0, 0, 1 * density, Path.Direction.CW);
@@ -583,16 +590,25 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		canvas.translate(currentViewport.lookAheadXY[0] + cx, currentViewport.lookAheadXY[1] + cy);
 
 		boolean showCross = now < lastDragTime + crossCursorHideDelay;
-		
+
+		// Draw north triangle
+		if (mapRotate && isFollowing)
+		{
+			canvas.save();
+			canvas.rotate(-renderViewport.mapHeading, 0, 0);
+			canvas.drawPath(trianglePath, compassPaint);
+			canvas.restore();
+		}
+
 		// draw cursor (it is always topmost)
 		if (isMoving)
 		{
 			int sx = currentViewport.locationXY[0] - currentViewport.mapCenterXY[0];
 			int sy = currentViewport.locationXY[1] - currentViewport.mapCenterXY[1];
-			
+
 			canvas.save();
 			canvas.translate(sx, sy);
-			canvas.rotate(currentViewport.bearing - currentViewport.mapHeading, 0, 0);
+			canvas.rotate(currentViewport.bearing - renderViewport.mapHeading, 0, 0);
 			if (movingCursor != null)
 				movingCursor.draw(canvas);
 			else
@@ -674,7 +690,7 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback, Mult
 		int cy = viewport.canvasHeight / 2;
 
 		if (mapRotate && isFollowing)
-			canvas.rotate(-currentViewport.mapHeading, currentViewport.lookAheadXY[0] + cx, currentViewport.lookAheadXY[1] + cy);
+			canvas.rotate(-viewport.mapHeading, viewport.lookAheadXY[0] + cx, viewport.lookAheadXY[1] + cy);
 
 		application.drawMap(viewport, loadBestMap, canvas);
 
