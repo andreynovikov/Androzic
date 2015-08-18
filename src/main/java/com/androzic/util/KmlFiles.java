@@ -71,12 +71,10 @@ public class KmlFiles
 	 */
 	public static List<Waypoint> loadWaypointsFromFile(final File file) throws SAXException, IOException, ParserConfigurationException
 	{
-		List<Waypoint> waypoints = new ArrayList<Waypoint>();
+		List<Waypoint> waypoints = new ArrayList<>();
 
 		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser parser = null;
-
-		parser = factory.newSAXParser();
+		SAXParser parser = factory.newSAXParser();
 		parser.parse(file, new KmlParser(file.getName(), waypoints, null));
 		
 		return waypoints;
@@ -93,14 +91,11 @@ public class KmlFiles
 	 */
 	public static List<Track> loadTracksFromFile(final File file) throws SAXException, IOException, ParserConfigurationException
 	{
-		List<Track> tracks = new ArrayList<Track>();
+		List<Track> tracks = new ArrayList<>();
 
 		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser parser = null;
-
-		parser = factory.newSAXParser();
+		SAXParser parser = factory.newSAXParser();
 		parser.parse(file, new KmlParser(file.getName(), null, tracks));
-	
 		return tracks;
 	}
 
@@ -218,7 +213,7 @@ public class KmlFiles
 	public static List<Route> loadRoutesFromFile(File file) throws SAXException, IOException, ParserConfigurationException
 	{
 		List<Track> tracks = loadTracksFromFile(file);
-		List<Route> routes = new ArrayList<Route>();
+		List<Route> routes = new ArrayList<>();
 		for (Track track : tracks)
 		{
 			Route route = new Route(track.name, track.description, track.show);
@@ -263,6 +258,7 @@ class KmlParser extends DefaultHandler
 	static final String STYLE = "Style";
 	static final String LINESTYLE = "LineStyle";
 	static final String LISTSTYLE = "ListStyle";
+	static final String ICONSTYLE = "IconStyle";
 	static final String STYLEURL = "styleUrl";
 	static final String COLOR = "color";
 	static final String WIDTH = "width";
@@ -289,7 +285,7 @@ class KmlParser extends DefaultHandler
 		this.filename = filename;
 		ispoint = false;
 		istrack = false;
-		styles = new HashMap<String, Style>();
+		styles = new HashMap<>();
 	}
 
 	@Override
@@ -326,12 +322,37 @@ class KmlParser extends DefaultHandler
 		{
 			style.lineStyle = new LineStyle();
 		}
+		else if (localName.equalsIgnoreCase(ICONSTYLE))
+		{
+			style.iconStyle = new IconStyle();
+		}
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException
 	{
-		if (localName.equalsIgnoreCase(PLACEMARK))
+		if (localName.equalsIgnoreCase(DOCUMENT))
+		{
+			if (styles.isEmpty())
+				return;
+			if (waypoints != null)
+			{
+				for (Waypoint waypoint : waypoints)
+				{
+					if (waypoint.style != null)
+						applyWaypointStyle(waypoint, styles.get(waypoint.style));
+				}
+			}
+			if (tracks != null)
+			{
+				for (Track track : tracks)
+				{
+					if (track.style != null)
+						applyTrackStyle(track, styles.get(track.style));
+				}
+			}
+		}
+		else if (localName.equalsIgnoreCase(PLACEMARK))
 		{
 			if (ispoint && waypoints != null && waypoint != null)
 			{
@@ -394,17 +415,11 @@ class KmlParser extends DefaultHandler
 		{
 			// TODO Only local styles are currently accepted
 			String id = builder.toString().trim();
-			try
-			{
-				id = id.substring(id.indexOf("#") + 1);
-			}
-			catch (IndexOutOfBoundsException e)
-			{
-				Log.e(TAG, "StyleURL error", e);
-			}
-			Style s = styles.get(id);
-			if (track != null && s != null)
-				setTrackStyle(track, s);
+			id = id.substring(id.indexOf("#") + 1);
+			if (waypoint != null)
+				waypoint.style = id;
+			if (track != null)
+				track.style = id;
 		}
 		else if (localName.equalsIgnoreCase(STYLE))
 		{
@@ -412,14 +427,24 @@ class KmlParser extends DefaultHandler
 			{
 				if (style.id != null)
 					styles.put(style.id, style);
-				else if (track != null)
-					setTrackStyle(track, style);
 				style = null;
 			}
 		}
 		else if (localName.equalsIgnoreCase(COLOR))
 		{
-			if (style != null && style.lineStyle != null)
+			if (style != null && style.iconStyle != null)
+			{
+				try
+				{
+					style.iconStyle.color = reverseColor((int) Long.parseLong(builder.toString().trim(), 16));
+				}
+				catch (NumberFormatException e)
+				{
+					style.iconStyle.color = Color.RED;
+					Log.e(TAG, "Color format error", e);
+				}
+			}
+			else if (style != null && style.lineStyle != null)
 			{
 				try
 				{
@@ -448,10 +473,18 @@ class KmlParser extends DefaultHandler
 			}
 		}
 	}
-	
-	private void setTrackStyle(Track trk, Style stl)
+
+	private void applyWaypointStyle(Waypoint wpt, Style stl)
 	{
-		if (stl.lineStyle != null)
+		if (stl != null && stl.iconStyle != null)
+		{
+			wpt.backcolor = stl.iconStyle.color;
+		}
+	}
+
+	private void applyTrackStyle(Track trk, Style stl)
+	{
+		if (stl != null && stl.lineStyle != null)
 		{
 			trk.color = stl.lineStyle.color;
 			trk.width = stl.lineStyle.width;
@@ -473,6 +506,7 @@ class KmlParser extends DefaultHandler
 	{
 		String id;
 		LineStyle lineStyle;
+		IconStyle iconStyle;
 	}
 	
 	class ColorStyle
@@ -484,4 +518,23 @@ class KmlParser extends DefaultHandler
 	{
 		int width;
 	}
+
+	class IconStyle extends ColorStyle
+	{
+		//TODO Add processing for this style field
+		String icon;
+	}
+
+	/*
+	<StyleMap id='line-DB4436-1-nodesc'>
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line-DB4436-1-nodesc-normal</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line-DB4436-1-nodesc-highlight</styleUrl>
+		</Pair>
+	</StyleMap>
+	*/
 }
