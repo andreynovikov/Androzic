@@ -20,10 +20,6 @@
 
 package com.androzic.track;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,7 +31,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AlertDialog;
@@ -59,13 +54,7 @@ import com.daimajia.swipe.util.Attributes;
 
 public class TrackList extends ListFragment implements FileListDialog.OnFileListDialogListener
 {
-	List<Track> tracks = null;
-
 	private OnTrackActionListener trackActionsCallback;
-	
-	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
-	final Handler handler = new Handler();
-
 	private TrackListAdapter adapter;
 
 	@Override

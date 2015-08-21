@@ -1,8 +1,7 @@
 package com.androzic;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-
-import com.shamanland.fab.FloatingActionButton;
 
 public interface FragmentHolder
 {

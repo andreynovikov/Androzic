@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
@@ -46,7 +47,6 @@ import com.androzic.data.Track;
 import com.androzic.util.Geo;
 import com.androzic.util.MeanValue;
 import com.androzic.util.StringFormatter;
-import com.shamanland.fab.FloatingActionButton;
 
 public class TrackDetails extends Fragment
 {

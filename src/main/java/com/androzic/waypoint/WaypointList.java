@@ -44,6 +44,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AlertDialog;
@@ -69,8 +70,6 @@ import com.androzic.util.Geo;
 import com.androzic.util.StringFormatter;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
-import com.shamanland.fab.FloatingActionButton;
-import com.shamanland.fab.ShowHideOnScroll;
 
 public class WaypointList extends ListFragment implements FileListDialog.OnFileListDialogListener
 {
@@ -110,7 +109,6 @@ public class WaypointList extends ListFragment implements FileListDialog.OnFileL
 			emptyView.setText(R.string.msg_empty_waypoint_list);
 
 		FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.actionButton);
-		getListView().setOnTouchListener(new ShowHideOnScroll(fab));
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v)

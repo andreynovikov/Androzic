@@ -40,6 +40,9 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -58,6 +61,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -88,9 +92,6 @@ import com.androzic.waypoint.WaypointDetails;
 import com.androzic.waypoint.WaypointInfo;
 import com.androzic.waypoint.WaypointList;
 import com.androzic.waypoint.WaypointProperties;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.listeners.ActionClickListener;
-import com.shamanland.fab.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity implements FragmentHolder, OnWaypointActionListener, OnMapActionListener, OnRouteActionListener, OnTrackActionListener, OnSharedPreferenceChangeListener
 {
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements FragmentHolder, O
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
+	private CoordinatorLayout mCoordinatorLayout;
 	private DrawerAdapter mDrawerAdapter;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private Drawable mHomeDrawable;
@@ -166,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements FragmentHolder, O
 		mDrawerList.setAdapter(mDrawerAdapter);
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 		initializeDrawerItems();
+
+		mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
@@ -484,22 +488,21 @@ public class MainActivity extends AppCompatActivity implements FragmentHolder, O
 		application.saveWaypoints(waypoint.set);
 		application.getMapHolder().refreshMap();
 
-		Snackbar snackbar = Snackbar.with(application);
-		snackbar.text(R.string.waypoint_deleted);
-		snackbar.actionLabel(R.string.undo);
-		snackbar.actionListener(new ActionClickListener() {
-			@Override
-			public void onActionClicked(Snackbar snackbar)
-			{
-				if (application.undoWaypoint == null)
-					return;
-				application.addWaypoint(application.undoWaypoint);
-				application.saveWaypoints(waypoint.set);
-				application.getMapHolder().refreshMap();
-				application.undoWaypoint = null;
-			}
-		});
-		snackbar.show(this);
+		Snackbar
+				.make(mCoordinatorLayout, R.string.waypoint_deleted, Snackbar.LENGTH_LONG)
+				.setAction(R.string.undo, new View.OnClickListener() {
+					@Override
+					public void onClick(View v)
+					{
+						if (application.undoWaypoint == null)
+							return;
+						application.addWaypoint(application.undoWaypoint);
+						application.saveWaypoints(waypoint.set);
+						application.getMapHolder().refreshMap();
+						application.undoWaypoint = null;
+					}
+				})
+				.show();
 	}
 
 	@Override

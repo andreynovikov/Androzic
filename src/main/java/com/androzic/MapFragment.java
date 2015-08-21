@@ -51,6 +51,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.internal.view.SupportMenuInflater;
@@ -88,9 +89,6 @@ import com.androzic.util.Clipboard;
 import com.androzic.util.CoordinateParser;
 import com.androzic.util.StringFormatter;
 import com.androzic.waypoint.OnWaypointActionListener;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.listeners.ActionClickListener;
-import com.nispok.snackbar.listeners.EventListener;
 
 public class MapFragment extends Fragment implements MapHolder, OnSharedPreferenceChangeListener, View.OnClickListener, View.OnTouchListener, MenuBuilder.Callback, MenuPresenter.Callback
 {
@@ -947,64 +945,33 @@ public class MapFragment extends Fragment implements MapHolder, OnSharedPreferen
 				case 1:
 					resetZoom = true;
 				case 2:
-					final Snackbar snackbar = Snackbar.with(application);
 					int text = resetZoom ? R.string.gently_reset_zoom : R.string.gently_keep_zoom;
-					snackbar.setTag(R.id.reset_zoom, resetZoom);
-					snackbar.text(text);
-					snackbar.actionLabel(R.string.undo);
-					snackbar.eventListener(new EventListener() {
+					final boolean finalResetZoom = resetZoom;
+					final Snackbar snackbar = Snackbar.make(getView(), text, Snackbar.LENGTH_LONG);
+					snackbar.setAction(R.string.undo, new View.OnClickListener()
+					{
 						@Override
-						public void onShow(Snackbar snackbar)
+						public void onClick(View v)
 						{
+							// We need just a button
 						}
-
+					});
+					snackbar.setCallback(new Snackbar.Callback()
+					{
 						@Override
-						public void onShowByReplace(Snackbar snackbar)
+						public void onDismissed(Snackbar snackbar, int event)
 						{
-						}
-
-						@Override
-						public void onShown(Snackbar snackbar)
-						{
-						}
-
-						@Override
-						public void onDismiss(Snackbar snackbar)
-						{
-						}
-
-						@Override
-						public void onDismissByReplace(Snackbar snackbar)
-						{
-							//FIXME Should handle replacement properly
-						}
-
-						@Override
-						public void onDismissed(Snackbar snackbar)
-						{
-							boolean setZoom = (boolean) snackbar.getTag(R.id.reset_zoom);
+							super.onDismissed(snackbar, event);
+							if (event == Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE)
+								return;
+							boolean setZoom = finalResetZoom;
+							if (event == Snackbar.Callback.DISMISS_EVENT_ACTION)
+								setZoom = !setZoom;
 							if (setZoom)
 								application.setZoom(1.);
 						}
 					});
-					final boolean finalResetZoom = resetZoom;
-					snackbar.actionListener(new ActionClickListener() {
-						@Override
-						public void onActionClicked(Snackbar snackbar)
-						{
-							snackbar.setTag(R.id.reset_zoom, !finalResetZoom);
-						}
-					});
-					snackbar.duration(Snackbar.SnackbarDuration.LENGTH_LONG);
-					// Code can be called from different threads, but layout can be
-					// changed only in UI thread
-					application.getUIHandler().post(new Runnable() {
-						@Override
-						public void run()
-						{
-							snackbar.show(getActivity());
-						}
-					});
+					snackbar.show();
 					break;
 				case 3:
 					break;

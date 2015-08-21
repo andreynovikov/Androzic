@@ -20,9 +20,6 @@
 
 package com.androzic.route;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -33,8 +30,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,16 +50,10 @@ import com.androzic.ui.FileListDialog;
 import com.androzic.util.StringFormatter;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
-import com.shamanland.fab.FloatingActionButton;
-import com.shamanland.fab.ShowHideOnScroll;
 
 public class RouteList extends ListFragment implements FileListDialog.OnFileListDialogListener
 {
 	private OnRouteActionListener routeActionsCallback;
-
-	protected ExecutorService threadPool = Executors.newFixedThreadPool(2);
-	final Handler handler = new Handler();
-
 	private RouteListAdapter adapter;
 
 	@Override
@@ -89,7 +80,6 @@ public class RouteList extends ListFragment implements FileListDialog.OnFileList
 			emptyView.setText(R.string.msg_empty_route_list);
 
 		FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.actionButton);
-		getListView().setOnTouchListener(new ShowHideOnScroll(fab));
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v)
