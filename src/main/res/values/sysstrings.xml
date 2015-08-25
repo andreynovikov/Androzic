@@ -110,7 +110,6 @@
 	<string name="def_grid_userscale">200</string>
 	<string name="def_grid_usermpp">20</string>
 	<string name="def_folder_map">Androzic/maps</string>
-	<string name="def_folder_sas">Androzic/sas</string>
 	<string name="def_folder_icon">Androzic/icons</string>
 	<string name="def_folder_markericon">Androzic/markericons</string>
 	<string name="def_folder_data">Androzic/data</string>

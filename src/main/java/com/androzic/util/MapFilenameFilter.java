@@ -30,7 +30,7 @@ public class MapFilenameFilter implements FilenameFilter
 	public boolean accept(final File dir, final String filename)
 	{
 		String lc = filename.toLowerCase();
-		return lc.endsWith(".map");
+		return lc.endsWith(".map") || lc.endsWith(".sqlitedb") || lc.endsWith(".mbtiles");
 	}
 
 }

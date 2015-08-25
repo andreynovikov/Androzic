@@ -55,7 +55,6 @@ import android.widget.TextView;
 import com.androzic.map.BaseMap;
 import com.androzic.map.OnMapActionListener;
 import com.androzic.map.online.OnlineMap;
-import com.androzic.map.sas.SASMap;
 
 public class MapList extends ListFragment
 {
@@ -212,7 +211,6 @@ public class MapList extends ListFragment
 				populated = true;
 				Androzic application = Androzic.getApplication();
 				TreeNode<BaseMap> onlinemaps = null;
-				TreeNode<BaseMap> sasmaps = null;
 				String mappath = application.getMapPath();
 	   	        
 				for (BaseMap map : application.getMaps())
@@ -222,12 +220,6 @@ public class MapList extends ListFragment
 						if (onlinemaps == null)
 							onlinemaps = mapsTree.addChild(getResources().getString(R.string.online_maps));
 						onlinemaps.addChild(map.path, map);
-					}
-					else if (map instanceof SASMap)
-					{
-						if (sasmaps == null)
-							sasmaps = mapsTree.addChild(getResources().getString(R.string.sas_maps));
-						sasmaps.addChild(map.path, map);
 					}
 					else
 					{
@@ -398,6 +390,10 @@ public class MapList extends ListFragment
 					itemHolder.scale = (TextView) convertView.findViewById(R.id.scale);
 					itemHolder.filename = (TextView) convertView.findViewById(R.id.filename);
 				}
+				else
+				{
+					return null;
+				}
 				convertView.setTag(itemHolder);
 			}
 			else
@@ -442,7 +438,7 @@ public class MapList extends ListFragment
 
 		public TreeNode()
 		{
-			this.children = new LinkedList<TreeNode<T>>();
+			this.children = new LinkedList<>();
 		}
 
 		public TreeNode(String name)
@@ -459,7 +455,7 @@ public class MapList extends ListFragment
 
 		public TreeNode<T> addChild(String name)
 		{
-			TreeNode<T> childNode = new TreeNode<T>(name);
+			TreeNode<T> childNode = new TreeNode<>(name);
 			childNode.parent = this;
 			children.add(childNode);
 			return childNode;
@@ -467,7 +463,7 @@ public class MapList extends ListFragment
 
 		public TreeNode<T> addChild(String name, T child)
 		{
-			TreeNode<T> childNode = new TreeNode<T>(name, child);
+			TreeNode<T> childNode = new TreeNode<>(name, child);
 			childNode.parent = this;
 			children.add(childNode);
 			return childNode;
@@ -513,9 +509,9 @@ public class MapList extends ListFragment
 		{
 			if (a.data != null && b.data != null)
 				return a.data.title.compareToIgnoreCase(b.data.title);
-			if (a.data != null && b.data == null)
+			if (a.data != null)
 				return 1;
-			if (a.data == null && b.data != null)
+			if (b.data != null)
 				return -1;
 			return a.name.compareToIgnoreCase(b.name);
 		}

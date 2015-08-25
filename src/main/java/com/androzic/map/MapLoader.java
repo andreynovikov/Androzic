@@ -29,11 +29,14 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import android.os.Build;
 import android.util.Log;
 
 import com.androzic.map.forge.ForgeMap;
+import com.androzic.map.mbtiles.MBTilesMap;
 import com.androzic.map.ozf.Grid;
 import com.androzic.map.ozf.OzfMap;
+import com.androzic.map.rmaps.SQLiteMap;
 import com.androzic.util.CSV;
 import com.androzic.util.OziExplorerFiles;
 import com.jhlabs.Point2D;
@@ -89,6 +92,8 @@ public class MapLoader
             initialize();
         }
 
+		// MapsForge magic length - 20
+		// SQLite magic length - 13
 		byte[] buffer = new byte[20];
 		InputStream is = new FileInputStream(file);
 		if (is.read(buffer) != buffer.length) {
@@ -96,8 +101,17 @@ public class MapLoader
 		}
 		is.close();
 		if (Arrays.equals(ForgeMap.MAGIC, buffer))
-		{
 			return new ForgeMap(file.getCanonicalPath());
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
+		{
+			byte[] buffer13 = Arrays.copyOf(buffer, SQLiteMap.MAGIC.length);
+			if (Arrays.equals(SQLiteMap.MAGIC, buffer13))
+			{
+				if (file.getName().endsWith(".mbtiles"))
+					return new MBTilesMap(file.getCanonicalPath());
+				else
+					return new SQLiteMap(file.getCanonicalPath());
+			}
 		}
 
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));

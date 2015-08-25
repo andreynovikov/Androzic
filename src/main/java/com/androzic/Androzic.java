@@ -74,7 +74,6 @@ import com.androzic.map.ozf.OzfMap;
 import com.androzic.map.MapIndex;
 import com.androzic.map.MockMap;
 import com.androzic.map.ozf.OzfDecoder;
-import com.androzic.map.SASMapLoader;
 import com.androzic.map.forge.ForgeMap;
 import com.androzic.map.online.OnlineMap;
 import com.androzic.map.online.OpenStreetMapTileProvider;
@@ -136,7 +135,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 	public static final String BROADCAST_WAYPOINT_REMOVED = "com.androzic.waypointRemoved";
 
 	public static final int PATH_DATA = 0x001;
-	public static final int PATH_SAS = 0x002;
 	public static final int PATH_ICONS = 0x008;
 	public static final int PATH_MARKERICONS = 0x010;
 	
@@ -1922,8 +1920,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			iconPath = path;
 		if ((pathtype & PATH_MARKERICONS) > 0)
 			markerPath = path;
-		if ((pathtype & PATH_SAS) > 0)
-			sasPath = path;
 	}
 
 	public boolean setMapPath(String path)
@@ -2011,29 +2007,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 			}
 		}
 
-		// SAS maps
-		File sasRoot = new File(sasPath);
-		File[] files = sasRoot.listFiles();
-		if (files != null)
-		{
-			for (File file: files)
-			{
-				if (file.isDirectory())
-				{
-					try
-					{
-						BaseMap map = SASMapLoader.load(file);
-						maps.addMap(map);
-					}
-					catch (IOException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-				
 		// Online maps
 		onlineMaps = new ArrayList<>();
 		TileProvider provider = new OpenStreetMapTileProvider();

@@ -367,13 +367,10 @@ public class Splash extends Activity implements OnClickListener
 				}
 			}
 
-			File sasdir = new File(settings.getString(getString(R.string.pref_folder_sas), Environment.getExternalStorageDirectory() + File.separator + resources.getString(R.string.def_folder_sas)));
-
 			// initialize paths
 			application.setRootPath(root.getAbsolutePath());
 			application.setMapPath(mapdir.getAbsolutePath());
 			application.setDataPath(Androzic.PATH_DATA, datadir.getAbsolutePath());
-			application.setDataPath(Androzic.PATH_SAS, sasdir.getAbsolutePath());
 			application.setDataPath(Androzic.PATH_ICONS, iconsdir.getAbsolutePath());
 			application.setDataPath(Androzic.PATH_MARKERICONS, markericonsdir.getAbsolutePath());
 
