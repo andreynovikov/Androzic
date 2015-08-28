@@ -1,45 +1,57 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.model.application'
 
-android {
-    compileSdkVersion 21
-    buildToolsVersion "22.0.1"
+model {
+    android {
+        compileSdkVersion = 23
+        buildToolsVersion ="23.0.0"
 
-    defaultConfig {
-        applicationId "com.androzic.v2"
-        minSdkVersion 8
-        targetSdkVersion 21
-        versionCode 109
-        versionName "2.2"
-
-        ndk {
-            moduleName "ozfdecoder"
-            ldLibs "z", "log"
+        defaultConfig.with {
+            applicationId = "com.androzic.v2"
+            versionCode = 110
+            minSdkVersion.apiLevel      = 8
+            targetSdkVersion.apiLevel   = 21
         }
     }
+    /*
+     * native build settings
+     */
+    android.ndk {
+        moduleName = "ozfdecoder"
+        ldLibs = ["z", "log"]
+        /*
+         * Other ndk flags configurable here are
+         * cppFlags += "-fno-rtti"
+         * cppFlags += "-fno-exceptions"
+         * ldLibs    = ["android", "log"]
+         * stl       = "system"
+         */
+    }
 
-    signingConfigs {
+    /*
+    android.signingConfigs {
+        create("signed") {
+            //storeFile = file(RELEASE_STORE_FILE)
+            //storePassword = RELEASE_STORE_PASSWORD
+            //keyAlias = RELEASE_KEY_ALIAS
+            //keyPassword = RELEASE_KEY_PASSWORD
+        }
+    }
+    */
+
+    android.buildTypes {
         release {
-            storeFile file(RELEASE_STORE_FILE)
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
+            minifyEnabled = false
+            proguardFiles  += file('proguard-rules.pro')
+            //signingConfig = $("android.signingConfigs.signed")
         }
     }
 
-    buildTypes {
-        release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+    android.productFlavors {
+        create("generic") {
+            versionName = "2.3"
         }
-    }
-    productFlavors {
-        generic {
-            applicationId "com.androzic.v2"
-            versionName "2.1"
-        }
-        SeaVenti {
-            applicationId "com.androzic.v2"
-            versionName "2.1-SeaVenti"
+        create("SeaVenti") {
+            versionName = "2.3-SeaVenti"
         }
     }
 }
@@ -50,9 +62,9 @@ dependencies {
     compile project(':libraries:color-picker-view:library')
     compile project(':libraries:android-support-v4-preferencefragment')
     compile project(':libraries:mapsforge')
-    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:support-v4:23.0.0'
+    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.android.support:design:23.0.0'
     compile 'com.daimajia.swipelayout:library:1.2.0'
-    compile 'com.nispok:snackbar:2.10.7'
-    compile 'com.shamanland:fab:0.0.8'
     compile 'com.esotericsoftware:kryo:3.0.1'
 }
