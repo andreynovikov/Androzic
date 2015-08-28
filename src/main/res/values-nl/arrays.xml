@@ -118,28 +118,32 @@
     <item>Normaal</item>
     <item>Groot</item>
   </string-array>
+  <string-array name="maprotation_names">
+    <item>Noord boven</item>
+    <item>Track boven</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Ozf2, ozfx3 kaart ondersteunen</item>
-    <item>OSM vector maps support</item>
-    <item>Application icon</item>
-    <item>Color picker</item>
-    <item>Seekbar preference initial code</item>
-    <item>Sunrise/sunset calculation</item>
+    <item>OSM vector kaarten ondersteuning</item>
+    <item>Pictogram</item>
+    <item>Kleurkiezer</item>
+    <item>Seekbar voorkeur initiële code</item>
+    <item>Zonsopgang / zonsondergang calculatie</item>
     <item>Multitouch controller</item>
-    <item>Drag sort list</item>
-    <item>Waypoint marker icons</item>
-    <item>Waypoint marker pins</item>
-    <item>Czech localization</item>
-    <item>French localization</item>
-    <item>Finnish localization</item>
-    <item>Bulgarian localization</item>
-    <item>German localization</item>
-    <item>Turkish localization</item>
-    <item>Italian localization</item>
-    <item>Spanish localization</item>
-    <item>Swedish localization</item>
-    <item>Ukrainian localization</item>
-    <item>Portuguese localization</item>
-    <item>Serbian localization</item>
+    <item>Sleep lijst sorteren</item>
+    <item>Pictogrammen van de tabelmarkeringen waypoint</item>
+    <item>Waypoint marker pinnen</item>
+    <item>Tsjechische vertaling</item>
+    <item>Franse vertaling</item>
+    <item>Finse vertaling</item>
+    <item>Bulgaarse vertaling</item>
+    <item>Duitse vertaling</item>
+    <item>Turkse vertaling</item>
+    <item>Italiaanse vertaling</item>
+    <item>Spaanse vertaling</item>
+    <item>Zweedse vertaling</item>
+    <item>Oekraïnse vertaling</item>
+    <item>Portugese vertaling</item>
+    <item>Servische vertaling</item>
   </string-array>
 </resources>

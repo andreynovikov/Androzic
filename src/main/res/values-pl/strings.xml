@@ -33,7 +33,7 @@
   <string name="homepage">Strona domowa</string>
   <string name="faq">F.A.Q.</string>
   <string name="feedback">Opinie i wsparcie</string>
-  <string name="about"><b>Klient nawigacji, który wykorzystuje mapy ofz2 OziExplorer-a</b>. Doskonały do ​​uprawiania turystyki pieszej, żeglarstwa, pływania łódką, geocaching-u, off-road-u i innych atrakcji. Od użytkownika oczekuje się znajomości OziExplorer-a lub przynajmniej gdzie uzyskać jego mapy. Mapy mogą być także tworzone samodzielnie, ale przy nieco większym nakładzie pracy, szczegóły w dziale FAQ. Może pracować bez map jako prosta nawigacja. Współpracuje z wieloma mapami on-line takimi jak Open Street Map (Wymaga połączenia z internetem). Wsparcie dla map programu SAS.Planet.</string>
+  <string name="about"><b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Supports MapsForge, MBTiles and SQLite (RMaps) offline maps. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required).</string>
   <string name="donations">Darowizny</string>
   <string name="donate">Jeśli podoba Ci się ta aplikacja możesz przekazać dotację dla dalszego rozwoju przy użyciu jednej z następujących metod:</string>
   <string name="donate_google">Dotuj przez sklep Google Play</string>
@@ -158,7 +158,6 @@
   <string name="start_to_end">do</string>
   <string name="drag">przeciągnij</string>
   <string name="online_maps">Mapy online</string>
-  <string name="sas_maps">Mapy SAS.Planet</string>
   <string name="start_point">Punkt początkowy</string>
   <string name="finish_point">Punkt końcowy</string>
   <string name="statistics">Statystyki</string>
@@ -272,7 +271,6 @@
   <string name="pref_folder_title">Foldery</string>
   <string name="pref_folder_prefix_title">Folder aplikacji</string>
   <string name="pref_folder_map_title">Folder map</string>
-  <string name="pref_folder_sas_title">Folder pamięci podręcznej SAS.Planet</string>
   <string name="pref_folder_data_title">Folder danych</string>
   <string name="pref_folder_icon_title">Folder ikon</string>
   <string name="pref_folder_prefix_caution">Ta opcja jest tylko dla zaawansowanych użytkowników. Używaj jej ostrożnie: jeśli ustawiona nieprawidłowo aplikacja może nie uruchomić się.</string>
@@ -301,6 +299,7 @@
   <string name="pref_mapcropborder_summary">Przytnij mapę wzdłuż granicy (po znacznikach rogów)</string>
   <string name="pref_mapdrawborder_title">Rysuj obramowanie mapy</string>
   <string name="pref_mapdrawborder_summary">Rysuj obramowanie (wzdłuż znaczników rogów)</string>
+  <string name="pref_maprotation_title">Map rotation</string>
   <string name="pref_unfollowontap_title">Zatrzymaj podążanie podczas przeciągania</string>
   <string name="pref_exit_title">Potwierdzenie wyjścia</string>
   <string name="pref_charset_title">Kodowanie plików tekstowych</string>

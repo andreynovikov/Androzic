@@ -33,7 +33,7 @@
   <string name="homepage">Startpagina</string>
   <string name="faq">F.A.Q.</string>
   <string name="feedback">Feedback en ondersteuning</string>
-  <string name="about"><b>Navigatie-client die gebruikmaakt van oude OziExplorer ozf2 kaarten</b>. Ideaal voor wandelen, geocaching, af-achteruitgaat, zeilen, varen en andere buitenactiviteiten. U verwacht dat u zich bewust zijn van OziExplorer of op minste waar om de kaarten te krijgen. Kaarten kunnen ook worden gemaakt door jezelf, maar met enige moeite, zie FAQ voor details. Kan werken zonder kaarten als een eenvoudige navigator. Werken met een aantal online kaarten zoals Open Street kaart (internetverbinding vereist). Werken met SAS.Planeet kaarten cache.</string>
+  <string name="about"><b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Supports MapsForge, MBTiles and SQLite (RMaps) offline maps. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required).</string>
   <string name="donations">Donaties</string>
   <string name="donate">U kunt deze toepassing doneren voor de verdere ontwikkeling met behulp van een van de volgende methoden:</string>
   <string name="donate_google">Doneren via Google Play winkel</string>
@@ -158,7 +158,6 @@
   <string name="start_to_end">Aan</string>
   <string name="drag">Sleep</string>
   <string name="online_maps">Online kaarten</string>
-  <string name="sas_maps">SAS.Zwerfster maps</string>
   <string name="start_point">Beginpunt</string>
   <string name="finish_point">Eind punt</string>
   <string name="statistics">Statistieken</string>
@@ -272,7 +271,6 @@
   <string name="pref_folder_title">Mappen</string>
   <string name="pref_folder_prefix_title">Programma map</string>
   <string name="pref_folder_map_title">Mappen map</string>
-  <string name="pref_folder_sas_title">SAS.Planeet cachemap</string>
   <string name="pref_folder_data_title">Datamap</string>
   <string name="pref_folder_icon_title">Pictogram folder</string>
   <string name="pref_folder_prefix_caution">Deze optie is alleen voor gevorderde gebruikers. Gebruik het met voorzichtigheid: Als verkeerd is ingesteld kan het programma niet starten.</string>
@@ -301,6 +299,7 @@
   <string name="pref_mapcropborder_summary">Gewas kaart langs borer (hoek markeringen)</string>
   <string name="pref_mapdrawborder_title">Teken map rand</string>
   <string name="pref_mapdrawborder_summary">Rand tekenen (langs hoek markeringen)</string>
+  <string name="pref_maprotation_title">Kaart rotatie</string>
   <string name="pref_unfollowontap_title">Stop volgen bij slepen</string>
   <string name="pref_exit_title">Bevestig stoppen</string>
   <string name="pref_charset_title">Tekstcodering bestand</string>

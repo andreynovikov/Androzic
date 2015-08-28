@@ -59,14 +59,14 @@
     <item>Astronomique</item>
   </string-array>
   <string-array name="angle_types">
-    <item>true</item>
-    <item>magnetic</item>
+    <item>vrai</item>
+    <item>magnétique</item>
   </string-array>
   <string-array name="angle_units">
-    <item>degrees</item>
+    <item>degrés</item>
     <item>NATO mils</item>
     <item>Soviet mils</item>
-    <item>grads</item>
+    <item>Grades</item>
   </string-array>
   <string-array name="angle_abbrs">
     <item>deg</item>
@@ -107,30 +107,34 @@
     <item>Non</item>
   </string-array>
   <string-array name="elementhide_names">
-    <item>1 second</item>
-    <item>3 seconds</item>
-    <item>5 seconds</item>
-    <item>10 seconds</item>
-    <item>Never</item>
+    <item>1 seconde</item>
+    <item>3 secondes</item>
+    <item>5 secondes</item>
+    <item>10 secondes</item>
+    <item>jamais</item>
   </string-array>
   <string-array name="scale_names">
-    <item>Small</item>
+    <item>Petit</item>
     <item>Normal</item>
-    <item>Large</item>
+    <item>Grande</item>
+  </string-array>
+  <string-array name="maprotation_names">
+    <item>Nord vers le haut</item>
+    <item>Direction vers le haut</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Prise en charge des cartes Ozf2, ozfx3 </item>
     <item>OSM vector maps support</item>
-    <item>Application icon</item>
+    <item>Icône de l\'application</item>
     <item>Color picker</item>
     <item>Seekbar preference initial code</item>
-    <item>Sunrise/sunset calculation</item>
+    <item>Calcul de lever/coucher du soleil</item>
     <item>Multitouch controller</item>
     <item>Drag sort list</item>
-    <item>Waypoint marker icons</item>
+    <item>Icônes des Waypoints</item>
     <item>Waypoint marker pins</item>
     <item>Czech localization</item>
-    <item>French localization</item>
+    <item>Traduction française</item>
     <item>Finnish localization</item>
     <item>Bulgarian localization</item>
     <item>German localization</item>

@@ -33,7 +33,7 @@
   <string name="homepage">主页</string>
   <string name="faq">常见问题</string>
   <string name="feedback">反馈和支持</string>
-  <string name="about"><b>使用旧的 OziExplorer ozf2 导航客户端地图</b>。非常适合徒步旅行、 寻宝、 越野、 帆船、 划船和其他户外活动。我们希望你知道 OziExplorer 或者至少知道从何处获取它的地图。地图还可以自己创建，但也需要一些努力，参见常见问题解答的详细信息。在没有地图时也可以作为一个简单的导航工具。支持大量的在线地图如 Open Street Map (需要互联网连接)。支持 SAS. 卫星地图缓存。</string>
+  <string name="about"><b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Supports MapsForge, MBTiles and SQLite (RMaps) offline maps. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required).</string>
   <string name="donations">捐赠</string>
   <string name="donate">如果你喜欢这个应用程序，你可以帮助我们进一步的开发，使用下列方法捐赠：</string>
   <string name="donate_google">通过谷歌应用市场捐赠</string>
@@ -158,7 +158,6 @@
   <string name="start_to_end">到</string>
   <string name="drag">拖动</string>
   <string name="online_maps">在线地图</string>
-  <string name="sas_maps">SAS. 卫星地图</string>
   <string name="start_point">起始点</string>
   <string name="finish_point">终点</string>
   <string name="statistics">统计数据</string>
@@ -272,7 +271,6 @@
   <string name="pref_folder_title">文件夹</string>
   <string name="pref_folder_prefix_title">应用程序文件夹</string>
   <string name="pref_folder_map_title">地图文件夹</string>
-  <string name="pref_folder_sas_title">SAS. 卫星地图缓存文件夹</string>
   <string name="pref_folder_data_title">数据文件夹</string>
   <string name="pref_folder_icon_title">文件夹图标</string>
   <string name="pref_folder_prefix_caution">此选项仅用于高级用户.请谨慎使用:如果不正确地设置应用程序可能不能启动.</string>
@@ -301,6 +299,7 @@
   <string name="pref_mapcropborder_summary">沿着边框裁切地图 (角标记)</string>
   <string name="pref_mapdrawborder_title">绘制地图边框</string>
   <string name="pref_mapdrawborder_summary">绘制边框 (沿角标记)</string>
+  <string name="pref_maprotation_title">Map rotation</string>
   <string name="pref_unfollowontap_title">拖动时停止跟随</string>
   <string name="pref_exit_title">退出确认</string>
   <string name="pref_charset_title">文本编码</string>

@@ -10,12 +10,12 @@
     <item quantity="other">%d segments</item>
   </plurals>
   <plurals name="weeksValue">
-    <item quantity="one">%s week</item>
-    <item quantity="other">%s weeks</item>
+    <item quantity="one">%s semaine</item>
+    <item quantity="other">%s semaines</item>
   </plurals>
   <plurals name="secondsValue">
-    <item quantity="one">%s second</item>
-    <item quantity="other">%s seconds</item>
+    <item quantity="one">%s secondes</item>
+    <item quantity="other">%s secondes</item>
   </plurals>
   <plurals name="pixelsValue">
     <item quantity="one">%s pixel</item>

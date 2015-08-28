@@ -59,13 +59,13 @@
     <item>Астрономически</item>
   </string-array>
   <string-array name="angle_types">
-    <item>true</item>
-    <item>magnetic</item>
+    <item>истински</item>
+    <item>магнитен</item>
   </string-array>
   <string-array name="angle_units">
-    <item>degrees</item>
-    <item>NATO mils</item>
-    <item>Soviet mils</item>
+    <item>градуса</item>
+    <item>НАТО мили</item>
+    <item>Съветски мили</item>
     <item>grads</item>
   </string-array>
   <string-array name="angle_abbrs">
@@ -82,7 +82,7 @@
   <string-array name="exit_names">
     <item>Натиснете двапъти назад</item>
     <item>Диалогов прозорец за потвърждение</item>
-    <item>Drawer menu item</item>
+    <item>Пунк на навигационното меню</item>
     <item>Нищо</item>
   </string-array>
   <string-array name="orientation_names">
@@ -102,21 +102,25 @@
   </string-array>
   <string-array name="forcezoom_names">
     <item>Да</item>
-    <item>Gently yes</item>
-    <item>Gently no</item>
+    <item>Внимателно да</item>
+    <item>Нежно не</item>
     <item>Не</item>
   </string-array>
   <string-array name="elementhide_names">
     <item>1 секунда</item>
-    <item>3 seconds</item>
+    <item>3 секунди</item>
     <item>5 секунди</item>
     <item>10 секунди</item>
     <item>Никога</item>
   </string-array>
   <string-array name="scale_names">
-    <item>Small</item>
-    <item>Normal</item>
-    <item>Large</item>
+    <item>Малък</item>
+    <item>Нормален</item>
+    <item>Голям</item>
+  </string-array>
+  <string-array name="maprotation_names">
+    <item>Севера нагоре</item>
+    <item>Направлението на движението</item>
   </string-array>
   <string-array name="credit_merits">
     <item>Поддръжка на карти ozf2 и ozf3 формат</item>

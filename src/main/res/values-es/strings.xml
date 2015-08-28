@@ -33,7 +33,7 @@
   <string name="homepage">Homepage</string>
   <string name="faq">F.A.Q.</string>
   <string name="feedback">Feedback and support</string>
-  <string name="about"><b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required). Works with SAS.Planet maps cache.</string>
+  <string name="about"><b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Supports MapsForge, MBTiles and SQLite (RMaps) offline maps. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required).</string>
   <string name="donations">Donations</string>
   <string name="donate">If you like this application you can donate for the further development using one of the following methods:</string>
   <string name="donate_google">Donate via Google Play Store</string>
@@ -158,7 +158,6 @@
   <string name="start_to_end">to</string>
   <string name="drag">drag</string>
   <string name="online_maps">Online maps</string>
-  <string name="sas_maps">SAS.Planet maps</string>
   <string name="start_point">Start point</string>
   <string name="finish_point">Finish point</string>
   <string name="statistics">Statistics</string>
@@ -276,7 +275,6 @@
   <string name="pref_folder_title">Carpetas</string>
   <string name="pref_folder_prefix_title">Carpeta de la aplicacion</string>
   <string name="pref_folder_map_title">Carpeta de mapas</string>
-  <string name="pref_folder_sas_title">SAS.Planet cache folder</string>
   <string name="pref_folder_data_title">Carpeta de datos</string>
   <string name="pref_folder_icon_title">Carpeta de iconos</string>
   <string name="pref_folder_prefix_caution">Opcion solo para usuarios avanzados. Si no se aplica correctamente la aplicación no podra comenzar.</string>
@@ -305,6 +303,7 @@
   <string name="pref_mapcropborder_summary">Crop map along borer (corner markers)</string>
   <string name="pref_mapdrawborder_title">Dibujar el borde del mapa</string>
   <string name="pref_mapdrawborder_summary">Draw border (along corner markers)</string>
+  <string name="pref_maprotation_title">Map rotation</string>
   <string name="pref_unfollowontap_title">Parar seguimiento al arrastrar</string>
   <string name="pref_exit_title">Confirmación de salida</string>
   <string name="pref_charset_title">Codificación de archivos de texto</string>

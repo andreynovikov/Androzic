@@ -33,7 +33,7 @@
   <string name="homepage">Домашня сторінка</string>
   <string name="faq">F.A.Q.</string>
   <string name="feedback">Зворотній зв\'язок та підтримка</string>
-  <string name="about"><b>Навігаційний клієнт, що використовує старі карти OziExplorer формату ozf2</b>. Відмінний вибір для туризму, гео-кешингу,  подорожей по бездоріжжю, вітрильного спорту та інших видів активностей поза цивілізацією. Використовуючи цей клієнт Ви повинні мати розуміння роботи OziExplorer, або хоча б знати, де взяти карти цього формату. Карти також можна створити самостійно, але з деякими зусиллями (перегляньте FAQ щоб отримати більше інформації). Може працювати без карт як звичайний навігатор. Працює з численними онлайн-картами, такими як Open Street Map (потрібне з’єднання з Інтернет). Працює з кешем карт SAS.Planet.</string>
+  <string name="about"><b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Supports MapsForge, MBTiles and SQLite (RMaps) offline maps. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required).</string>
   <string name="donations">Пожертва</string>
   <string name="donate">Якщо вам подобається ця програма, ви можете пожертвувати для подальшого розвитку, використовуючи один з наступних методів:</string>
   <string name="donate_google">Пожертва через Google Play Store</string>
@@ -160,7 +160,6 @@
   <string name="start_to_end">до</string>
   <string name="drag">перетягніть</string>
   <string name="online_maps">Online maps</string>
-  <string name="sas_maps">Карти SAS.Planet</string>
   <string name="start_point">Початкова точка</string>
   <string name="finish_point">Фінішна точка</string>
   <string name="statistics">Статистика</string>
@@ -274,7 +273,6 @@
   <string name="pref_folder_title">Теки</string>
   <string name="pref_folder_prefix_title">Тека додатку</string>
   <string name="pref_folder_map_title">Тека мап</string>
-  <string name="pref_folder_sas_title">Тека кешу SAS.Планета</string>
   <string name="pref_folder_data_title">Тека даних</string>
   <string name="pref_folder_icon_title">Тека значків</string>
   <string name="pref_folder_prefix_caution">Ця опція лише для досвідчених користувачів. Використовуйте обережно: при невірному значенні програма може не запускатися.</string>
@@ -303,6 +301,7 @@
   <string name="pref_mapcropborder_summary">Обрізати мапу вздовж границь (кутових маркерів)</string>
   <string name="pref_mapdrawborder_title">Показувати межі мапи</string>
   <string name="pref_mapdrawborder_summary">Відображати межу (вздовж кутових маркерів)</string>
+  <string name="pref_maprotation_title">Map rotation</string>
   <string name="pref_unfollowontap_title">Припинити слідкування при перетягуванні</string>
   <string name="pref_exit_title">Підтвердження виходу</string>
   <string name="pref_charset_title">Кодування текстових файлів</string>

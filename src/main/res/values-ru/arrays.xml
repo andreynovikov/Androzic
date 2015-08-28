@@ -118,6 +118,10 @@
     <item>Нормальный</item>
     <item>Большой</item>
   </string-array>
+  <string-array name="maprotation_names">
+    <item>Север вверху</item>
+    <item>Направление движения</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Поддержка карт формата ozf2, ozfx3</item>
     <item>Поддержка векторных карт OSM</item>

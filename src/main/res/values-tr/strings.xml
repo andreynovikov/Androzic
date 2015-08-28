@@ -33,7 +33,7 @@
   <string name="homepage">Ana Sayfa</string>
   <string name="faq">S.S.S.</string>
   <string name="feedback">Geri besleme ve destek</string>
-  <string name="about"><b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required). Works with SAS.Planet maps cache.</string>
+  <string name="about"><b>Navigation client that uses old OziExplorer ozf2 maps</b>. Great for hiking, geocaching, off-roading, sailing, boating and other outdoor activities. You are expected to be aware of OziExplorer or at least of where to get its maps. Maps can also be created by yourself, but with some effort, see FAQ for details. Supports MapsForge, MBTiles and SQLite (RMaps) offline maps. Can work without maps as a simple navigator. Works with a number of online maps such as Open Street Map (Internet connection required).</string>
   <string name="donations">Bağışlar</string>
   <string name="donate">If you like this application you can donate for the further development using one of the following methods:</string>
   <string name="donate_google">Google Play ile bağışta bulunun</string>
@@ -159,7 +159,6 @@
   <string name="start_to_end">Hedef</string>
   <string name="drag">sürükleyin</string>
   <string name="online_maps">Çevirimiçi haritalar</string>
-  <string name="sas_maps">SAS.Planet haritaları</string>
   <string name="start_point">Başlangıç noktası</string>
   <string name="finish_point">Bitiş noktası</string>
   <string name="statistics">İstatistikler</string>
@@ -273,7 +272,6 @@
   <string name="pref_folder_title">Klasörler</string>
   <string name="pref_folder_prefix_title">Uygulama klasörü</string>
   <string name="pref_folder_map_title">Haritalar klasörü</string>
-  <string name="pref_folder_sas_title">SAS.Planet haritaları ön bellek klasörü</string>
   <string name="pref_folder_data_title">Veri Klasörü</string>
   <string name="pref_folder_icon_title">Simgeler klasörü</string>
   <string name="pref_folder_prefix_caution">Bu seçenek yalnızca gelişmiş kullanıcılar içindir. Dikkatli kullanın: Eğer doğru ayarlanmazsa uygulamayı başlatamayabilirsiniz.</string>
@@ -302,6 +300,7 @@
   <string name="pref_mapcropborder_summary">Haritayı sınır hizasından (köşe işaretlerinden) kırp</string>
   <string name="pref_mapdrawborder_title">Harita Kenarlarını Çiz</string>
   <string name="pref_mapdrawborder_summary">Köşe işaretleri boyunca kenarlık çiz</string>
+  <string name="pref_maprotation_title">Map rotation</string>
   <string name="pref_unfollowontap_title">Sürüklemede otomatik takibi bırak</string>
   <string name="pref_exit_title">Çıkış onayı</string>
   <string name="pref_charset_title">Metin dosyası kodlaması</string>

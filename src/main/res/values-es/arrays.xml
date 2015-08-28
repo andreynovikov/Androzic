@@ -118,6 +118,10 @@
     <item>Normal</item>
     <item>Large</item>
   </string-array>
+  <string-array name="maprotation_names">
+    <item>North up</item>
+    <item>Track up</item>
+  </string-array>
   <string-array name="credit_merits">
     <item>Soporte de mapas ozf2, ozfx3</item>
     <item>OSM vector maps support</item>
