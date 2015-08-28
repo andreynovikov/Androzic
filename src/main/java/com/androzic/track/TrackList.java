@@ -116,15 +116,6 @@ public class TrackList extends ListFragment implements FileListDialog.OnFileList
 	}
 
 	@Override
-	public void onPrepareOptionsMenu(final Menu menu)
-	{
-		Androzic application = Androzic.getApplication();
-		boolean tracking = application.isTracking();
-		menu.findItem(R.id.action_export).setEnabled(tracking);
-		menu.findItem(R.id.action_clear).setEnabled(tracking);
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(final MenuItem item)
 	{
 		switch (item.getItemId())
