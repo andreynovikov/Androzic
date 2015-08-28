@@ -1943,7 +1943,6 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 
 	public void initializeMaps()
 	{
-		AndroidGraphicFactory.createInstance(this);
 		initializeRenderTheme();
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean useIndex = settings.getBoolean(getString(R.string.pref_usemapindex), getResources().getBoolean(R.bool.def_usemapindex));
@@ -2577,6 +2576,7 @@ public class Androzic extends BaseApplication implements OnSharedPreferenceChang
 		if (initialized)
 			return;
 
+		AndroidGraphicFactory.createInstance(this);
 		try
 		{
 			OzfDecoder.useNativeCalls();
