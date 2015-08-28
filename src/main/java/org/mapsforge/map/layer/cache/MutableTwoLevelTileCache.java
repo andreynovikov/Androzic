@@ -18,6 +18,8 @@ package org.mapsforge.map.layer.cache;
 
 import org.mapsforge.core.graphics.TileBitmap;
 import org.mapsforge.map.layer.queue.Job;
+import org.mapsforge.map.model.common.Observable;
+import org.mapsforge.map.model.common.Observer;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,10 +30,12 @@ public class MutableTwoLevelTileCache implements TileCache
 	private TileCache firstLevelTileCache;
 	private TileCache secondLevelTileCache;
 	private final Set<Job> workingSet;
+	private final Observable observable;
 
 	public MutableTwoLevelTileCache()
 	{
 		this.workingSet = Collections.synchronizedSet(new HashSet<Job>());
+		this.observable = new Observable();
 	}
 
 	public void setFirstLevelCache(TileCache firstLevelTileCache)
@@ -138,6 +142,7 @@ public class MutableTwoLevelTileCache implements TileCache
 		}
 		if (this.secondLevelTileCache != null)
 			this.secondLevelTileCache.put(key, bitmap);
+		this.observable.notifyObservers();
 	}
 
 	@Override
@@ -166,5 +171,17 @@ public class MutableTwoLevelTileCache implements TileCache
 				}
 			}
 		}
+	}
+
+	@Override
+	public void addObserver(Observer observer)
+	{
+		this.observable.addObserver(observer);
+	}
+
+	@Override
+	public void removeObserver(Observer observer)
+	{
+		this.observable.removeObserver(observer);
 	}
 }

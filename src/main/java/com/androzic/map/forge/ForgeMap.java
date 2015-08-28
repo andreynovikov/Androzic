@@ -254,11 +254,7 @@ public class ForgeMap extends TileMap
 			finally
 			{
 				mapWorker = null;
-				if (databaseRenderer != null)
-				{
-					databaseRenderer.destroy();
-					databaseRenderer = null;
-				}
+				databaseRenderer = null;
 				tileCache = null;
 				if (memoryTileCache != null)
 				{
@@ -528,7 +524,7 @@ public class ForgeMap extends TileMap
 
 		try
 		{
-			fileSystemTileCache = new FileSystemTileCache(tileCacheFiles, cacheDirectory, AndroidGraphicFactory.INSTANCE, false, 0);
+			fileSystemTileCache = new FileSystemTileCache(tileCacheFiles, cacheDirectory, AndroidGraphicFactory.INSTANCE, false);
 			return fileSystemTileCache;
 		}
 		catch (IllegalArgumentException e)
